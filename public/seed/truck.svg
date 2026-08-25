@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Truck">
+  <rect width="160" height="160" fill="#ebe6e0"/>
+  <rect x="22" y="62" width="70" height="42" rx="3" fill="#0f4a3c"/>
+  <path d="M92 78h28l14 18v8H92z" fill="#5a6e50"/>
+  <circle cx="48" cy="116" r="14" fill="#3d4f36"/>
+  <circle cx="112" cy="116" r="14" fill="#3d4f36"/>
+  <rect x="100" y="84" width="14" height="10" fill="#c9a227"/>
+</svg>

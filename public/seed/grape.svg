@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Khaghogh">
+  <rect width="160" height="160" fill="#f1f0e6"/>
+  <g fill="#6b3f7a">
+    <circle cx="66" cy="70" r="14"/><circle cx="94" cy="70" r="14"/>
+    <circle cx="80" cy="92" r="14"/><circle cx="58" cy="96" r="13"/>
+    <circle cx="102" cy="96" r="13"/><circle cx="80" cy="118" r="13"/>
+  </g>
+  <path d="M80 40v20" stroke="#4d7c4a" stroke-width="7" stroke-linecap="round"/>
+  <path d="M80 44c10-10 22-10 30 0-10 8-22 8-30 0z" fill="#5c8f57"/>
+</svg>

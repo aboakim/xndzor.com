@@ -1,0 +1,45 @@
+"use client";
+
+import { FormEvent, useState } from "react";
+import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
+
+export function GroupBuyJoinForm({ campaignId }: { campaignId: string }) {
+  const t = useTranslations("groupBuy");
+  const router = useRouter();
+  const [qty, setQty] = useState("100");
+  const [saving, setSaving] = useState(false);
+  const [done, setDone] = useState(false);
+
+  async function onSubmit(e: FormEvent) {
+    e.preventDefault();
+    setSaving(true);
+    const res = await fetch("/api/group-buy", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ campaignId, qty }),
+    });
+    setSaving(false);
+    if (res.status === 401) {
+      router.push("/auth/login");
+      return;
+    }
+    if (!res.ok) return;
+    setDone(true);
+    router.refresh();
+  }
+
+  if (done) return <p className="muted">{t("joined")}</p>;
+
+  return (
+    <form className="offer-form" onSubmit={onSubmit}>
+      <label>
+        <span>{t("yourQty")}</span>
+        <input type="number" min={1} value={qty} onChange={(e) => setQty(e.target.value)} />
+      </label>
+      <button type="submit" className="btn primary" disabled={saving}>
+        {saving ? t("joining") : t("join")}
+      </button>
+    </form>
+  );
+}

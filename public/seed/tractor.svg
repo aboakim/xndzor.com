@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Tractor">
+  <rect width="160" height="160" fill="#e8efe4"/>
+  <circle cx="52" cy="112" r="22" fill="#3d4f36"/>
+  <circle cx="52" cy="112" r="10" fill="#c9a227"/>
+  <circle cx="112" cy="118" r="16" fill="#3d4f36"/>
+  <circle cx="112" cy="118" r="7" fill="#c9a227"/>
+  <path d="M28 100h20l18-36h36l12 20h18v16H98l-8-14H70l-12 30H28z" fill="#0f4a3c"/>
+  <rect x="70" y="48" width="28" height="18" rx="3" fill="#5a6e50"/>
+</svg>

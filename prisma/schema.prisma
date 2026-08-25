@@ -1,0 +1,445 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String             @id @default(cuid())
+  email            String             @unique
+  passwordHash     String
+  name             String
+  phone            String?
+  role             String             @default("FARMER") // FARMER | BUYER | PROVIDER | BOTH
+  marzId           String?
+  marz             Marz?              @relation(fields: [marzId], references: [id])
+  createdAt        DateTime           @default(now())
+  demands          Demand[]
+  supplies         Supply[]
+  offers           Offer[]
+  jobRequests      JobRequest[]
+  providers        ServiceProvider[]
+  jobApplications  JobApplication[]
+  futureHarvests   FutureHarvest[]
+  preOffers        PreOffer[]
+  groupCampaigns   GroupBuyCampaign[]
+  groupJoins       GroupBuyJoin[]
+  plots            Plot[]
+  machineryListings MachineryListing[]
+}
+
+model Marz {
+  id             String             @id
+  slug           String             @unique
+  nameHy         String
+  nameEn         String
+  nameRu         String
+  sortOrder      Int                @default(0)
+  villages       Village[]
+  users          User[]
+  demands        Demand[]
+  supplies       Supply[]
+  jobRequests    JobRequest[]
+  providers      ServiceProvider[]
+  futureHarvests FutureHarvest[]
+  campaigns      GroupBuyCampaign[]
+  plots          Plot[]
+  machineryListings MachineryListing[]
+}
+
+model Village {
+  id             String            @id
+  slug           String            @unique
+  marzId         String
+  marz           Marz              @relation(fields: [marzId], references: [id])
+  nameHy         String
+  nameEn         String
+  nameRu         String
+  kind           String            @default("settlement")
+  /// WGS84 centre of the settlement, used for the village map page
+  lat            Float?
+  lng            Float?
+  demands        Demand[]
+  supplies       Supply[]
+  jobRequests    JobRequest[]
+  providers      ServiceProvider[]
+  futureHarvests FutureHarvest[]
+  plots          Plot[]
+  machineryListings MachineryListing[]
+
+  @@index([marzId])
+  @@index([nameEn])
+  @@index([nameHy])
+}
+
+model Product {
+  id             String             @id @default(cuid())
+  slug           String             @unique
+  nameKey        String
+  sortOrder      Int                @default(0)
+  demands        Demand[]
+  supplies       Supply[]
+  futureHarvests FutureHarvest[]
+  campaigns      GroupBuyCampaign[]
+  plots          Plot[]
+}
+
+/// Buyer need: Գնել
+model Demand {
+  id           String    @id @default(cuid())
+  title        String
+  description  String
+  productId    String
+  product      Product   @relation(fields: [productId], references: [id])
+  qtyMin       Int
+  qtyMax       Int?
+  unit         String
+  priceMinAmd  Int?
+  priceMaxAmd  Int?
+  timingNote   String?
+  neededBy     DateTime?
+  status       String    @default("ACTIVE")
+  marzId       String
+  marz         Marz      @relation(fields: [marzId], references: [id])
+  villageId    String?
+  village      Village?  @relation(fields: [villageId], references: [id])
+  phone        String
+  whatsapp     String?
+  imageUrls    String    @default("[]")
+  userId       String
+  user         User      @relation(fields: [userId], references: [id])
+  offers       Offer[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([productId])
+  @@index([marzId])
+  @@index([status])
+}
+
+/// Farmer sell: Վաճառել
+model Supply {
+  id           String    @id @default(cuid())
+  title        String
+  description  String
+  productId    String
+  product      Product   @relation(fields: [productId], references: [id])
+  qtyAvailable Int
+  unit         String
+  priceAmd     Int?
+  readyInDays  Int       @default(0)
+  status       String    @default("ACTIVE")
+  marzId       String
+  marz         Marz      @relation(fields: [marzId], references: [id])
+  villageId    String?
+  village      Village?  @relation(fields: [villageId], references: [id])
+  phone        String
+  whatsapp     String?
+  imageUrls    String    @default("[]")
+  userId       String
+  user         User      @relation(fields: [userId], references: [id])
+  offers       Offer[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([productId])
+  @@index([marzId])
+  @@index([status])
+}
+
+model Offer {
+  id         String   @id @default(cuid())
+  supplyId   String
+  supply     Supply   @relation(fields: [supplyId], references: [id])
+  demandId   String
+  demand     Demand   @relation(fields: [demandId], references: [id])
+  fromUserId String
+  fromUser   User     @relation(fields: [fromUserId], references: [id])
+  message    String?
+  status     String   @default("SENT")
+  createdAt  DateTime @default(now())
+
+  @@unique([supplyId, demandId, fromUserId])
+  @@index([demandId])
+  @@index([supplyId])
+}
+
+/// Job request: Պատվիրել աշխատանք (not machinery classifieds)
+model JobRequest {
+  id           String           @id @default(cuid())
+  jobType      String // PLOW | SOW | SPRAY | HARVEST | TRANSPORT | PRUNE | GREENHOUSE | CONSULT | OTHER
+  title        String
+  description  String
+  hectares     Float?
+  areaNote     String?
+  workDate     DateTime?
+  dateFrom     DateTime?
+  dateTo       DateTime?
+  budgetAmd    Int?
+  status       String           @default("ACTIVE") // ACTIVE | FILLED | HIDDEN
+  marzId       String
+  marz         Marz             @relation(fields: [marzId], references: [id])
+  villageId    String?
+  village      Village?         @relation(fields: [villageId], references: [id])
+  phone        String
+  whatsapp     String?
+  userId       String
+  user         User             @relation(fields: [userId], references: [id])
+  applications JobApplication[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([jobType])
+  @@index([marzId])
+  @@index([status])
+}
+
+/// Provider capacity: Կատարել աշխատանք
+model ServiceProvider {
+  id            String           @id @default(cuid())
+  title         String
+  description   String
+  jobTypesJson  String           @default("[]") // JSON string[] of job types
+  coverageNote  String?
+  hectaresMax   Float?
+  rateAmd       Int?
+  rateUnit      String? // ha | day | job
+  availableFrom DateTime?
+  availableTo   DateTime?
+  status        String           @default("ACTIVE") // ACTIVE | BUSY | HIDDEN
+  marzId        String
+  marz          Marz             @relation(fields: [marzId], references: [id])
+  villageId     String?
+  village       Village?         @relation(fields: [villageId], references: [id])
+  phone         String
+  whatsapp      String?
+  userId        String
+  user          User             @relation(fields: [userId], references: [id])
+  applications  JobApplication[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@index([marzId])
+  @@index([status])
+}
+
+model JobApplication {
+  id               String          @id @default(cuid())
+  jobRequestId     String
+  jobRequest       JobRequest      @relation(fields: [jobRequestId], references: [id])
+  providerId       String
+  provider         ServiceProvider @relation(fields: [providerId], references: [id])
+  fromUserId       String
+  fromUser         User            @relation(fields: [fromUserId], references: [id])
+  message          String?
+  proposedPriceAmd Int?
+  status           String          @default("SENT") // SENT | ACCEPTED | DECLINED
+  createdAt        DateTime        @default(now())
+
+  @@unique([jobRequestId, providerId])
+  @@index([jobRequestId])
+  @@index([providerId])
+}
+
+/// Land plot — FarmOS core
+model Plot {
+  id               String         @id @default(cuid())
+  name             String
+  hectares         Float
+  cropProductId    String
+  cropProduct      Product        @relation(fields: [cropProductId], references: [id])
+  plantDate        DateTime
+  irrigationNotes  String?
+  lastFertilizer   String?
+  lastIrrigationAt DateTime?
+  harvestFrom      DateTime?
+  harvestTo        DateTime?
+  status           String         @default("ACTIVE") // ACTIVE | HARVESTED | ARCHIVED
+  marzId           String
+  marz             Marz           @relation(fields: [marzId], references: [id])
+  villageId        String?
+  village          Village?       @relation(fields: [villageId], references: [id])
+  userId           String
+  user             User           @relation(fields: [userId], references: [id])
+  photoUrls        String         @default("[]")
+  photoNote        String? // plant-photo assist stub + disclaimer
+  tasks            PlotTask[]
+  yieldEstimate    YieldEstimate?
+  futureHarvests   FutureHarvest[]
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@index([userId])
+  @@index([marzId])
+  @@index([cropProductId])
+  @@index([status])
+}
+
+/// Today / upcoming farm tasks for a plot
+model PlotTask {
+  id        String    @id @default(cuid())
+  plotId    String
+  plot      Plot      @relation(fields: [plotId], references: [id], onDelete: Cascade)
+  kind      String // IRRIGATION | PEST | WEATHER | HARVEST | FERTILIZER | CUSTOM
+  title     String
+  detail    String?
+  dueDate   DateTime?
+  status    String    @default("OPEN") // OPEN | DONE | SKIPPED
+  priority  Int       @default(0)
+  createdAt DateTime  @default(now())
+
+  @@index([plotId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+/// Rule-based yield estimate (tons); farmer can override
+model YieldEstimate {
+  id                 String   @id @default(cuid())
+  plotId             String   @unique
+  plot               Plot     @relation(fields: [plotId], references: [id], onDelete: Cascade)
+  tonsMin            Float
+  tonsMax            Float
+  unit               String   @default("ton")
+  assumptionNote     String
+  farmerOverrideTons Float?
+  source             String   @default("RULE_TABLE")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+/// Future harvest listing (pre-sale) — marketplace module linked from plot
+model FutureHarvest {
+  id          String     @id @default(cuid())
+  productId   String
+  product     Product    @relation(fields: [productId], references: [id])
+  plotId      String?
+  plot        Plot?      @relation(fields: [plotId], references: [id])
+  title       String
+  description String
+  qtyExpected Int
+  unit        String
+  harvestDate DateTime
+  priceAmd    Int?
+  status      String     @default("ACTIVE") // ACTIVE | RESERVED | SOLD | HIDDEN
+  marzId      String
+  marz        Marz       @relation(fields: [marzId], references: [id])
+  villageId   String?
+  village     Village?   @relation(fields: [villageId], references: [id])
+  phone       String
+  whatsapp    String?
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+  preOffers   PreOffer[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([productId])
+  @@index([marzId])
+  @@index([status])
+  @@index([plotId])
+}
+
+/// Buyer pre-offer / reserve qty on a future harvest
+model PreOffer {
+  id              String        @id @default(cuid())
+  futureHarvestId String
+  futureHarvest   FutureHarvest @relation(fields: [futureHarvestId], references: [id])
+  fromUserId      String
+  fromUser        User          @relation(fields: [fromUserId], references: [id])
+  qtyWanted       Int
+  message         String?
+  status          String        @default("SENT") // SENT | RESERVED | DECLINED
+  createdAt       DateTime      @default(now())
+
+  @@unique([futureHarvestId, fromUserId])
+  @@index([futureHarvestId])
+}
+
+/// Group buy: Միանալ խմբային գնմանը
+model GroupBuyCampaign {
+  id              String         @id @default(cuid())
+  productId       String
+  product         Product        @relation(fields: [productId], references: [id])
+  title           String
+  description     String
+  targetQty       Int
+  unit            String
+  pricePerUnitAmd Int?
+  deadline        DateTime?
+  status          String         @default("OPEN") // OPEN | QUOTED | CLOSED
+  supplierNote    String?
+  marzId          String?
+  marz            Marz?          @relation(fields: [marzId], references: [id])
+  organizerId     String
+  organizer       User           @relation(fields: [organizerId], references: [id])
+  joins           GroupBuyJoin[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([productId])
+  @@index([status])
+}
+
+model GroupBuyJoin {
+  id         String           @id @default(cuid())
+  campaignId String
+  campaign   GroupBuyCampaign @relation(fields: [campaignId], references: [id])
+  userId     String
+  user       User             @relation(fields: [userId], references: [id])
+  qty        Int
+  status     String           @default("JOINED") // JOINED | LEFT
+  createdAt  DateTime         @default(now())
+
+  @@unique([campaignId, userId])
+  @@index([campaignId])
+}
+
+/// Agricultural machinery for sale (inventory-style marketplace; not job orders)
+model MachineryListing {
+  id              String   @id @default(cuid())
+  title           String
+  description     String
+  /// TRACTOR | COMBINE | TRAILER | CULTIVATOR | SPRAYER | TRUCK | SEEDER | OTHER
+  machineryType   String
+  make            String
+  model           String
+  year            Int
+  engineHours     Int?
+  mileageKm       Int?
+  /// NEW | USED | FOR_PARTS
+  condition       String   @default("USED")
+  priceAmd        Int?
+  priceNegotiable Boolean  @default(false)
+  powerHp         Int?
+  transmission    String?
+  driveType       String?
+  fuel            String?
+  workingWidth    String?
+  capacity        String?
+  attachments     String?
+  documentsNote   String?
+  /// ACTIVE | SOLD | HIDDEN
+  status          String   @default("ACTIVE")
+  marzId          String
+  marz            Marz     @relation(fields: [marzId], references: [id])
+  villageId       String?
+  village         Village? @relation(fields: [villageId], references: [id])
+  phone           String
+  whatsapp        String?
+  imageUrls       String   @default("[]")
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([machineryType])
+  @@index([marzId])
+  @@index([status])
+  @@index([year])
+  @@index([priceAmd])
+  @@index([userId])
+}

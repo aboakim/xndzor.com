@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Sprayer">
+  <rect width="160" height="160" fill="#e4eef0"/>
+  <circle cx="50" cy="110" r="16" fill="#3d4f36"/>
+  <circle cx="108" cy="112" r="12" fill="#3d4f36"/>
+  <path d="M34 96h28l14-28h36l10 16h14v16H98l-6-10H72L58 112H34z" fill="#3d6670"/>
+  <path d="M40 68h80" stroke="#7aa3b0" stroke-width="5" stroke-linecap="round"/>
+  <path d="M48 68v10M80 68v10M112 68v10" stroke="#7aa3b0" stroke-width="3"/>
+</svg>

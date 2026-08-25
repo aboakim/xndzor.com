@@ -1,0 +1,21 @@
+{
+ "villages": 806,
+ "withArmenianName": 806,
+ "withCoords": 806,
+ "coordsBySource": {
+  "osm": 784,
+  "curated": 21,
+  "community-centroid": 1
+ },
+ "matchModes": {
+  "marz-unique": 779,
+  "anchor-nearest": 15,
+  "community-nearest": 4,
+  "override": 22
+ },
+ "missingArmenianName": [],
+ "missingCoords": [],
+ "coordsOutsideOwnMarz": [
+  "AM03_ararat_tigranashen Tigranashen 39.785556,44.943611 (curated/override)"
+ ]
+}

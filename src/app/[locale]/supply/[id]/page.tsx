@@ -1,0 +1,176 @@
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import { Link } from "@/i18n/navigation";
+import { ContactActions } from "@/components/ContactActions";
+import { OfferButton } from "@/components/OfferButton";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { ListingGallery } from "@/components/ListingGallery";
+import { findMatchesForSupply } from "@/lib/matching";
+import { formatAmd, formatPriceRange, formatQty, parseImageUrls } from "@/lib/utils";
+import { localizedPlaceName } from "@/lib/places";
+import { getSession } from "@/lib/session";
+import { ProductIcon } from "@/components/AgIcons";
+import { VillageLink } from "@/components/VillageLink";
+
+export default async function SupplyDetailPage({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}) {
+  const { locale, id } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations();
+  const session = await getSession();
+
+  const supply = await prisma.supply.findUnique({
+    where: { id },
+    include: {
+      product: true,
+      marz: true,
+      village: true,
+      user: { select: { id: true, name: true } },
+    },
+  });
+  if (!supply || supply.status === "HIDDEN") notFound();
+
+  const demands = await prisma.demand.findMany({
+    where: { status: "ACTIVE", productId: supply.productId },
+    include: { product: true, marz: true, village: true, user: { select: { name: true } } },
+  });
+
+  const matches = findMatchesForSupply(supply, demands);
+  const byId = Object.fromEntries(demands.map((d) => [d.id, d]));
+  const ranked = matches.map((m) => ({ ...m, demand: byId[m.demandId] })).filter((m) => m.demand);
+
+  const marzLabel = t(`marzes.${supply.marz.slug}` as "marzes.Yerevan");
+  const isOwner = session?.user?.id === supply.userId;
+  const images = parseImageUrls(supply.imageUrls);
+
+  return (
+    <div className="section detail-page">
+      <Breadcrumbs
+        items={[
+          { href: "/", label: t("nav.home") },
+          { href: "/supply", label: t("supplyBoard.title") },
+          {
+            href: `/supply?product=${supply.product.slug}`,
+            label: t(supply.product.nameKey as "products.tomato"),
+          },
+          { href: `/supply?marz=${supply.marzId}`, label: marzLabel },
+          { label: supply.title },
+        ]}
+      />
+
+      <ListingGallery images={images} />
+
+      <p className="eyebrow">{t("pillars.supply")}</p>
+      <h1>{supply.title}</h1>
+      <p className="detail-product">
+        <ProductIcon slugOrKey={supply.product.slug} size={18} />
+        {t(supply.product.nameKey as "products.tomato")}
+      </p>
+      <p className="detail-location">
+        {supply.village ? (
+          <>
+            <VillageLink village={supply.village} locale={locale} />
+            {", "}
+          </>
+        ) : null}
+        {marzLabel}
+      </p>
+
+      <div className="detail-stats">
+        <div>
+          <span>{t("detail.qty")}</span>
+          <strong>
+            {formatQty(supply.qtyAvailable, null, supply.unit, (k) => t(k as "units.kg"))}
+          </strong>
+        </div>
+        <div>
+          <span>{t("detail.price")}</span>
+          <strong>
+            {supply.priceAmd != null
+              ? formatPriceRange(supply.priceAmd, supply.priceAmd, supply.unit, (k) =>
+                  t(k as "common.amd")
+                )
+              : t("detail.priceOpen")}
+          </strong>
+        </div>
+        <div>
+          <span>{t("detail.ready")}</span>
+          <strong>
+            {supply.readyInDays === 0
+              ? t("supply.readyNow")
+              : t("supply.readyIn", { days: supply.readyInDays })}
+          </strong>
+        </div>
+      </div>
+
+      <div className="detail-body">
+        <h2>{t("detail.description")}</h2>
+        <p className="pre-wrap detail-desc">{supply.description}</p>
+        <p className="muted">
+          {t("detail.postedBy")} {supply.user.name}
+        </p>
+      </div>
+
+      <ContactActions
+        phone={supply.phone}
+        whatsapp={supply.whatsapp}
+        waText={
+          locale === "hy"
+            ? `Բարև, հետաքրքրված եմ՝ ${supply.title}`
+            : `Hi, interested in: ${supply.title}`
+        }
+      />
+
+      <section className="match-section killer-flow">
+        <h2>{t("findBuyer.title")}</h2>
+        <p className="lede">{t("findBuyer.lede")}</p>
+        {ranked.length === 0 ? (
+          <p className="empty-state">{t("detail.noMatches")}</p>
+        ) : (
+          <ul className="match-list">
+            {ranked.map(({ demand, score, reasons }) => (
+              <li key={demand.id} className="match-row">
+                <div>
+                  <Link href={`/demand/${demand.id}`}>
+                    <strong>{demand.title}</strong>
+                  </Link>
+                  <p>
+                    {formatQty(demand.qtyMin, demand.qtyMax, demand.unit, (k) => t(k as "units.kg"))}
+                    {demand.priceMaxAmd != null
+                      ? ` · ≤ ${formatAmd(demand.priceMaxAmd)} ${t("common.amd")}`
+                      : ""}
+                    {" · "}
+                    {demand.village ? `${localizedPlaceName(demand.village, locale)}, ` : ""}
+                    {t(`marzes.${demand.marz.slug}` as "marzes.Yerevan")}
+                  </p>
+                  <p className="match-score">
+                    {t("detail.score", { score })} ·{" "}
+                    {reasons.map((r) => t(`reasons.${r}` as "reasons.same_product")).join(", ")}
+                  </p>
+                </div>
+                <div className="match-actions">
+                  <ContactActions phone={demand.phone} whatsapp={demand.whatsapp} />
+                  {isOwner ? (
+                    <OfferButton
+                      supplyId={supply.id}
+                      demandId={demand.id}
+                      defaultMessage={
+                        locale === "hy"
+                          ? `Կարող եմ մատակարարել ${supply.qtyAvailable} ${t(`units.${supply.unit}` as "units.kg")}.`
+                          : `I can supply ${supply.qtyAvailable} ${supply.unit}.`
+                      }
+                    />
+                  ) : null}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </div>
+  );
+}

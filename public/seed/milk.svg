@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Kat">
+  <rect width="160" height="160" fill="#eef1f5"/>
+  <path d="M56 56h48l8 78H48z" fill="#f7fafc" stroke="#9fb3c2" stroke-width="4"/>
+  <path d="M60 40h40v16H60z" fill="#cddbe6" stroke="#9fb3c2" stroke-width="4"/>
+  <path d="M54 96h52" stroke="#7aa3b0" stroke-width="8" stroke-linecap="round"/>
+</svg>

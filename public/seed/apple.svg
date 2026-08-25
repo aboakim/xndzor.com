@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Khndzor">
+  <rect width="160" height="160" fill="#eef3ea"/>
+  <path d="M80 50c-26 0-42 18-42 42s18 44 42 44 42-20 42-44-16-42-42-42z" fill="#b83b34"/>
+  <path d="M62 66c8-6 16-6 22 0-8 10-16 14-26 12 0-5 2-9 4-12z" fill="#d4665c" opacity=".65"/>
+  <path d="M80 50V34" stroke="#6b5236" stroke-width="6" stroke-linecap="round"/>
+  <path d="M80 40c8-10 20-12 28-8-4 12-16 16-28 12z" fill="#5c8f57"/>
+</svg>

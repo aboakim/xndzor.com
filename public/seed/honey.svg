@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Meghr">
+  <rect width="160" height="160" fill="#fbf3dd"/>
+  <rect x="44" y="56" width="72" height="76" rx="8" fill="#d9a520"/>
+  <rect x="52" y="76" width="56" height="20" rx="4" fill="#fdf6e3"/>
+  <path d="M62 56V44a18 18 0 0136 0v12" fill="none" stroke="#8f6b16" stroke-width="7"/>
+  <path d="M56 110h48" stroke="#b3861a" stroke-width="6" stroke-linecap="round"/>
+</svg>

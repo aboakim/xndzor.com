@@ -1,0 +1,376 @@
+[
+  {
+    "id": "AM02",
+    "level": 1,
+    "level_name": {
+      "local": "Մարզ",
+      "en": "Region"
+    },
+    "name": {
+      "local": "Արագածոտն",
+      "en": "Aragatsotn",
+      "slug": "aragatsotn-am02"
+    },
+    "code": {
+      "id": "AM02",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "community": 7,
+      "settlement": 80
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "40.472",
+      "lon": "44.305"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/am/regions/aragatsotn-am02/",
+      "api": "https://openadmindata.org/api/am/"
+    }
+  },
+  {
+    "id": "AM03",
+    "level": 1,
+    "level_name": {
+      "local": "Մարզ",
+      "en": "Region"
+    },
+    "name": {
+      "local": "Արարատ",
+      "en": "Ararat",
+      "slug": "ararat-am03"
+    },
+    "code": {
+      "id": "AM03",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "community": 5,
+      "settlement": 95
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "39.944",
+      "lon": "44.806"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/am/regions/ararat-am03/",
+      "api": "https://openadmindata.org/api/am/"
+    }
+  },
+  {
+    "id": "AM04",
+    "level": 1,
+    "level_name": {
+      "local": "Մարզ",
+      "en": "Region"
+    },
+    "name": {
+      "local": "Արմավիր",
+      "en": "Armavir",
+      "slug": "armavir-am04"
+    },
+    "code": {
+      "id": "AM04",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "community": 6,
+      "settlement": 85
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "40.154",
+      "lon": "44.04"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/am/regions/armavir-am04/",
+      "api": "https://openadmindata.org/api/am/"
+    }
+  },
+  {
+    "id": "AM05",
+    "level": 1,
+    "level_name": {
+      "local": "Մարզ",
+      "en": "Region"
+    },
+    "name": {
+      "local": "Գեղարքունիք",
+      "en": "Gegharkunik",
+      "slug": "gegharkunik-am05"
+    },
+    "code": {
+      "id": "AM05",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "community": 4,
+      "settlement": 75
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "40.307",
+      "lon": "45.406"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/am/regions/gegharkunik-am05/",
+      "api": "https://openadmindata.org/api/am/"
+    }
+  },
+  {
+    "id": "AM07",
+    "level": 1,
+    "level_name": {
+      "local": "Մարզ",
+      "en": "Region"
+    },
+    "name": {
+      "local": "Կոտայք",
+      "en": "Kotayk",
+      "slug": "kotayk-am07"
+    },
+    "code": {
+      "id": "AM07",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "community": 9,
+      "settlement": 53
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "40.406",
+      "lon": "44.699"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/am/regions/kotayk-am07/",
+      "api": "https://openadmindata.org/api/am/"
+    }
+  },
+  {
+    "id": "AM06",
+    "level": 1,
+    "level_name": {
+      "local": "Մարզ",
+      "en": "Region"
+    },
+    "name": {
+      "local": "Լոռի",
+      "en": "Lori",
+      "slug": "lori-am06"
+    },
+    "code": {
+      "id": "AM06",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "community": 9,
+      "settlement": 67
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "40.96",
+      "lon": "44.467"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/am/regions/lori-am06/",
+      "api": "https://openadmindata.org/api/am/"
+    }
+  },
+  {
+    "id": "AM08",
+    "level": 1,
+    "level_name": {
+      "local": "Մարզ",
+      "en": "Region"
+    },
+    "name": {
+      "local": "Շիրակ",
+      "en": "Shirak",
+      "slug": "shirak-am08"
+    },
+    "code": {
+      "id": "AM08",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "community": 5,
+      "settlement": 105
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "40.797",
+      "lon": "43.868"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/am/regions/shirak-am08/",
+      "api": "https://openadmindata.org/api/am/"
+    }
+  },
+  {
+    "id": "AM09",
+    "level": 1,
+    "level_name": {
+      "local": "Մարզ",
+      "en": "Region"
+    },
+    "name": {
+      "local": "Սյունիք",
+      "en": "Syunik",
+      "slug": "syunik-am09"
+    },
+    "code": {
+      "id": "AM09",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "community": 6,
+      "settlement": 111
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "39.353",
+      "lon": "46.151"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/am/regions/syunik-am09/",
+      "api": "https://openadmindata.org/api/am/"
+    }
+  },
+  {
+    "id": "AM11",
+    "level": 1,
+    "level_name": {
+      "local": "Մարզ",
+      "en": "Region"
+    },
+    "name": {
+      "local": "Տավուշ",
+      "en": "Tavush",
+      "slug": "tavush-am11"
+    },
+    "code": {
+      "id": "AM11",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "community": 4,
+      "settlement": 61
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "40.97",
+      "lon": "45.111"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/am/regions/tavush-am11/",
+      "api": "https://openadmindata.org/api/am/"
+    }
+  },
+  {
+    "id": "AM10",
+    "level": 1,
+    "level_name": {
+      "local": "Մարզ",
+      "en": "Region"
+    },
+    "name": {
+      "local": "Վայոց Ձոր",
+      "en": "Vayots Dzor",
+      "slug": "vayots-dzor-am10"
+    },
+    "code": {
+      "id": "AM10",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "community": 4,
+      "settlement": 35
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "39.753",
+      "lon": "45.416"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/am/regions/vayots-dzor-am10/",
+      "api": "https://openadmindata.org/api/am/"
+    }
+  },
+  {
+    "id": "AM01",
+    "level": 1,
+    "level_name": {
+      "local": "Մարզ",
+      "en": "Region"
+    },
+    "name": {
+      "local": "Երևան",
+      "en": "Yerevan",
+      "slug": "yerevan-am01"
+    },
+    "code": {
+      "id": "AM01",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "community": 12,
+      "settlement": 0
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "40.165",
+      "lon": "44.505"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/am/regions/yerevan-am01/",
+      "api": "https://openadmindata.org/api/am/"
+    }
+  }
+]
