@@ -11,10 +11,11 @@ const products = [
   { slug: "potato", nameKey: "products.potato", sortOrder: 2 },
   { slug: "grape", nameKey: "products.grape", sortOrder: 3 },
   { slug: "apple", nameKey: "products.apple", sortOrder: 4 },
-  { slug: "wheat", nameKey: "products.wheat", sortOrder: 5 },
-  { slug: "milk", nameKey: "products.milk", sortOrder: 6 },
-  { slug: "honey", nameKey: "products.honey", sortOrder: 7 },
-  { slug: "other", nameKey: "products.other", sortOrder: 8 },
+  { slug: "peach", nameKey: "products.peach", sortOrder: 5 },
+  { slug: "wheat", nameKey: "products.wheat", sortOrder: 6 },
+  { slug: "milk", nameKey: "products.milk", sortOrder: 7 },
+  { slug: "honey", nameKey: "products.honey", sortOrder: 8 },
+  { slug: "other", nameKey: "products.other", sortOrder: 9 },
 ];
 
 function findVillageId(marzId: string, nameEn: string): string {
@@ -34,6 +35,13 @@ const photos = (...names: string[]) =>
   );
 
 async function main() {
+  await prisma.demandAlert.deleteMany();
+  await prisma.boost.deleteMany();
+  await prisma.payment.deleteMany();
+  await prisma.subscription.deleteMany();
+  await prisma.plan.deleteMany();
+  await prisma.farmReview.deleteMany();
+  await prisma.productBatch.deleteMany();
   await prisma.preOffer.deleteMany();
   await prisma.plotTask.deleteMany();
   await prisma.yieldEstimate.deleteMany();
@@ -48,6 +56,9 @@ async function main() {
   await prisma.supply.deleteMany();
   await prisma.demand.deleteMany();
   await prisma.machineryListing.deleteMany();
+  await prisma.animalListing.deleteMany();
+  await prisma.comment.deleteMany();
+  await prisma.catalogListing.deleteMany();
   await prisma.product.deleteMany();
   await prisma.user.deleteMany();
   await prisma.village.deleteMany();
@@ -94,8 +105,62 @@ async function main() {
       phone: "+37491111222",
       role: "FARMER",
       marzId: "Ararat",
+      villageId: findVillageId("Ararat", "Masis"),
+      farmId: "AR-002184",
+      farmName: "Մասիսի ֆերմա Արամ",
+      farmVerified: true,
+      isPro: true,
+      proUntil: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+      isVerifiedPaid: true,
+      verifiedPaidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+      showPhoneOnPassport: false,
+      createdAt: new Date("2024-03-12"),
     },
   });
+  const admin = await prisma.user.create({
+    data: {
+      email: process.env.ADMIN_EMAIL?.trim().toLowerCase() || "admin@demo.am",
+      passwordHash,
+      name: "FarmOS Admin",
+      phone: "+37490000000",
+      role: "ADMIN",
+      marzId: "Yerevan",
+    },
+  });
+
+  await prisma.plan.createMany({
+    data: [
+      { code: "FARM_PRO_MONTHLY", kind: "FARM_PRO", nameKey: "pricing.farmPro.name", amountAmd: 4900, interval: "MONTHLY", sortOrder: 1 },
+      { code: "FARM_PRO_YEARLY", kind: "FARM_PRO", nameKey: "pricing.farmPro.name", amountAmd: 49000, interval: "YEARLY", sortOrder: 2 },
+      { code: "BUYER_PRO_MONTHLY", kind: "BUYER_PRO", nameKey: "pricing.buyerPro.name", amountAmd: 9900, interval: "MONTHLY", sortOrder: 3 },
+      { code: "VERIFIED_FARM_YEARLY", kind: "VERIFIED_FARM", nameKey: "pricing.verifiedFarm.name", amountAmd: 9900, interval: "YEARLY", sortOrder: 4 },
+      { code: "BOOST_7", kind: "BOOST", nameKey: "pricing.boost.name7", amountAmd: 1500, interval: "DAYS_7", sortOrder: 5 },
+      { code: "BOOST_30", kind: "BOOST", nameKey: "pricing.boost.name30", amountAmd: 3900, interval: "DAYS_30", sortOrder: 6 },
+    ],
+  });
+
+  await prisma.subscription.create({
+    data: {
+      userId: farmer.id,
+      planCode: "FARM_PRO_YEARLY",
+      status: "ACTIVE",
+      currentPeriodEnd: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+    },
+  });
+
+  await prisma.payment.create({
+    data: {
+      userId: farmer.id,
+      amountAmd: 49000,
+      amountCharge: 12250,
+      currencyCharge: "usd",
+      status: "SUCCEEDED",
+      provider: "DEMO",
+      productCode: "FARM_PRO_YEARLY",
+      metadataJson: "{}",
+    },
+  });
+  console.log("Admin:", admin.email);
   const buyer = await prisma.user.create({
     data: {
       email: "buyer@demo.am",
@@ -124,6 +189,7 @@ async function main() {
       phone: "+37495555666",
       role: "PROVIDER",
       marzId: "Armavir",
+      farmId: "AR-002190",
     },
   });
   const farmer2 = await prisma.user.create({
@@ -134,6 +200,11 @@ async function main() {
       phone: "+37497777888",
       role: "FARMER",
       marzId: "Lori",
+      villageId: findVillageId("Lori", "Vanadzor"),
+      farmId: "AR-002185",
+      farmName: "Լոռու այգի Լևոն",
+      farmVerified: true,
+      createdAt: new Date("2024-06-01"),
     },
   });
   const shop = await prisma.user.create({
@@ -154,6 +225,11 @@ async function main() {
       phone: "+37477112233",
       role: "FARMER",
       marzId: "Gegharkunik",
+      villageId: findVillageId("Gegharkunik", "Sevan"),
+      farmId: "AR-002186",
+      farmName: "Սևանի մեղվաբուծություն",
+      farmVerified: false,
+      createdAt: new Date("2025-01-20"),
     },
   });
   const farmer4 = await prisma.user.create({
@@ -164,6 +240,8 @@ async function main() {
       phone: "+37498445566",
       role: "FARMER",
       marzId: "VayotsDzor",
+      farmId: "AR-002188",
+      createdAt: new Date("2025-08-01"),
     },
   });
   const farmer5 = await prisma.user.create({
@@ -174,6 +252,7 @@ async function main() {
       phone: "+37455778899",
       role: "BOTH",
       marzId: "Tavush",
+      farmId: "AR-002189",
     },
   });
   const provider2 = await prisma.user.create({
@@ -184,6 +263,7 @@ async function main() {
       phone: "+37496334455",
       role: "PROVIDER",
       marzId: "Shirak",
+      farmId: "AR-002191",
     },
   });
   const exporter = await prisma.user.create({
@@ -194,6 +274,52 @@ async function main() {
       phone: "+37491667788",
       role: "BUYER",
       marzId: "Armavir",
+    },
+  });
+  const factory = await prisma.user.create({
+    data: {
+      email: "factory@demo.am",
+      passwordHash,
+      name: "Երևան Կոնսերվ",
+      phone: "+37491110001",
+      role: "BUYER",
+      marzId: "Yerevan",
+    },
+  });
+  const restaurant = await prisma.user.create({
+    data: {
+      email: "resto@demo.am",
+      passwordHash,
+      name: "Գառնի Ռեստորան",
+      phone: "+37491110002",
+      role: "BUYER",
+      marzId: "Kotayk",
+    },
+  });
+  const farmerArmavir = await prisma.user.create({
+    data: {
+      email: "armavir@demo.am",
+      passwordHash,
+      name: "Հովհաննես Արմավիր",
+      phone: "+37491110003",
+      role: "FARMER",
+      marzId: "Armavir",
+      villageId: findVillageId("Armavir", "Vagharshapat"),
+      farmId: "AR-002187",
+      farmName: "Արմավիրի լոլիկ",
+      farmVerified: false,
+      createdAt: new Date("2025-02-10"),
+    },
+  });
+  const farmerArmavir2 = await prisma.user.create({
+    data: {
+      email: "armavir2@demo.am",
+      passwordHash,
+      name: "Մարիամ Մեծամոր",
+      phone: "+37491110004",
+      role: "FARMER",
+      marzId: "Armavir",
+      farmId: "AR-002192",
     },
   });
 
@@ -238,31 +364,51 @@ async function main() {
       description: "Շաբաթական մթերում։ Կարող ենք նախապես ամրագրել օգոստոս–սեպտեմբեր։",
       productId: bySlug.tomato,
       qtyMin: 2000,
-      qtyMax: 8000,
+      qtyMax: 5000,
       unit: "kg",
       priceMinAmd: 120,
-      priceMaxAmd: 220,
+      priceMaxAmd: 180,
+      buyerKind: "FACTORY",
       marzId: "Yerevan",
       villageId: v.kentron,
-      phone: buyer.phone!,
-      userId: buyer.id,
+      phone: factory.phone!,
+      userId: factory.id,
     },
   });
 
   await prisma.demand.create({
     data: {
       title: "Լոլիկ մեծածախ Կոտայք",
-      description: "Պետք է 3–5 տոննա օգոստոսի վերջին։",
+      description: "Պետք է 2–3 տոննա օգոստոսի վերջին։",
       productId: bySlug.tomato,
-      qtyMin: 3000,
-      qtyMax: 5000,
+      qtyMin: 2000,
+      qtyMax: 3000,
       unit: "kg",
       priceMinAmd: 140,
-      priceMaxAmd: 200,
+      priceMaxAmd: 190,
+      buyerKind: "WHOLESALE",
       marzId: "Kotayk",
       villageId: v.abovyan,
       phone: buyerB.phone!,
       userId: buyerB.id,
+    },
+  });
+
+  await prisma.demand.create({
+    data: {
+      title: "Լոլիկ ռեստորանի համար — փոքր ծավալ",
+      description: "Շաբաթական 200–400 կգ թարմ լոլիկ։",
+      productId: bySlug.tomato,
+      qtyMin: 200,
+      qtyMax: 400,
+      unit: "kg",
+      priceMinAmd: 220,
+      priceMaxAmd: 280,
+      buyerKind: "RESTAURANT",
+      marzId: "Kotayk",
+      villageId: v.abovyan,
+      phone: restaurant.phone!,
+      userId: restaurant.id,
     },
   });
 
@@ -276,6 +422,7 @@ async function main() {
       unit: "ton",
       priceMinAmd: 140000,
       priceMaxAmd: 180000,
+      buyerKind: "WHOLESALE",
       marzId: "Armavir",
       villageId: v.vagharshapat,
       phone: shop.phone!,
@@ -293,6 +440,7 @@ async function main() {
       unit: "ton",
       priceMinAmd: 180000,
       priceMaxAmd: 250000,
+      buyerKind: "FACTORY",
       marzId: "Ararat",
       villageId: v.masis,
       phone: buyer.phone!,
@@ -310,6 +458,7 @@ async function main() {
       unit: "ton",
       priceMinAmd: 210000,
       priceMaxAmd: 280000,
+      buyerKind: "EXPORTER",
       timingNote: "Սեպտեմբեր–հոկտեմբեր",
       neededBy: new Date("2026-10-05"),
       marzId: "Armavir",
@@ -317,6 +466,81 @@ async function main() {
       phone: exporter.phone!,
       whatsapp: exporter.phone!,
       userId: exporter.id,
+    },
+  });
+
+  // Strong peach demand (undersupply demo) — almost no registered supply
+  await prisma.demand.create({
+    data: {
+      title: "Դեղձ կոնսերվի գործարանի համար — 80 տ",
+      description: "Օգոստոս–սեպտեմբեր, հասուն դեղձ, մեծ ծավալ։ Կարող ենք նախապես ամրագրել։",
+      productId: bySlug.peach,
+      qtyMin: 50,
+      qtyMax: 80,
+      unit: "ton",
+      priceMinAmd: 280000,
+      priceMaxAmd: 350000,
+      buyerKind: "FACTORY",
+      timingNote: "Օգոստոս–սեպտեմբեր 2026",
+      neededBy: new Date("2026-09-15"),
+      marzId: "Ararat",
+      villageId: v.artashat,
+      phone: factory.phone!,
+      userId: factory.id,
+    },
+  });
+
+  await prisma.demand.create({
+    data: {
+      title: "Դեղձ արտահանում — 1-ին կարգ",
+      description: "30–45 տ տեսակավորված դեղձ, սառնարանային շղթա։",
+      productId: bySlug.peach,
+      qtyMin: 30,
+      qtyMax: 45,
+      unit: "ton",
+      priceMinAmd: 320000,
+      priceMaxAmd: 400000,
+      buyerKind: "EXPORTER",
+      marzId: "Armavir",
+      villageId: v.vagharshapat,
+      phone: exporter.phone!,
+      userId: exporter.id,
+    },
+  });
+
+  await prisma.demand.create({
+    data: {
+      title: "Դեղձ խանութների ցանց — շաբաթական",
+      description: "Շաբաթական 3–5 տ, փոքր փաթեթավորում։",
+      productId: bySlug.peach,
+      qtyMin: 12,
+      qtyMax: 20,
+      unit: "ton",
+      priceMinAmd: 300000,
+      priceMaxAmd: 360000,
+      buyerKind: "SHOP_CHAIN",
+      marzId: "Yerevan",
+      villageId: v.kentron,
+      phone: shop.phone!,
+      userId: shop.id,
+    },
+  });
+
+  await prisma.demand.create({
+    data: {
+      title: "Դեղձ ռեստորաններ — սեզոնային",
+      description: "2–4 տ թարմ դեղձ մենյուի համար։",
+      productId: bySlug.peach,
+      qtyMin: 2,
+      qtyMax: 4,
+      unit: "ton",
+      priceMinAmd: 380000,
+      priceMaxAmd: 450000,
+      buyerKind: "RESTAURANT",
+      marzId: "Kotayk",
+      villageId: v.abovyan,
+      phone: restaurant.phone!,
+      userId: restaurant.id,
     },
   });
 
@@ -330,6 +554,7 @@ async function main() {
       unit: "liter",
       priceMinAmd: 180,
       priceMaxAmd: 230,
+      buyerKind: "FACTORY",
       timingNote: "Ամբողջ տարի",
       marzId: "Gegharkunik",
       villageId: v.gavar,
@@ -348,6 +573,7 @@ async function main() {
       unit: "ton",
       priceMinAmd: 190000,
       priceMaxAmd: 240000,
+      buyerKind: "SHOP_CHAIN",
       marzId: "Lori",
       villageId: v.vanadzor,
       phone: buyerB.phone!,
@@ -365,6 +591,7 @@ async function main() {
       unit: "kg",
       priceMinAmd: 3200,
       priceMaxAmd: 4500,
+      buyerKind: "SHOP_CHAIN",
       neededBy: new Date("2026-11-20"),
       marzId: "Tavush",
       villageId: v.ijevan,
@@ -813,6 +1040,122 @@ async function main() {
       qtyWanted: 15,
       message: "Մեծածախ — 15 տ",
       status: "SENT",
+    },
+  });
+
+  // Armavir tomato concentration → overproduction signal demo
+  const armavirTomatoA = await prisma.plot.create({
+    data: {
+      name: "Արմավիրի լոլիկ — 3 հա",
+      hectares: 3,
+      cropProductId: bySlug.tomato,
+      plantDate: new Date("2026-03-20"),
+      irrigationNotes: "Կաթիլային",
+      harvestFrom: new Date("2026-08-10"),
+      harvestTo: new Date("2026-09-15"),
+      marzId: "Armavir",
+      villageId: v.vagharshapat,
+      userId: farmerArmavir.id,
+      yieldEstimate: {
+        create: {
+          tonsMin: 75,
+          tonsMax: 110,
+          assumptionNote: "Արմավիր · ոռոգվող · ֆերմերի գնահատական",
+          farmerOverrideTons: 95,
+          source: "RULE_TABLE",
+        },
+      },
+    },
+  });
+
+  const armavirTomatoB = await prisma.plot.create({
+    data: {
+      name: "Մեծամորի լոլիկ — 4 հա",
+      hectares: 4,
+      cropProductId: bySlug.tomato,
+      plantDate: new Date("2026-03-25"),
+      irrigationNotes: "Ոռոգվող",
+      harvestFrom: new Date("2026-08-15"),
+      harvestTo: new Date("2026-09-20"),
+      marzId: "Armavir",
+      villageId: v.metsamor,
+      userId: farmerArmavir2.id,
+      yieldEstimate: {
+        create: {
+          tonsMin: 100,
+          tonsMax: 140,
+          assumptionNote: "Մեծամոր · բաց դաշտ",
+          farmerOverrideTons: 120,
+          source: "RULE_TABLE",
+        },
+      },
+    },
+  });
+
+  await prisma.futureHarvest.create({
+    data: {
+      productId: bySlug.tomato,
+      plotId: armavirTomatoA.id,
+      title: "Արմավիր · լոլիկ 95 տ (օգոստոս)",
+      description: "3 հա · սպասվող ~95 տ։ Կենտրոնացված Արմավիրում — գերարտադրության օրինակ։",
+      qtyExpected: 95,
+      unit: "ton",
+      harvestDate: new Date("2026-08-20"),
+      priceAmd: 145000,
+      marzId: "Armavir",
+      villageId: v.vagharshapat,
+      phone: farmerArmavir.phone!,
+      userId: farmerArmavir.id,
+    },
+  });
+
+  await prisma.futureHarvest.create({
+    data: {
+      productId: bySlug.tomato,
+      plotId: armavirTomatoB.id,
+      title: "Մեծամոր · լոլիկ 120 տ (օգոստոս–սեպտեմբեր)",
+      description: "4 հա · սպասվող ~120 տ։",
+      qtyExpected: 120,
+      unit: "ton",
+      harvestDate: new Date("2026-08-28"),
+      priceAmd: 140000,
+      marzId: "Armavir",
+      villageId: v.metsamor,
+      phone: farmerArmavir2.phone!,
+      userId: farmerArmavir2.id,
+    },
+  });
+
+  await prisma.futureHarvest.create({
+    data: {
+      productId: bySlug.tomato,
+      title: "Այգեշատ · լոլիկ 60 տ",
+      description: "Լրացուցիչ Արմավիրի մատակարարում՝ գերարտադրության ազդանշանի համար։",
+      qtyExpected: 60,
+      unit: "ton",
+      harvestDate: new Date("2026-09-01"),
+      priceAmd: 150000,
+      marzId: "Armavir",
+      villageId: v.aygeshat,
+      phone: farmerArmavir.phone!,
+      userId: farmerArmavir.id,
+    },
+  });
+
+  // Tiny peach supply vs huge demand → green undersupply
+  await prisma.futureHarvest.create({
+    data: {
+      productId: bySlug.peach,
+      title: "Փոքր դեղձի այգի — Արարատ (օրինակ)",
+      description: "Միայն ~3 տ գրանցված առաջարկ՝ ընդդեմ 100+ տ պահանջարկի։",
+      qtyExpected: 3,
+      unit: "ton",
+      harvestDate: new Date("2026-08-25"),
+      priceAmd: 340000,
+      marzId: "Ararat",
+      villageId: v.vedi,
+      phone: farmer.phone!,
+      userId: farmer.id,
     },
   });
 
@@ -1270,6 +1613,618 @@ async function main() {
     ],
   });
 
+  // Demo TOP boost — John Deere appears first on machinery board / home
+  const topTractor = await prisma.machineryListing.findFirst({
+    where: { title: { contains: "John Deere 6155R" }, userId: farmer.id },
+  });
+  if (topTractor) {
+    const boostPay = await prisma.payment.create({
+      data: {
+        userId: farmer.id,
+        amountAmd: 3900,
+        amountCharge: 975,
+        currencyCharge: "usd",
+        status: "SUCCEEDED",
+        provider: "DEMO",
+        productCode: "BOOST_30",
+        metadataJson: JSON.stringify({
+          targetType: "MACHINERY",
+          targetId: topTractor.id,
+        }),
+      },
+    });
+    await prisma.boost.create({
+      data: {
+        userId: farmer.id,
+        targetType: "MACHINERY",
+        targetId: topTractor.id,
+        days: 30,
+        endsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        source: "PAID",
+        paymentId: boostPay.id,
+      },
+    });
+  }
+
+  // —— Livestock / domestic animals marketplace ——
+  await prisma.animalListing.createMany({
+    data: [
+      {
+        title: "Կաթնատու կովեր՝ Հոլշտայն, Արարատ",
+        description:
+          "Երեք առողջ Հոլշտայն կովեր, օրական միջինը 22–26 լ կաթ։ Պատվաստումները արված են, փաստաթղթերը կան։ Վաճառվում են որպես խումբ կամ առանձին։ Հարմար է կաթնատնտեսության համար։",
+        animalType: "COW",
+        breed: "Holstein",
+        sex: "FEMALE",
+        ageValue: 4,
+        ageUnit: "YEARS",
+        weightKg: 580,
+        quantity: 3,
+        purpose: "DAIRY",
+        vaccinated: true,
+        healthNotes: "Պատվաստումներ արված են 2026 գարնանը",
+        documentsNote: "Անասնաբուժական փաստաթղթեր կան",
+        priceAmd: 1_800_000,
+        priceNegotiable: true,
+        priceMode: "PER_HEAD",
+        marzId: "Ararat",
+        villageId: v.masis,
+        phone: farmer.phone!,
+        whatsapp: farmer.phone!,
+        imageUrls: photos("animals/cow.svg"),
+        userId: farmer.id,
+        status: "ACTIVE",
+      },
+      {
+        title: "Մսատու ցուլ՝ Արաբուղաղ, Լոռի",
+        description:
+          "Լավ մարմնակազմությամբ ցուլ՝ բազմացման և մսի համար։ Խաղաղ բնավորություն, կերակրվել է խոտով և խտանյութով։ Կարող եք տեսնել տնտեսությունում։",
+        animalType: "BULL",
+        breed: "Arabughal",
+        sex: "MALE",
+        ageValue: 3,
+        ageUnit: "YEARS",
+        weightKg: 720,
+        quantity: 1,
+        purpose: "BREEDING",
+        vaccinated: true,
+        healthNotes: "Առողջ, վերջին զննում՝ հուլիս 2026",
+        priceAmd: 950_000,
+        priceNegotiable: true,
+        priceMode: "LOT",
+        marzId: "Lori",
+        villageId: v.vanadzor,
+        phone: farmer2.phone!,
+        whatsapp: farmer2.phone!,
+        imageUrls: photos("animals/bull.svg"),
+        userId: farmer2.id,
+        status: "ACTIVE",
+      },
+      {
+        title: "Ոչխարների երամակ՝ 45 գլուխ, Շիրակ",
+        description:
+          "Խառը երամակ՝ մայրեր և գառներ։ Հիմնականում մսի և բրդի նպատակով։ Ամբողջական խումբով վաճառք՝ ավելի շահավետ։ Առողջական վիճակը լավ է։",
+        animalType: "SHEEP",
+        breed: "Local mix",
+        sex: "MIXED",
+        ageValue: 18,
+        ageUnit: "MONTHS",
+        quantity: 45,
+        purpose: "MEAT",
+        vaccinated: true,
+        priceAmd: 6_500_000,
+        priceNegotiable: true,
+        priceMode: "LOT",
+        marzId: "Shirak",
+        villageId: v.gyumri,
+        phone: farmer4.phone!,
+        whatsapp: farmer4.phone!,
+        imageUrls: photos("animals/sheep.svg"),
+        userId: farmer4.id,
+        status: "ACTIVE",
+      },
+      {
+        title: "Կաթնատու այծեր՝ Զաանեն, Կոտայք",
+        description:
+          "Ութ Զաանեն այծեր՝ կայուն կաթնատվությամբ։ Հարմար է փոքր ֆերմայի կամ ընտանեկան տնտեսության համար։ Պատվաստումներ արված։",
+        animalType: "GOAT",
+        breed: "Saanen",
+        sex: "FEMALE",
+        ageValue: 2,
+        ageUnit: "YEARS",
+        weightKg: 55,
+        quantity: 8,
+        purpose: "DAIRY",
+        vaccinated: true,
+        healthNotes: "Կաթնատվություն՝ օրական 2–3.5 լ",
+        priceAmd: 220_000,
+        priceNegotiable: false,
+        priceMode: "PER_HEAD",
+        marzId: "Kotayk",
+        villageId: v.abovyan,
+        phone: farmer.phone!,
+        imageUrls: photos("animals/goat.svg"),
+        userId: farmer.id,
+        status: "ACTIVE",
+      },
+      {
+        title: "Խոզեր՝ մսատու երիտասարդներ, Արմավիր",
+        description:
+          "Տասը երիտասարդ խոզ՝ մսի համար։ Կերակրված են ստանդարտ ռացիոնով։ Վաճառքը՝ խմբով։ Հնարավոր է տեսնել գոմում։",
+        animalType: "PIG",
+        breed: "Landrace mix",
+        sex: "MIXED",
+        ageValue: 5,
+        ageUnit: "MONTHS",
+        weightKg: 70,
+        quantity: 10,
+        purpose: "MEAT",
+        vaccinated: true,
+        priceAmd: 1_200_000,
+        priceNegotiable: true,
+        priceMode: "LOT",
+        marzId: "Armavir",
+        villageId: v.vagharshapat,
+        phone: farmer3.phone!,
+        whatsapp: farmer3.phone!,
+        imageUrls: photos("animals/pig.svg"),
+        userId: farmer3.id,
+        status: "ACTIVE",
+      },
+      {
+        title: "Աշխատանքային ձի՝ Վայոց ձոր",
+        description:
+          "Ուժեղ աշխատանքային ձի՝ դաշտային և լեռնային աշխատանքների համար։ Հանգիստ բնավորություն, սովոր է լծկանի։ Առողջ է, պայտերը կարգին։",
+        animalType: "HORSE",
+        breed: "Local work",
+        sex: "MALE",
+        ageValue: 7,
+        ageUnit: "YEARS",
+        weightKg: 480,
+        quantity: 1,
+        purpose: "WORK",
+        vaccinated: true,
+        documentsNote: "Սեփականության փաստաթուղթ կա",
+        priceAmd: 1_100_000,
+        priceNegotiable: true,
+        priceMode: "LOT",
+        marzId: "VayotsDzor",
+        villageId: v.areni,
+        phone: farmer5.phone!,
+        whatsapp: farmer5.phone!,
+        imageUrls: photos("animals/horse.svg"),
+        userId: farmer5.id,
+        status: "ACTIVE",
+      },
+      {
+        title: "Հավեր՝ ձվատու երամակ, Գեղարքունիք",
+        description:
+          "120 ձվատու հավ՝ լավ արտադրողականությամբ։ Վանդակային/ազատ պահման փորձով։ Վաճառվում է որպես խումբ։",
+        animalType: "CHICKEN",
+        breed: "Laying mix",
+        sex: "FEMALE",
+        ageValue: 10,
+        ageUnit: "MONTHS",
+        quantity: 120,
+        purpose: "OTHER",
+        vaccinated: true,
+        healthNotes: "Ձվատվություն՝ ~70%",
+        priceAmd: 480_000,
+        priceNegotiable: true,
+        priceMode: "LOT",
+        marzId: "Gegharkunik",
+        villageId: v.sevan,
+        phone: farmer3.phone!,
+        imageUrls: photos("animals/chicken.svg"),
+        userId: farmer3.id,
+        status: "ACTIVE",
+      },
+      {
+        title: "Մեղվաընտանիքներ՝ 20 փեթակ, Տավուշ",
+        description:
+          "Ուժեղ մեղվաընտանիքներ՝ աշնանային մեղրի սեզոնից հետո։ Փեթակները ստանդարտ են։ Հարմար է սկսնակ և փորձառու մեղվապահի համար։",
+        animalType: "BEE_COLONY",
+        breed: "Carnica mix",
+        sex: "MIXED",
+        ageValue: 1,
+        ageUnit: "YEARS",
+        quantity: 20,
+        purpose: "OTHER",
+        vaccinated: false,
+        healthNotes: "Ուժեղ ընտանիքներ, աշնանային ստուգում անցած",
+        priceAmd: 90_000,
+        priceNegotiable: true,
+        priceMode: "PER_HEAD",
+        marzId: "Tavush",
+        villageId: v.ijevan,
+        phone: farmer5.phone!,
+        whatsapp: farmer5.phone!,
+        imageUrls: photos("animals/bees.svg"),
+        userId: farmer5.id,
+        status: "ACTIVE",
+      },
+      {
+        title: "Հովվաշուն՝ Կովկասյան, Սյունիք",
+        description:
+          "Երիտասարդ Կովկասյան հովվաշուն՝ հոտի և տնտեսության պահպանության համար։ Պատվաստված է, սովոր է գյուղական միջավայրին։",
+        animalType: "DOG",
+        breed: "Caucasian Shepherd",
+        sex: "MALE",
+        ageValue: 14,
+        ageUnit: "MONTHS",
+        weightKg: 45,
+        quantity: 1,
+        purpose: "WORK",
+        vaccinated: true,
+        pedigreeNote: "Ծնողները՝ աշխատանքային գծից",
+        priceAmd: 250_000,
+        priceNegotiable: false,
+        priceMode: "LOT",
+        marzId: "Syunik",
+        villageId: v.goris,
+        phone: farmer2.phone!,
+        whatsapp: farmer2.phone!,
+        imageUrls: photos("animals/dog.svg"),
+        userId: farmer2.id,
+        status: "ACTIVE",
+      },
+    ],
+  });
+
+  // —— Unified catalog marketplace (fertilizer, seed, feed, chemical, tool, land) ——
+  const catFertNpk = await prisma.catalogListing.create({
+    data: {
+      category: "FERTILIZER",
+      subtype: "NPK",
+      title: "NPK 15-15-15 · 50 կգ պարկեր",
+      description:
+        "Հանքային NPK 15-15-15՝ դաշտային մշակույթների համար։ Պարկերով 50 կգ։ Պահեստը՝ Կոտայքում։ Մանրամասն բաղադրությունը՝ պիտակի վրա։",
+      brand: "AgroMix",
+      specsJson: JSON.stringify({ composition: "N-P-K", npkRatio: "15-15-15" }),
+      quantity: 12,
+      unit: "ton",
+      packageSize: "50 kg",
+      priceAmd: 220_000,
+      priceNegotiable: true,
+      priceUnit: "PER_KG",
+      marzId: "Kotayk",
+      villageId: v.abovyan,
+      phone: shop.phone!,
+      whatsapp: shop.phone!,
+      imageUrls: photos("tomato"),
+      userId: shop.id,
+    },
+  });
+
+  await prisma.catalogListing.createMany({
+    data: [
+      {
+        category: "FERTILIZER",
+        subtype: "UREA",
+        title: "Միզանյութ (urea) · մեծածախ",
+        description: "Ազոտական պարարտանյութ ցորենի և բանջարեղենի համար։ Առաքում հնարավոր է մարզեր։",
+        brand: "Uralchem",
+        specsJson: JSON.stringify({ composition: "Urea 46% N", npkRatio: "46-0-0" }),
+        quantity: 8,
+        unit: "ton",
+        packageSize: "50 kg",
+        priceAmd: 195_000,
+        priceNegotiable: true,
+        priceUnit: "PER_KG",
+        marzId: "Armavir",
+        villageId: v.vagharshapat,
+        phone: shop.phone!,
+        imageUrls: photos("wheat"),
+        userId: shop.id,
+        status: "ACTIVE",
+      },
+      {
+        category: "FERTILIZER",
+        subtype: "COMPOST",
+        title: "Օրգանական կոմպոստ · 1 տ պարկեր",
+        description: "Հասունացած կոմպոստ այգիների և ջերմոցների համար։ Առանց քիմիական հավելումների։",
+        brand: "Local Compost",
+        specsJson: JSON.stringify({ composition: "Organic compost", npkRatio: "—" }),
+        quantity: 40,
+        unit: "ton",
+        packageSize: "1 ton",
+        priceAmd: 35_000,
+        priceNegotiable: false,
+        priceUnit: "LOT",
+        marzId: "Ararat",
+        villageId: v.masis,
+        phone: farmer.phone!,
+        whatsapp: farmer.phone!,
+        imageUrls: photos("potato"),
+        userId: farmer.id,
+        status: "ACTIVE",
+      },
+      {
+        category: "SEED",
+        subtype: "WHEAT",
+        title: "Ցորենի սերմ · ծլունակություն 92%",
+        description: "Սերտիֆիկացված ցորենի սերմ աշնանային ցանքի համար։ Պահեստը չոր է։",
+        brand: "Shirak Seed",
+        specsJson: JSON.stringify({ crop: "wheat", germinationPct: 92, certified: true }),
+        quantity: 5,
+        unit: "ton",
+        packageSize: "25 kg",
+        priceAmd: 280_000,
+        priceNegotiable: true,
+        priceUnit: "PER_KG",
+        marzId: "Shirak",
+        villageId: v.gyumri,
+        phone: provider2.phone!,
+        imageUrls: photos("wheat"),
+        userId: provider2.id,
+        status: "ACTIVE",
+      },
+      {
+        category: "SEED",
+        subtype: "TOMATO",
+        title: "Լոլիկի տնկիներ · բաց դաշտ",
+        description: "Ուժեղ տնկիներ՝ բաց դաշտի համար։ Կարող եք վերցնել Մասիսից։",
+        brand: "Masis Nursery",
+        specsJson: JSON.stringify({ crop: "tomato", germinationPct: null, certified: false }),
+        quantity: 2000,
+        unit: "piece",
+        packageSize: "tray",
+        priceAmd: 80,
+        priceNegotiable: true,
+        priceUnit: "LOT",
+        marzId: "Ararat",
+        villageId: v.masis,
+        phone: farmer.phone!,
+        imageUrls: photos("tomato"),
+        userId: farmer.id,
+        status: "ACTIVE",
+      },
+      {
+        category: "FEED",
+        subtype: "HAY",
+        title: "Ալպիական խոտ · 20 տ",
+        description: "Չոր ալպիական խոտ ոչխարների և խոշոր եղջերավորների համար։",
+        brand: null,
+        specsJson: JSON.stringify({ forAnimals: "sheep, cattle", proteinPct: 12 }),
+        quantity: 20,
+        unit: "ton",
+        packageSize: "bale",
+        priceAmd: 90_000,
+        priceNegotiable: true,
+        priceUnit: "LOT",
+        marzId: "Gegharkunik",
+        villageId: v.sevan,
+        phone: farmer3.phone!,
+        imageUrls: photos("honey"),
+        userId: farmer3.id,
+        status: "ACTIVE",
+      },
+      {
+        category: "CHEMICAL",
+        subtype: "FUNGICIDE",
+        title: "Ֆունգիցիդ այգիների համար",
+        description:
+          "Դաշտային/այգու ֆունգիցիդ։ Հետևեք պիտակի հրահանգներին։ Սա բժշկական խորհուրդ չէ։",
+        brand: "CropGuard",
+        specsJson: JSON.stringify({
+          activeIngredient: "See label",
+          caution: "Use PPE; follow label",
+        }),
+        quantity: 200,
+        unit: "liter",
+        packageSize: "5 L",
+        priceAmd: 12_000,
+        priceNegotiable: false,
+        priceUnit: "PER_LITER",
+        marzId: "VayotsDzor",
+        villageId: v.areni,
+        phone: farmer4.phone!,
+        imageUrls: photos("apple"),
+        userId: farmer4.id,
+        status: "ACTIVE",
+      },
+      {
+        category: "TOOL",
+        subtype: "IRRIGATION",
+        title: "Կաթիլային ոռոգման հավաքածու · 1 հա",
+        description: "Կաթիլային գծեր, ֆիլտր և կցորդներ՝ մոտ 1 հա-ի համար։",
+        brand: "DripArm",
+        specsJson: JSON.stringify({ condition: "new", material: "PE" }),
+        quantity: 5,
+        unit: "piece",
+        packageSize: "kit",
+        priceAmd: 450_000,
+        priceNegotiable: true,
+        priceUnit: "LOT",
+        marzId: "Armavir",
+        villageId: v.metsamor,
+        phone: shop.phone!,
+        imageUrls: photos("grape"),
+        userId: shop.id,
+        status: "ACTIVE",
+      },
+      {
+        category: "LAND",
+        subtype: "ARABLE",
+        title: "2.5 հա վարելահող՝ ոռոգմամբ, Արարատ",
+        description: "Վաճառք։ Ոռոգման հասանելիություն կա։ Հարմար է բանջարեղենի համար։",
+        brand: null,
+        specsJson: JSON.stringify({
+          hectares: 2.5,
+          waterAccess: "canal",
+          dealType: "sale",
+          soilNote: "loam",
+        }),
+        quantity: 2.5,
+        unit: "ha",
+        priceAmd: 18_000_000,
+        priceNegotiable: true,
+        priceUnit: "PER_HA",
+        marzId: "Ararat",
+        villageId: v.artashat,
+        phone: farmer.phone!,
+        whatsapp: farmer.phone!,
+        imageUrls: photos("wheat"),
+        userId: farmer.id,
+        status: "ACTIVE",
+      },
+    ],
+  });
+
+  const firstMachine = await prisma.machineryListing.findFirst({ orderBy: { createdAt: "asc" } });
+  const firstAnimal = await prisma.animalListing.findFirst({ orderBy: { createdAt: "asc" } });
+
+  await prisma.comment.createMany({
+    data: [
+      {
+        targetType: "CATALOG",
+        targetId: catFertNpk.id,
+        body: "Կարո՞ղ եմ վերցնել 2 տոննա այս շաբաթ։",
+        rating: 5,
+        userId: farmer.id,
+      },
+      {
+        targetType: "CATALOG",
+        targetId: catFertNpk.id,
+        body: "Որակը լավ է, առաքումը ճշգրիտ էր։",
+        rating: 4,
+        userId: farmer2.id,
+      },
+      ...(firstMachine
+        ? [
+            {
+              targetType: "MACHINERY" as const,
+              targetId: firstMachine.id,
+              body: "Մոտորաժամը հաստատվա՞ծ է սպասարկման գրքույկով։",
+              rating: 4,
+              userId: buyer.id,
+            },
+          ]
+        : []),
+      ...(firstAnimal
+        ? [
+            {
+              targetType: "ANIMAL" as const,
+              targetId: firstAnimal.id,
+              body: "Կարելի՞ է տեսնել տնտեսությունում հանգստյան օրը։",
+              rating: 5,
+              userId: buyerB.id,
+            },
+          ]
+        : []),
+    ],
+  });
+
+  // —— Farm Passport demos: reviews + product batches ——
+  await prisma.farmReview.createMany({
+    data: [
+      {
+        farmUserId: farmer.id,
+        fromUserId: buyer.id,
+        rating: 5,
+        body: "Պահպանեց ժամկետը և որակը — կրկին կաշխատենք։",
+      },
+      {
+        farmUserId: farmer.id,
+        fromUserId: buyerB.id,
+        rating: 5,
+        body: "Հստակ քանակ, լավ կապ։",
+      },
+      {
+        farmUserId: farmer.id,
+        fromUserId: factory.id,
+        rating: 4,
+        body: "Լավ գործարք գործարանի համար։",
+      },
+      {
+        farmUserId: farmer2.id,
+        fromUserId: shop.id,
+        rating: 5,
+        body: "Լոռու խնձոր — կայուն մատակարար։",
+      },
+      {
+        farmUserId: farmer2.id,
+        fromUserId: buyer.id,
+        rating: 4,
+      },
+      {
+        farmUserId: farmerArmavir.id,
+        fromUserId: exporter.id,
+        rating: 3,
+        body: "Քանակը լավ էր, ժամկետը մի փոքր ուշ։",
+      },
+    ],
+  });
+
+  const armavirFh = await prisma.futureHarvest.findFirst({
+    where: { userId: farmerArmavir.id, status: "ACTIVE" },
+  });
+  if (armavirFh) {
+    await prisma.preOffer.create({
+      data: {
+        futureHarvestId: armavirFh.id,
+        fromUserId: exporter.id,
+        qtyWanted: 20,
+        message: "Արտահանում — 20 տ",
+        status: "RESERVED",
+      },
+    });
+  }
+
+  const levonSold = await prisma.futureHarvest.findFirst({
+    where: { userId: farmer2.id },
+  });
+  if (levonSold) {
+    await prisma.futureHarvest.update({
+      where: { id: levonSold.id },
+      data: { status: "SOLD" },
+    });
+  }
+
+  await prisma.productBatch.createMany({
+    data: [
+      {
+        batchCode: "TOMATO-AR-2026-00182",
+        userId: farmer.id,
+        productId: bySlug.tomato,
+        plotId: plotTomato.id,
+        futureHarvestId: tomatoFuture.id,
+        qtyTons: 40,
+        harvestDate: new Date("2026-09-05"),
+        publishedAt: new Date("2026-08-20"),
+        note: "Մասիսի լոլիկ — առաջին խմբաքանակ",
+        status: "PUBLISHED",
+      },
+      {
+        batchCode: "TOMATO-AR-2026-00183",
+        userId: farmer.id,
+        productId: bySlug.tomato,
+        plotId: plotTomato.id,
+        qtyTons: 25,
+        harvestDate: new Date("2026-09-12"),
+        note: "Երկրորդ խմբաքանակ",
+        status: "PUBLISHED",
+      },
+      {
+        batchCode: "APPLE-AR-2026-00041",
+        userId: farmer2.id,
+        productId: bySlug.apple,
+        qtyTons: 12,
+        harvestDate: new Date("2026-10-01"),
+        note: "Լոռու խնձոր",
+        status: "PUBLISHED",
+      },
+      {
+        batchCode: "TOMATO-AR-2026-00201",
+        userId: farmerArmavir.id,
+        productId: bySlug.tomato,
+        qtyTons: 30,
+        harvestDate: new Date("2026-08-25"),
+        status: "PUBLISHED",
+      },
+    ],
+  });
+
   console.log({
     marzes: await prisma.marz.count(),
     villages: await prisma.village.count(),
@@ -1284,9 +2239,18 @@ async function main() {
     providers: await prisma.serviceProvider.count(),
     campaigns: await prisma.groupBuyCampaign.count(),
     machinery: await prisma.machineryListing.count(),
+    animals: await prisma.animalListing.count(),
+    catalog: await prisma.catalogListing.count(),
+    comments: await prisma.comment.count(),
+    productBatches: await prisma.productBatch.count(),
+    farmReviews: await prisma.farmReview.count(),
   });
   console.log("Demo: farmer@demo.am / password123 — plot → forecast → demand → pre-sale");
+  console.log("Farm passport: /hy/farms/AR-002184 (farmer@demo.am)");
+  console.log("Batch: /hy/batches/TOMATO-AR-2026-00182");
   console.log("Machinery: /hy/machinery — John Deere, MTZ, Case, Claas…");
+  console.log("Animals: /hy/animals — cows, sheep, goats, bees…");
+  console.log("Shop: /hy/shop/fertilizers, /hy/shop/seeds, … + comments on detail pages");
 }
 
 main()

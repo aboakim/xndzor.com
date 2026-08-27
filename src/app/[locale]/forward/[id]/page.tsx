@@ -7,6 +7,12 @@ import { ForwardInterestForm } from "@/components/ForwardInterestForm";
 import { formatAmd } from "@/lib/utils";
 import { getSession } from "@/lib/session";
 import { VillageLink } from "@/components/VillageLink";
+import { CreateBatchButton } from "@/components/CreateBatchButton";
+import { TrustedPill } from "@/components/FarmScoreBadge";
+import { formatFarmId } from "@/lib/farm-id";
+import { getFarmScore } from "@/lib/farm-score";
+import { BoostButton } from "@/components/BoostButton";
+import { getActiveBoostMap, getUserEntitlements } from "@/lib/monetization";
 
 export default async function ForwardDetailPage({
   params,
@@ -25,7 +31,7 @@ export default async function ForwardDetailPage({
       marz: true,
       village: true,
       plot: true,
-      user: { select: { id: true, name: true } },
+      user: { select: { id: true, name: true, farmId: true, farmVerified: true } },
       preOffers: {
         include: { fromUser: { select: { id: true, name: true } } },
         orderBy: { createdAt: "desc" },
@@ -38,6 +44,19 @@ export default async function ForwardDetailPage({
     .filter((i) => i.status !== "DECLINED")
     .reduce((s, i) => s + i.qtyWanted, 0);
   const isOwner = session?.user?.id === crop.userId;
+  const farmScore = await getFarmScore(crop.userId);
+  const boostMap = await getActiveBoostMap("FUTURE_HARVEST", [crop.id]);
+  const boostedUntil = boostMap.get(crop.id);
+  const ownerEnt =
+    isOwner && session?.user?.id ? await getUserEntitlements(session.user.id) : null;
+  const viewerEnt = session?.user?.id
+    ? await getUserEntitlements(session.user.id)
+    : null;
+  const daysToHarvest = Math.ceil(
+    (crop.harvestDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+  );
+  const earlyAccessLocked =
+    !isOwner && daysToHarvest > 14 && !viewerEnt?.isBuyerPro;
 
   const matchingDemand = await prisma.demand.findMany({
     where: { status: "ACTIVE", productId: crop.productId },
@@ -84,7 +103,38 @@ export default async function ForwardDetailPage({
         </div>
       </div>
       <p className="pre-wrap">{crop.description}</p>
-      <ContactActions phone={crop.phone} whatsapp={crop.whatsapp} />
+      {earlyAccessLocked ? (
+        <div className="buyer-pro-gate">
+          <p>{t("pricing.buyerPro.f1")}</p>
+          <Link href="/pricing" className="btn primary">
+            {t("pricing.buyerPro.cta")}
+          </Link>
+        </div>
+      ) : (
+        <ContactActions phone={crop.phone} whatsapp={crop.whatsapp} />
+      )}
+
+      {crop.user.farmId ? (
+        <p className="farm-link-row">
+          <Link href={`/farms/${crop.user.farmId}`}>
+            {crop.user.name} · {formatFarmId(crop.user.farmId)}
+          </Link>
+          {farmScore?.trusted ? <TrustedPill score={farmScore.score} /> : null}
+        </p>
+      ) : null}
+
+      {isOwner ? (
+        <div className="passport-create-batch">
+          <BoostButton
+            targetType="FUTURE_HARVEST"
+            targetId={crop.id}
+            isPro={Boolean(ownerEnt?.isPro)}
+            boostQuotaRemaining={ownerEnt?.boostQuotaRemaining ?? 0}
+            currentlyBoostedUntil={boostedUntil?.toISOString() ?? null}
+          />
+          <CreateBatchButton futureHarvestId={crop.id} />
+        </div>
+      ) : null}
 
       {isOwner && crop.preOffers.length > 0 ? (
         <section className="match-section">

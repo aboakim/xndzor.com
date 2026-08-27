@@ -78,6 +78,7 @@ export async function POST(req: Request) {
       priceMaxAmd:
         data.priceMaxAmd === "" || data.priceMaxAmd == null ? null : Number(data.priceMaxAmd),
       timingNote: data.timingNote || null,
+      buyerKind: data.buyerKind || "WHOLESALE",
       marzId: data.marzId,
       villageId: data.villageId,
       phone: data.phone,

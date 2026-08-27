@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="FarmOS">
+  <rect width="64" height="64" rx="12" fill="#0a3329"/>
+  <path d="M32 10c-2 8-10 14-18 16 8 2 14 10 16 18 2-8 10-14 18-16-8-2-14-10-16-18z" fill="#6f9b7a"/>
+  <path d="M20 46h24c-2 6-8 10-12 10s-10-4-12-10z" fill="#b8922a"/>
+  <circle cx="32" cy="28" r="4" fill="#ebe8e0"/>
+</svg>

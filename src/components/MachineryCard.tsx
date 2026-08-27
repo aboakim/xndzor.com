@@ -2,9 +2,12 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { formatAmd, parseImageUrls } from "@/lib/utils";
+import { tContent } from "@/lib/content-locale";
 import { MachineryTypeIcon } from "@/components/AgIcons";
 import { ClassifiedRow } from "@/components/ClassifiedRow";
 import { VillageLink, type VillageRef } from "@/components/VillageLink";
+import { TrustedPill } from "@/components/FarmScoreBadge";
+import { MonetizationPills } from "@/components/MonetizationBadges";
 
 type Place = { nameHy: string; nameEn: string; nameRu: string; slug?: string };
 
@@ -24,6 +27,10 @@ export function MachineryCard({
   marz,
   village,
   imageUrls,
+  farmScore,
+  trusted,
+  isPro,
+  boosted,
 }: {
   id: string;
   title: string;
@@ -40,6 +47,10 @@ export function MachineryCard({
   marz: Place;
   village?: VillageRef | null;
   imageUrls?: string | null;
+  farmScore?: number | null;
+  trusted?: boolean;
+  isPro?: boolean;
+  boosted?: boolean;
 }) {
   const t = useTranslations();
   const locale = useLocale();
@@ -71,11 +82,17 @@ export function MachineryCard({
   return (
     <ClassifiedRow
       href={`/machinery/${id}`}
-      title={title}
+      title={tContent(locale, title)}
       meta={facts}
       value={priceLabel}
       thumb={cover}
       icon={<MachineryTypeIcon type={machineryType} size={20} />}
+      badge={
+        <>
+          <MonetizationPills isPro={isPro} boosted={boosted} />
+          {trusted && farmScore != null ? <TrustedPill score={farmScore} /> : null}
+        </>
+      }
       place={
         village ? (
           <>

@@ -10,6 +10,10 @@ import { effectiveTons } from "@/lib/yield";
 import { fetchMarzWeather } from "@/lib/weather";
 import { resolveTaskCopy } from "@/lib/task-copy";
 import { VillageLink } from "@/components/VillageLink";
+import { DemandSnapshotPanel } from "@/components/DemandSnapshotPanel";
+import { getDemandSnapshot } from "@/lib/exchange";
+import { CreateBatchButton } from "@/components/CreateBatchButton";
+import { ensureFarmId } from "@/lib/farm-id";
 
 export default async function PlotDetailPage({
   params,
@@ -44,14 +48,16 @@ export default async function PlotDetailPage({
   });
   if (!plot) notFound();
 
+  await ensureFarmId(session.user.id);
+
   const weather = await fetchMarzWeather(plot.marzId, locale);
   const tons = plot.yieldEstimate ? effectiveTons(plot.yieldEstimate) : null;
   const photos: string[] = JSON.parse(plot.photoUrls || "[]");
 
-  const matchingDemand = await prisma.demand.findMany({
-    where: { status: "ACTIVE", productId: plot.cropProductId },
-    include: { user: { select: { name: true } } },
-    take: 6,
+  const snap = await getDemandSnapshot({
+    productId: plot.cropProductId,
+    marzId: plot.marzId,
+    take: 8,
   });
 
   const approaching =
@@ -141,28 +147,14 @@ export default async function PlotDetailPage({
 
       <section className="match-section">
         <h2>{t("plots.matchingDemand")}</h2>
-        {matchingDemand.length === 0 ? (
-          <p className="muted">{t("plots.noDemand")}</p>
-        ) : (
-          <ul className="match-list">
-            {matchingDemand.map((d, i) => (
-              <li key={d.id} className="match-row">
-                <div>
-                  <strong>
-                    {t("plots.buyerLabel", { letter: String.fromCharCode(65 + i) })} — {d.user.name}
-                  </strong>
-                  <p>
-                    {d.title} · {d.qtyMin}
-                    {d.qtyMax ? `–${d.qtyMax}` : "+"} {t(`units.${d.unit}` as "units.kg")}
-                  </p>
-                </div>
-                <Link href={`/demand/${d.id}`} className="btn secondary dark">
-                  {t("common.open")}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
+        <DemandSnapshotPanel
+          snap={snap}
+          t={(k, v) => t(k as "grow.snapshotTitle", v)}
+          locale={locale}
+        />
+        <p className="muted small">
+          <Link href={`/grow?crop=${plot.cropProductId}`}>{t("grow.ctaBoard")} →</Link>
+        </p>
       </section>
 
       {plot.futureHarvests.length > 0 ? (
@@ -246,6 +238,9 @@ export default async function PlotDetailPage({
           defaultTitle={`${plot.name} — ապագա բերք`}
           defaultQtyTons={tons ?? 1}
         />
+        <div className="passport-create-batch">
+          <CreateBatchButton plotId={plot.id} />
+        </div>
       </div>
 
       {plot.irrigationNotes || plot.lastFertilizer ? (

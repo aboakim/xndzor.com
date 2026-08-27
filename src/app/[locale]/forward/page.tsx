@@ -7,15 +7,27 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ClassifiedRow } from "@/components/ClassifiedRow";
 import { EmptyState } from "@/components/EmptyState";
 import { VillageLink } from "@/components/VillageLink";
+import { TrustedPill } from "@/components/FarmScoreBadge";
+import { MonetizationPills } from "@/components/MonetizationBadges";
+import { getFarmScoreSnippets, TRUSTED_SCORE_MIN } from "@/lib/farm-score";
+import {
+  getActiveBoostMap,
+  getProUserIds,
+  sortByMonetization,
+} from "@/lib/monetization";
 
 export default async function ForwardBoardPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ trusted?: string }>;
 }) {
   const { locale } = await params;
+  const sp = await searchParams;
   setRequestLocale(locale);
   const t = await getTranslations();
+  const trustedOnly = sp.trusted === "1" || sp.trusted === "true";
 
   const crops = await prisma.futureHarvest.findMany({
     where: { status: "ACTIVE" },
@@ -28,6 +40,28 @@ export default async function ForwardBoardPage({
     },
     orderBy: { harvestDate: "asc" },
   });
+
+  const snippets = await getFarmScoreSnippets(crops.map((c) => c.userId));
+  const boostMap = await getActiveBoostMap(
+    "FUTURE_HARVEST",
+    crops.map((c) => c.id),
+  );
+  const proIds = await getProUserIds(crops.map((c) => c.userId));
+  const ranked = sortByMonetization(crops, boostMap, proIds);
+
+  let cropRows = ranked.map((c) => {
+    const sn = snippets.get(c.userId);
+    return {
+      c,
+      farmScore: sn?.score ?? null,
+      trusted: sn?.trusted ?? false,
+      boosted: boostMap.has(c.id),
+      isPro: proIds.has(c.userId),
+    };
+  });
+  if (trustedOnly) {
+    cropRows = cropRows.filter((r) => r.trusted);
+  }
 
   const demandByProduct = await prisma.demand.groupBy({
     by: ["productId"],
@@ -60,6 +94,18 @@ export default async function ForwardBoardPage({
         </div>
       </div>
 
+      <div className="trust-filter-row">
+        <Link href="/forward" className={!trustedOnly ? "active" : undefined}>
+          {t("farmPassport.filterAll")}
+        </Link>
+        <Link
+          href="/forward?trusted=1"
+          className={trustedOnly ? "active" : undefined}
+        >
+          {t("farmPassport.filterTrusted", { min: TRUSTED_SCORE_MIN })}
+        </Link>
+      </div>
+
       {demandByProduct.length > 0 ? (
         <section className="match-section compact-section">
           <h2>{t("forwardBoard.dashboard")}</h2>
@@ -84,7 +130,7 @@ export default async function ForwardBoardPage({
         </section>
       ) : null}
 
-      {crops.length === 0 ? (
+      {cropRows.length === 0 ? (
         <EmptyState
           message={t("forwardBoard.empty")}
           actionHref="/forward/new"
@@ -92,7 +138,7 @@ export default async function ForwardBoardPage({
         />
       ) : (
         <div className="classified-list">
-          {crops.map((c) => {
+          {cropRows.map(({ c, farmScore, trusted, boosted, isPro }) => {
             const reserved = c.preOffers.reduce((s, i) => s + i.qtyWanted, 0);
             const marzLabel = t(`marzes.${c.marz.slug}` as "marzes.Yerevan");
             const meta = [
@@ -113,6 +159,14 @@ export default async function ForwardBoardPage({
                 meta={meta}
                 value={c.priceAmd != null ? `${formatAmd(c.priceAmd)} ֏` : undefined}
                 icon={<ProductIcon slugOrKey={c.product.slug} size={20} />}
+                badge={
+                  <>
+                    <MonetizationPills isPro={isPro} boosted={boosted} />
+                    {trusted && farmScore != null ? (
+                      <TrustedPill score={farmScore} />
+                    ) : null}
+                  </>
+                }
                 place={
                   c.village ? (
                     <>

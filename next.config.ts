@@ -24,7 +24,7 @@ const securityHeaders = [
       "connect-src 'self'",
       "frame-ancestors 'none'",
       "base-uri 'self'",
-      "form-action 'self'",
+      "form-action 'self' https://checkout.stripe.com https://*.stripe.com",
       "object-src 'none'",
     ].join("; "),
   },
@@ -39,6 +39,8 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Standalone output is produced in Docker (linux). Local Windows builds use default output.
+  ...(process.env.DOCKER_BUILD === "1" ? { output: "standalone" as const } : {}),
   poweredByHeader: false,
   images: {
     remotePatterns: [
@@ -59,6 +61,12 @@ const nextConfig: NextConfig = {
       { source: "/:locale/listings", destination: "/:locale/supply", permanent: false },
       { source: "/:locale/listings/new", destination: "/:locale/supply/new", permanent: false },
       { source: "/:locale/my/listings", destination: "/:locale/matches", permanent: false },
+      { source: "/:locale/fertilizers", destination: "/:locale/shop/fertilizers", permanent: false },
+      { source: "/:locale/seeds", destination: "/:locale/shop/seeds", permanent: false },
+      { source: "/:locale/feed", destination: "/:locale/shop/feed", permanent: false },
+      { source: "/:locale/chemicals", destination: "/:locale/shop/chemicals", permanent: false },
+      { source: "/:locale/tools", destination: "/:locale/shop/tools", permanent: false },
+      { source: "/:locale/land", destination: "/:locale/shop/land", permanent: false },
     ];
   },
 };

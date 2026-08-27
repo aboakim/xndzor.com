@@ -1,0 +1,39 @@
+# FarmOS Armenia — VPS deploy (SQLite on volume)
+# 1. Copy .env.example → .env and fill secrets + NEXTAUTH_URL=https://your.domain
+# 2. docker compose up -d --build
+# 3. Point DNS A record to this server; terminate TLS (Caddy/nginx/Cloudflare)
+
+services:
+  app:
+    build: .
+    container_name: farmos
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: file:/data/prod.db
+      # Override host .env SQLite path for the container volume
+      HOSTNAME: 0.0.0.0
+      PORT: "3000"
+    volumes:
+      - farmos_db:/data
+      - farmos_uploads:/app/public/uploads
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/hy').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 8s
+      retries: 5
+      start_period: 40s
+
+volumes:
+  farmos_db:
+  farmos_uploads:

@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import type { ReactNode } from "react";
 import { ActionIcon } from "@/components/AgIcons";
+import { Reveal } from "@/components/Reveal";
 
 /** Home feed block: icon + heading + count, a grid of cards, and a "see all" link. */
 export function HomeSection({
@@ -21,7 +22,7 @@ export function HomeSection({
   id?: string;
 }) {
   return (
-    <section className="section home-feed-section" id={id}>
+    <Reveal as="section" className="section home-feed-section" id={id}>
       <div className="home-feed-head">
         <h2>
           <span className={`home-feed-icon action-${action}`} aria-hidden>
@@ -35,6 +36,6 @@ export function HomeSection({
         </Link>
       </div>
       {children}
-    </section>
+    </Reveal>
   );
 }

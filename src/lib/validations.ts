@@ -1,9 +1,31 @@
 import { z } from "zod";
 import { MARZES } from "./locations";
 import { JOB_TYPES } from "./matching";
+import {
+  ANIMAL_AGE_UNITS,
+  ANIMAL_PRICE_MODES,
+  ANIMAL_PURPOSES,
+  ANIMAL_SEXES,
+  ANIMAL_TYPES,
+} from "./animals";
+import {
+  CATALOG_CATEGORIES,
+  CATALOG_PRICE_UNITS,
+  CATALOG_UNITS,
+  COMMENT_TARGET_TYPES,
+} from "./catalog";
 import { MACHINERY_CONDITIONS, MACHINERY_TYPES } from "./machinery";
 
 export const UNITS = ["kg", "ton", "liter", "piece", "box"] as const;
+
+export const BUYER_KINDS = [
+  "FACTORY",
+  "SHOP_CHAIN",
+  "RESTAURANT",
+  "WHOLESALE",
+  "EXPORTER",
+  "OTHER",
+] as const;
 
 /** Legacy resource listing stubs (routes redirect to jobs) */
 export const RESOURCE_TYPES = [
@@ -24,14 +46,47 @@ export const ALLOWED_IMAGE_TYPES = [
 
 const imageUrlsField = z.array(z.string().min(1)).max(8).optional().default([]);
 
+/** Armenian (+374…) or international phone; digits, spaces, +, -, () allowed. */
+const phoneField = z
+  .string()
+  .trim()
+  .max(20)
+  .refine(
+    (v) => v === "" || /^[+]?[\d\s\-()]{8,20}$/.test(v),
+    { message: "INVALID_PHONE" }
+  );
+
 export const registerSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(10).max(128),
-  name: z.string().min(2).max(80),
-  phone: z.string().min(8).max(20).optional().or(z.literal("")),
-  marz: z.enum(MARZES).optional().or(z.literal("")),
+  email: z.string().trim().email({ message: "INVALID_EMAIL" }),
+  password: z
+    .string()
+    .min(10, { message: "PASSWORD_TOO_SHORT" })
+    .max(128, { message: "PASSWORD_TOO_LONG" }),
+  name: z
+    .string()
+    .trim()
+    .min(2, { message: "INVALID_NAME" })
+    .max(80, { message: "INVALID_NAME" }),
+  phone: phoneField.optional().or(z.literal("")),
+  marz: z.enum(MARZES, { message: "INVALID_MARZ" }),
+  villageId: z.string().trim().min(1, { message: "VILLAGE_REQUIRED" }),
   role: z.enum(["FARMER", "BUYER", "PROVIDER", "BOTH"]).optional().default("BOTH"),
 });
+
+export type RegisterErrorCode =
+  | "INVALID_EMAIL"
+  | "PASSWORD_TOO_SHORT"
+  | "PASSWORD_TOO_LONG"
+  | "INVALID_NAME"
+  | "INVALID_PHONE"
+  | "INVALID_MARZ"
+  | "MARZ_REQUIRED"
+  | "VILLAGE_REQUIRED"
+  | "INVALID_VILLAGE"
+  | "EMAIL_TAKEN"
+  | "RATE_LIMITED"
+  | "INVALID_INPUT"
+  | "SERVER_ERROR";
 
 export const demandSchema = z.object({
   title: z.string().min(5).max(120),
@@ -42,6 +97,7 @@ export const demandSchema = z.object({
   unit: z.enum(UNITS),
   priceMinAmd: z.coerce.number().int().nonnegative().max(10_000_000_000).optional().or(z.literal("")),
   priceMaxAmd: z.coerce.number().int().nonnegative().max(10_000_000_000).optional().or(z.literal("")),
+  buyerKind: z.enum(BUYER_KINDS).optional().default("WHOLESALE"),
   timingNote: z.string().max(200).optional().or(z.literal("")),
   marzId: z.enum(MARZES),
   villageId: z.string().optional().or(z.literal("")),
@@ -218,4 +274,65 @@ export const machineryListingSchema = z.object({
 
 export const machineryStatusSchema = z.object({
   status: z.enum(["ACTIVE", "SOLD", "HIDDEN"]),
+});
+
+export const animalListingSchema = z.object({
+  title: z.string().min(5).max(160),
+  description: z.string().min(20).max(12000),
+  animalType: z.enum(ANIMAL_TYPES),
+  breed: z.string().min(1).max(80),
+  sex: z.enum(ANIMAL_SEXES),
+  ageValue: z.coerce.number().int().nonnegative().max(600).optional().or(z.literal("")),
+  ageUnit: z.enum(ANIMAL_AGE_UNITS).optional().default("MONTHS"),
+  weightKg: z.coerce.number().positive().max(10_000).optional().or(z.literal("")),
+  quantity: z.coerce.number().int().positive().max(100_000).default(1),
+  purpose: z.enum(ANIMAL_PURPOSES),
+  vaccinated: z.boolean().optional().default(false),
+  healthNotes: z.string().max(2000).optional().or(z.literal("")),
+  documentsNote: z.string().max(500).optional().or(z.literal("")),
+  pedigreeNote: z.string().max(500).optional().or(z.literal("")),
+  priceAmd: z.coerce.number().int().nonnegative().max(10_000_000_000).optional().or(z.literal("")),
+  priceNegotiable: z.boolean().optional().default(false),
+  priceMode: z.enum(ANIMAL_PRICE_MODES).optional().default("LOT"),
+  marzId: z.enum(MARZES),
+  villageId: z.string().optional().or(z.literal("")),
+  phone: z.string().min(8).max(20),
+  whatsapp: z.string().min(8).max(20).optional().or(z.literal("")),
+  imageUrls: imageUrlsField,
+});
+
+export const animalStatusSchema = z.object({
+  status: z.enum(["ACTIVE", "SOLD", "HIDDEN"]),
+});
+
+export const catalogListingSchema = z.object({
+  category: z.enum(CATALOG_CATEGORIES),
+  subtype: z.string().min(1).max(40),
+  title: z.string().min(5).max(160),
+  description: z.string().min(20).max(12000),
+  brand: z.string().max(80).optional().or(z.literal("")),
+  specs: z.record(z.string(), z.union([z.string(), z.number(), z.boolean(), z.null()])).optional().default({}),
+  quantity: z.coerce.number().positive().max(10_000_000).optional().or(z.literal("")),
+  unit: z.enum(CATALOG_UNITS).optional().or(z.literal("")),
+  packageSize: z.string().max(80).optional().or(z.literal("")),
+  priceAmd: z.coerce.number().int().nonnegative().max(10_000_000_000).optional().or(z.literal("")),
+  priceNegotiable: z.boolean().optional().default(false),
+  priceUnit: z.enum(CATALOG_PRICE_UNITS).optional().default("LOT"),
+  expiryDate: z.string().optional().or(z.literal("")),
+  marzId: z.enum(MARZES),
+  villageId: z.string().optional().or(z.literal("")),
+  phone: z.string().min(8).max(20),
+  whatsapp: z.string().min(8).max(20).optional().or(z.literal("")),
+  imageUrls: imageUrlsField,
+});
+
+export const catalogStatusSchema = z.object({
+  status: z.enum(["ACTIVE", "SOLD", "HIDDEN"]),
+});
+
+export const commentSchema = z.object({
+  targetType: z.enum(COMMENT_TARGET_TYPES),
+  targetId: z.string().min(1).max(40),
+  body: z.string().min(2).max(2000),
+  rating: z.coerce.number().int().min(1).max(5).optional().or(z.literal("")),
 });

@@ -1,6 +1,15 @@
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { authOptions } from "./auth";
 
-export function getSession() {
-  return getServerSession(authOptions);
+export type AppSession = {
+  user?: {
+    id: string;
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+  };
+};
+
+export function getSession(): Promise<AppSession | null> {
+  return getServerSession(authOptions) as Promise<AppSession | null>;
 }

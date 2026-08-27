@@ -1,7 +1,9 @@
 export { MARZES, type MarzSlug as Marz } from "./locations";
+import { localeTag } from "./content-locale";
 
-export function formatAmd(amount: number, locale = "hy-AM"): string {
-  return new Intl.NumberFormat(locale, {
+export function formatAmd(amount: number, locale = "hy"): string {
+  const tag = locale.includes("-") ? locale : localeTag(locale);
+  return new Intl.NumberFormat(tag, {
     style: "decimal",
     maximumFractionDigits: 0,
   }).format(amount);

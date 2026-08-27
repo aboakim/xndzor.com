@@ -70,6 +70,13 @@ export const YIELD_TABLE: Record<string, YieldRange> = {
     assumptionEn: "Apricot · mid orchard",
     assumptionRu: "Абрикос · средний сад",
   },
+  peach: {
+    tonsPerHaMin: 10,
+    tonsPerHaMax: 20,
+    assumptionHy: "Դեղձ · միջին այգի · ոռոգվող",
+    assumptionEn: "Peach · mid orchard · irrigated",
+    assumptionRu: "Персик · средний сад · полив",
+  },
   other: {
     tonsPerHaMin: 3,
     tonsPerHaMax: 8,

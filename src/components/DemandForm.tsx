@@ -69,6 +69,7 @@ export function DemandForm({
         qtyMin: fd.get("qtyMin"),
         qtyMax: fd.get("qtyMax") || "",
         unit: String(fd.get("unit") || "kg"),
+        buyerKind: String(fd.get("buyerKind") || "WHOLESALE"),
         priceMinAmd: fd.get("priceMinAmd") || "",
         priceMaxAmd: fd.get("priceMaxAmd") || "",
         timingNote: String(fd.get("timingNote") || ""),
@@ -157,6 +158,18 @@ export function DemandForm({
           </select>
         </label>
       </div>
+      <label>
+        <span>{t("postDemand.fields.buyerKind")}</span>
+        <select name="buyerKind" defaultValue="WHOLESALE">
+          {(["FACTORY", "SHOP_CHAIN", "RESTAURANT", "WHOLESALE", "EXPORTER", "OTHER"] as const).map(
+            (k) => (
+              <option key={k} value={k}>
+                {t(`buyerKinds.${k}`)}
+              </option>
+            )
+          )}
+        </select>
+      </label>
       <div className="form-row">
         <label>
           <span>{t("postDemand.fields.qtyMin")}</span>

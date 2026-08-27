@@ -19,6 +19,22 @@ Freely licensed photos downloaded into this repo (no hotlinks). Used only for sa
 
 Photos illustrate equipment **type/brand family** for sample listings; they are not dealer inventory shots of the exact Armenian units described in seed copy.
 
+## Animals (`public/seed/animals/`)
+
+| File | Subject | Notes |
+|------|---------|-------|
+| `cow.svg` | Dairy cow | Stylized placeholder (pine/earth palette) |
+| `bull.svg` | Bull | Stylized placeholder |
+| `sheep.svg` | Sheep flock | Stylized placeholder |
+| `goat.svg` | Goat | Stylized placeholder |
+| `pig.svg` | Pig | Stylized placeholder |
+| `horse.svg` | Work horse | Stylized placeholder |
+| `chicken.svg` | Chickens | Stylized placeholder |
+| `bees.svg` | Bee colony / hive | Stylized placeholder |
+| `dog.svg` | Herding/guard dog | Stylized placeholder |
+
+SVG placeholders ship for reliable offline seed. Replace with freely licensed Wikimedia/Unsplash livestock photos when available (same pattern as machinery JPEGs).
+
 ## Produce placeholders (`public/seed/*.svg`)
 
 Crop icons remain simple SVG placeholders for supply/demand seed rows until real produce photos are added the same way.

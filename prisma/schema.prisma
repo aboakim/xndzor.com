@@ -13,9 +13,25 @@ model User {
   passwordHash     String
   name             String
   phone            String?
-  role             String             @default("FARMER") // FARMER | BUYER | PROVIDER | BOTH
+  role             String             @default("FARMER") // FARMER | BUYER | PROVIDER | BOTH | ADMIN
+  /// Public Farm Passport ID, e.g. AR-002184 (display as #AR-002184)
+  farmId           String?            @unique
+  /// Manual or criteria-based verified farm badge
+  farmVerified     Boolean            @default(false)
+  /// Optional: show phone on public Farm Passport (default hidden)
+  showPhoneOnPassport Boolean         @default(false)
+  /// Optional public farm display name (falls back to user name)
+  farmName         String?
+  /// Monetization entitlements (synced from Subscription / Payment)
+  isPro            Boolean            @default(false)
+  proUntil         DateTime?
+  isVerifiedPaid   Boolean            @default(false)
+  verifiedPaidUntil DateTime?
+  buyerProUntil    DateTime?
   marzId           String?
   marz             Marz?              @relation(fields: [marzId], references: [id])
+  villageId        String?
+  village          Village?           @relation(fields: [villageId], references: [id])
   createdAt        DateTime           @default(now())
   demands          Demand[]
   supplies         Supply[]
@@ -29,6 +45,20 @@ model User {
   groupJoins       GroupBuyJoin[]
   plots            Plot[]
   machineryListings MachineryListing[]
+  animalListings    AnimalListing[]
+  catalogListings   CatalogListing[]
+  comments          Comment[]
+  productBatches    ProductBatch[]
+  farmReviewsReceived FarmReview[]    @relation("FarmReviewsReceived")
+  farmReviewsGiven    FarmReview[]    @relation("FarmReviewsGiven")
+  subscriptions    Subscription[]
+  boosts           Boost[]
+  payments         Payment[]
+  demandAlerts     DemandAlert[]
+
+  @@index([villageId])
+  @@index([farmId])
+  @@index([isPro])
 }
 
 model Marz {
@@ -48,6 +78,8 @@ model Marz {
   campaigns      GroupBuyCampaign[]
   plots          Plot[]
   machineryListings MachineryListing[]
+  animalListings    AnimalListing[]
+  catalogListings   CatalogListing[]
 }
 
 model Village {
@@ -62,6 +94,7 @@ model Village {
   /// WGS84 centre of the settlement, used for the village map page
   lat            Float?
   lng            Float?
+  users          User[]
   demands        Demand[]
   supplies       Supply[]
   jobRequests    JobRequest[]
@@ -69,6 +102,8 @@ model Village {
   futureHarvests FutureHarvest[]
   plots          Plot[]
   machineryListings MachineryListing[]
+  animalListings    AnimalListing[]
+  catalogListings   CatalogListing[]
 
   @@index([marzId])
   @@index([nameEn])
@@ -85,6 +120,8 @@ model Product {
   futureHarvests FutureHarvest[]
   campaigns      GroupBuyCampaign[]
   plots          Plot[]
+  productBatches ProductBatch[]
+  demandAlerts   DemandAlert[]
 }
 
 /// Buyer need: Գնել
@@ -99,6 +136,8 @@ model Demand {
   unit         String
   priceMinAmd  Int?
   priceMaxAmd  Int?
+  /// FACTORY | SHOP_CHAIN | RESTAURANT | WHOLESALE | EXPORTER | OTHER
+  buyerKind    String    @default("WHOLESALE")
   timingNote   String?
   neededBy     DateTime?
   status       String    @default("ACTIVE")
@@ -118,6 +157,7 @@ model Demand {
   @@index([productId])
   @@index([marzId])
   @@index([status])
+  @@index([buyerKind])
 }
 
 /// Farmer sell: Վաճառել
@@ -269,6 +309,7 @@ model Plot {
   tasks            PlotTask[]
   yieldEstimate    YieldEstimate?
   futureHarvests   FutureHarvest[]
+  productBatches   ProductBatch[]
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
 
@@ -334,6 +375,7 @@ model FutureHarvest {
   userId      String
   user        User       @relation(fields: [userId], references: [id])
   preOffers   PreOffer[]
+  productBatches ProductBatch[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
@@ -441,5 +483,257 @@ model MachineryListing {
   @@index([status])
   @@index([year])
   @@index([priceAmd])
+  @@index([userId])
+}
+
+/// Livestock / domestic animals for sale (inventory marketplace)
+model AnimalListing {
+  id              String   @id @default(cuid())
+  title           String
+  description     String
+  /// CATTLE | COW | BULL | SHEEP | GOAT | PIG | HORSE | CHICKEN | TURKEY | BEE_COLONY | DOG | OTHER
+  animalType      String
+  breed           String
+  /// MALE | FEMALE | MIXED
+  sex             String   @default("MIXED")
+  ageValue        Int?
+  /// MONTHS | YEARS
+  ageUnit         String   @default("MONTHS")
+  weightKg        Float?
+  /// Head count / colony count
+  quantity        Int      @default(1)
+  /// MEAT | DAIRY | BREEDING | WORK | PET | OTHER
+  purpose         String   @default("OTHER")
+  vaccinated      Boolean  @default(false)
+  healthNotes     String?
+  documentsNote   String?
+  pedigreeNote    String?
+  priceAmd        Int?
+  priceNegotiable Boolean  @default(false)
+  /// PER_HEAD | LOT
+  priceMode       String   @default("LOT")
+  /// ACTIVE | SOLD | HIDDEN
+  status          String   @default("ACTIVE")
+  marzId          String
+  marz            Marz     @relation(fields: [marzId], references: [id])
+  villageId       String?
+  village         Village? @relation(fields: [villageId], references: [id])
+  phone           String
+  whatsapp        String?
+  imageUrls       String   @default("[]")
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([animalType])
+  @@index([marzId])
+  @@index([status])
+  @@index([purpose])
+  @@index([priceAmd])
+  @@index([userId])
+}
+
+/// Unified ag marketplace catalog (fertilizer, seed, feed, chemical, tool, land)
+model CatalogListing {
+  id              String    @id @default(cuid())
+  /// FERTILIZER | SEED | FEED | CHEMICAL | TOOL | LAND
+  category        String
+  /// Category-specific subtype (e.g. NPK, ORGANIC, WHEAT, HERBICIDE…)
+  subtype         String
+  title           String
+  description     String
+  brand           String?
+  /// JSON bag of extra fields (NPK ratio, hectares, waterAccess, etc.)
+  specsJson       String    @default("{}")
+  quantity        Float?
+  unit            String?
+  packageSize     String?
+  priceAmd        Int?
+  priceNegotiable Boolean   @default(false)
+  /// PER_KG | PER_BAG | PER_LITER | PER_HA | LOT | OTHER
+  priceUnit       String    @default("LOT")
+  expiryDate      DateTime?
+  /// ACTIVE | SOLD | HIDDEN
+  status          String    @default("ACTIVE")
+  marzId          String
+  marz            Marz      @relation(fields: [marzId], references: [id])
+  villageId       String?
+  village         Village?  @relation(fields: [villageId], references: [id])
+  phone           String
+  whatsapp        String?
+  imageUrls       String    @default("[]")
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([category])
+  @@index([subtype])
+  @@index([marzId])
+  @@index([status])
+  @@index([priceAmd])
+  @@index([userId])
+}
+
+/// User comments / reviews on marketplace listings
+model Comment {
+  id         String   @id @default(cuid())
+  /// MACHINERY | ANIMAL | CATALOG
+  targetType String
+  targetId   String
+  body       String
+  /// Optional 1–5 star rating
+  rating     Int?
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@index([targetType, targetId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+/// Product Passport — harvest batch with traceable origin
+model ProductBatch {
+  id              String         @id @default(cuid())
+  /// Public code e.g. TOMATO-AR-2026-00182
+  batchCode       String         @unique
+  userId          String
+  user            User           @relation(fields: [userId], references: [id])
+  productId       String
+  product         Product        @relation(fields: [productId], references: [id])
+  plotId          String?
+  plot            Plot?          @relation(fields: [plotId], references: [id])
+  futureHarvestId String?
+  futureHarvest   FutureHarvest? @relation(fields: [futureHarvestId], references: [id])
+  qtyTons         Float
+  harvestDate     DateTime
+  publishedAt     DateTime       @default(now())
+  /// PUBLISHED | HIDDEN
+  status          String         @default("PUBLISHED")
+  note            String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([userId])
+  @@index([productId])
+  @@index([plotId])
+  @@index([futureHarvestId])
+  @@index([status])
+  @@index([batchCode])
+}
+
+/// Buyer rating of a farm after a completed interaction (pre-offer / offer context)
+model FarmReview {
+  id          String   @id @default(cuid())
+  farmUserId  String
+  farmUser    User     @relation("FarmReviewsReceived", fields: [farmUserId], references: [id])
+  fromUserId  String
+  fromUser    User     @relation("FarmReviewsGiven", fields: [fromUserId], references: [id])
+  /// 1–5 stars
+  rating      Int
+  body        String?
+  /// Optional context links (not enforced FK for flexibility)
+  preOfferId  String?
+  offerId     String?
+  createdAt   DateTime @default(now())
+
+  @@index([farmUserId])
+  @@index([fromUserId])
+  @@index([createdAt])
+}
+
+/// Catalog of sellable plans (seeded; prices also in src/lib/pricing.ts)
+model Plan {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  /// FARM_PRO | BUYER_PRO | VERIFIED_FARM | BOOST
+  kind        String
+  nameKey     String
+  amountAmd   Int
+  /// MONTHLY | YEARLY | ONE_TIME | DAYS_7 | DAYS_30
+  interval    String
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+model Subscription {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  /// Plan code e.g. FARM_PRO_MONTHLY
+  planCode         String
+  /// ACTIVE | CANCELED | EXPIRED | PAST_DUE
+  status           String   @default("ACTIVE")
+  currentPeriodEnd DateTime
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([planCode])
+}
+
+/// Featured listing boost (machinery / animal / catalog / supply / future harvest)
+model Boost {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id])
+  /// MACHINERY | ANIMAL | CATALOG | SUPPLY | FUTURE_HARVEST
+  targetType String
+  targetId   String
+  days       Int
+  startsAt   DateTime  @default(now())
+  endsAt     DateTime
+  /// PAID | PRO_QUOTA
+  source     String    @default("PAID")
+  paymentId  String?
+  payment    Payment?  @relation(fields: [paymentId], references: [id])
+  createdAt  DateTime  @default(now())
+
+  @@index([targetType, targetId])
+  @@index([endsAt])
+  @@index([userId])
+}
+
+model Payment {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  amountAmd      Int
+  /// Stripe charge amount in smallest currency unit (e.g. USD cents)
+  amountCharge   Int?
+  currencyCharge String   @default("usd")
+  /// PENDING | SUCCEEDED | FAILED | CANCELED
+  status         String   @default("PENDING")
+  /// STRIPE | DEMO
+  provider       String
+  providerRef    String?
+  /// Product / SKU code from pricing config
+  productCode    String
+  metadataJson   String   @default("{}")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  boosts         Boost[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([providerRef])
+  @@index([createdAt])
+}
+
+/// Pro farmers: crop demand alerts (gated behind Farm Pro)
+model DemandAlert {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
   @@index([userId])
 }

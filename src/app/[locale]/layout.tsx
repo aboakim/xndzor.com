@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { Header } from "@/components/Header";
 import { MobileTabBar } from "@/components/MobileTabBar";
+import { PageFade } from "@/components/PageFade";
 import { Providers } from "@/components/Providers";
 
 export function generateStaticParams() {
@@ -30,7 +31,9 @@ export default async function LocaleLayout({
       <Providers>
         <div className="app-shell" lang={locale}>
           <Header />
-          <main className="app-main">{children}</main>
+          <main className="app-main">
+            <PageFade>{children}</PageFade>
+          </main>
           <footer className="site-footer">
             <p>FarmOS Armenia · Գյուղատնտես</p>
             <p>{t("note")}</p>

@@ -6,6 +6,7 @@ import { useRouter } from "@/i18n/navigation";
 import { MARZES, localizedPlaceName, type LocationVillage } from "@/lib/places";
 import { estimateYieldTons } from "@/lib/yield";
 import { ProductIcon } from "@/components/AgIcons";
+import { LiveDemandSnapshot } from "@/components/LiveDemandSnapshot";
 
 type Product = { id: string; slug: string; nameKey: string };
 
@@ -151,6 +152,7 @@ export function PlotForm({
           placeholder={t("common.optional")}
         />
       </label>
+      {productId ? <LiveDemandSnapshot productId={productId} marzId={marzId || undefined} /> : null}
       <label>
         <span>{t("plots.fields.plantDate")}</span>
         <input name="plantDate" type="date" required />

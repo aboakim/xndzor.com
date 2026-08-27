@@ -2,10 +2,13 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { parseImageUrls } from "@/lib/utils";
+import { tContent } from "@/lib/content-locale";
 import { localizedPlaceName } from "@/lib/places";
 import { ProductIcon } from "@/components/AgIcons";
 import { ClassifiedRow } from "@/components/ClassifiedRow";
 import { VillageLink, type VillageRef } from "@/components/VillageLink";
+import { TrustedPill } from "@/components/FarmScoreBadge";
+import { MonetizationPills } from "@/components/MonetizationBadges";
 
 type Place = { nameHy: string; nameEn: string; nameRu: string; slug?: string };
 
@@ -21,6 +24,10 @@ type TradeCardProps = {
   village?: VillageRef | null;
   meta?: string;
   imageUrls?: string | null;
+  farmScore?: number | null;
+  trusted?: boolean;
+  isPro?: boolean;
+  boosted?: boolean;
 };
 
 export function TradeCard({
@@ -35,6 +42,10 @@ export function TradeCard({
   village,
   meta,
   imageUrls,
+  farmScore,
+  trusted,
+  isPro,
+  boosted,
 }: TradeCardProps) {
   const t = useTranslations();
   const locale = useLocale();
@@ -56,11 +67,17 @@ export function TradeCard({
   return (
     <ClassifiedRow
       href={href}
-      title={title}
+      title={tContent(locale, title)}
       meta={metaLine}
       value={priceLabel}
       thumb={cover}
       icon={<ProductIcon slugOrKey={slug} size={20} />}
+      badge={
+        <>
+          <MonetizationPills isPro={isPro} boosted={boosted} />
+          {trusted && farmScore != null ? <TrustedPill score={farmScore} /> : null}
+        </>
+      }
       place={
         village ? (
           <>

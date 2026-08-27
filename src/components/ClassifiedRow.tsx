@@ -10,6 +10,8 @@ type ClassifiedRowProps = {
   thumb?: string | null;
   /** Interactive trailing meta (e.g. a village map link) shown after `meta`. */
   place?: ReactNode;
+  /** Optional trust / farm-score badge */
+  badge?: ReactNode;
 };
 
 /**
@@ -26,6 +28,7 @@ export function ClassifiedRow({
   icon,
   thumb,
   place,
+  badge,
 }: ClassifiedRowProps) {
   return (
     <div className="classified-row">
@@ -44,6 +47,7 @@ export function ClassifiedRow({
         <span className="classified-meta">
           <span className="classified-meta-text">{meta}</span>
           {place ? <span className="classified-meta-place">{place}</span> : null}
+          {badge ? <span className="classified-meta-badge">{badge}</span> : null}
         </span>
       </span>
       {value ? <span className="classified-value">{value}</span> : null}

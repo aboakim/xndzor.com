@@ -154,6 +154,15 @@ export function IconApricot(p: IconProps) {
   );
 }
 
+export function IconPeach(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M12 8c-4 0-7 3.2-7 7.2S8.2 21 12 21s7-2.6 7-5.8c0-2.2-1.2-4-3-5.2" />
+      <path d="M12 8c0-2 1.2-3.5 3-4M9.5 9c1.5-1 3.5-1 5 0" />
+    </Svg>
+  );
+}
+
 export function IconWheat(p: IconProps) {
   return (
     <Svg {...p}>
@@ -380,6 +389,62 @@ export function IconMachinery(p: IconProps) {
   );
 }
 
+export function IconAnimals(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <ellipse cx="12" cy="14" rx="6" ry="4" />
+      <circle cx="8.5" cy="9" r="2.2" />
+      <circle cx="15.5" cy="9" r="2.2" />
+      <path d="M7 8.2l-1.5-2M17 8.2l1.5-2" />
+      <path d="M10 16.5v2.5M14 16.5v2.5" />
+    </Svg>
+  );
+}
+
+export function IconCow(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <ellipse cx="12" cy="13.5" rx="6.5" ry="4" />
+      <circle cx="8" cy="8.5" r="2.3" />
+      <path d="M6.2 7.2l-1.4-1.8M9.5 7l1-1.6" />
+      <path d="M9.5 16.5v2.2M14.5 16.5v2.2" />
+      <circle cx="7.2" cy="8.2" r="0.5" fill="currentColor" stroke="none" />
+    </Svg>
+  );
+}
+
+export function IconSheep(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M6 13a6 4.5 0 0112 0" />
+      <circle cx="8" cy="9" r="2" />
+      <path d="M7 14.5v3M11 15v3M15 14.5v3" />
+      <path d="M16 10c1.2 0 2 .8 2 2" />
+    </Svg>
+  );
+}
+
+export function IconBee(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <ellipse cx="12" cy="13" rx="4" ry="3" />
+      <path d="M10 12h4M10 14h4" />
+      <path d="M8 10c-2-1-3-3-2.5-4.5M16 10c2-1 3-3 2.5-4.5" />
+      <path d="M12 10V7" />
+    </Svg>
+  );
+}
+
+export function IconDog(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M5 11l2-4 3 2 4-1 3 3v5H6z" />
+      <path d="M7 16v3M11 16.5v3M15 16v3" />
+      <circle cx="8.5" cy="10.5" r="0.6" fill="currentColor" stroke="none" />
+    </Svg>
+  );
+}
+
 export function IconTractor(p: IconProps) {
   return (
     <Svg {...p}>
@@ -455,6 +520,7 @@ const PRODUCT_ICONS: Record<string, (p: IconProps) => ReactElement> = {
   grape: IconGrape,
   apple: IconApple,
   apricot: IconApricot,
+  peach: IconPeach,
   wheat: IconWheat,
   milk: IconMilk,
   honey: IconHoney,
@@ -482,6 +548,7 @@ const ACTION_ICONS: Record<string, (p: IconProps) => ReactElement> = {
   orderJob: IconOrderJob,
   doJob: IconDoJob,
   forward: IconForward,
+  grow: IconForward,
   groupBuy: IconGroupBuy,
   match: IconMatch,
   today: IconToday,
@@ -491,6 +558,13 @@ const ACTION_ICONS: Record<string, (p: IconProps) => ReactElement> = {
   yield: IconYield,
   market: IconMarket,
   machinery: IconMachinery,
+  animals: IconAnimals,
+  fertilizers: IconFertilize,
+  seeds: IconSow,
+  feed: IconHay,
+  chemicals: IconSpray,
+  tools: IconOrderJob,
+  land: IconPlot,
 };
 
 const MACHINERY_ICONS: Record<string, (p: IconProps) => ReactElement> = {
@@ -502,6 +576,21 @@ const MACHINERY_ICONS: Record<string, (p: IconProps) => ReactElement> = {
   TRUCK: IconTruck,
   SEEDER: IconSeeder,
   OTHER: IconMachinery,
+};
+
+const ANIMAL_ICONS: Record<string, (p: IconProps) => ReactElement> = {
+  CATTLE: IconCow,
+  COW: IconCow,
+  BULL: IconCow,
+  SHEEP: IconSheep,
+  GOAT: IconSheep,
+  PIG: IconAnimals,
+  HORSE: IconAnimals,
+  CHICKEN: IconAnimals,
+  TURKEY: IconAnimals,
+  BEE_COLONY: IconBee,
+  DOG: IconDog,
+  OTHER: IconAnimals,
 };
 
 const FARM_TASK_ICONS: Record<string, (p: IconProps) => ReactElement> = {
@@ -564,6 +653,19 @@ export function MachineryTypeIcon({
   className?: string;
 }) {
   const Comp = MACHINERY_ICONS[type] ?? IconMachinery;
+  return <Comp size={size} className={className ?? "ag-icon"} />;
+}
+
+export function AnimalTypeIcon({
+  type,
+  size = 18,
+  className,
+}: {
+  type: string;
+  size?: number;
+  className?: string;
+}) {
+  const Comp = ANIMAL_ICONS[type] ?? IconAnimals;
   return <Comp size={size} className={className ?? "ag-icon"} />;
 }
 

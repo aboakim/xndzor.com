@@ -2,63 +2,87 @@
 
 **Agricultural operating system** for Armenia (repo folder: Gyuxatntes).
 
-Promise: *Հողամաս → բերքի կանխատեսում → շուկայի պահանջարկ → նախնական վաճառք*
+## Strategic moat
 
-Marketplace (Demand / Supply / Jobs / Group-buy) is a **module**, not the product. GoShuka / Koriz / Aqlor already cover pure farm-to-buyer markets — we lead with farm operations.
+**Farm Passport + Farm Score (reputation) + Product Passport (batch history) + Live Demand network («Ի՞նչ աճեցնել»).**
 
----
+| Layer | Role |
+|-------|------|
+| Live demand /grow | *What to grow* — overproduction signal, matching |
+| Farm Passport | Public trust identity (`#AR-NNNNNN`) |
+| Farm Score 0–100 | Agricultural reliability from platform activity |
+| Product Passport | Traceable harvest batch (`TOMATO-AR-2026-NNNNN`) |
 
-## Killer loop (center the product)
+Marketplace (Demand / Supply / Jobs / Machinery / Shop) remains a **secondary module**. GoShuka / Koriz / Aqlor cover pure farm-to-buyer markets — we lead with demand signal **plus** verifiable farm/batch trust.
 
-| Step | What | Model |
-|------|------|--------|
-| 1 | Register land plot(s) | `Plot` |
-| 2 | Rule-based yield estimate (crop × ha → ton range; editable) | `YieldEstimate` |
-| 3 | Match open buyer demand | reuse `Demand` |
-| 4 | Publish Future Harvest + buyer pre-offers | `FutureHarvest` + `PreOffer` |
-
-Today UX «Ի՞նչ անել այսօր»: `PlotTask` + irrigation / seasonal pest heuristics + Open-Meteo weather caveat (`src/lib/farm-today.ts`, `src/lib/weather.ts`).
-
-Farm context → market actions (from plot approaching harvest): workers → `/jobs/new` prefilled; equipment → jobs; fertilizer → group-buy; sell → future harvest.
+See `FARM_SCORE.md` for the score formula.
 
 ---
 
-## Modules (reachable from Farm OS, not List.am home)
+## Killer loop
 
-| Module | Model |
-|--------|--------|
-| Գնել / Վաճառել | `Demand` ↔ `Supply` |
-| Գյուղտեխնիկա (վաճառք) | `MachineryListing` |
-| Պատվիրել / Կատարել աշխատանք | `JobRequest` + `ServiceProvider` |
+| Step | What | Model / route |
+|------|------|----------------|
+| 1 | Register plot + crop + harvest window + expected tons | `Plot` + `YieldEstimate` → `/plots/new` |
+| 2 | Instant demand snapshot | `Demand` aggregate → plot create/detail |
+| 3 | National board: expected supply vs open demand + marz map | `/grow` (alias `/exchange`) |
+| 4 | **Overproduction signal** ⚠️ / undersupply 🟢 | `src/lib/exchange.ts` |
+| 5 | Pre-agree before harvest | `FutureHarvest` + `PreOffer` |
+| 6 | Publish Farm Passport + Farm Score | `/farms/[farmId]` |
+| 7 | Create Product Passport batch | `/batches/[batchId]` from plot / future harvest |
+
+### Overproduction signal (methodology)
+
+- **Supply tons** = ACTIVE `FutureHarvest` qty (→ tons) **+** ACTIVE plot `YieldEstimate` for plots **without** an ACTIVE future harvest (no double count).
+- **Demand tons** = ACTIVE `Demand` (`qtyMax` or `qtyMin`) converted to tons.
+- **OVER** if supply ≫ demand (±12% band); **UNDER** if demand ≫ supply; else **BALANCED**.
+- Badge: *platform registrations only — not national statistics*.
+
+---
+
+## Modules (reachable)
+
+| Module | Model / route |
+|--------|----------------|
+| Ի՞նչ աճեցնել / Բորսա | Exchange + map → `/grow` |
+| Ֆերմայի անձնագիր | `User.farmId` + Farm Score → `/farms/[farmId]` |
+| Խմբաքանակի անձնագիր | `ProductBatch` → `/batches/[batchId]` |
 | Ապագա բերք | `FutureHarvest` + `PreOffer` |
+| Գնել / Վաճառել | `Demand` ↔ `Supply` (+ Trusted filter) |
+| Գյուղտեխնիկա / Կենդանիներ / Խանութ | listings (+ Trusted badge) |
+| Աշխատանք | `JobRequest` + `ServiceProvider` |
 | Խմբային գնում | `GroupBuyCampaign` |
-
-Job types unchanged: PLOW, SOW, SPRAY, HARVEST, TRANSPORT, PRUNE, GREENHOUSE, CONSULT, OTHER.
-
-Machinery sales (`/machinery`) are **inventory listings** (tractor/combine/etc. for sale) — distinct from Job Marketplace «պատվիրել աշխատանք».
-
----
-
-## AI plant photo (MVP careful)
-
-Upload on plot → store URL + disclaimer stub (“possible issue — review checklist / consult specialist”). **No diagnosis certainty** (Berqo exists for clinical path).
+| Խորհրդատու | Stub `/advisor` (rule tips from exchange) |
 
 ---
 
 ## Deferred
 
 - Full agronomy science / IoT sensors
-- Paid AI plant diagnosis
-- Online payments
+- Full AI plant diagnosis / advisor (stub only)
+- Paid map APIs
 
----
+## Monetization (MVP)
+
+| Product | Price (config) | Route |
+|---------|----------------|-------|
+| **TOP / Թոփ listing** (7 / 30 days) | **1,500 / 3,900 AMD** | listing «Խթանել / Թոփում տեղադրել» |
+| Farm Pro monthly / yearly | 4,900 / 49,000 AMD | `/pricing` |
+| Verified Farm yearly | 9,900 AMD | `/pricing` |
+| Buyer Pro monthly | 9,900 AMD | `/pricing` |
+
+Edit amounts in `src/lib/pricing.ts`. Models: `Plan`, `Subscription`, `Boost`, `Payment`, User flags `isPro` / `isVerifiedPaid` / `buyerProUntil`.
+
+- **TOP boost** sorts first on boards + home; badge «Թոփ»
+- **Demo checkout** when Stripe keys missing (labeled դեմո վճարում)
+- **Stripe Checkout** (USD charge from AMD via `AMD_PER_USD`) when keys set — money to **your** Stripe account
+- Owner: `/admin/earnings` (role `ADMIN` or `ADMIN_EMAIL`)
+- User: `/account/billing`
 
 ## Yield assumptions (MVP)
 
-Documented in `src/lib/yield.ts` (tons/ha tables). Farmer can override. Not agronomic advice.
-
----
+`src/lib/yield.ts` — not agronomic advice.
 
 ## Stack
 
-Next.js 15 · Prisma SQLite · Auth.js · next-intl (hy/ru/en) · AMD · Marz/Village · Open-Meteo (free)
+Next.js 15 · Prisma SQLite · Auth.js · next-intl (hy/ru/en) · AMD · Marz/Village · Open-Meteo (free) · `qrcode`

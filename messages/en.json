@@ -1,8 +1,8 @@
 {
   "brand": "Գյուղատնտես",
   "brandLatin": "FarmOS Armenia",
-  "promise": "Plot → forecast → buyer → pre-sale.",
-  "tagline": "Your fields, today’s work, and selling harvest — in one place",
+  "promise": "Plot → future harvest → demand signal → pre-sale.",
+  "tagline": "What to grow by demand: plot → signal → pre-sale",
   "nav": {
     "home": "Home",
     "today": "Today",
@@ -27,7 +27,19 @@
     "register": "Register",
     "post": "Add",
     "postDemand": "Add",
-    "postSupply": "Add"
+    "postSupply": "Add",
+    "animals": "Animals",
+    "fertilizers": "Fertilizers",
+    "seeds": "Seeds / seedlings",
+    "feed": "Feed / fodder",
+    "chemicals": "Plant protection",
+    "tools": "Tools & equipment",
+    "land": "Land / orchard",
+    "shop": "Market",
+    "grow": "What to grow",
+    "myPassport": "My farm passport",
+    "pricing": "Pricing",
+    "billing": "Billing"
   },
   "menu": {
     "plots": "Plots",
@@ -46,7 +58,17 @@
     "machineryDesc": "Tractors, combines and equipment for sale",
     "groupBuy": "Group buy",
     "groupBuyDesc": "Buy together, pay less",
-    "loginHint": "Log in to see your plots"
+    "loginHint": "Log in to see your plots",
+    "animals": "Livestock",
+    "animalsDesc": "Cattle, sheep, goats, bees for sale",
+    "fertilizers": "Fertilizers",
+    "seeds": "Seeds / seedlings",
+    "feed": "Feed / fodder",
+    "chemicals": "Plant protection",
+    "tools": "Tools & equipment",
+    "land": "Land / orchard",
+    "grow": "What to grow",
+    "growDesc": "Future harvest exchange and demand"
   },
   "farmos": {
     "todayEyebrow": "FarmOS",
@@ -95,7 +117,17 @@
     "groupBuyTitle": "Group buy",
     "seeAll": "See all",
     "participants": "{n} joined",
-    "myPlots": "My plots"
+    "myPlots": "My plots",
+    "animalsTitle": "Livestock & animals",
+    "fertilizersTitle": "Fertilizers",
+    "seedsTitle": "Seeds / seedlings",
+    "feedTitle": "Feed / fodder",
+    "chemicalsTitle": "Plant protection",
+    "toolsTitle": "Tools & equipment",
+    "landTitle": "Land / orchard",
+    "pricingCtaTitle": "Top listing boost & Farm Pro",
+    "pricingCtaLede": "Put your listing at the top of the feed or unlock farm tools.",
+    "pricingCtaButton": "See pricing"
   },
   "village": {
     "mapTitle": "{village} — map",
@@ -166,7 +198,8 @@
     "cucumber": "Cucumber",
     "onion": "Onion",
     "hay": "Hay",
-    "other": "Other"
+    "other": "Other",
+    "peach": "Peach"
   },
   "units": {
     "kg": "kg",
@@ -208,17 +241,18 @@
     "whatsapp": "WhatsApp",
     "open": "Open",
     "add": "Add",
-    "send": "Send"
+    "send": "Send",
+    "loading": "Loading…"
   },
   "board": {
     "search": "Search",
     "searchHome": "Search crop, buyer, job…",
     "product": "Product",
     "marz": "Marz",
-    "village": "Village",
+    "village": "City/Village",
     "allProducts": "All",
     "allMarzes": "All marzes",
-    "allVillages": "All villages",
+    "allVillages": "All cities/villages",
     "apply": "Apply"
   },
   "images": {
@@ -372,9 +406,10 @@
       "timing": "Timing",
       "timingHint": "",
       "marz": "Marz",
-      "village": "Village",
+      "village": "City/Village",
       "phone": "Phone",
-      "whatsapp": "WhatsApp"
+      "whatsapp": "WhatsApp",
+      "buyerKind": "Buyer type"
     }
   },
   "postSupply": {
@@ -393,7 +428,7 @@
       "price": "Price",
       "readyInDays": "Ready (days)",
       "marz": "Marz",
-      "village": "Village",
+      "village": "City/Village",
       "phone": "Phone",
       "whatsapp": "WhatsApp"
     }
@@ -444,12 +479,41 @@
     "name": "Name",
     "phone": "Phone",
     "marz": "Marz",
+    "village": "City/Village",
     "loginSubmit": "Log in",
     "registerSubmit": "Register",
     "noAccount": "No account?",
     "hasAccount": "Already registered?",
-    "error": "Error",
-    "registerError": "Error"
+    "error": "Invalid login details",
+    "registerError": "Registration failed",
+    "placeholders": {
+      "name": "e.g. Ալբերտ / Albert",
+      "email": "name@example.com",
+      "password": "at least 10 characters",
+      "phone": "+37492222222",
+      "marz": "Select marz",
+      "village": "Select city/village"
+    },
+    "hints": {
+      "password": "Password must be at least 10 characters.",
+      "phone": "Example: +37492222222"
+    },
+    "errors": {
+      "INVALID_EMAIL": "Invalid email address.",
+      "PASSWORD_TOO_SHORT": "Password is too short — at least 10 characters.",
+      "PASSWORD_TOO_LONG": "Password is too long.",
+      "INVALID_NAME": "Name must be at least 2 characters.",
+      "INVALID_PHONE": "Invalid phone number. Example: +37492222222",
+      "INVALID_MARZ": "Please select a valid marz.",
+      "MARZ_REQUIRED": "Please select a marz.",
+      "VILLAGE_REQUIRED": "Please select a city/village.",
+      "INVALID_VILLAGE": "Please select a valid city/village in that marz.",
+      "EMAIL_TAKEN": "This email is already registered. Log in or use another address.",
+      "RATE_LIMITED": "Too many attempts. Please try again later.",
+      "INVALID_INPUT": "Check the fields and try again.",
+      "SERVER_ERROR": "Server error. Please try again.",
+      "LOGIN_FAILED": "Account created, but sign-in failed. Please log in."
+    }
   },
   "footer": {
     "note": "FarmOS Armenia · plot → forecast → sale"
@@ -620,7 +684,7 @@
       "price": "Price (AMD)",
       "negotiable": "Negotiable",
       "marz": "Marz",
-      "village": "Village",
+      "village": "City/Village",
       "phone": "Phone",
       "whatsapp": "WhatsApp",
       "description": "Full description",
@@ -665,5 +729,565 @@
     "hide": "Hide",
     "delete": "Delete",
     "confirmDelete": "Delete this listing?"
+  },
+  "animalTypes": {
+    "CATTLE": "Cattle",
+    "COW": "Cow",
+    "BULL": "Bull",
+    "SHEEP": "Sheep",
+    "GOAT": "Goat",
+    "PIG": "Pig",
+    "HORSE": "Horse",
+    "CHICKEN": "Chicken",
+    "TURKEY": "Turkey",
+    "BEE_COLONY": "Bee colony",
+    "DOG": "Dog (herding/guard)",
+    "OTHER": "Other"
+  },
+  "animalSexes": {
+    "MALE": "Male",
+    "FEMALE": "Female",
+    "MIXED": "Mixed"
+  },
+  "animalPurposes": {
+    "MEAT": "Meat",
+    "DAIRY": "Dairy",
+    "BREEDING": "Breeding",
+    "WORK": "Work",
+    "PET": "Pet",
+    "OTHER": "Other"
+  },
+  "animalAgeUnits": {
+    "MONTHS": "months",
+    "YEARS": "years"
+  },
+  "animalPriceModes": {
+    "PER_HEAD": "Price per head",
+    "LOT": "Price for lot"
+  },
+  "animalsBoard": {
+    "title": "Livestock & animals",
+    "lede": "Cattle, sheep, goats, bees and more for sale — with detailed descriptions.",
+    "empty": "No animals yet. Post the first listing.",
+    "type": "Type",
+    "allTypes": "All types",
+    "purpose": "Purpose",
+    "allPurposes": "All purposes",
+    "ageFrom": "Age from",
+    "ageTo": "Age to",
+    "priceFrom": "Price from",
+    "priceTo": "Price to"
+  },
+  "postAnimals": {
+    "title": "List an animal",
+    "lede": "Fill in type, breed, age, health, price and photos.",
+    "submit": "Publish",
+    "saving": "Saving…",
+    "error": "Error — check the fields",
+    "sections": {
+      "basics": "Basics",
+      "details": "Details",
+      "priceLocation": "Price & location",
+      "description": "Description & photos"
+    },
+    "fields": {
+      "title": "Title",
+      "titleHint": "e.g. Holstein dairy cows — Ararat",
+      "type": "Type",
+      "breed": "Breed",
+      "breedHint": "Holstein, Saanen…",
+      "sex": "Sex",
+      "purpose": "Purpose",
+      "quantity": "Quantity (head)",
+      "ageValue": "Age",
+      "ageUnit": "Age unit",
+      "weightKg": "Weight (kg)",
+      "vaccinated": "Vaccinated",
+      "healthNotes": "Health / vaccines",
+      "healthHint": "Vaccines, illness, feeding…",
+      "pedigreeNote": "Pedigree (optional)",
+      "documentsNote": "Documents",
+      "price": "Price (AMD)",
+      "priceMode": "Price mode",
+      "negotiable": "Negotiable",
+      "marz": "Marz",
+      "village": "City/Village",
+      "phone": "Phone",
+      "whatsapp": "WhatsApp",
+      "description": "Detailed description",
+      "descriptionHint": "Temperament, feeding, what is included…"
+    }
+  },
+  "animals": {
+    "kg": "kg",
+    "heads": "{n} head",
+    "perHead": "head",
+    "negotiable": "negotiable",
+    "yes": "Yes",
+    "no": "No",
+    "status": {
+      "ACTIVE": "Active",
+      "SOLD": "Sold",
+      "HIDDEN": "Hidden"
+    },
+    "detail": {
+      "type": "Type",
+      "breed": "Breed",
+      "sex": "Sex",
+      "purpose": "Purpose",
+      "quantity": "Quantity",
+      "age": "Age",
+      "weight": "Weight",
+      "vaccinated": "Vaccinated",
+      "healthNotes": "Health",
+      "pedigreeNote": "Pedigree",
+      "documentsNote": "Documents"
+    }
+  },
+  "myAnimals": {
+    "title": "My animals",
+    "lede": "Manage your animal listings.",
+    "empty": "You have no listings yet.",
+    "manage": "Manage listing",
+    "markActive": "Mark active",
+    "markSold": "Mark sold",
+    "hide": "Hide",
+    "delete": "Delete",
+    "confirmDelete": "Delete this listing?"
+  },
+  "catalogCategories": {
+    "FERTILIZER": "Fertilizers",
+    "SEED": "Seeds / seedlings",
+    "FEED": "Feed / fodder",
+    "CHEMICAL": "Plant protection",
+    "TOOL": "Tools & equipment",
+    "LAND": "Land / orchard"
+  },
+  "catalogLedes": {
+    "FERTILIZER": "Organic and mineral fertilizers with detailed composition.",
+    "SEED": "Seeds and seedlings with variety and germination info.",
+    "FEED": "Hay, silage, concentrate and other feed.",
+    "CHEMICAL": "Crop protection products. Not medical advice.",
+    "TOOL": "Hand tools, irrigation parts and small equipment.",
+    "LAND": "Plot or orchard for sale / rent."
+  },
+  "catalogSubtypes": {
+    "FERTILIZER": {
+      "ORGANIC": "Organic",
+      "MINERAL": "Mineral",
+      "NPK": "NPK",
+      "UREA": "Urea",
+      "COMPOST": "Compost",
+      "MANURE": "Manure",
+      "OTHER": "Other"
+    },
+    "SEED": {
+      "WHEAT": "Wheat",
+      "BARLEY": "Barley",
+      "TOMATO": "Tomato",
+      "POTATO": "Potato",
+      "GRAPE": "Grape",
+      "APPLE": "Apple",
+      "VEGETABLE": "Vegetable",
+      "SEEDLING": "Seedling",
+      "OTHER": "Other"
+    },
+    "FEED": {
+      "HAY": "Hay",
+      "SILAGE": "Silage",
+      "GRAIN": "Grain",
+      "MIXED": "Mixed",
+      "SUPPLEMENT": "Supplement",
+      "OTHER": "Other"
+    },
+    "CHEMICAL": {
+      "HERBICIDE": "Herbicide",
+      "FUNGICIDE": "Fungicide",
+      "INSECTICIDE": "Insecticide",
+      "FERTILIZER_ADJ": "Adjuvant",
+      "OTHER": "Other"
+    },
+    "TOOL": {
+      "HAND": "Hand tool",
+      "IRRIGATION": "Irrigation",
+      "GREENHOUSE": "Greenhouse",
+      "STORAGE": "Storage",
+      "OTHER": "Other"
+    },
+    "LAND": {
+      "ARABLE": "Arable",
+      "ORCHARD": "Orchard",
+      "PASTURE": "Pasture",
+      "GREENHOUSE": "Greenhouse",
+      "OTHER": "Other"
+    }
+  },
+  "catalogSpecs": {
+    "composition": "Composition",
+    "npkRatio": "NPK ratio",
+    "crop": "Crop",
+    "germinationPct": "Germination %",
+    "certified": "Certified",
+    "forAnimals": "For animals",
+    "proteinPct": "Protein %",
+    "activeIngredient": "Active ingredient",
+    "caution": "Caution",
+    "condition": "Condition",
+    "material": "Material",
+    "hectares": "Hectares",
+    "waterAccess": "Water access",
+    "dealType": "Sale / rent",
+    "soilNote": "Soil note"
+  },
+  "catalogUnits": {
+    "kg": "kg",
+    "ton": "ton",
+    "liter": "liter",
+    "piece": "piece",
+    "bag": "bag",
+    "ha": "ha",
+    "other": "other"
+  },
+  "catalogPriceUnits": {
+    "PER_KG": "per kg",
+    "PER_BAG": "per bag",
+    "PER_LITER": "per liter",
+    "PER_HA": "per ha",
+    "LOT": "lot",
+    "OTHER": "other"
+  },
+  "catalog": {
+    "negotiable": "negotiable",
+    "chemicalDisclaimer": "Note: this is not medical or agronomic diagnosis. Follow the label and local rules.",
+    "status": {
+      "ACTIVE": "Active",
+      "SOLD": "Sold",
+      "HIDDEN": "Hidden"
+    }
+  },
+  "catalogBoard": {
+    "empty": "No listings yet. Add one.",
+    "subtype": "Type",
+    "allSubtypes": "All",
+    "priceFrom": "Price from",
+    "priceTo": "Price to"
+  },
+  "postCatalog": {
+    "title": "Post a listing",
+    "submit": "Publish",
+    "saving": "Saving…",
+    "error": "Error — check fields",
+    "sections": {
+      "basics": "Basics",
+      "specs": "Details",
+      "priceLocation": "Price & location",
+      "description": "Description & photos"
+    },
+    "fields": {
+      "title": "Title",
+      "subtype": "Type",
+      "brand": "Brand",
+      "quantity": "Quantity",
+      "unit": "Unit",
+      "packageSize": "Packaging",
+      "packageHint": "e.g. 50 kg bag",
+      "expiryDate": "Expiry",
+      "price": "Price (AMD)",
+      "priceUnit": "Price mode",
+      "negotiable": "Negotiable",
+      "marz": "Marz",
+      "village": "City/Village",
+      "phone": "Phone",
+      "whatsapp": "WhatsApp",
+      "description": "Detailed description"
+    },
+    "hints": {
+      "FERTILIZER": "e.g. NPK 15-15-15 · 50 kg bags",
+      "SEED": "e.g. wheat seed · 92% germination",
+      "FEED": "e.g. alpine hay · 20 t",
+      "CHEMICAL": "e.g. herbicide for field crops",
+      "TOOL": "e.g. drip irrigation kit",
+      "LAND": "e.g. 2.5 ha irrigated arable land"
+    }
+  },
+  "myCatalog": {
+    "title": "My market listings",
+    "lede": "Manage fertilizer, seed and other listings.",
+    "empty": "No listings yet.",
+    "manage": "Manage",
+    "markActive": "Mark active",
+    "markSold": "Mark sold",
+    "hide": "Hide",
+    "delete": "Delete",
+    "confirmDelete": "Delete this listing?"
+  },
+  "comments": {
+    "title": "Comments",
+    "lede": "Questions and reviews about this listing.",
+    "empty": "No comments yet.",
+    "yourComment": "Your comment",
+    "placeholder": "Write a question or review…",
+    "ratingOptional": "Rating (optional)",
+    "noRating": "No rating",
+    "stars": "{n} ★",
+    "submit": "Post",
+    "sending": "Sending…",
+    "error": "Could not post",
+    "delete": "Delete",
+    "confirmDelete": "Delete this comment?",
+    "loginToComment": "Log in to comment"
+  },
+  "buyerKinds": {
+    "FACTORY": "Factory",
+    "SHOP_CHAIN": "Shop chain",
+    "RESTAURANT": "Restaurant",
+    "WHOLESALE": "Wholesale",
+    "EXPORTER": "Exporter",
+    "OTHER": "Other"
+  },
+  "grow": {
+    "eyebrow": "Agricultural exchange",
+    "title": "What to grow",
+    "lede": "2026 expected harvest vs buyer demand on one board. Overproduction signal before you plant.",
+    "homeHeadline": "What is in demand in Armenia this season?",
+    "homeLede": "Register a plot and see who wants your crop — and whether supply already exceeds demand.",
+    "homeTagline": "Not marketplace-first — what to grow by demand.",
+    "seasonDemandTitle": "Open demand by crop",
+    "signalSectionTitle": "Overproduction signal",
+    "ctaPlot": "Register a plot",
+    "ctaBoard": "See demand",
+    "ctaForward": "Publish future harvest",
+    "ctaDemand": "Buyer request",
+    "empty": "No data yet. Register a plot or demand.",
+    "supplyBoardTitle": "2026 expected harvest",
+    "supplyBoardLede": "Future harvest + plot yields (no double count)",
+    "demandBoardTitle": "Buyer demand",
+    "demandBoardLede": "Active posts by tons, buyers, average price",
+    "sources": "sources",
+    "buyers": "buyers",
+    "expectedSupply": "Expected supply",
+    "openDemand": "Open demand",
+    "avgPrice": "Avg price",
+    "gap": "Gap",
+    "methodBadge": "Platform registrations only — not national statistics",
+    "signalEmpty": "Not enough data for this crop yet.",
+    "signalOverTitle": "⚠️ {crop} — supply exceeds demand",
+    "signalOverBody": "Explore other buyers or crops before planting more.",
+    "signalUnderTitle": "🟢 {crop} — demand exceeds expected supply",
+    "signalUnderBody": "Buyers on the platform want more of this crop than registered harvest.",
+    "signalBalancedTitle": "⚖️ {crop} — supply and demand are close",
+    "signalBalancedBody": "Balanced based on platform registrations.",
+    "chipOver": "Overproduction",
+    "chipUnder": "Undersupply",
+    "chipBalanced": "Balanced",
+    "chipNoData": "No data",
+    "mapTitle": "Supply ↔ demand by marz",
+    "mapHint": "Select a marz for details",
+    "mapTip": "supply {supply} t · demand {demand} t",
+    "matchSupply": "Matching future harvests",
+    "matchDemand": "Matching buyers",
+    "snapshotTitle": "Demand for {crop}",
+    "snapshotSummary": "{buyers} buyers · {tons} t demand · avg {price}/kg",
+    "snapshotEmpty": "No open demand for this crop.",
+    "nearby": "nearby",
+    "buyerAnon": "Buyer"
+  },
+  "farmPassport": {
+    "title": "Farm passport",
+    "eyebrow": "Farm Passport",
+    "verified": "Verified farm",
+    "scanFarm": "SCAN FARM",
+    "qrAlt": "QR code to farm passport",
+    "scoreDisclaimer": "Score is based on platform activity only.",
+    "ha": "ha",
+    "mainCrops": "Main crops",
+    "vsDemand": "Your crops vs national demand",
+    "vsDemandLede": "Compare your crops with the «What to grow» signal.",
+    "signal": "Signal {signal} · demand {demand} t · supply {supply} t",
+    "noCropDemand": "No demand signal for your crops yet.",
+    "unlocksTitle": "Reputation unlocks",
+    "unlocks": {
+      "trusted": "Trusted supplier status (badge on listings)",
+      "visibility": "Higher visibility in matches",
+      "verified": "Verified farm badge",
+      "batches": "Product batch passports"
+    },
+    "batches": "Batches",
+    "reviews": "Buyer ratings",
+    "phone": "Phone",
+    "phoneHidden": "Phone hidden until contact.",
+    "trustedBadge": "Trusted",
+    "filterAll": "All",
+    "filterTrusted": "Trusted (≥{min})",
+    "onTimeEstimateNote": "* On-time % is an estimate (demo/seed formula).",
+    "stats": {
+      "ha": "Total ha",
+      "tonsSold": "Tons sold",
+      "deals": "Successful deals",
+      "rating": "Buyer rating",
+      "onTime": "On-time %",
+      "livestock": "Livestock",
+      "machinery": "Machinery"
+    },
+    "bands": {
+      "highly_reliable": "Highly Reliable",
+      "reliable": "Reliable",
+      "building": "Building",
+      "new": "New",
+      "at_risk": "At risk"
+    }
+  },
+  "productPassport": {
+    "eyebrow": "Product Passport",
+    "create": "Create batch passport",
+    "creating": "Creating…",
+    "createError": "Could not create batch",
+    "qty": "Quantity",
+    "harvestDate": "Harvest date",
+    "published": "Published",
+    "scanBatch": "SCAN BATCH",
+    "qrAlt": "QR code to batch",
+    "chain": "Origin chain",
+    "chainFarm": "1. Farm",
+    "chainHarvest": "2. Harvest",
+    "chainBatch": "3. Batch",
+    "plot": "Plot",
+    "directPlot": "Direct from plot",
+    "viewFarm": "View farm passport"
+  },
+  "advisor": {
+    "title": "Advisor",
+    "eyebrow": "FarmOS",
+    "lede": "Simple tips from the exchange. Full AI advisor coming soon.",
+    "soon": "Coming soon: personalized advice.",
+    "stubLink": "Advisor (soon)",
+    "underTitle": "Undersupply (demand is high)",
+    "underTip": "Buyers on the platform want more than registered harvest.",
+    "overTitle": "Overproduction risk",
+    "overTip": "Registered supply exceeds demand — be careful planting more.",
+    "yourCrops": "Your crops",
+    "yourCropsHint": "Compare with signals on What to grow."
+  },
+  "pricing": {
+    "title": "Pricing",
+    "eyebrow": "FarmOS Pro",
+    "lede": "Platform fees are paid online — even when farmer–buyer contact stays offline.",
+    "demoBanner": "Test checkout · Stripe keys not set yet — no real charge. Add Stripe keys before going live.",
+    "stripeNote": "Prices shown in AMD. Stripe charges USD equivalent (~{rate} AMD = 1 USD).",
+    "offlineNote": "Deal amounts stay between parties. The platform only charges package fees.",
+    "myBilling": "My billing",
+    "billingLede": "Subscriptions, boosts, and payment history.",
+    "goPro": "Go Pro",
+    "buy": "Buy",
+    "processing": "Processing…",
+    "perMonth": "month",
+    "perYear": "year",
+    "days": "days",
+    "active": "Active",
+    "inactive": "Inactive",
+    "activeUntil": "Until {date}",
+    "youArePro": "You are Farm Pro until {date}.",
+    "payments": "Payments",
+    "subscriptions": "Subscriptions",
+    "boosts": "Boosts",
+    "noPayments": "No payments yet.",
+    "noSubs": "No subscriptions yet.",
+    "noBoosts": "No boosts yet.",
+    "adminEarnings": "Earnings (admin)",
+    "adminLede": "Successful payments and total revenue in AMD.",
+    "totalEarned": "Total",
+    "paymentCount": "Payment count",
+    "byProduct": "By product",
+    "badges": {
+      "pro": "Pro",
+      "boosted": "TOP",
+      "verified": "✅ Verified farm"
+    },
+    "farmPro": {
+      "name": "Farm Pro",
+      "tagline": "For farmers — visibility and alerts",
+      "ctaMonth": "Monthly",
+      "ctaYear": "Yearly",
+      "f1": "Higher visibility in lists",
+      "f2": "Pro badge on passport and listings",
+      "f3": "{n} free boosts / month",
+      "f4": "Demand alerts for your crops",
+      "f5": "Priority in match lists"
+    },
+    "boost": {
+      "name": "TOP listing",
+      "name7": "TOP 7 days",
+      "name30": "TOP 30 days",
+      "tagline": "Pay the platform to pin your ad at the top of lists",
+      "features": "TOP badge + top placement",
+      "heroPill": "Most popular",
+      "f1": "Your listing at the top of category & home for 7 or 30 days",
+      "f2": "«TOP» badge on boards",
+      "f3": "Payment goes to the site owner (platform revenue)",
+      "f4": "Works for machinery, animals, shop, supply, future harvest",
+      "fromListing": "Open your listing → «Boost / Place in TOP» → pay for 7 or 30 days.",
+      "openListings": "Browse my listings",
+      "cta": "Boost / Place in TOP",
+      "choose": "Choose TOP duration (paid to the site)",
+      "buy7": "TOP 7 days · 1,500 AMD",
+      "buy30": "TOP 30 days · 3,900 AMD",
+      "useQuota": "Pro free quota ({n} left)",
+      "proHint": "Farm Pro includes free monthly TOP slots.",
+      "activeUntil": "In TOP until {date}",
+      "quotaLabel": "Pro TOP quota"
+    },
+    "verifiedFarm": {
+      "name": "Verified farm",
+      "tagline": "Paid verification · ✅ badge",
+      "cta": "Verify farm",
+      "f1": "✅ Verified farm badge on passport",
+      "f2": "MVP activates after payment"
+    },
+    "buyerPro": {
+      "name": "Buyer Pro",
+      "tagline": "Factories and wholesalers",
+      "cta": "Get Buyer Pro",
+      "f1": "Full contact earlier on future harvests",
+      "f2": "Early access to future harvests",
+      "f3": "Export matches (soon)"
+    },
+    "alerts": {
+      "proOnly": "Demand alerts require Farm Pro.",
+      "product": "Crop",
+      "subscribe": "Subscribe",
+      "saved": "Alert saved.",
+      "already": "Already subscribed."
+    },
+    "demo": {
+      "eyebrow": "Demo",
+      "title": "Demo payment",
+      "lede": "No Stripe keys. Confirm to simulate a successful payment.",
+      "banner": "demo payment — no real charge",
+      "confirm": "Confirm demo payment",
+      "cancel": "Cancel"
+    },
+    "success": {
+      "eyebrow": "Checkout",
+      "title": "Success",
+      "activated": "Your package is active.",
+      "pending": "Payment received — activation may take a moment."
+    },
+    "cancel": {
+      "eyebrow": "Checkout",
+      "title": "Canceled",
+      "lede": "Payment was canceled. You can try again.",
+      "home": "Home"
+    },
+    "errors": {
+      "generic": "Something went wrong. Try again.",
+      "unauthorized": "Please sign in.",
+      "pro_required": "Farm Pro required.",
+      "quota_exhausted": "Pro quota exhausted.",
+      "not_owner": "You can only boost your own listing.",
+      "boost_target_required": "Choose a listing.",
+      "not_found": "Not found.",
+      "not_demo": "Not a demo payment.",
+      "demo_disabled_when_stripe_configured": "Stripe is on — demo is disabled."
+    }
   }
 }

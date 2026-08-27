@@ -10,6 +10,8 @@ import { findMatchesForSupply } from "@/lib/matching";
 import { formatAmd, formatPriceRange, formatQty, parseImageUrls } from "@/lib/utils";
 import { localizedPlaceName } from "@/lib/places";
 import { getSession } from "@/lib/session";
+import { BoostButton } from "@/components/BoostButton";
+import { getActiveBoostMap, getUserEntitlements } from "@/lib/monetization";
 import { ProductIcon } from "@/components/AgIcons";
 import { VillageLink } from "@/components/VillageLink";
 
@@ -46,6 +48,10 @@ export default async function SupplyDetailPage({
   const marzLabel = t(`marzes.${supply.marz.slug}` as "marzes.Yerevan");
   const isOwner = session?.user?.id === supply.userId;
   const images = parseImageUrls(supply.imageUrls);
+  const boostMap = await getActiveBoostMap("SUPPLY", [supply.id]);
+  const boostedUntil = boostMap.get(supply.id);
+  const ownerEnt =
+    isOwner && session?.user?.id ? await getUserEntitlements(session.user.id) : null;
 
   return (
     <div className="section detail-page">
@@ -124,6 +130,19 @@ export default async function SupplyDetailPage({
             : `Hi, interested in: ${supply.title}`
         }
       />
+
+      {isOwner ? (
+        <section className="owner-panel">
+          <h2>{t("pricing.boost.cta")}</h2>
+          <BoostButton
+            targetType="SUPPLY"
+            targetId={supply.id}
+            isPro={Boolean(ownerEnt?.isPro)}
+            boostQuotaRemaining={ownerEnt?.boostQuotaRemaining ?? 0}
+            currentlyBoostedUntil={boostedUntil?.toISOString() ?? null}
+          />
+        </section>
+      ) : null}
 
       <section className="match-section killer-flow">
         <h2>{t("findBuyer.title")}</h2>

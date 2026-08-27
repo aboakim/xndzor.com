@@ -8,6 +8,12 @@ import { MachineryFilters } from "@/components/MachineryFilters";
 import { MachineryTypeIcon } from "@/components/AgIcons";
 import { MACHINERY_TYPES } from "@/lib/machinery";
 import { getSession } from "@/lib/session";
+import { getFarmScoreSnippets } from "@/lib/farm-score";
+import {
+  getActiveBoostMap,
+  getProUserIds,
+  sortByMonetization,
+} from "@/lib/monetization";
 
 export default async function MachineryBoardPage({
   params,
@@ -70,6 +76,14 @@ export default async function MachineryBoardPage({
     orderBy: { createdAt: "desc" },
   });
 
+  const snippets = await getFarmScoreSnippets(listings.map((m) => m.userId));
+  const boostMap = await getActiveBoostMap(
+    "MACHINERY",
+    listings.map((m) => m.id),
+  );
+  const proIds = await getProUserIds(listings.map((m) => m.userId));
+  const ranked = sortByMonetization(listings, boostMap, proIds);
+
   return (
     <div className="section page-board">
       <Breadcrumbs
@@ -123,7 +137,7 @@ export default async function MachineryBoardPage({
         priceMax={sp.priceMax}
       />
 
-      {listings.length === 0 ? (
+      {ranked.length === 0 ? (
         <EmptyState
           message={t("machineryBoard.empty")}
           actionHref="/machinery/new"
@@ -131,26 +145,33 @@ export default async function MachineryBoardPage({
         />
       ) : (
         <div className="classified-list">
-          {listings.map((m) => (
-            <MachineryCard
-              key={m.id}
-              id={m.id}
-              title={m.title}
-              machineryType={m.machineryType}
-              make={m.make}
-              model={m.model}
-              year={m.year}
-              condition={m.condition}
-              priceAmd={m.priceAmd}
-              priceNegotiable={m.priceNegotiable}
-              engineHours={m.engineHours}
-              mileageKm={m.mileageKm}
-              powerHp={m.powerHp}
-              marz={{ ...m.marz, slug: m.marz.slug }}
-              village={m.village}
-              imageUrls={m.imageUrls}
-            />
-          ))}
+          {ranked.map((m) => {
+            const sn = snippets.get(m.userId);
+            return (
+              <MachineryCard
+                key={m.id}
+                id={m.id}
+                title={m.title}
+                machineryType={m.machineryType}
+                make={m.make}
+                model={m.model}
+                year={m.year}
+                condition={m.condition}
+                priceAmd={m.priceAmd}
+                priceNegotiable={m.priceNegotiable}
+                engineHours={m.engineHours}
+                mileageKm={m.mileageKm}
+                powerHp={m.powerHp}
+                marz={{ ...m.marz, slug: m.marz.slug }}
+                village={m.village}
+                imageUrls={m.imageUrls}
+                farmScore={sn?.score ?? null}
+                trusted={sn?.trusted ?? false}
+                isPro={proIds.has(m.userId)}
+                boosted={boostMap.has(m.id)}
+              />
+            );
+          })}
         </div>
       )}
     </div>

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { MARZES } from "@/lib/locations";
 import { UNITS } from "@/lib/validations";
 import { ProductIcon } from "@/components/AgIcons";
+import { LiveCropSignal } from "@/components/LiveCropSignal";
 
 type Product = { id: string; slug: string; nameKey: string };
 
@@ -72,6 +73,7 @@ export function ForwardCropForm({
           ))}
         </span>
       </label>
+      {productId ? <LiveCropSignal productId={productId} /> : null}
       <label>
         <span>{t("forwardForm.title")}</span>
         <input name="title" required minLength={5} />

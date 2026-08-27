@@ -40,6 +40,7 @@ Set in `next.config.ts`: CSP (Next-friendly), `X-Frame-Options: DENY`, `nosniff`
 - Prisma parameterized queries only (no raw SQL with user input).
 - User text stripped of HTML tags before storage; React escapes on render (no `dangerouslySetInnerHTML`).
 - Zod validation on create/update payloads.
+- **Farm Passport / Product Passport** — public read by `farmId` / `batchCode`. Phone on passport only if `showPhoneOnPassport`. Batch create requires session + ownership of plot/future harvest (`POST /api/batches`).
 
 ## Residual risks (honest)
 

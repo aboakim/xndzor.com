@@ -7,22 +7,22 @@ import { IconBuy, IconForward, IconOrderJob, IconPlot, IconToday } from "@/compo
 const TABS = [
   { href: "/", key: "home" as const, Icon: IconToday, match: (p: string) => p === "/" },
   {
+    href: "/grow",
+    key: "grow" as const,
+    Icon: IconForward,
+    match: (p: string) => p.startsWith("/grow") || p.startsWith("/exchange"),
+  },
+  {
     href: "/plots",
     key: "plots" as const,
     Icon: IconPlot,
     match: (p: string) => p.startsWith("/plots"),
   },
   {
-    href: "/forward",
-    key: "sellCrop" as const,
-    Icon: IconForward,
-    match: (p: string) => p.startsWith("/forward") || p.startsWith("/supply"),
-  },
-  {
     href: "/demand",
     key: "findBuyer" as const,
     Icon: IconBuy,
-    match: (p: string) => p.startsWith("/demand"),
+    match: (p: string) => p.startsWith("/demand") || p.startsWith("/forward"),
   },
   {
     href: "/jobs",

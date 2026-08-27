@@ -51,15 +51,29 @@ export function Header() {
               ))}
             </div>
             {session ? (
-              <button
-                type="button"
-                className="linkish utility-auth"
-                onClick={() => signOut({ callbackUrl: `/${locale}` })}
-              >
-                {t("logout")}
-              </button>
+              <>
+                <Link href="/pricing" className="utility-link utility-pro">
+                  {t("pricing")}
+                </Link>
+                <Link href="/farms/me" className="utility-link">
+                  {t("myPassport")}
+                </Link>
+                <Link href="/account/billing" className="utility-link">
+                  {t("billing")}
+                </Link>
+                <button
+                  type="button"
+                  className="linkish utility-auth"
+                  onClick={() => signOut({ callbackUrl: `/${locale}` })}
+                >
+                  {t("logout")}
+                </button>
+              </>
             ) : (
               <>
+                <Link href="/pricing" className="utility-link">
+                  {t("pricing")}
+                </Link>
                 <Link href="/auth/login" className="utility-link">
                   {t("login")}
                 </Link>
@@ -102,6 +116,12 @@ export function Header() {
           <Link href="/" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
             {t("home")}
           </Link>
+          <Link href="/farms/me" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
+            {t("myPassport")}
+          </Link>
+          <Link href="/grow" className="nav-item" onClick={() => setOpen(false)}>
+            {t("grow")}
+          </Link>
           <Link href="/plots" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
             {t("plots")}
           </Link>
@@ -119,6 +139,27 @@ export function Header() {
           </Link>
           <Link href="/machinery" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
             {t("machinery")}
+          </Link>
+          <Link href="/animals" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
+            {t("animals")}
+          </Link>
+          <Link href="/shop/fertilizers" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
+            {t("fertilizers")}
+          </Link>
+          <Link href="/shop/seeds" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
+            {t("seeds")}
+          </Link>
+          <Link href="/shop/feed" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
+            {t("feed")}
+          </Link>
+          <Link href="/shop/chemicals" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
+            {t("chemicals")}
+          </Link>
+          <Link href="/shop/tools" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
+            {t("tools")}
+          </Link>
+          <Link href="/shop/land" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
+            {t("land")}
           </Link>
           <Link href="/group-buy" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
             {t("groupBuy")}

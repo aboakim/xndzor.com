@@ -2,29 +2,39 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
-import { ActionIcon, JobTypeIcon, MachineryTypeIcon, ProductIcon } from "@/components/AgIcons";
+import { ActionIcon, JobTypeIcon, ProductIcon } from "@/components/AgIcons";
 import { ClassifiedRow } from "@/components/ClassifiedRow";
 import { HomeSection } from "@/components/HomeSection";
+import { OverproductionSignal, signalLabel } from "@/components/OverproductionSignal";
 import { PostCard } from "@/components/PostCard";
+import { Reveal } from "@/components/Reveal";
 import { SearchBar } from "@/components/SearchBar";
 import { VillageLink } from "@/components/VillageLink";
 import { resolveTaskCopy } from "@/lib/task-copy";
 import { fetchMarzWeather } from "@/lib/weather";
 import { formatAmd, formatPriceRange, formatQty, parseImageUrls } from "@/lib/utils";
 import { effectiveTons } from "@/lib/yield";
+import { getCropRankings } from "@/lib/exchange";
+import {
+  getActiveBoostMap,
+  getProUserIds,
+  sortByMonetization,
+} from "@/lib/monetization";
+import { MonetizationPills } from "@/components/MonetizationBadges";
 
 const CATEGORIES = [
+  { href: "/grow", action: "grow", labelKey: "menu.grow" as const },
   { href: "/plots", action: "plot", labelKey: "menu.plots" as const },
-  { href: "/#today", action: "today", labelKey: "menu.today" as const },
   { href: "/forward", action: "forward", labelKey: "menu.forward" as const },
   { href: "/demand", action: "buy", labelKey: "menu.buy" as const },
-  { href: "/supply", action: "sell", labelKey: "menu.sellNow" as const },
   { href: "/machinery", action: "machinery", labelKey: "menu.machinery" as const },
+  { href: "/animals", action: "animals", labelKey: "menu.animals" as const },
   { href: "/jobs", action: "orderJob", labelKey: "menu.jobs" as const },
-  { href: "/group-buy", action: "groupBuy", labelKey: "menu.groupBuy" as const },
+  { href: "/shop/fertilizers", action: "fertilizers", labelKey: "menu.fertilizers" as const },
 ] as const;
 
 const FEED_TAKE = 6;
+const FEED_FETCH = 24;
 
 export default async function HomePage({
   params,
@@ -37,30 +47,34 @@ export default async function HomePage({
   const session = await getSession();
 
   const [
-    harvests,
-    supplies,
+    rankings,
+    harvestsRaw,
+    suppliesRaw,
     demands,
     jobs,
     campaigns,
-    machines,
+    machineryRaw,
+    animalsRaw,
     harvestCount,
     supplyCount,
     demandCount,
     jobCount,
     campaignCount,
-    machineCount,
+    machineryCount,
+    animalCount,
   ] = await Promise.all([
+    getCropRankings(),
     prisma.futureHarvest.findMany({
       where: { status: "ACTIVE" },
       include: { product: true, marz: true, village: true, preOffers: true },
       orderBy: { harvestDate: "asc" },
-      take: FEED_TAKE,
+      take: FEED_FETCH,
     }),
     prisma.supply.findMany({
       where: { status: "ACTIVE" },
       include: { product: true, marz: true, village: true },
       orderBy: { createdAt: "desc" },
-      take: FEED_TAKE,
+      take: FEED_FETCH,
     }),
     prisma.demand.findMany({
       where: { status: "ACTIVE" },
@@ -84,7 +98,13 @@ export default async function HomePage({
       where: { status: "ACTIVE" },
       include: { marz: true, village: true },
       orderBy: { createdAt: "desc" },
-      take: FEED_TAKE,
+      take: FEED_FETCH,
+    }),
+    prisma.animalListing.findMany({
+      where: { status: "ACTIVE" },
+      include: { marz: true, village: true },
+      orderBy: { createdAt: "desc" },
+      take: FEED_FETCH,
     }),
     prisma.futureHarvest.count({ where: { status: "ACTIVE" } }),
     prisma.supply.count({ where: { status: "ACTIVE" } }),
@@ -92,7 +112,44 @@ export default async function HomePage({
     prisma.jobRequest.count({ where: { status: "ACTIVE" } }),
     prisma.groupBuyCampaign.count({ where: { status: { in: ["OPEN", "QUOTED"] } } }),
     prisma.machineryListing.count({ where: { status: "ACTIVE" } }),
+    prisma.animalListing.count({ where: { status: "ACTIVE" } }),
   ]);
+
+  const [harvestBoost, supplyBoost, machBoost, animalBoost] = await Promise.all([
+    getActiveBoostMap(
+      "FUTURE_HARVEST",
+      harvestsRaw.map((h) => h.id),
+    ),
+    getActiveBoostMap(
+      "SUPPLY",
+      suppliesRaw.map((s) => s.id),
+    ),
+    getActiveBoostMap(
+      "MACHINERY",
+      machineryRaw.map((m) => m.id),
+    ),
+    getActiveBoostMap(
+      "ANIMAL",
+      animalsRaw.map((a) => a.id),
+    ),
+  ]);
+  const [harvestPro, supplyPro, machPro, animalPro] = await Promise.all([
+    getProUserIds(harvestsRaw.map((h) => h.userId)),
+    getProUserIds(suppliesRaw.map((s) => s.userId)),
+    getProUserIds(machineryRaw.map((m) => m.userId)),
+    getProUserIds(animalsRaw.map((a) => a.userId)),
+  ]);
+
+  const harvests = sortByMonetization(harvestsRaw, harvestBoost, harvestPro).slice(
+    0,
+    FEED_TAKE,
+  );
+  const supplies = sortByMonetization(suppliesRaw, supplyBoost, supplyPro).slice(
+    0,
+    FEED_TAKE,
+  );
+  const machinery = sortByMonetization(machineryRaw, machBoost, machPro).slice(0, 4);
+  const animals = sortByMonetization(animalsRaw, animalBoost, animalPro).slice(0, 4);
 
   let plots: Awaited<ReturnType<typeof loadPlots>> = [];
   let weatherSummary: string | null = null;
@@ -112,29 +169,33 @@ export default async function HomePage({
     }))
   );
 
+  const overExample = rankings.find((r) => r.signal === "OVER") || null;
+  const underExample = rankings.find((r) => r.signal === "UNDER") || null;
+  const highlight = overExample || underExample || rankings[0] || null;
+
   const marzLabel = (slug: string) => t(`marzes.${slug}` as "marzes.Yerevan");
   const day = (d: Date) => d.toISOString().slice(0, 10);
   const postHref = session ? (plots.length === 0 ? "/plots/new" : "/forward/new") : "/auth/register";
 
   return (
     <div className="home-listam">
-      <section className="home-search-block">
-        <div className="home-search-inner">
+      <section className="home-search-block motion-hero">
+        <div className="home-search-inner animate-rise">
           <h1 className="sr-only">{t("brand")}</h1>
           <SearchBar large />
           <Link href={postHref} className="btn primary home-post-btn">
             {t("nav.post")}
           </Link>
         </div>
-        <p className="home-welcome muted">
+        <p className="home-welcome muted animate-fade-delay">
           {session
-            ? `${t("dashboard.greeting", { name: session.user.name || "" })}${weatherSummary ? ` · ${weatherSummary}` : ""}`
+            ? `${t("dashboard.greeting", { name: session.user?.name || "" })}${weatherSummary ? ` · ${weatherSummary}` : ""}`
             : t("tagline")}
         </p>
       </section>
 
       <section className="section home-categories">
-        <div className="category-icon-grid">
+        <div className="category-icon-grid motion-chip-stagger">
           {CATEGORIES.map((cat) => (
             <Link key={cat.labelKey} href={cat.href} className="category-icon-tile">
               <span className={`cat-icon action-${cat.action}`} aria-hidden>
@@ -146,8 +207,62 @@ export default async function HomePage({
         </div>
       </section>
 
+      <Reveal as="section" className="section home-grow-spotlight" stagger>
+        <div className="grow-spotlight-card">
+          <div className="grow-spotlight-copy">
+            <p className="eyebrow">{t("grow.eyebrow")}</p>
+            <h2>{t("grow.homeHeadline")}</h2>
+            <p className="lede">{t("grow.homeLede")}</p>
+            <div className="grow-cta-row">
+              <Link href="/grow" className="btn primary">
+                {t("grow.ctaBoard")}
+              </Link>
+              <Link href={session ? "/plots/new" : "/auth/register"} className="btn ghost">
+                {t("grow.ctaPlot")}
+              </Link>
+            </div>
+          </div>
+          {highlight ? (
+            <div className="grow-spotlight-signal">
+              <OverproductionSignal
+                row={highlight}
+                t={(k, v) => t(k as "grow.signalOverTitle", v)}
+                locale={locale}
+                compact
+                showMethod={false}
+              />
+            </div>
+          ) : null}
+        </div>
+
+        {rankings.length > 0 ? (
+          <ol className="crop-rank-list home-rank">
+            {rankings.slice(0, 5).map((r, i) => (
+              <li key={r.productId}>
+                <Link href={`/grow?crop=${r.productId}`} className="rank-link">
+                  <span className="rank-n">{i + 1}</span>
+                  <ProductIcon slugOrKey={r.slug} size={20} />
+                  <span className="rank-body">
+                    <strong>{t(r.nameKey as "products.tomato")}</strong>
+                    <em>
+                      {r.demandTons} {t("units.ton")} · {r.buyerCount} {t("grow.buyers")}
+                      {r.avgPriceAmdPerKg != null
+                        ? ` · ~${formatAmd(r.avgPriceAmdPerKg, locale)} ֏/${t("units.kg")}`
+                        : ""}
+                    </em>
+                  </span>
+                  <span className={`signal-chip is-${r.signal.toLowerCase()} signal-pulse-once`}>
+                    {signalLabel(r.signal, (k, v) => t(k as "grow.chipOver", v))}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ol>
+        ) : null}
+      </Reveal>
+
       {session ? (
-        <section className="section home-farm-strip" id="today">
+        <Reveal as="section" className="section home-farm-strip" id="today">
           <div className="home-feed-head">
             <h2>
               <span className="home-feed-icon action-today" aria-hidden>
@@ -201,9 +316,9 @@ export default async function HomePage({
               })}
             </div>
           ) : null}
-        </section>
+        </Reveal>
       ) : (
-        <section className="section home-feature-row">
+        <Reveal as="section" className="section home-feature-row" stagger>
           <Link href="/auth/login" className="feature-tile feature-today">
             <span className="feature-tile-icon" aria-hidden>
               <ActionIcon action="today" size={32} />
@@ -211,14 +326,14 @@ export default async function HomePage({
             <strong>{t("menu.today")}</strong>
             <span>{t("menu.todayDesc")}</span>
           </Link>
-          <Link href="/forward" className="feature-tile feature-forward">
+          <Link href="/grow" className="feature-tile feature-forward">
             <span className="feature-tile-icon" aria-hidden>
-              <ActionIcon action="forward" size={32} />
+              <ActionIcon action="grow" size={32} />
             </span>
-            <strong>{t("menu.forward")}</strong>
-            <span>{t("menu.sellDesc")}</span>
+            <strong>{t("menu.grow")}</strong>
+            <span>{t("menu.growDesc")}</span>
           </Link>
-        </section>
+        </Reveal>
       )}
 
       <HomeSection
@@ -236,6 +351,7 @@ export default async function HomePage({
               const reserved = h.preOffers
                 .filter((o) => o.status !== "DECLINED")
                 .reduce((s, o) => s + o.qtyWanted, 0);
+              const top = harvestBoost.has(h.id);
               return (
                 <PostCard
                   key={h.id}
@@ -248,9 +364,17 @@ export default async function HomePage({
                     day(h.harvestDate),
                   ]}
                   badge={
-                    reserved > 0
-                      ? t("forwardBoard.reserved", { qty: reserved, total: h.qtyExpected })
-                      : null
+                    top || reserved > 0 ? (
+                      <>
+                        {top ? <MonetizationPills boosted /> : null}
+                        {reserved > 0
+                          ? t("forwardBoard.reserved", {
+                              qty: reserved,
+                              total: h.qtyExpected,
+                            })
+                          : null}
+                      </>
+                    ) : null
                   }
                   value={h.priceAmd != null ? `${formatAmd(h.priceAmd)} ֏` : undefined}
                   place={
@@ -291,6 +415,14 @@ export default async function HomePage({
                     ? t("supply.readyNow")
                     : t("supply.readyIn", { days: s.readyInDays }),
                 ]}
+                badge={
+                  supplyBoost.has(s.id) || supplyPro.has(s.userId) ? (
+                    <MonetizationPills
+                      boosted={supplyBoost.has(s.id)}
+                      isPro={supplyPro.has(s.userId)}
+                    />
+                  ) : null
+                }
                 value={
                   s.priceAmd != null
                     ? formatPriceRange(s.priceAmd, s.priceAmd, s.unit, (k) => t(k as "common.amd"))
@@ -350,37 +482,64 @@ export default async function HomePage({
         title={t("home.machineryTitle")}
         href="/machinery"
         seeAllLabel={t("home.seeAll")}
-        count={machineCount}
+        count={machineryCount}
       >
-        {machines.length === 0 ? (
+        {machinery.length === 0 ? (
           <EmptyFeed message={t("machineryBoard.empty")} href="/machinery/new" label={t("common.add")} />
         ) : (
-          <div className="post-grid">
-            {machines.map((m) => (
-              <PostCard
+          <div className="classified-list">
+            {machinery.map((m) => (
+              <ClassifiedRow
                 key={m.id}
                 href={`/machinery/${m.id}`}
                 title={m.title}
+                meta={`${t(`machineryTypes.${m.machineryType}` as "machineryTypes.TRACTOR")} · ${m.make} ${m.model} · ${marzLabel(m.marz.slug)}`}
+                value={m.priceAmd != null ? `${formatAmd(m.priceAmd)} ֏` : undefined}
                 thumb={parseImageUrls(m.imageUrls)[0]}
-                icon={<MachineryTypeIcon type={m.machineryType} size={22} />}
-                facts={[
-                  t(`machineryTypes.${m.machineryType}` as "machineryTypes.TRACTOR"),
-                  `${m.make} ${m.model}`,
-                  String(m.year),
-                  m.powerHp != null ? `${m.powerHp} ${t("machinery.hp")}` : null,
-                ]}
-                value={
-                  m.priceAmd != null
-                    ? `${formatAmd(m.priceAmd)} ֏`
-                    : m.priceNegotiable
-                      ? t("detail.priceOpen")
-                      : undefined
+                icon={<ActionIcon action="machinery" size={20} />}
+                badge={
+                  <MonetizationPills
+                    boosted={machBoost.has(m.id)}
+                    isPro={machPro.has(m.userId)}
+                  />
                 }
                 place={
-                  <>
-                    {m.village ? <VillageLink village={m.village} locale={locale} /> : null}
-                    <span className="post-card-marz">{marzLabel(m.marz.slug)}</span>
-                  </>
+                  m.village ? <VillageLink village={m.village} locale={locale} /> : undefined
+                }
+              />
+            ))}
+          </div>
+        )}
+      </HomeSection>
+
+      <HomeSection
+        action="animals"
+        title={t("home.animalsTitle")}
+        href="/animals"
+        seeAllLabel={t("home.seeAll")}
+        count={animalCount}
+      >
+        {animals.length === 0 ? (
+          <EmptyFeed message={t("animalsBoard.empty")} href="/animals/new" label={t("common.add")} />
+        ) : (
+          <div className="classified-list">
+            {animals.map((a) => (
+              <ClassifiedRow
+                key={a.id}
+                href={`/animals/${a.id}`}
+                title={a.title}
+                meta={`${t(`animalTypes.${a.animalType}` as "animalTypes.COW")} · ${a.breed} · ${marzLabel(a.marz.slug)}`}
+                value={a.priceAmd != null ? `${formatAmd(a.priceAmd)} ֏` : undefined}
+                thumb={parseImageUrls(a.imageUrls)[0]}
+                icon={<ActionIcon action="animals" size={20} />}
+                badge={
+                  <MonetizationPills
+                    boosted={animalBoost.has(a.id)}
+                    isPro={animalPro.has(a.userId)}
+                  />
+                }
+                place={
+                  a.village ? <VillageLink village={a.village} locale={locale} /> : undefined
                 }
               />
             ))}
@@ -467,6 +626,24 @@ export default async function HomePage({
           </div>
         )}
       </HomeSection>
+
+      <Reveal as="section" className="section home-pricing-cta">
+        <div className="home-pricing-cta-inner">
+          <div>
+            <p className="eyebrow">{t("nav.pricing")}</p>
+            <h2>{t("home.pricingCtaTitle")}</h2>
+            <p className="lede">{t("home.pricingCtaLede")}</p>
+          </div>
+          <div className="grow-cta-row">
+            <Link href="/pricing" className="btn primary">
+              {t("home.pricingCtaButton")}
+            </Link>
+            <Link href={session ? "/forward" : "/auth/register"} className="btn ghost">
+              {session ? t("nav.forward") : t("nav.register")}
+            </Link>
+          </div>
+        </div>
+      </Reveal>
     </div>
   );
 }

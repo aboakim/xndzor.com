@@ -1,4 +1,3 @@
-import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
@@ -9,7 +8,9 @@ const isProd = process.env.NODE_ENV === "production";
 
 export { BCRYPT_ROUNDS };
 
-export const authOptions: NextAuthOptions = {
+/** Loose typing — next-auth type re-exports break under bundler resolution in this project. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const authOptions: any = {
   secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
   session: {
     strategy: "jwt",
@@ -40,13 +41,10 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
-
-        const email = credentials.email.toLowerCase().trim();
-        const failKey = `login-fail:${email}`;
-
-        const lock = isLocked(failKey);
-        if (lock.locked) return null;
+        if (!credentials?.email || !credentials.password) return null;
+        const email = String(credentials.email).toLowerCase().trim();
+        const failKey = `auth:${email}`;
+        if (isLocked(failKey).locked) return null;
 
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user) {
@@ -54,7 +52,7 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const ok = await bcrypt.compare(credentials.password, user.passwordHash);
+        const ok = await bcrypt.compare(String(credentials.password), user.passwordHash);
         if (!ok) {
           recordAuthFailure(failKey);
           return null;
@@ -70,13 +68,15 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async jwt({ token, user }: any) {
       if (user) {
         token.id = user.id;
       }
       return token;
     },
-    async session({ session, token }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async session({ session, token }: any) {
       if (session.user && token.id) {
         session.user.id = token.id as string;
       }

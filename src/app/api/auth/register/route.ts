@@ -2,9 +2,38 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { BCRYPT_ROUNDS } from "@/lib/password";
-import { registerSchema } from "@/lib/validations";
+import { registerSchema, type RegisterErrorCode } from "@/lib/validations";
 import { cleanText } from "@/lib/sanitize";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { allocateFarmId } from "@/lib/farm-id";
+
+function err(code: RegisterErrorCode, status: number, extra?: Record<string, string>) {
+  return NextResponse.json(
+    { error: code, code, ...extra },
+    {
+      status,
+      ...(extra?.retryAfter
+        ? { headers: { "Retry-After": extra.retryAfter } }
+        : {}),
+    }
+  );
+}
+
+function zodCode(issueMessage: string | undefined): RegisterErrorCode {
+  const known: RegisterErrorCode[] = [
+    "INVALID_EMAIL",
+    "PASSWORD_TOO_SHORT",
+    "PASSWORD_TOO_LONG",
+    "INVALID_NAME",
+    "INVALID_PHONE",
+    "INVALID_MARZ",
+    "VILLAGE_REQUIRED",
+  ];
+  if (issueMessage && (known as string[]).includes(issueMessage)) {
+    return issueMessage as RegisterErrorCode;
+  }
+  return "INVALID_INPUT";
+}
 
 export async function POST(req: Request) {
   try {
@@ -14,42 +43,57 @@ export async function POST(req: Request) {
       windowMs: 60 * 60 * 1000,
     });
     if (!limited.ok) {
-      return NextResponse.json(
-        { error: "Too many registrations. Try again later." },
-        { status: 429, headers: { "Retry-After": String(limited.retryAfterSec) } }
-      );
+      return err("RATE_LIMITED", 429, {
+        retryAfter: String(limited.retryAfterSec),
+      });
     }
 
     const body = await req.json();
     const parsed = registerSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+      const first = parsed.error.issues[0];
+      return err(zodCode(first?.message), 400);
     }
-    const { email, password, phone, marz } = parsed.data;
+    const { email, password, phone, marz, villageId } = parsed.data;
     const name = cleanText(parsed.data.name, 80);
     if (name.length < 2) {
-      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+      return err("INVALID_NAME", 400);
+    }
+
+    const village = await prisma.village.findUnique({
+      where: { id: villageId },
+      select: { id: true, marzId: true },
+    });
+    if (!village || village.marzId !== marz) {
+      return err("INVALID_VILLAGE", 400);
     }
 
     const exists = await prisma.user.findUnique({
       where: { email: email.toLowerCase().trim() },
     });
     if (exists) {
-      return NextResponse.json({ error: "Email already registered" }, { status: 409 });
+      return err("EMAIL_TAKEN", 409);
     }
     const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
+    const role = parsed.data.role ?? "BOTH";
+    const wantsFarm =
+      role === "FARMER" || role === "BOTH" || role === "PROVIDER";
+    const farmId = wantsFarm ? await allocateFarmId() : null;
     const user = await prisma.user.create({
       data: {
         email: email.toLowerCase().trim(),
         passwordHash,
         name,
         phone: phone ? cleanText(phone, 20) : null,
-        marzId: marz || null,
+        marzId: marz,
+        villageId: village.id,
+        role,
+        farmId,
       },
-      select: { id: true, email: true, name: true },
+      select: { id: true, email: true, name: true, farmId: true },
     });
     return NextResponse.json(user, { status: 201 });
   } catch {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    return err("SERVER_ERROR", 500);
   }
 }

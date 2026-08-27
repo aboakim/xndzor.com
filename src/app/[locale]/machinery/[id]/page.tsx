@@ -7,9 +7,14 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ListingGallery } from "@/components/ListingGallery";
 import { MachineryTypeIcon } from "@/components/AgIcons";
 import { MachineryListingActions } from "@/components/MachineryListingActions";
+import { CommentSection } from "@/components/CommentSection";
 import { VillageLink } from "@/components/VillageLink";
 import { formatAmd, parseImageUrls } from "@/lib/utils";
+import { tContent } from "@/lib/content-locale";
 import { getSession } from "@/lib/session";
+import { BoostButton } from "@/components/BoostButton";
+import { MonetizationPills } from "@/components/MonetizationBadges";
+import { getActiveBoostMap, getUserEntitlements } from "@/lib/monetization";
 
 export default async function MachineryDetailPage({
   params,
@@ -31,9 +36,22 @@ export default async function MachineryDetailPage({
   });
   if (!listing || listing.status === "HIDDEN") notFound();
 
+  const title = tContent(locale, listing.title);
+  const description = tContent(locale, listing.description);
   const marzLabel = t(`marzes.${listing.marz.slug}` as "marzes.Yerevan");
   const isOwner = session?.user?.id === listing.userId;
   const images = parseImageUrls(listing.imageUrls);
+  const boostMap = await getActiveBoostMap("MACHINERY", [listing.id]);
+  const boostedUntil = boostMap.get(listing.id);
+  const seller = await prisma.user.findUnique({
+    where: { id: listing.userId },
+    select: { isPro: true, proUntil: true },
+  });
+  const sellerPro =
+    Boolean(seller?.isPro && seller.proUntil && seller.proUntil > new Date());
+  const ownerEnt = isOwner && session?.user?.id
+    ? await getUserEntitlements(session.user.id)
+    : null;
 
   const specs: { label: string; value: string }[] = [
     {
@@ -105,7 +123,7 @@ export default async function MachineryDetailPage({
             label: t(`machineryTypes.${listing.machineryType}` as "machineryTypes.TRACTOR"),
           },
           { href: `/machinery?marz=${listing.marzId}`, label: marzLabel },
-          { label: listing.title },
+          { label: title },
         ]}
       />
 
@@ -116,9 +134,10 @@ export default async function MachineryDetailPage({
         {t("pillars.machinery")}
         {statusBadge ? ` · ${statusBadge}` : null}
       </p>
-      <h1>{listing.title}</h1>
+      <h1>{title}</h1>
       <p className="detail-product">
-        {listing.make} {listing.model} · {listing.year}
+        {listing.make} {listing.model} · {listing.year}{" "}
+        <MonetizationPills isPro={sellerPro} boosted={Boolean(boostedUntil)} />
       </p>
       <p className="detail-location">
         {listing.village ? (
@@ -176,7 +195,7 @@ export default async function MachineryDetailPage({
 
       <div className="detail-body">
         <h2>{t("detail.description")}</h2>
-        <p className="pre-wrap detail-desc">{listing.description}</p>
+        <p className="pre-wrap detail-desc">{description}</p>
         <p className="muted">
           {t("detail.postedBy")} {listing.user.name}
         </p>
@@ -187,14 +206,25 @@ export default async function MachineryDetailPage({
         whatsapp={listing.whatsapp}
         waText={
           locale === "hy"
-            ? `Բարև, հետաքրքրված եմ տեխնիկայով՝ ${listing.title}`
-            : `Hi, interested in machinery: ${listing.title}`
+            ? `Բարև, հետաքրքրված եմ տեխնիկայով՝ ${title}`
+            : locale === "ru"
+              ? `Здравствуйте, интересуюсь техникой: ${title}`
+              : `Hi, interested in machinery: ${title}`
         }
       />
+
+      <CommentSection targetType="MACHINERY" targetId={listing.id} />
 
       {isOwner ? (
         <section className="owner-panel">
           <h2>{t("myMachinery.manage")}</h2>
+          <BoostButton
+            targetType="MACHINERY"
+            targetId={listing.id}
+            isPro={Boolean(ownerEnt?.isPro)}
+            boostQuotaRemaining={ownerEnt?.boostQuotaRemaining ?? 0}
+            currentlyBoostedUntil={boostedUntil?.toISOString() ?? null}
+          />
           <MachineryListingActions id={listing.id} status={listing.status} />
           <p className="muted">
             <Link href="/my/machinery">{t("myMachinery.title")}</Link>

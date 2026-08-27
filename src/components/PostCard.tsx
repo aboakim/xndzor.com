@@ -11,7 +11,7 @@ type PostCardProps = {
   value?: string;
   /** Village map link plus marz label. */
   place?: ReactNode;
-  badge?: string | null;
+  badge?: ReactNode;
   progress?: { pct: number; label: string } | null;
 };
 
