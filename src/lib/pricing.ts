@@ -145,7 +145,10 @@ function isAnyPaymentConfigured(): boolean {
   const telcell =
     Boolean(process.env.TELCELL_MERCHANT_ID?.trim()) &&
     Boolean(process.env.TELCELL_SECRET?.trim());
-  return isStripeConfigured() || idram || telcell;
+  const bank =
+    Boolean(process.env.OWNER_BANK_ACCOUNT?.trim()) &&
+    Boolean(process.env.OWNER_BANK_HOLDER?.trim());
+  return isStripeConfigured() || idram || telcell || bank;
 }
 
 /**

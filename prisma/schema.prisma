@@ -738,7 +738,7 @@ model Payment {
   currencyCharge  String   @default("usd")
   /// PENDING | SUCCEEDED | FAILED | CANCELED
   status          String   @default("PENDING")
-  /// STRIPE | DEMO | IDRAM | TELCELL | FREE
+  /// STRIPE | DEMO | IDRAM | TELCELL | FREE | BANK_TRANSFER
   provider        String
   providerRef     String?
   /// Stripe Checkout Session id (idempotency)

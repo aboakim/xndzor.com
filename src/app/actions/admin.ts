@@ -115,3 +115,50 @@ export async function togglePlanActive(planId: string, active: boolean) {
   await prisma.plan.update({ where: { id: planId }, data: { active } });
   revalidateAdmin();
 }
+
+/**
+ * Admin confirms a manual bank transfer → activate package (same fulfillPayment path).
+ * Does not consume early-bird free slots (paid BANK_TRANSFER provider).
+ */
+export async function confirmBankPayment(paymentId: string) {
+  await assertAdmin();
+  const payment = await prisma.payment.findUnique({ where: { id: paymentId } });
+  if (!payment) throw new Error("not_found");
+  if (payment.provider !== "BANK_TRANSFER") throw new Error("invalid_provider");
+  if (payment.status === "SUCCEEDED") {
+    revalidateAdmin();
+    return;
+  }
+  if (payment.status !== "PENDING") throw new Error("invalid_status");
+
+  let meta: Record<string, unknown> = {};
+  try {
+    meta = JSON.parse(payment.metadataJson || "{}") as Record<string, unknown>;
+  } catch {
+    meta = {};
+  }
+
+  await prisma.payment.update({
+    where: { id: payment.id },
+    data: {
+      metadataJson: JSON.stringify({
+        ...meta,
+        adminConfirmedAt: new Date().toISOString(),
+      }),
+    },
+  });
+
+  const { fulfillPayment, logPaymentEvent } = await import("@/lib/payments");
+  const result = await fulfillPayment(payment.id);
+  if (result !== "activated" && result !== "already") {
+    throw new Error("fulfill_failed");
+  }
+  logPaymentEvent("bank_admin_confirmed", {
+    paymentId: payment.id,
+    userId: payment.userId,
+    productCode: payment.productCode,
+    amountAmd: payment.amountAmd,
+    result,
+  });
+  revalidateAdmin();
+}

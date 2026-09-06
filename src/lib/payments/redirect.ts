@@ -25,6 +25,7 @@ export type CheckoutRedirectResponse = {
   url?: string;
   demoCheckoutUrl?: string;
   cardCheckoutUrl?: string;
+  bankCheckoutUrl?: string;
   redirect?: { action: string; fields: Record<string, string> };
 };
 
@@ -36,6 +37,10 @@ export function handleCheckoutResponse(data: CheckoutRedirectResponse): boolean 
         ? window.location.pathname.split("/")[1] || "hy"
         : "hy";
     window.location.href = `/${locale}/checkout/success${pid}`;
+    return true;
+  }
+  if (data.mode === "bank" && data.bankCheckoutUrl) {
+    window.location.href = data.bankCheckoutUrl;
     return true;
   }
   if (data.mode === "card" && data.cardCheckoutUrl) {

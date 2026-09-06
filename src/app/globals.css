@@ -7382,6 +7382,11 @@ a.listing-card-title::after {
   border-color: rgba(0, 102, 204, 0.25);
 }
 
+.pay-badge-bank {
+  color: #1a5c3a;
+  border-color: rgba(26, 92, 58, 0.28);
+}
+
 .pay-badge-stripe {
   color: #635bff;
   border-color: rgba(99, 91, 255, 0.25);
@@ -7533,6 +7538,80 @@ a.listing-card-title::after {
 .payment-method-status-active {
   color: var(--pine);
   font-weight: 600;
+}
+
+/* Manual bank transfer checkout */
+.bank-checkout-page {
+  max-width: 32rem;
+}
+
+.bank-transfer-steps {
+  margin: 1rem 0 1.25rem;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.bank-transfer-details {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.bank-transfer-row {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.bank-transfer-row:last-child {
+  border-bottom: none;
+}
+
+.bank-transfer-row dt {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.bank-transfer-row dd {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.bank-transfer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.bank-transfer-pending {
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--pine) 8%, var(--surface));
+}
+
+.bank-transfer-pending-title {
+  margin: 0 0 0.35rem;
+  font-weight: 600;
+}
+
+.admin-payment-pending {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
 }
 
 /* Card checkout + ARCA OTP */

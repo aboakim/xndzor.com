@@ -11,6 +11,7 @@ type PaymentAvailability = {
   stripe: boolean;
   idram: boolean;
   telcell: boolean;
+  bank: boolean;
   any: boolean;
   demo: boolean;
 };
@@ -30,7 +31,14 @@ async function fetchCsrfToken(): Promise<string> {
 async function fetchAvailability(): Promise<PaymentAvailability> {
   const res = await fetch("/api/payments/methods");
   if (!res.ok) {
-    return { stripe: false, idram: false, telcell: false, any: false, demo: true };
+    return {
+      stripe: false,
+      idram: false,
+      telcell: false,
+      bank: false,
+      any: false,
+      demo: true,
+    };
   }
   return res.json() as Promise<PaymentAvailability>;
 }
@@ -129,7 +137,7 @@ export function PaymentMethodPicker({
   }, []);
 
   const methods: {
-    id: "stripe" | "idram" | "telcell";
+    id: "stripe" | "idram" | "telcell" | "bank";
     label: string;
     badges: ReactNode;
     enabled: boolean;
@@ -158,12 +166,20 @@ export function PaymentMethodPicker({
       badges: <span className="pay-badge pay-badge-telcell">TelCell</span>,
       enabled: Boolean(availability?.telcell),
     },
+    {
+      id: "bank",
+      label: t("bankTransfer.label"),
+      badges: <span className="pay-badge pay-badge-bank">Bank</span>,
+      enabled: Boolean(availability?.bank),
+    },
   ];
 
   const demoMode = Boolean(availability?.demo);
-  const visibleMethods = methods.filter((m) => m.enabled || demoMode);
+  const visibleMethods = methods.filter(
+    (m) => m.enabled || (demoMode && m.id !== "bank"),
+  );
 
-  async function checkout(provider: "stripe" | "idram" | "telcell") {
+  async function checkout(provider: "stripe" | "idram" | "telcell" | "bank") {
     if (status === "unauthenticated" || !session) {
       window.location.href = `/${locale}/auth/login?callbackUrl=/${locale}/pricing`;
       return;
@@ -191,6 +207,7 @@ export function PaymentMethodPicker({
         url?: string;
         demoCheckoutUrl?: string;
         cardCheckoutUrl?: string;
+        bankCheckoutUrl?: string;
         redirect?: { action: string; fields: Record<string, string> };
         ok?: boolean;
       };

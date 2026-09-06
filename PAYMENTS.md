@@ -1,7 +1,41 @@
 # Վճարումներ / Payments — Xndzor.com (Խնձոր․քոմ)
 
 Քայլ առ քայլ՝ **իրական վճարումներ** ստանալու համար Հայաստանից։  
-Աջակցվող միջոցներ՝ **Visa, Mastercard, ArCa** (Stripe), **iDram**, **TelCell**։
+Աջակցվող միջոցներ՝ **բանկային փոխանցում (խորհուրդ է տրվում սկսել այստեղից)**, **Visa / Mastercard / ArCa** (Stripe), **iDram**, **TelCell**։
+
+---
+
+## 0. Ամենաարագ ուղի Հայաստանի համար (խորհուրդ)
+
+**Բանկային փոխանցում** → գումարը գալիս է **ձեր** հաշվին։ Merchant պայմանագիր պետք չէ։
+
+1. Բացեք ձեր բանկի հավելվածը / հաշիվը և պատճենեք՝
+   - բանկի անուն
+   - հաշվեհամար
+   - ստացողի անուն (անձ կամ ընկերություն)
+2. Vercel → Project → **Settings → Environment Variables** ավելացրեք.
+
+```env
+PACKAGES_FREE=false
+EARLY_BIRD_FREE_LIMIT=100
+
+OWNER_BANK_NAME=Ameriabank
+OWNER_BANK_ACCOUNT=0123456789012345
+OWNER_BANK_HOLDER=Անուն Ազգանուն / Company LLC
+OWNER_BANK_INN=
+OWNER_BANK_BIC=
+OWNER_BANK_NOTE=Նշեք վճարման կոդը նպատակում
+```
+
+3. **Redeploy** (Deployments → Redeploy).
+4. Թեստ՝ https://www.xndzor.com/hy/pricing → գնել փաթեթ → **Բանկային փոխանցում**.
+5. Օգտատերը փոխանցում է և սեղմում է **«Ես վճարել եմ»**.
+6. Դուք մտնում եք **Ադմին → Վճարումներ** → ստուգում եք հաշվին մուտքը → **Հաստատել վճարումը** → փաթեթը ակտիվանում է։
+
+> Early-bird անվճար տեղերը **չեն** սպառվում վճարովի բանկային ճանապարհով։
+
+**Ադմին էջ.** https://www.xndzor.com/hy/admin/payments  
+**Օգտատիրոջ էջ.** `/hy/checkout/bank?paymentId=…`
 
 ---
 
@@ -15,7 +49,8 @@
 
 > **AMD vs USD:** Կայքում գները ցուցադրվում են **դրամով (AMD)** (`src/lib/pricing.ts`)։  
 > Stripe-ը հաճախ գանձում է **USD**-ով։ Փոխարժեքը՝ `AMD_PER_USD = 400`։  
-> **ArCa** քարտերը Հայաստանում սովորաբար աշխատում են Stripe Checkout-ով — թեստավորեք live mode-ում։
+> **ArCa** քարտերը Հայաստանում սովորաբար աշխատում են Stripe-ով — թեստավորեք live mode-ում։  
+> Եթե Stripe-ը չի աջակցում ձեր երկիրը որպես merchant — օգտագործեք **բանկային փոխանցում** կամ iDram/TelCell։
 
 ### 1.2 API բանալիներ
 
@@ -123,11 +158,19 @@ https://YOUR_DOMAIN/api/payments/telcell/callback
 ## 4. Unified checkout UI
 
 `/pricing`, boost modal, checkout — **վճարման եղանակի ընտրություն:**
+- **Բանկային փոխանցում** — երբ `OWNER_BANK_ACCOUNT` + `OWNER_BANK_HOLDER` set → `/[locale]/checkout/bank`
 - **Բանկային քարտ (Visa / MC / ArCa)** — on-site card form → `/[locale]/checkout/card?paymentId=…`
 - **iDram** — երբ `IDRAM_SECRET_KEY` + `IDRAM_EDP_REC_ACCOUNT` set
 - **TelCell** — երբ `TELCELL_MERCHANT_ID` + `TELCELL_SECRET` set
 
-### 4.1 Card checkout flow (Visa / MC / ArCa)
+### 4.1 Bank transfer flow
+
+1. Checkout ստեղծում է `Payment` (`provider: BANK_TRANSFER`, `status: PENDING`)
+2. Օգտատերը տեսնում է ձեր հաշվի տվյալները + `XND-……` կոդը
+3. Փոխանցում է գումարը → սեղմում է **Ես վճարել եմ** (դեռ PENDING)
+4. Ադմինը հաստատում է → `fulfillPayment()` → SUCCEEDED + փաթեթի ակտիվացում
+
+### 4.2 Card checkout flow (Visa / MC / ArCa)
 
 **Route:** `/hy/checkout/card?paymentId=…` (also `ru`, `en`)
 
@@ -146,33 +189,13 @@ https://YOUR_DOMAIN/api/payments/telcell/callback
 | `POST /api/payments/card/resend-otp` | Resend OTP (demo, rate limited) |
 | `GET /api/payments/card/info` | Payment summary for checkout page |
 
-**Demo mode (no Stripe/bank keys):** Full card + simulated ARCA SMS OTP. OTP logged to server console:
+**Demo mode (no Stripe/bank keys):** Full card + simulated ARCA SMS OTP. OTP logged to server console.
 
-```
-[DEMO] ARCA OTP for payment clxxx → +374***22: 123456
-```
-
-Optional testing: `DEMO_OTP_IN_RESPONSE=true` returns OTP in API response (**never in production**).
-
-**Production — Stripe:** Stripe **PaymentIntent + Payment Element** (PCI — PAN/CVV never touch our server). 3D Secure / bank SMS handled by Stripe; UI copy references ARCA/բանկի հաստատում. Monthly subscriptions still use Stripe Checkout Session (redirect).
-
-**Future — Armenian ArCa/bank gateway:** Merchant registers with bank, enables 3DS SMS. Env for gateway redirect if needed. Step 2 OTP UI matches bank SMS flow. See section 10 below.
+**Production — Stripe:** Stripe **PaymentIntent + Payment Element** (PCI — PAN/CVV never touch our server).
 
 **Security:** Never log full card number/CVV. Rate limit OTP (5 attempts). OTP expires 5 minutes.
 
-**Demo mode:** local dev, երբ **ոչ մի** provider կարգավորված չէ → card checkout with simulated OTP  
-**Production:** գոնե **մեկ** provider պարտադիր, հ contrary 503։
-
----
-
-## 4b. Future — ArCa / bank direct integration
-
-When integrating a local Armenian bank gateway (ArCa 3DS SMS):
-
-1. Merchant registers with the bank and enables 3DS SMS on the merchant account.
-2. Add gateway env vars (redirect URL, merchant ID, secret) — TBD per bank API.
-3. Step 2 OTP UI on `/checkout/card` already matches bank SMS UX; wire `initiate`/`verify-otp` to bank APIs instead of demo OTP.
-4. Keep `fulfillPayment()` as the single entitlement hook after bank confirms payment.
+**Production:** գոնե **մեկ** provider պարտադիր (Stripe / iDram / TelCell / bank), հակառակ դեպքում 503։
 
 ---
 
@@ -195,36 +218,50 @@ Success URL՝ `/hy/checkout/success?paymentId=…`
 
 - Callback signature verification (iDram MD5, TelCell MD5, Stripe webhook HMAC)
 - Return URL alone **never trusted**
+- Bank transfer: user «I've paid» **does not** activate — only admin confirm
 - CSRF token checkout POST-ի վրա
 - Rate limit checkout + callbacks
 - Server-side amounts from `pricing.ts` only
 
 ---
 
-## 6b. Անվճար փաթեթներ (launch) / Free packages
+## 6b. Անվճար փաթեթներ և early-bird
 
-By default **`PACKAGES_FREE=true`** (also the default when unset):
+By default **`PACKAGES_FREE=true`** forces everything free.
 
-- Farm Pro, Buyer Pro, Verified Farm, TOP/Boost activate at **0 AMD**
-- Checkout skips Stripe / iDram / TelCell and fulfills immediately (`provider: FREE`)
-- Pricing page shows **Անվճար / Free** and **Ակտիվացնել / Activate**
-- Catalog AMD amounts in `src/lib/pricing.ts` stay as reference for later paid launch
-
-**Re-enable paid packages:**
+Live launch pattern:
 
 ```env
 PACKAGES_FREE=false
+EARLY_BIRD_FREE_LIMIT=100
 ```
 
-Then configure at least one payment provider and restart the app. Users must activate packages again after expiry (or keep existing entitlements until `proUntil` / boost `endsAt`).
+- First 100 **package activations** are free forever (`provider: FREE`)
+- When slots are full → paid path (bank / Stripe / iDram / TelCell)
+- Paid activations **do not** consume early-bird slots
+
+**Re-enable paid-only (no free slots):**
+
+```env
+EARLY_BIRD_FREE_LIMIT=0
+```
 
 ---
 
 ## 7. Env ամբողջական ցանկ
 
 ```env
-# Free launch (default true) — set false when ready to charge
-PACKAGES_FREE=true
+# Free launch / early-bird
+PACKAGES_FREE=false
+EARLY_BIRD_FREE_LIMIT=100
+
+# Bank transfer → your AMD account (recommended start)
+OWNER_BANK_NAME=
+OWNER_BANK_ACCOUNT=
+OWNER_BANK_HOLDER=
+OWNER_BANK_INN=
+OWNER_BANK_BIC=
+OWNER_BANK_NOTE=
 
 # Stripe
 STRIPE_SECRET_KEY=
@@ -243,18 +280,18 @@ TELCELL_SECRET=
 TELCELL_CHECKOUT_URL=https://telcellmoney.am/invoices
 
 # Optional
-PAYMENT_PROVIDER=stripe
+PAYMENT_PROVIDER=bank
 DEMO_OTP_IN_RESPONSE=true
-STRIPE_PRICE_FARM_PRO_MONTHLY=
-# …
 ```
 
 ---
 
-## 8. Production callback URLs (փոխարինեք YOUR_DOMAIN)
+## 8. Production callback / page URLs
 
 | Provider | URL |
 |----------|-----|
+| Bank transfer (user) | `https://YOUR_DOMAIN/hy/checkout/bank?paymentId={id}` |
+| Admin confirm | `https://YOUR_DOMAIN/hy/admin/payments` |
 | Stripe webhook | `https://YOUR_DOMAIN/api/checkout/webhook` |
 | iDram RESULT_URL | `https://YOUR_DOMAIN/api/payments/idram/callback` |
 | TelCell callback | `https://YOUR_DOMAIN/api/payments/telcell/callback` |
@@ -266,10 +303,12 @@ STRIPE_PRICE_FARM_PRO_MONTHLY=
 
 ## 9. Ստուգացանկ
 
-- [ ] Stripe live keys + webhook
-- [ ] iDram merchant + RESULT_URL callback tested
-- [ ] TelCell merchant + callback tested
-- [ ] TOP boost → հայտարարությունը վերևում
-- [ ] Farm Pro / Verified ակտիվացվում են
-- [ ] `/hy/admin/earnings` ցույց է տալիս վճարում
-- [ ] Production-ում demo checkout **չի** բացվում
+- [ ] `OWNER_BANK_*` set on Vercel + redeploy
+- [ ] Pricing → Bank transfer → instructions page works
+- [ ] Admin confirms PENDING bank payment → package unlocks
+- [ ] Early-bird free claim still works while slots remain
+- [ ] Paid path does **not** reduce early-bird remaining
+- [ ] (Optional) Stripe live keys + webhook
+- [ ] (Optional) iDram / TelCell merchant + callback tested
+- [ ] `/hy/admin/payments` shows revenue
+- [ ] Production-ում demo checkout **չի** բացվում երբ provider կա

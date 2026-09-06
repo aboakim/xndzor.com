@@ -2,9 +2,41 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { formatAmd } from "@/lib/utils";
 import { maskEmail } from "@/lib/payments";
-import { getProduct } from "@/lib/pricing";
+import { AdminPaymentsClient, type AdminPaymentRow } from "./AdminPaymentsClient";
 
 export const dynamic = "force-dynamic";
+
+function toRow(p: {
+  id: string;
+  amountAmd: number;
+  status: string;
+  provider: string;
+  productCode: string;
+  providerRef: string | null;
+  metadataJson: string;
+  createdAt: Date;
+  user: { email: string | null; name: string };
+}): AdminPaymentRow {
+  let userMarkedPaid = false;
+  try {
+    const meta = JSON.parse(p.metadataJson || "{}") as Record<string, unknown>;
+    userMarkedPaid = Boolean(meta.userMarkedPaidAt);
+  } catch {
+    userMarkedPaid = false;
+  }
+  return {
+    id: p.id,
+    amountAmd: p.amountAmd,
+    status: p.status,
+    provider: p.provider,
+    productCode: p.productCode,
+    providerRef: p.providerRef,
+    userMarkedPaid,
+    createdAt: p.createdAt.toISOString(),
+    userName: p.user.name,
+    userEmail: p.user.email,
+  };
+}
 
 export default async function AdminPaymentsPage({
   params,
@@ -34,6 +66,11 @@ export default async function AdminPaymentsPage({
   for (const p of succeeded) {
     byProduct.set(p.productCode, (byProduct.get(p.productCode) || 0) + p.amountAmd);
   }
+
+  const rows = payments.map(toRow);
+  const pendingBank = rows.filter(
+    (p) => p.provider === "BANK_TRANSFER" && p.status === "PENDING",
+  );
 
   return (
     <>
@@ -65,26 +102,11 @@ export default async function AdminPaymentsPage({
         ))}
       </ul>
 
-      <h3>{t("recentPayments")}</h3>
-      <ul className="billing-list">
-        {payments.map((p) => {
-          const product = getProduct(p.productCode);
-          return (
-            <li key={p.id}>
-              <span>
-                {p.user.name} · {maskEmail(p.user.email)}
-              </span>
-              <span>
-                {product?.kind ?? p.productCode} · {formatAmd(p.amountAmd, locale)} ֏ · {p.status} ·{" "}
-                {p.provider}
-              </span>
-              <time dateTime={p.createdAt.toISOString()}>
-                {p.createdAt.toLocaleString(locale)}
-              </time>
-            </li>
-          );
-        })}
-      </ul>
+      <AdminPaymentsClient
+        pendingBank={pendingBank}
+        payments={rows}
+        locale={locale}
+      />
 
       <h3>{t("subscriptions")}</h3>
       <ul className="billing-list">

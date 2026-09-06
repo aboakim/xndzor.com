@@ -23,8 +23,12 @@ import {
 } from "@/lib/early-bird";
 import { isIdramConfigured, buildIdramCheckoutForm } from "@/lib/payments/idram";
 import { isTelcellConfigured, buildTelcellCheckoutForm } from "@/lib/payments/telcell";
+import {
+  isBankTransferConfigured,
+  paymentTransferReference,
+} from "@/lib/payments/bank-transfer";
 
-const localProviderSchema = z.enum(["idram", "telcell"]);
+const localProviderSchema = z.enum(["idram", "telcell", "bank"]);
 
 const bodySchema = z.object({
   productCode: z.enum([
@@ -42,7 +46,7 @@ const bodySchema = z.object({
   targetId: z.string().min(1).optional(),
   /** When true and user is Pro with quota, apply free boost instead of paying */
   useProQuota: z.boolean().optional(),
-  /** Payment gateway: stripe (cards), idram, telcell */
+  /** Payment gateway: stripe (cards), idram, telcell, bank transfer */
   paymentProvider: z.union([z.literal("stripe"), localProviderSchema]).optional(),
 });
 
@@ -102,7 +106,14 @@ export async function POST(req: Request) {
   }
 
   const demoMode = isDemoModeAllowed();
-  const effectiveProvider = demoMode ? "stripe" : paymentProvider;
+  // Demo forces card/OTP path for stripe only; keep local providers when chosen
+  const effectiveProvider =
+    demoMode &&
+    paymentProvider !== "idram" &&
+    paymentProvider !== "telcell" &&
+    paymentProvider !== "bank"
+      ? "stripe"
+      : paymentProvider;
 
   const targetType = parsed.data.targetType as BoostTargetType | undefined;
   const targetId = parsed.data.targetId;
@@ -262,8 +273,47 @@ export async function POST(req: Request) {
     });
   }
 
+  // ── Bank transfer (manual) — PENDING until admin confirms ───────────────
+  if (effectiveProvider === "bank" && isBankTransferConfigured()) {
+    const payment = await prisma.payment.create({
+      data: {
+        userId: session.user.id,
+        amountAmd,
+        amountCharge: amountAmd,
+        currencyCharge: "amd",
+        status: "PENDING",
+        provider: "BANK_TRANSFER",
+        productCode: product.code,
+        metadataJson: JSON.stringify(metadata),
+      },
+    });
+    const transferRef = paymentTransferReference(payment.id);
+    await prisma.payment.update({
+      where: { id: payment.id },
+      data: {
+        providerRef: transferRef,
+        metadataJson: JSON.stringify({ ...metadata, transferRef }),
+      },
+    });
+    logPaymentEvent("checkout_created", {
+      paymentId: payment.id,
+      userId: session.user.id,
+      productCode,
+      provider: "BANK_TRANSFER",
+      amountAmd,
+      transferRef,
+    });
+    return NextResponse.json({
+      mode: "bank",
+      paymentId: payment.id,
+      bankCheckoutUrl: `${origin}/${locale}/checkout/bank?paymentId=${payment.id}`,
+    });
+  }
+
   if (
-    (effectiveProvider === "idram" || effectiveProvider === "telcell") &&
+    (effectiveProvider === "idram" ||
+      effectiveProvider === "telcell" ||
+      effectiveProvider === "bank") &&
     !demoMode
   ) {
     return NextResponse.json({ error: "provider_not_configured" }, { status: 503 });

@@ -1,8 +1,9 @@
 import { isDemoModeAllowed, isStripeConfigured } from "./pricing";
 import { isIdramConfigured } from "./payments/idram";
 import { isTelcellConfigured } from "./payments/telcell";
+import { isBankTransferConfigured } from "./payments/bank-transfer";
 
-export type LocalPaymentProvider = "idram" | "telcell";
+export type LocalPaymentProvider = "idram" | "telcell" | "bank";
 
 export type PaymentMethodId =
   | "stripe"
@@ -10,7 +11,8 @@ export type PaymentMethodId =
   | "mastercard"
   | "arca"
   | "idram"
-  | "telcell";
+  | "telcell"
+  | "bank";
 
 export type PaymentMethod = {
   id: PaymentMethodId;
@@ -28,22 +30,29 @@ export type PaymentMethod = {
 
 /** At least one real payment provider is configured. */
 export function isAnyPaymentConfigured(): boolean {
-  return isStripeConfigured() || isIdramConfigured() || isTelcellConfigured();
+  return (
+    isStripeConfigured() ||
+    isIdramConfigured() ||
+    isTelcellConfigured() ||
+    isBankTransferConfigured()
+  );
 }
 
 export function isLocalProviderEnabled(provider: LocalPaymentProvider): boolean {
   if (provider === "idram") return isIdramConfigured();
   if (provider === "telcell") return isTelcellConfigured();
+  if (provider === "bank") return isBankTransferConfigured();
   return false;
 }
 
 /** Default PAYMENT_PROVIDER env — stripe remains primary when set. */
 export function getDefaultPaymentProvider(): "stripe" | LocalPaymentProvider {
   const v = process.env.PAYMENT_PROVIDER?.trim().toLowerCase();
-  if (v === "idram" || v === "telcell") return v;
+  if (v === "idram" || v === "telcell" || v === "bank") return v;
   if (isStripeConfigured()) return "stripe";
   if (isIdramConfigured()) return "idram";
   if (isTelcellConfigured()) return "telcell";
+  if (isBankTransferConfigured()) return "bank";
   return "stripe";
 }
 
@@ -89,6 +98,13 @@ export function getPaymentMethods(): PaymentMethod[] {
       variant: "telcell",
       active: isTelcellConfigured(),
     },
+    {
+      id: "bank",
+      label: "Bank transfer",
+      badge: "Bank",
+      variant: "bank",
+      active: isBankTransferConfigured(),
+    },
   ];
 }
 
@@ -114,13 +130,15 @@ export function getPaymentAvailability(): {
   stripe: boolean;
   idram: boolean;
   telcell: boolean;
+  bank: boolean;
   any: boolean;
   demo: boolean;
 } {
   const stripe = isStripeConfigured();
   const idram = isIdramConfigured();
   const telcell = isTelcellConfigured();
-  const any = stripe || idram || telcell;
+  const bank = isBankTransferConfigured();
+  const any = stripe || idram || telcell || bank;
   const demo = isDemoModeAllowed();
-  return { stripe, idram, telcell, any, demo };
+  return { stripe, idram, telcell, bank, any, demo };
 }
