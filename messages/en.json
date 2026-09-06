@@ -1,6 +1,6 @@
 {
-  "brand": "Գյուղատնտես",
-  "brandLatin": "FarmOS Armenia",
+  "brand": "Xndzor",
+  "brandLatin": "Xndzor",
   "promise": "Plot → future harvest → demand signal → pre-sale.",
   "tagline": "What to grow by demand: plot → signal → pre-sale",
   "nav": {
@@ -39,7 +39,159 @@
     "grow": "What to grow",
     "myPassport": "My farm passport",
     "pricing": "Pricing",
-    "billing": "Billing"
+    "billing": "Billing",
+    "security": "Security",
+    "help": "Help",
+    "sections": "Categories",
+    "myFarm": "My farm",
+    "utilityNav": "Quick links",
+    "profile": "Profile",
+    "admin": "Admin",
+    "locale": {
+      "label": "Language",
+      "hy": "Armenian",
+      "ru": "Russian",
+      "en": "English"
+    }
+  },
+  "megaMenu": {
+    "title": "Categories",
+    "close": "Close",
+    "allIn": "All in {category}",
+    "categories": {
+      "grow": {
+        "label": "What to grow",
+        "desc": "Demand signals, crop rankings and marz map"
+      },
+      "plots": {
+        "label": "Plots & harvest",
+        "desc": "Fields, yield forecast and pre-sale"
+      },
+      "trade": {
+        "label": "Buy & sell",
+        "desc": "Supply, demand, forward contracts and group buy"
+      },
+      "machinery": {
+        "label": "Machinery",
+        "desc": "Tractors, combines, trailers and parts"
+      },
+      "animals": {
+        "label": "Animals",
+        "desc": "Local livestock marketplace"
+      },
+      "inputs": {
+        "label": "Inputs & seeds",
+        "desc": "Fertilizers, seeds, feed and crop protection"
+      },
+      "toolsLand": {
+        "label": "Tools & land",
+        "desc": "Farm tools and land listings"
+      },
+      "jobs": {
+        "label": "Jobs & services",
+        "desc": "Order or offer field work"
+      },
+      "groupBuySection": {
+        "label": "Group buy",
+        "desc": "Buy together, pay less"
+      },
+      "passport": {
+        "label": "Farm passport",
+        "desc": "Farm OS, Farm Score, QR and product passport"
+      },
+      "farmOs": {
+        "label": "Farm OS",
+        "desc": "Weather, costs, storage, village"
+      }
+    },
+    "groups": {
+      "signals": "Signals",
+      "maps": "Map",
+      "fields": "Plots",
+      "harvestTrade": "Harvest trade",
+      "marketplace": "Marketplace",
+      "contracts": "Contracts",
+      "fieldMachines": "Field machines",
+      "transportMachines": "Transport",
+      "partsGroup": "Parts",
+      "livestock": "Livestock",
+      "poultryGroup": "Poultry",
+      "beekeeping": "Beekeeping",
+      "otherAnimals": "Other",
+      "cropInputs": "Crop inputs",
+      "animalInputs": "Feed",
+      "equipmentShop": "Tools",
+      "landShop": "Land",
+      "hire": "Hire",
+      "jobTypes": "Job types",
+      "groupBuyLinks": "Campaigns",
+      "farmOs": "Farm OS",
+      "farmVillage": "Village",
+      "trust": "Trust",
+      "plans": "Plans",
+      "farmOps": "Tools"
+    },
+    "subs": {
+      "demandBoard": "Demand board",
+      "overproduction": "Overproduction signal",
+      "cropRanking": "Crop ranking",
+      "marzMap": "Marz map",
+      "myPlots": "My plots",
+      "addPlot": "Add plot",
+      "futureHarvest": "Future harvest",
+      "preSell": "Pre-sell",
+      "supply": "Sell (supply)",
+      "demand": "Buy (demand)",
+      "forward": "Forward contracts",
+      "groupBuy": "Group buy",
+      "tractors": "Tractors",
+      "combines": "Combines",
+      "cultivators": "Cultivators",
+      "trailers": "Trailers",
+      "trucks": "Trucks",
+      "sprayers": "Sprayers",
+      "seeders": "Seeders",
+      "parts": "Parts & spares",
+      "cattle": "Cattle",
+      "cows": "Cows",
+      "bulls": "Bulls",
+      "sheepGoats": "Sheep",
+      "goats": "Goats",
+      "pigs": "Pigs",
+      "poultry": "Chickens",
+      "turkeys": "Turkeys",
+      "horses": "Horses",
+      "bees": "Bee colonies",
+      "dogs": "Dogs (guard/herding)",
+      "otherAnimalsSub": "Other animals",
+      "fertilizers": "Fertilizers",
+      "seeds": "Seeds / seedlings",
+      "feed": "Feed",
+      "chemicals": "Crop protection",
+      "tools": "Tools",
+      "land": "Land / orchard",
+      "orderWork": "Order work",
+      "providers": "Providers",
+      "harvest": "Harvest",
+      "plow": "Plow",
+      "spray": "Spray",
+      "transport": "Transport",
+      "openCampaigns": "Open campaigns",
+      "groupBuyAbout": "How it works",
+      "farmHub": "My farm",
+      "farmRisks": "Tomorrow’s dangers",
+      "farmDiary": "Farm diary (voice)",
+      "farmCosts": "Where is my money going?",
+      "farmSpaces": "Empty space is money",
+      "farmReturns": "Empty return",
+      "farmScore": "Xndzor Score",
+      "todayCockpit": "Today (Farm OS)",
+      "farmRadar": "Village radar",
+      "farmTogether": "Village together",
+      "qr": "QR code",
+      "productPassport": "Product passport",
+      "pricingTop": "Pricing / TOP"
+    }
   },
   "menu": {
     "plots": "Plots",
@@ -127,7 +279,37 @@
     "landTitle": "Land / orchard",
     "pricingCtaTitle": "Top listing boost & Farm Pro",
     "pricingCtaLede": "Put your listing at the top of the feed or unlock farm tools.",
-    "pricingCtaButton": "See pricing"
+    "pricingCtaButton": "See pricing",
+    "recentlyViewed": "Recently viewed",
+    "recentlyViewedHint": "From your last visits on this device",
+    "recentKind": {
+      "machinery": "Machinery",
+      "animal": "Animals",
+      "supply": "Sell",
+      "catalog": "Shop",
+      "animals": "Animals",
+      "forward": "Future harvest",
+      "demand": "Buy",
+      "jobs": "Jobs",
+      "shop": "Shop"
+    },
+    "marketPulseTitle": "Market pulse",
+    "marketPulseSubtitle": "Live counts across the marketplace",
+    "marketPulseLive": "Live",
+    "weatherTitle": "Farm weather",
+    "weatherCta": "See risks & forecast",
+    "weatherDemo": "Demo",
+    "weatherLive": "Live",
+    "quickActions": "Quick actions",
+    "quickCue": "Post or browse in one tap",
+    "quickSell": "Sell crop",
+    "quickBuy": "Post demand",
+    "quickMachinery": "Machinery",
+    "quickFarm": "My farm",
+    "searchHint": "Use search above for harvest, buyers, jobs…",
+    "recommendedTitle": "Recommended for you",
+    "recommendedSubtitle": "Boosted and Pro listings",
+    "sectionCueBrowse": "Browse active listings"
   },
   "village": {
     "mapTitle": "{village} — map",
@@ -253,7 +435,9 @@
     "allProducts": "All",
     "allMarzes": "All marzes",
     "allVillages": "All cities/villages",
-    "apply": "Apply"
+    "apply": "Apply",
+    "searchShortcut": "Ctrl+K",
+    "filters": "Filters"
   },
   "images": {
     "none": "No image",
@@ -375,7 +559,72 @@
     "yourQty": "Your quantity",
     "join": "Join",
     "joining": "…",
-    "joined": "You joined"
+    "joined": "You joined",
+    "about": {
+      "badge": "Group buy",
+      "eyebrow": "Buy together",
+      "title": "Group buy — cheaper together",
+      "lede": "Join a campaign, pool quantity, get a supplier quote. Pay offline.",
+      "whatTitle": "What is it?",
+      "whatBody": [
+        "Neighbors join the same purchase — diesel, seed, feed or inputs.",
+        "When the target quantity is reached, a supplier quote is collected.",
+        "Payment stays between you and the supplier — offline."
+      ],
+      "howTitle": "How it works",
+      "steps": [
+        {
+          "title": "Open a campaign",
+          "body": "Pick product, target qty and unit price hint."
+        },
+        {
+          "title": "Neighbors join",
+          "body": "Each farm adds their quantity."
+        },
+        {
+          "title": "Quote & pay",
+          "body": "Supplier quote arrives — settle offline."
+        }
+      ],
+      "advantagesTitle": "Why join",
+      "advantages": [
+        {
+          "title": "Lower price",
+          "body": "Bulk volume usually beats solo retail."
+        },
+        {
+          "title": "Village logistics",
+          "body": "Shared delivery to one point."
+        },
+        {
+          "title": "Transparent",
+          "body": "See progress toward the target."
+        }
+      ],
+      "exampleTitle": "Example",
+      "exampleLede": "Diesel — solo vs group (illustrative).",
+      "soloLabel": "Alone",
+      "groupLabel": "In a group",
+      "perFarm": "per farm",
+      "saveNote": "About {pct}% savings in this example.",
+      "whoTitle": "Who is it for?",
+      "whoBody": "Farms in the same village or marz that buy the same inputs.",
+      "faqTitle": "FAQ",
+      "faq": [
+        {
+          "q": "Do I pay on the platform?",
+          "a": "No — payment is offline with the supplier."
+        },
+        {
+          "q": "What if the target is not met?",
+          "a": "The campaign stays open or closes without obligation."
+        }
+      ],
+      "ctaTitle": "Ready to join?",
+      "ctaLede": "See open campaigns or start with neighbors.",
+      "ctaOffers": "Open campaigns",
+      "ctaJoin": "Join a campaign"
+    }
   },
   "detail": {
     "qty": "Quantity",
@@ -516,7 +765,28 @@
     }
   },
   "footer": {
-    "note": "FarmOS Armenia · plot → forecast → sale"
+    "note": "FarmOS Armenia · plot → forecast → sale",
+    "tagline": "Plot → future harvest → demand signal → pre-sale.",
+    "usefulLinks": "Useful links",
+    "about": "About",
+    "help": "Help",
+    "contact": "Contact",
+    "pricing": "Pricing",
+    "services": "Services",
+    "farmPassport": "Farm passport",
+    "growExchange": "What to grow",
+    "topPlacement": "Top placement",
+    "groupBuy": "Group buy",
+    "jobs": "Jobs",
+    "paymentMethods": "Payment methods",
+    "comingSoon": "Coming soon",
+    "security": "Security",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "cookiesNote": "We use cookies for sign-in and language preference.",
+    "cookies": "Cookies",
+    "copyright": "© {year} FarmOS Armenia / Xndzor",
+    "backToTop": "Back to top"
   },
   "os": {
     "ctaStart": "Get started",
@@ -1234,14 +1504,22 @@
       "useQuota": "Pro free quota ({n} left)",
       "proHint": "Farm Pro includes free monthly TOP slots.",
       "activeUntil": "In TOP until {date}",
-      "quotaLabel": "Pro TOP quota"
+      "quotaLabel": "Pro TOP quota",
+      "taglineFree": "Activate TOP placement to pin your ad at the top of lists",
+      "f3Free": "Free for now — no payment",
+      "fromListingFree": "Open your listing → «Boost / Place in TOP» → activate for 7 or 30 days.",
+      "chooseFree": "Choose TOP duration (free)",
+      "activate7": "TOP 7 days · Free",
+      "activate30": "TOP 30 days · Free"
     },
     "verifiedFarm": {
       "name": "Verified farm",
       "tagline": "Paid verification · ✅ badge",
       "cta": "Verify farm",
       "f1": "✅ Verified farm badge on passport",
-      "f2": "MVP activates after payment"
+      "f2": "MVP activates after payment",
+      "taglineFree": "Verification · ✅ badge (free)",
+      "f2Free": "Activates immediately after you click Activate"
     },
     "buyerPro": {
       "name": "Buyer Pro",
@@ -1288,6 +1566,1630 @@
       "not_found": "Not found.",
       "not_demo": "Not a demo payment.",
       "demo_disabled_when_stripe_configured": "Stripe is on — demo is disabled."
+    },
+    "ledeFree": "All packages are free for now. Activate and use them. Paid packages coming soon.",
+    "ledeEarlyBird": "{remaining} free spots left — register and activate Pro packages at no cost.",
+    "free": "Free",
+    "activate": "Activate",
+    "activateMonth": "Activate · monthly",
+    "activateYear": "Activate · yearly",
+    "freeBannerTitle": "Free packages",
+    "freeBanner": "No payment required. Click Activate to unlock. Paid packages coming soon.",
+    "demoModeTitle": "Demo mode",
+    "demoModeHint": "Try demo payment",
+    "offlineNoteFree": "Deal amounts stay between parties. Platform packages are free for now."
+  },
+  "pages": {
+    "about": {
+      "eyebrow": "About",
+      "title": "About Xndzor",
+      "lede": "Agricultural marketplace for Armenian farmers.",
+      "body": [
+        "Xndzor brings together plot management, future harvest pre-sales, the market, and farm tools in one place.",
+        "Our goal is to answer “What should I grow?” using demand signals, group buying, and local market data.",
+        "The platform is built for real village farming in Armenia — offline deals, WhatsApp contact, and online payments for TOP/Pro packages."
+      ]
+    },
+    "help": {
+      "eyebrow": "Help",
+      "title": "Help",
+      "lede": "Common questions and quick links.",
+      "body": [
+        "To post a listing, tap Add in the top menu or open the relevant section (machinery, animals, sell).",
+        "For TOP listings and Farm Pro, go to Pricing — payment is via Stripe (card).",
+        "In Grow Exchange you see demand signals by crop and region.",
+        "For other questions, write to us via Contact."
+      ]
+    },
+    "contact": {
+      "eyebrow": "Contact",
+      "title": "Contact us",
+      "lede": "Questions, suggestions, and partnerships.",
+      "email": "hello@xndzor.com",
+      "body": [
+        "Email us or reach us on Telegram (official channel coming soon).",
+        "For business and media inquiries, mention Xndzor.com in the subject.",
+        "Technical support — describe the issue, attach a screenshot and listing link."
+      ],
+      "emailCta": "Email us",
+      "mailSubject": "Xndzor.com — question"
+    },
+    "terms": {
+      "eyebrow": "Legal",
+      "title": "Terms of Use",
+      "lede": "By using the platform you agree to these rules.",
+      "body": [
+        "Xndzor.com is a marketplace — deal money is between parties; the platform only charges TOP/Pro/Verified fees.",
+        "Listings must be honest, without fraud or legally banned products.",
+        "We may remove or restrict accounts that break the rules.",
+        "Payment services (Stripe and future local wallets) have their own terms."
+      ]
+    },
+    "privacy": {
+      "eyebrow": "Legal",
+      "title": "Privacy Policy",
+      "lede": "What data we collect and how we use it.",
+      "body": [
+        "At registration we store email, name, and listing data.",
+        "Payments are processed by Stripe — card data is not stored on our servers.",
+        "Cookies are used for login sessions and language preference.",
+        "You may request account deletion or corrections via Contact."
+      ]
+    },
+    "security": {
+      "title": "Security",
+      "introTitle": "Your security is our priority",
+      "introBody": "Xndzor.com takes user security seriously. We protect your data with modern technology and help you trade safely in the agricultural marketplace.",
+      "tipsHeading": "Security tips",
+      "tips": [
+        {
+          "icon": "🔒",
+          "title": "Protect your account",
+          "items": [
+            "Use a strong, unique password — at least 10 characters with letters and numbers.",
+            "Never share your password with anyone.",
+            "Change your password regularly, especially after suspicious login attempts.",
+            "After failed logins your account is temporarily locked (8 attempts / 15 minutes)."
+          ]
+        },
+        {
+          "icon": "🤝",
+          "title": "Safe meetings",
+          "items": [
+            "Meet only in public places — markets, cafés, village centers.",
+            "Tell friends or family where you are going and when you expect to return.",
+            "Trust your intuition — if something feels wrong, walk away.",
+            "For farm deals and equipment viewings, bring someone with you when possible."
+          ]
+        },
+        {
+          "icon": "💳",
+          "title": "Safe payments",
+          "items": [
+            "Never send money in advance to strangers.",
+            "Use Stripe / platform checkout for TOP and Pro packages.",
+            "Inspect the product, animal, or machinery before you pay.",
+            "Avoid unknown wallets and unsafe transfer methods.",
+            "Prefer sellers verified through Farm Passport."
+          ]
+        },
+        {
+          "icon": "🔍",
+          "title": "Beware of scams",
+          "items": [
+            "Be wary of offers that are too good to be true.",
+            "Check the seller's Farm Score, passport, and listing history.",
+            "Do not trust phone-only “verification” without a platform profile.",
+            "Report suspicious listings with the Report button or via Contact."
+          ]
+        },
+        {
+          "icon": "📱",
+          "title": "Personal data",
+          "items": [
+            "Share only the information needed for the deal.",
+            "Do not send bank details or card numbers in chat.",
+            "Use platform contact details and WhatsApp from the listing.",
+            "Watch for phishing — Xndzor.com will never ask for your password by email."
+          ]
+        },
+        {
+          "icon": "⚠️",
+          "title": "Report violations",
+          "items": [
+            "Report suspicious, fake, or illegal listings.",
+            "Use the Report listing button on the listing page.",
+            "Contact support immediately for serious violations.",
+            "Help keep the community safe — your report matters."
+          ]
+        }
+      ],
+      "dataProtection": {
+        "title": "Data protection",
+        "body": [
+          "The site uses a secure connection (HTTPS) — your information is sent in encrypted form.",
+          "Passwords are stored in scrambled form — we cannot see your actual password.",
+          "Login information is protected so other websites cannot misuse it.",
+          "Card payments go through Stripe's secure checkout page — we never store your card number.",
+          "We do not share your personal data with others without your permission."
+        ],
+        "learnMore": "Learn more in our",
+        "privacyLink": "Privacy Policy",
+        "termsLink": "Terms of Use"
+      },
+      "cta": {
+        "title": "Have a problem?",
+        "body": "If you encountered a scam, suspicious listing, or technical issue — contact us right away.",
+        "button": "Report a problem",
+        "mailSubject": "Xndzor.com — security report",
+        "mailBody": "Hello,\n\nI would like to report a security issue on Xndzor.com.\n\n[describe the issue]\n\n---\n{email}"
+      }
+    }
+  },
+  "payments": {
+    "acceptedMethods": "Accepted payment methods",
+    "comingSoon": "Coming soon",
+    "demoBadge": "Demo",
+    "demoModeNote": "Demo mode — payments are simulated locally.",
+    "chooseMethod": "Choose payment method",
+    "chooseMethodHint": "Select how you want to pay for packages and boosts.",
+    "configurePaymentsProd": "Online payments are not configured yet — contact support or use demo mode.",
+    "cardStripe": "Card (Stripe)",
+    "active": "Active",
+    "demoOnly": "Demo only",
+    "arcaNote": "ArCa cards are processed via Stripe when enabled.",
+    "cardCheckout": {
+      "eyebrow": "Checkout",
+      "title": "Card payment",
+      "amount": "Amount: {amount} AMD",
+      "cardNumber": "Card number",
+      "expiry": "Expiry",
+      "cvv": "CVV",
+      "cardholderName": "Cardholder name",
+      "phone": "Phone for SMS",
+      "demoBanner": "Demo checkout — no real charge.",
+      "continue": "Continue",
+      "otpMessage": "Enter the code sent to {phone}",
+      "demoOtpHint": "Demo code: {code}",
+      "demoOtpConsole": "Check server console in demo mode.",
+      "otpLabel": "Verification code",
+      "confirmPayment": "Confirm payment",
+      "resendWait": "Resend in {sec}s",
+      "resendCode": "Resend code",
+      "cancel": "Cancel",
+      "backToPricing": "Back to pricing",
+      "stripeSecureNote": "Card data is processed by Stripe — not stored on our servers.",
+      "stripe3dsNote": "Your bank may ask for 3-D Secure confirmation.",
+      "errors": {
+        "generic": "Payment failed. Try again.",
+        "not_found": "Payment not found.",
+        "phone_required": "Phone number is required.",
+        "otp_required": "Enter the verification code."
+      }
+    }
+  },
+  "earlyBird": {
+    "eyebrow": "Early bird",
+    "headline": "First 100 farmers — packages free forever",
+    "subheadline": "Register now and keep Pro visibility without paying while slots last.",
+    "remaining": "{remaining} free slots left",
+    "registeredCount": "{registered} / {limit} registered",
+    "ctaRegister": "Register free",
+    "ctaPricing": "See pricing",
+    "ctaActivate": "Activate your plan",
+    "slotsFullEyebrow": "Early bird",
+    "slotsFullHeadline": "All free slots are taken",
+    "yoursEyebrow": "Your early-bird slot",
+    "yoursHeadline": "You have a permanent free package",
+    "yoursNote": "Thank you for joining early — activate Pro features from pricing when ready.",
+    "profileWelcome": "You have an early-bird free package.",
+    "profileWelcomeRemaining": "Early bird: {remaining} slots left of {limit}.",
+    "registerSuccess": "Account created.",
+    "registerSuccessFull": "Account created — your early-bird free package is active.",
+    "registerSuccessRemaining": "({remaining} slots left)",
+    "registerNoSlot": "Account created — free slots are full; see pricing for plans.",
+    "pricingBadge": "Early bird — {remaining} spots left",
+    "pricingBadgeNote": "{registered} / {limit} already registered",
+    "pricingQualified": "You unlocked free access!",
+    "pricingQualifiedFull": "Activate packages for free — your early bird slot is saved.",
+    "pricingQualifiedOpen": "{remaining} free spots left — activate now."
+  },
+  "pwa": {
+    "install": "Install app",
+    "iosHint": "Add Xndzor to your home screen for quick access.",
+    "androidHint": "Install the app for faster access offline.",
+    "genericHint": "Save Xndzor to your device home screen.",
+    "iosStep1": "Tap Share in Safari",
+    "iosStep2": "Choose “Add to Home Screen”",
+    "iosStep3": "Tap Add",
+    "howTo": "How to install",
+    "gotIt": "Got it",
+    "dismiss": "Dismiss"
+  },
+  "xndzor": {
+    "heroTitle": "Xndzor — farm market OS",
+    "heroTagline": "What to grow by demand: plot → signal → pre-sale",
+    "heroSide": {
+      "quickLabel": "Quick links"
+    },
+    "modeLabel": "Mode",
+    "modeNeed": "I need",
+    "modeHave": "I have",
+    "whatNeed": "What do you need?",
+    "whatHave": "What do you have?",
+    "placeholderNeed": "e.g. apple harvest in 10 days, 4 ha, need workers and truck…",
+    "placeholderHave": "e.g. 2 ha potatoes ready, looking for buyer…",
+    "quickChips": "Quick examples",
+    "finding": "Finding…",
+    "findSolution": "Find solution",
+    "foundSolution": "Suggested bundle",
+    "errors": {
+      "solveFailed": "Could not build a bundle. Try again."
+    },
+    "bundleEyebrow": "Solution bundle",
+    "estimatedPrice": "Estimated price",
+    "startDate": "Start",
+    "location": "Location",
+    "organizeAll": "Organize all",
+    "adjustBundle": "Adjust bundle",
+    "chips": {
+      "need": {
+        "harvest": "Harvest crew",
+        "tractor": "Tractor",
+        "workers": "Workers",
+        "seed": "Seed",
+        "fertilizer": "Fertilizer",
+        "truck": "Truck",
+        "warehouse": "Warehouse",
+        "buyer": "Buyer",
+        "agronomist": "Agronomist",
+        "irrigation": "Irrigation"
+      },
+      "have": {
+        "crop": "Crop to sell",
+        "equipment": "Equipment",
+        "workers": "Workers available",
+        "warehouse": "Warehouse space",
+        "truck": "Truck capacity",
+        "services": "Farm services"
+      }
+    },
+    "crops": {
+      "apple": "Apple",
+      "tomato": "Tomato",
+      "grape": "Grape",
+      "apricot": "Apricot",
+      "potato": "Potato",
+      "wheat": "Wheat"
+    },
+    "needTypes": {
+      "harvest": "Harvest",
+      "tractor": "Tractor",
+      "workers": "Workers",
+      "seed": "Seed",
+      "fertilizer": "Fertilizer",
+      "truck": "Truck",
+      "warehouse": "Warehouse",
+      "buyer": "Buyer",
+      "agronomist": "Agronomist",
+      "irrigation": "Irrigation"
+    },
+    "locations": {
+      "Armavir": "Armavir",
+      "Ararat": "Ararat",
+      "Yerevan": "Yerevan"
+    },
+    "confidence": {
+      "high": "High match",
+      "medium": "Medium match",
+      "demo": "Demo"
+    },
+    "items": {
+      "workers": "{count} workers",
+      "equipment": "{count} equipment",
+      "trucks": "{count} trucks",
+      "boxes": "{count} box sets",
+      "buyers": "{count} buyers",
+      "seed": "{count} seed lots",
+      "fertilizer": "{count} fertilizer",
+      "warehouse": "{count} warehouse slots",
+      "agronomist": "{count} agronomist visits",
+      "irrigation": "{count} irrigation jobs",
+      "crop": "{count} crop lots"
+    },
+    "itemDetails": {
+      "harvest_crew": "harvest crew"
+    },
+    "bundle": {
+      "appleHarvest": "Apple harvest · {areaHa} ha in {days} days",
+      "genericNeed": "Farm need bundle",
+      "haveCrop": "Sell {crop} · {areaHa} ha",
+      "priceIncludesAll": "Includes labor, logistics estimate",
+      "estimatedRevenue": "Estimated revenue"
+    },
+    "promoSlider": {
+      "ariaLabel": "Featured",
+      "slideOf": "Slide {current} of {total}",
+      "prev": "Previous",
+      "next": "Next",
+      "goTo": "Go to slide {n}",
+      "cta": "Learn more",
+      "items": {
+        "groupBuy": {
+          "badge": "Group buy",
+          "title": "Buy together, pay less",
+          "hook": "Join neighbors on diesel, seed, and services",
+          "highlights": [
+            "Pool diesel orders",
+            "Shared seed lots",
+            "Village delivery"
+          ],
+          "stat": {
+            "value": "−40%",
+            "label": "typical savings"
+          }
+        },
+        "solve": {
+          "badge": "AI bundle",
+          "title": "One click — full solution",
+          "hook": "Workers, machines, trucks, buyers in one plan",
+          "highlights": [
+            "Harvest crew",
+            "Tractors & trucks",
+            "Buyers matched"
+          ],
+          "stat": {
+            "value": "1",
+            "label": "bundle"
+          }
+        },
+        "grow": {
+          "badge": "Demand",
+          "title": "What to grow",
+          "hook": "See oversupply and buyer signals by crop",
+          "highlights": [
+            "Oversupply alerts",
+            "Buyer demand",
+            "Crop signals"
+          ],
+          "stat": {
+            "value": "Live",
+            "label": "market pulse"
+          }
+        },
+        "route": {
+          "badge": "Logistics",
+          "title": "Shared route",
+          "hook": "Split truck cost across farms on the way",
+          "highlights": [
+            "Split fuel cost",
+            "Multi-farm pickup",
+            "AMD savings"
+          ],
+          "stat": {
+            "value": "3",
+            "label": "farms / trip"
+          }
+        },
+        "passport": {
+          "badge": "Trust",
+          "title": "Farm passport",
+          "hook": "Score, QR, verified batches for buyers",
+          "highlights": [
+            "Farm score",
+            "QR traceability",
+            "Verified badge"
+          ],
+          "stat": {
+            "value": "87",
+            "label": "avg score"
+          }
+        },
+        "match": {
+          "badge": "Matches",
+          "title": "Buyer ↔ farmer",
+          "hook": "Demand signals matched to your plots",
+          "highlights": [
+            "Demand ↔ supply",
+            "Plot-aware",
+            "Pre-offers"
+          ],
+          "stat": {
+            "value": "24",
+            "label": "open matches"
+          }
+        }
+      }
+    },
+    "welcomeTrust": {
+      "badge": "Trusted marketplace",
+      "headline": "Built for Armenian farmers and buyers",
+      "subheadline": "Plots, future harvest, demand signals, and safe deals in AMD.",
+      "farmerTitle": "For farmers",
+      "farmerDesc": "Register plots, publish harvest, find buyers.",
+      "farmerPerks": {
+        "buyer": "See who is buying your crop",
+        "workers": "Order jobs and machinery",
+        "equipment": "List machinery and animals"
+      },
+      "buyerTitle": "For buyers",
+      "buyerDesc": "Post demand, group buy, and trusted farm passports.",
+      "buyerPerks": {
+        "fresh": "Source directly from farms",
+        "farmer": "Farm Score and verified badge",
+        "supplier": "Forward contracts and pre-offers"
+      },
+      "badgesLabel": "Why Xndzor",
+      "badges": {
+        "verified": "Verified farms",
+        "amd": "Prices in AMD",
+        "exclusive": "Only on Xndzor"
+      },
+      "ctaPrimary": "Post a listing",
+      "ctaListings": "Browse market",
+      "ctaRegister": "Create account"
+    },
+    "trustStrip": {
+      "ariaLabel": "Value highlights",
+      "items": {
+        "community": "Village-scale tools — not a generic classifieds site",
+        "prices": "Transparent AMD pricing and group savings",
+        "exclusive": "Farm OS features exclusive to Xndzor"
+      }
+    },
+    "featureBanners": {
+      "exclusive": "Only on Xndzor",
+      "ctaLearnMore": "Learn more",
+      "sectionLabel": "Platform features",
+      "solve": {
+        "brand": "Solve",
+        "headline": "One problem → full bundle",
+        "lede": "Harvest, workers, trucks, buyers — organized together.",
+        "hook": "Type your need in Armenian, Russian, or English.",
+        "cta": "Try solver",
+        "needLabel": "You need",
+        "needExample": "Apple harvest · 4 ha · 10 days",
+        "nodes": {
+          "workers": "Workers",
+          "equipment": "Machines",
+          "truck": "Truck",
+          "buyer": "Buyer"
+        },
+        "bundleLabel": "Bundle",
+        "bundleMeta": "Estimated price & schedule"
+      },
+      "route": {
+        "brand": "Route",
+        "headline": "Shared logistics",
+        "lede": "One truck, multiple farms — split the cost.",
+        "hook": "See demo route across marzes.",
+        "cta": "See route",
+        "stops": {
+          "armavir": "Armavir",
+          "artashat": "Artashat",
+          "yerevan": "Yerevan"
+        },
+        "destination": "Destination",
+        "stopFarms": "{n} farms",
+        "splitChip": "Cost split automatically"
+      },
+      "grow": {
+        "brand": "Grow exchange",
+        "headline": "What to plant",
+        "lede": "Demand vs supply signals by crop.",
+        "hook": "Avoid oversupplied crops before you plant.",
+        "cta": "Open exchange",
+        "demand": "Demand",
+        "supply": "Supply",
+        "over": "Oversupply",
+        "alertTitle": "Alert",
+        "alertBody": "High demand window for apples"
+      },
+      "passport": {
+        "brand": "Farm passport",
+        "headline": "Trust for buyers",
+        "lede": "Public score, QR, and verified batches.",
+        "hook": "Buyers pre-pay trusted farms.",
+        "cta": "My passport",
+        "scoreLabel": "Farm score",
+        "trusted": "Trusted farm",
+        "qrLabel": "Scan QR on the field"
+      }
+    },
+    "route": {
+      "eyebrow": "Demo route",
+      "title": "Shared truck route",
+      "subtitle": "3 farms → Yerevan buyer",
+      "marzes": {
+        "Armavir": "Armavir",
+        "Artashat": "Artashat",
+        "Yerevan": "Yerevan"
+      },
+      "stopDetail": "{farms} farms · {ha} ha · {tons} t",
+      "destination": "Buyer destination",
+      "totalCost": "Total logistics",
+      "perFarm": "Per farm",
+      "teaser": "Real routes will match open harvests and buyers."
+    },
+    "groupOrder": {
+      "title": "Group order with neighbors",
+      "subtitle": "Same service — lower price per farm",
+      "farms": "Farms joined",
+      "ha": "ha",
+      "totalArea": "Total area",
+      "savings": "Savings",
+      "soloPrice": "Solo price",
+      "groupPrice": "Group price",
+      "perFarm": "per farm",
+      "joinNeighbors": "Join neighbors",
+      "crops": {
+        "apple": "Apple",
+        "tomato": "Tomato",
+        "grape": "Grape",
+        "apricot": "Apricot",
+        "potato": "Potato",
+        "wheat": "Wheat"
+      }
+    },
+    "groupBuyBanner": {
+      "badge": "Group buy",
+      "brand": "Xndzor Group",
+      "headline": "Buy diesel, seed, and feed together",
+      "lede": "Factories quote one price for the whole village.",
+      "exclusive": "Exclusive group pricing on Xndzor",
+      "cta": "Join a campaign",
+      "ctaLearnMore": "How it works",
+      "ctaSecondary": "Browse open campaigns",
+      "soloLabel": "Solo",
+      "groupLabel": "Group",
+      "perFarm": "per farm",
+      "saveChip": "Save {pct}%"
+    },
+    "pastelCards": {
+      "sectionTitle": "Useful for the farm",
+      "sectionLede": "Group buy, full solutions, grow advice, shared routes and farm passport."
+    }
+  },
+  "farm": {
+    "hub": {
+      "title": "My farm",
+      "lede": "Operating tools for your plots — weather, costs, storage, village.",
+      "loginHint": "Log in to personalize risks, diary and score.",
+      "startHere": "Start here",
+      "startCue": "Most useful tools for today",
+      "allTools": "All farm tools",
+      "toolsCue": "Weather, money, storage, village",
+      "scoreCue": "See what to improve"
+    },
+    "weather": {
+      "title": "Live weather",
+      "demo": "Demo",
+      "live": "Live"
+    },
+    "tools": {
+      "risks": {
+        "title": "Tomorrow’s dangers",
+        "desc": "Wind, frost, irrigation, harvest — for your plot."
+      },
+      "diary": {
+        "title": "Farm diary (voice)",
+        "desc": "Speak Armenian → day report."
+      },
+      "costs": {
+        "title": "Where is my money going?",
+        "desc": "Expenses → season cost per kg."
+      },
+      "sellOrWait": {
+        "title": "Sell now / wait",
+        "desc": "Rough AMD scenarios for inventory."
+      },
+      "spaces": {
+        "title": "Empty space is money",
+        "desc": "Warehouse, cold, silo, greenhouse…"
+      },
+      "returns": {
+        "title": "Empty return",
+        "desc": "Trucks with free tons on the way back."
+      },
+      "journey": {
+        "title": "Seed to sale",
+        "desc": "Crop stages, costs, yield, profit."
+      },
+      "radar": {
+        "title": "Village radar",
+        "desc": "Anonymous village activity snapshot."
+      },
+      "together": {
+        "title": "Village together",
+        "desc": "Shared goals (cold storage tonnage…)."
+      },
+      "whyYield": {
+        "title": "Why less yield?",
+        "desc": "Year compare stub with factors."
+      },
+      "score": {
+        "title": "Xndzor Score",
+        "desc": "Farm health: production, costs, water, storage, sales."
+      }
+    },
+    "risks": {
+      "pickPlot": "Your plot",
+      "noPlots": "No plots yet — risks use marz/village weather.",
+      "addPlot": "Add a plot",
+      "tomorrow": "Morning risks",
+      "personalizedNote": "Not generic weather — interpreted for your farm context."
+    },
+    "diary": {
+      "plot": "Plot",
+      "anyPlot": "Any / all",
+      "transcript": "Day report",
+      "placeholder": "e.g. Watered 2 ha, spent 40,000 AMD diesel, tomorrow spray…",
+      "speak": "Speak",
+      "listening": "Listening…",
+      "save": "Save",
+      "noSpeech": "Voice not available in this browser — type instead.",
+      "speechError": "Speech recognition failed — try typing.",
+      "saveError": "Could not save.",
+      "saved": "Saved.",
+      "history": "Recent entries",
+      "empty": "No diary entries yet.",
+      "toCosts": "Open expense tracker"
+    },
+    "costs": {
+      "category": "Category",
+      "amount": "Amount (AMD)",
+      "note": "Note",
+      "plot": "Plot",
+      "anyPlot": "—",
+      "add": "Add expense",
+      "saveError": "Could not save.",
+      "seasonTotal": "Logged total",
+      "perKg": "Est. cost / kg",
+      "needYield": "Add plot yield estimates for cost/kg.",
+      "byCategory": "By category",
+      "history": "History",
+      "empty": "No expenses yet.",
+      "cats": {
+        "diesel": "Diesel",
+        "labor": "Workers",
+        "seed": "Seed",
+        "water": "Water",
+        "other": "Other"
+      }
+    },
+    "sellOrWait": {
+      "qtyKg": "Qty (kg)",
+      "priceNow": "Price now (AMD/kg)",
+      "lift30": "Price +% in 30d",
+      "lift60": "Price +% in 60d",
+      "storageDay": "Storage AMD/kg/day",
+      "spoil30": "Spoilage % 30d",
+      "spoil60": "Spoilage % 60d",
+      "revenue": "Revenue",
+      "storage": "Storage cost",
+      "spoilage": "Spoilage loss",
+      "perKg": "Net / kg",
+      "best": "Best net",
+      "disclaimer": "Rough math only — not market advice.",
+      "scenarios": {
+        "now": "Sell now",
+        "d30": "Wait 30 days",
+        "d60": "Wait 60 days"
+      }
+    },
+    "spaces": {
+      "add": "List empty space",
+      "empty": "No open spaces yet.",
+      "titleField": "Title",
+      "type": "Type",
+      "description": "Description",
+      "area": "Area",
+      "capacity": "Capacity note",
+      "price": "Price (AMD)",
+      "marz": "Marz",
+      "phone": "Phone",
+      "publish": "Publish",
+      "saveError": "Could not publish.",
+      "types": {
+        "WAREHOUSE": "Warehouse",
+        "COLD": "Cold storage",
+        "SILO": "Silo",
+        "GREENHOUSE": "Greenhouse",
+        "DRYER": "Dryer",
+        "LAND": "Land"
+      }
+    },
+    "returns": {
+      "add": "Offer empty return",
+      "empty": "No open return loads yet.",
+      "from": "From",
+      "to": "To",
+      "fromMarz": "From marz",
+      "toMarz": "To marz",
+      "freeTons": "Free tons",
+      "price": "Price (AMD)",
+      "departAt": "Depart",
+      "phone": "Phone",
+      "publish": "Publish",
+      "saveError": "Could not publish."
+    },
+    "journey": {
+      "demoBadge": "Demo journey",
+      "demoCrop": "Tomato · sample season",
+      "totalCost": "Total cost",
+      "yieldKg": "Yield (kg)",
+      "profit": "Est. profit",
+      "stages": {
+        "seed": "Seed / seedlings",
+        "plant": "Planting",
+        "care": "Care & inputs",
+        "harvest": "Harvest",
+        "sell": "Sale / logistics"
+      }
+    },
+    "radar": {
+      "demoVillage": "Sample village",
+      "anonymousDemo": "Anonymous demo",
+      "privacy": "Counts only — no names shown.",
+      "metrics": {
+        "farms": "Active farms",
+        "harvests": "Harvests",
+        "machinery": "Free machinery",
+        "trucks": "Trucks",
+        "warehouses": "Warehouses",
+        "risks": "High risks"
+      },
+      "activityTitle": "Recent pulse",
+      "activity": {
+        "harvestPulse": "{n} harvest listings active",
+        "machinePulse": "{n} machinery offers nearby",
+        "supplyPulse": "{n} supply posts in village"
+      }
+    },
+    "together": {
+      "demoTitle": "Shared cold storage — 200 t",
+      "stubBadge": "Stub / demo",
+      "farmsJoined": "farms joined",
+      "setVillage": "Set your village on profile to see real goals.",
+      "empty": "No open village goals yet.",
+      "join": "Join with qty"
+    },
+    "whyYield": {
+      "lastYear": "Last year",
+      "thisYear": "This year",
+      "stubNote": "Stub comparison — connect diary & journey for real factors.",
+      "factors": "Likely factors",
+      "yourJourneys": "Your journeys",
+      "openJourney": "Open seed-to-sale",
+      "factor": {
+        "weather": "Weather stress",
+        "water": "Irrigation gaps",
+        "inputs": "Inputs timing",
+        "timing": "Planting window",
+        "pests": "Pests / disease"
+      },
+      "weight": {
+        "high": "High",
+        "medium": "Medium",
+        "low": "Low"
+      }
+    },
+    "score": {
+      "short": "Xndzor",
+      "openDetail": "Farm health detail",
+      "overall": "Overall health",
+      "lede": "Production, costs, water, storage and sales — tips to improve.",
+      "vsPassport": "Separate from Farm Passport trust score.",
+      "pillars": {
+        "production": "Production",
+        "costs": "Costs",
+        "water": "Water",
+        "storage": "Storage",
+        "sales": "Sales"
+      },
+      "tips": {
+        "addPlot": "Register a plot to unlock production signals.",
+        "clearTasks": "Clear open plot tasks to raise production score.",
+        "keepPlots": "Keep plot data fresh.",
+        "logExpenses": "Log diesel, labor, seed and water expenses.",
+        "reviewCosts": "Review high categories before peak season.",
+        "diaryWater": "Keep voice diary for irrigation notes.",
+        "recordIrrigation": "Record last irrigation on your plots.",
+        "listSpace": "List empty warehouse/cold space if unused.",
+        "useStorage": "Match empty space to demand on Spaces.",
+        "listHarvest": "List harvest on supply or future harvest.",
+        "followOffers": "Follow buyer interest on your listings."
+      }
+    }
+  },
+  "features": {
+    "about": {
+      "badge": "Only on Xndzor in Armenia",
+      "whatTitle": "What it is",
+      "whyTitle": "Why it matters",
+      "howTitle": "How it works",
+      "advantagesTitle": "Advantages",
+      "exampleTitle": "A concrete example",
+      "whoTitle": "Who it is for",
+      "faqTitle": "Frequently asked questions",
+      "ctaGrow": "Open Grow Exchange",
+      "ctaPassport": "Open farm passport",
+      "ctaGroupBuy": "Group buy",
+      "solve": {
+        "eyebrow": "Xndzor · Problem → solution",
+        "title": "Describe the need — get one complete offer",
+        "lede": "Write what you need in one sentence. Xndzor assembles workers, equipment, a truck, and a buyer into a single package — no days of phone chasing.",
+        "whatBody": [
+          "Problem → solution is an Xndzor exclusive: you describe the farm need — harvest, tractor, workers, transport, or a buyer — and the platform builds one combined offer instead of ten separate listings.",
+          "In Armenia, this format — from one problem to a full solution — exists only on Xndzor. You are not left alone coordinating; the system connects suppliers and shows a clear package."
+        ],
+        "whyBody": [
+          "Every day farmers spend hours on calls, WhatsApp, and “who has a tractor?” messages. One harvest often needs 3–4 different people — each found separately.",
+          "On Xndzor one post replaces that scramble: you see one offer, one timeline, one clear path. You save time, stress, and rush-hire premiums."
+        ],
+        "steps": [
+          {
+            "title": "Write the problem",
+            "body": "Example: “4 ha apples, harvest in 10 days” or “need a tractor and a truck.” Short and concrete is enough."
+          },
+          {
+            "title": "Xndzor gathers the pieces",
+            "body": "The system looks for workers, equipment, transport, and/or a buyer in your marz and timeframe."
+          },
+          {
+            "title": "You get one package",
+            "body": "In a single offer you see what the solution includes — without ten separate negotiations."
+          },
+          {
+            "title": "Confirm and continue",
+            "body": "Pick what fits, connect with participants, and get to work with a clear plan."
+          }
+        ],
+        "advantages": [
+          {
+            "title": "One step, full solution",
+            "body": "You don’t post four listings — one need becomes a combined offer."
+          },
+          {
+            "title": "Save days",
+            "body": "What alone can take 2–3 days of calls is often organized much faster."
+          },
+          {
+            "title": "Fewer overpays",
+            "body": "Rush rentals are expensive; an early, organized package is often cheaper."
+          },
+          {
+            "title": "Only on Xndzor",
+            "body": "This problem-to-solution format is available in Armenia only here."
+          },
+          {
+            "title": "Works for every farm",
+            "body": "Same simple logic for a small orchard or a large field."
+          }
+        ],
+        "exampleLede": "4 ha apple harvest — workers + equipment + truck. Coordinating alone is costly and slow.",
+        "beforeLabel": "Coordinating alone",
+        "afterLabel": "Xndzor package",
+        "exampleUnit": "approx. cost",
+        "saveNote": "Save up to −{pct}% plus days less running around",
+        "whoBody": "Farmers who need harvest help, equipment, workers, transport, or a buyer — and don’t want to hunt each piece for days.",
+        "faq": [
+          {
+            "q": "Must I include everything in one need?",
+            "a": "Not required. Start with one need (e.g. only a tractor); the system can suggest extra pieces if useful."
+          },
+          {
+            "q": "Is this paid?",
+            "a": "Core use is available through Xndzor. Any plan limits are listed on the pricing page."
+          },
+          {
+            "q": "What language should I write in?",
+            "a": "Write as you speak — simple Armenian (or your locale). Crop, area, and timing matter most."
+          },
+          {
+            "q": "Can I find only a buyer?",
+            "a": "Yes. The need can be sales-only or transport-only — not necessarily a full package."
+          },
+          {
+            "q": "How is this different from a normal listing?",
+            "a": "A normal listing is one need. Here the goal is a full solution from one problem, with several participants."
+          }
+        ],
+        "ctaTitle": "Ready to solve it in one step?",
+        "ctaLede": "Write your need now and see how Xndzor builds a complete offer.",
+        "ctaPrimary": "Write my need"
+      },
+      "route": {
+        "eyebrow": "Xndzor · Xndzor Route",
+        "title": "One truck — multiple farms, shared route",
+        "lede": "Hauling alone is expensive. Xndzor Route pools neighboring farms’ crops on one optimal route — cost is split among participants.",
+        "whatBody": [
+          "Xndzor Route is shared delivery: one truck picks up from several farms (e.g. Armavir → Artashat → Yerevan) and goes to a common destination.",
+          "In Armenia, this kind of shared farm route in this format exists only on Xndzor. You don’t pay for the whole truck alone."
+        ],
+        "whyBody": [
+          "If every farm hires a truck alone, each pays nearly the full trip — even with a half-empty load.",
+          "On a shared route the truck fills from several farms, kilometers and fuel are split, and you save money and time with one agreed schedule."
+        ],
+        "steps": [
+          {
+            "title": "Note the crop and place",
+            "body": "Say what you move, how many tons/crates, and which village."
+          },
+          {
+            "title": "Join the route",
+            "body": "Neighbor farms join the same direction. The system shows the stops."
+          },
+          {
+            "title": "Cost is split",
+            "body": "Total transport cost is divided among participants by volume or agreement."
+          },
+          {
+            "title": "One truck, several stops",
+            "body": "The truck collects in order and delivers to the destination."
+          }
+        ],
+        "advantages": [
+          {
+            "title": "Up to −60% on delivery",
+            "body": "Vs hiring alone, a shared route is often half or better."
+          },
+          {
+            "title": "A full truck",
+            "body": "The vehicle doesn’t run half-empty — better fuel and time."
+          },
+          {
+            "title": "Clear stops",
+            "body": "You see the route — Armavir, Artashat, Yerevan, and more."
+          },
+          {
+            "title": "Only on Xndzor",
+            "body": "This shared Route for farmers in Armenia — only here."
+          },
+          {
+            "title": "Less stress",
+            "body": "One organized delivery instead of finding a new driver every time."
+          }
+        ],
+        "exampleLede": "Several farms send crop toward Yerevan. Alone, each would pay nearly the full trip.",
+        "beforeLabel": "Alone",
+        "afterLabel": "With Route",
+        "exampleUnit": "per farm",
+        "saveNote": "Save up to −{pct}% on delivery per farm",
+        "whoBody": "Farmers moving crop to the city or processing who want to share transport cost with neighbors.",
+        "faq": [
+          {
+            "q": "Must we be from the same village?",
+            "a": "Not required. Same direction and compatible timing matter. Stops can be different villages."
+          },
+          {
+            "q": "How is my share calculated?",
+            "a": "Usually by volume or stop agreement. Each route page shows the split logic."
+          },
+          {
+            "q": "What if my load is small?",
+            "a": "Small loads are why Route exists — join, fill the truck, pay less."
+          },
+          {
+            "q": "Can I be the driver?",
+            "a": "If you have a truck, you can join as a carrier. Details are on the route offer."
+          },
+          {
+            "q": "When is full automation ready?",
+            "a": "Route logic is already shown. Auto-optimization is growing — you can already see the format and the savings."
+          }
+        ],
+        "ctaTitle": "Ready to share delivery cost?",
+        "ctaLede": "See the route example and start using Xndzor to make transport cheaper.",
+        "ctaPrimary": "See the route"
+      },
+      "grow": {
+        "eyebrow": "Xndzor · Grow Exchange",
+        "title": "What to plant — know the market first",
+        "lede": "Grow Exchange shows demand and supply on one screen — overproduction warnings and clear signals on what to plant so the harvest sells.",
+        "whatBody": [
+          "Grow Exchange is a national signal board for farmers: see which crops are in demand, where the market is full, and where overproduction risk is high.",
+          "In Armenia, this Grow Exchange format — seeing the market before planting — exists only on Xndzor. You don’t plant “like last year” with no new data."
+        ],
+        "whyBody": [
+          "The wrong crop is a season lost — seed, labor, water, and time. When everyone plants the same thing, price collapses and crop stays in the field.",
+          "Grow helps you decide before you spend: if tomatoes in Ararat are already saturated, pick another crop or market — and avoid hundreds of thousands of AMD in losses."
+        ],
+        "steps": [
+          {
+            "title": "Open Grow Exchange",
+            "body": "On one screen see demand, supply, and warnings by crop and marz."
+          },
+          {
+            "title": "Check your plan",
+            "body": "Before buying seed, see if buyers are waiting — or the market is already full."
+          },
+          {
+            "title": "Choose smarter",
+            "body": "If there’s an overproduction signal, change the plan or timing before you spend."
+          },
+          {
+            "title": "Act with confidence",
+            "body": "Plant what has demand, then use Xndzor’s other tools to sell."
+          }
+        ],
+        "advantages": [
+          {
+            "title": "Decide before spending",
+            "body": "Invest seed and labor only in what the market actually wants."
+          },
+          {
+            "title": "Overproduction alerts",
+            "body": "See when the market is full — before repeating the same mistake."
+          },
+          {
+            "title": "National picture",
+            "body": "Not only your village — a wider demand/supply view."
+          },
+          {
+            "title": "Only on Xndzor",
+            "body": "This Grow Exchange format in Armenia — only on Xndzor."
+          },
+          {
+            "title": "Tied to selling",
+            "body": "When the crop is ready, find buyers and group tools on the same platform."
+          }
+        ],
+        "exampleLede": "Last year a farmer planted tomatoes without checking in a marz where the market was already full.",
+        "beforeLabel": "Without Grow",
+        "afterLabel": "With Grow",
+        "exampleAfterValue": "right crop · sold",
+        "saveNote": "Up to 800,000 AMD seasonal loss risk — avoidable with one check",
+        "whoBody": "Farmers and growers planning to plant or switch crops who want a sellable harvest — not overproduction.",
+        "faq": [
+          {
+            "q": "Is this a price guarantee?",
+            "a": "No. Grow is a market signal for decisions, not a price guarantee — but it helps avoid obvious overproduction."
+          },
+          {
+            "q": "How often is it updated?",
+            "a": "Data refreshes from platform activity and listings. Always check the latest signals before a big spend."
+          },
+          {
+            "q": "Can I see only my marz?",
+            "a": "Yes — focus on your marz and crop while still seeing the national context."
+          },
+          {
+            "q": "What if I already planted?",
+            "a": "Grow is still useful — see demand and decide early sales or storage on Xndzor."
+          },
+          {
+            "q": "Is it free?",
+            "a": "Core viewing is available through Xndzor. Details are on the pricing page."
+          }
+        ],
+        "ctaTitle": "Check the market before you plant",
+        "ctaLede": "Open Grow Exchange, read the signals, and plant what actually sells.",
+        "ctaPrimary": "Open Grow Exchange"
+      },
+      "passport": {
+        "eyebrow": "Xndzor · Farm Passport",
+        "title": "Farm Score + QR product passport",
+        "lede": "Your trusted farm identity on Xndzor — a 0–100 Farm Score and a QR code buyers scan to see origin and trust you faster.",
+        "whatBody": [
+          "Farm Passport combines Farm Score (a trust rating) and a QR product passport. Buyers scan and see which farm the crop came from and how trusted it is.",
+          "In Armenia, this farm passport + QR origin format for ag trade exists only on Xndzor. You stand out from anonymous sellers."
+        ],
+        "whyBody": [
+          "Buyers pay more willingly when they see origin and trust. Without identity you compete only on price — often by cutting it.",
+          "A strong Score and QR passport shorten negotiation: buyers doubt less, decide faster, and you can keep a fairer price."
+        ],
+        "steps": [
+          {
+            "title": "Open your farm page",
+            "body": "Create or open your farm profile on Xndzor."
+          },
+          {
+            "title": "Build Farm Score",
+            "body": "Activity, transparency, and reliable deals raise the 0–100 score."
+          },
+          {
+            "title": "Attach a QR product passport",
+            "body": "Batches get a QR so buyers see origin."
+          },
+          {
+            "title": "Sell with more trust",
+            "body": "Buyers see Score and origin — and agree more easily."
+          }
+        ],
+        "advantages": [
+          {
+            "title": "Higher trust",
+            "body": "Buyers see not only price, but farm reputation."
+          },
+          {
+            "title": "Better price",
+            "body": "Trusted farms can often hold a higher price than anonymous sellers."
+          },
+          {
+            "title": "QR origin",
+            "body": "One scan — and the buyer knows where the crop came from."
+          },
+          {
+            "title": "Only on Xndzor",
+            "body": "Farm Score + QR passport in this format — only on Xndzor in Armenia."
+          },
+          {
+            "title": "Long-term reputation",
+            "body": "Score grows over time into your digital credit."
+          }
+        ],
+        "exampleLede": "Same quality apples: one without a passport, another with Farm Score 87 and QR origin.",
+        "beforeLabel": "Without passport",
+        "afterLabel": "Trusted farm",
+        "exampleUnit": "per kg",
+        "saveNote": "Higher price for a trusted farm ({before} → {after} AMD/kg)",
+        "whoBody": "Farmers selling crop who want to stand out with trust, origin, and a more stable price.",
+        "faq": [
+          {
+            "q": "How is Farm Score calculated?",
+            "a": "Score depends on farm activity, transparency, and reliable behavior on the platform. Details are on your passport page."
+          },
+          {
+            "q": "Must I print the QR?",
+            "a": "Show it on screen or print it on packaging. Buyers scan to see origin."
+          },
+          {
+            "q": "Can I start with a low Score?",
+            "a": "Yes. Every farm starts somewhere — steady, honest work raises the score."
+          },
+          {
+            "q": "Does this replace official certificates?",
+            "a": "No. It’s Xndzor’s trust and origin layer that complements your real quality and documents."
+          },
+          {
+            "q": "Where do buyers see it?",
+            "a": "On your farm page and via QR scan on the product passport."
+          }
+        ],
+        "ctaTitle": "Make your farm trusted",
+        "ctaLede": "Open the farm passport, raise your Score, and sell with origin — not only on price.",
+        "ctaPrimary": "Open my passport"
+      }
+    }
+  },
+  "browse": {
+    "filters": "Filters",
+    "clearAll": "Clear all",
+    "closeFilters": "Close filters",
+    "back": "Back",
+    "sort": "Sort",
+    "sortNewest": "Newest",
+    "sortPriceAsc": "Price: low to high",
+    "sortPriceDesc": "Price: high to low",
+    "view": "View",
+    "grid": "Grid",
+    "list": "List",
+    "density": "Density",
+    "densityCozy": "Cozy",
+    "densityDense": "Dense",
+    "resultsCount": "{n, plural, one {# listing} other {# listings}}",
+    "resultsCue": "Refine with filters or change sort",
+    "emptyCue": "Be the first — post takes about a minute",
+    "verified": "Verified",
+    "price": "Price",
+    "priceFrom": "From",
+    "priceTo": "To"
+  },
+  "farmOs": {
+    "brandEyebrow": "Farm OS",
+    "noPlots": "No active plots yet.",
+    "plotSelect": "Plot",
+    "today": {
+      "title": "Today on the farm",
+      "tagline": "Weather, risks, costs and next moves — for your plot.",
+      "openPlot": "Open plot",
+      "links": "Quick links"
+    },
+    "danger": {
+      "eyebrow": "Tomorrow",
+      "title": "Tomorrow’s dangers"
+    },
+    "risks": {
+      "frost": "Frost risk",
+      "frostDetail": "Min ~{temp}°C in 48h — protect sensitive crops.",
+      "frostMild": "Cool nights",
+      "frostMildDetail": "Min ~{temp}°C — watch tender growth.",
+      "heavyRain": "Heavy rain",
+      "heavyRainDetail": "About {mm} mm in 48h — check drainage and spray timing.",
+      "wind": "Strong wind",
+      "windDetail": "Up to ~{wind} m/s — secure covers and young plants.",
+      "dry": "Irrigation needed soon",
+      "dryDetail": "Soil looks dry — plan watering before heat peaks.",
+      "harvestGood": "Good harvest window",
+      "harvestGoodDetail": "Window {from} → {to} looks favorable.",
+      "harvestWatch": "Harvest window — watch weather",
+      "harvestWatchDetail": "Planned {from} → {to}; weather may complicate picking.",
+      "logIrrigation": "Log last irrigation",
+      "logIrrigationDetail": "Mark watering on the plot so risks stay accurate.",
+      "calm": "Calm outlook",
+      "calmDetail": "No high alerts for the next day — keep routine care."
+    },
+    "weather": {
+      "unavailable": "Weather unavailable right now.",
+      "eyebrow": "Weather",
+      "title": "Local forecast",
+      "wind": "Wind",
+      "precip": "Rain today",
+      "frost": "Frost 48h",
+      "frostYes": "Yes",
+      "frostNo": "No",
+      "irrigation": "Irrigation",
+      "harvest": "Harvest",
+      "range": "Day range",
+      "irrigationHint": {
+        "postpone": "Postpone watering",
+        "water_soon": "Water soon",
+        "normal": "Normal"
+      },
+      "harvestWindow": {
+        "good": "Good",
+        "fair": "Fair",
+        "poor": "Poor"
+      }
+    },
+    "costs": {
+      "title": "Where is my money going?",
+      "lede": "Log diesel, labor, seed and water — see season cost per kg.",
+      "snapshot": "Season costs",
+      "seasonTotal": "Logged total",
+      "entries": "Entries",
+      "perKg": "Est. cost / kg",
+      "open": "Open costs",
+      "yieldTons": "Est. yield (t)",
+      "recent": "Recent expenses",
+      "empty": "No expenses yet.",
+      "addTitle": "Add expense",
+      "amount": "Amount (AMD)",
+      "category": "Category",
+      "plot": "Plot",
+      "plotNone": "— any —",
+      "date": "Date",
+      "note": "Note",
+      "error": "Could not save.",
+      "saving": "Saving…",
+      "save": "Save",
+      "categories": {
+        "diesel": "Diesel",
+        "labor": "Labor",
+        "seed": "Seed",
+        "water": "Water",
+        "other": "Other"
+      }
+    },
+    "score": {
+      "eyebrow": "Health",
+      "title": "Xndzor Score",
+      "tipsTitle": "Raise {from} → {to}",
+      "openPassport": "Open farm passport",
+      "axes": {
+        "production": "Production",
+        "cost": "Costs",
+        "water": "Water",
+        "storage": "Storage",
+        "sales": "Sales"
+      },
+      "tips": {
+        "production": "Keep plot tasks and harvest dates up to date.",
+        "cost": "Log expenses by category every week.",
+        "water": "Record irrigations in the diary.",
+        "storage": "List empty warehouse or cold space if unused.",
+        "sales": "List harvest on supply or future harvest.",
+        "logCosts": "Add your first expenses to unlock cost score.",
+        "batch": "Create a product batch for trust and sales."
+      }
+    },
+    "sell": {
+      "nav": "Sell now / wait",
+      "eyebrow": "Decision",
+      "title": "Sell now or wait?",
+      "lede": "Rough AMD scenarios — not market advice.",
+      "qty": "Qty (tons)",
+      "crop": "Crop",
+      "price": "Price (AMD / ton)",
+      "perTon": "{price} ֏ / t",
+      "storage": "Storage {cost} ֏",
+      "disclaimer": "Estimates only — check local prices and spoilage.",
+      "riskNow": "Cash now, less storage risk.",
+      "risk30": "Price may rise; storage and spoilage apply.",
+      "risk60": "Longer hold — higher storage and spoilage risk.",
+      "scenario": {
+        "now": "Sell now",
+        "store30": "Wait 30 days",
+        "store60": "Wait 60 days"
+      },
+      "riskBand": {
+        "low": "Lower risk",
+        "medium": "Medium risk",
+        "high": "Higher risk"
+      }
+    },
+    "diary": {
+      "nav": "Diary",
+      "title": "Farm diary",
+      "lede": "Speak or type Armenian — we parse watering, fertilizer, workers.",
+      "recent": "Recent entries",
+      "empty": "No diary entries yet.",
+      "record": "Speak",
+      "stop": "Stop",
+      "noSpeech": "Voice not available — type instead.",
+      "plot": "Plot",
+      "plotNone": "— any —",
+      "placeholder": "e.g. Watered 2 ha, 40,000 AMD diesel, tomorrow spray…",
+      "parsed": "Parsed",
+      "wateredHa": "Watered ~{n} ha",
+      "fertilizerKg": "Fertilizer ~{n} kg",
+      "workers": "Workers tomorrow: {n}",
+      "keywords": "Keywords",
+      "error": "Could not save.",
+      "saved": "Saved.",
+      "saving": "Saving…",
+      "save": "Save"
+    },
+    "spaces": {
+      "nav": "Empty space",
+      "title": "Empty space is money",
+      "lede": "Warehouse, cold, silo, greenhouse — list free capacity.",
+      "empty": "No open spaces yet.",
+      "matchTeaser": "Matched to nearby harvest demand when possible.",
+      "loginToAdd": "log in to list space",
+      "addTitle": "List empty space",
+      "error": "Could not publish.",
+      "saving": "Saving…",
+      "save": "Publish",
+      "fields": {
+        "title": "Title",
+        "description": "Description",
+        "type": "Type",
+        "marz": "Marz",
+        "capacity": "Capacity note",
+        "from": "Available from",
+        "to": "Available to",
+        "price": "Price (AMD)",
+        "priceUnit": "Price unit",
+        "phone": "Phone"
+      },
+      "types": {
+        "WAREHOUSE": "Warehouse",
+        "COLD": "Cold storage",
+        "SILO": "Silo",
+        "GREENHOUSE": "Greenhouse"
+      },
+      "priceUnit": {
+        "PER_DAY": "per day",
+        "PER_MONTH": "per month",
+        "LOT": "lot"
+      }
+    },
+    "return": {
+      "title": "Empty return",
+      "lede": "Trucks with free tons on the way back — offer capacity.",
+      "routeLink": "About routes",
+      "offerCta": "Offer empty return",
+      "from": "From",
+      "to": "To",
+      "capacity": "Free capacity",
+      "error": "Could not save.",
+      "saved": "Saved.",
+      "saving": "Saving…",
+      "save": "Save"
+    },
+    "timeline": {
+      "title": "Seed to sale",
+      "lede": "Crop stages from planting to sale.",
+      "missing": "Not logged",
+      "profit": "Est. profit: {amount} ֏",
+      "profitNeed": "Add costs and yield to estimate profit.",
+      "plant": "Planting",
+      "fertilizer": "Fertilizer",
+      "irrigate": "Irrigation",
+      "harvest": "Harvest",
+      "presale": "Pre-sale",
+      "costs": "Costs logged",
+      "sale": "Sale",
+      "status": {
+        "logged": "Logged",
+        "listed": "Listed",
+        "done": "Done"
+      }
+    },
+    "radar": {
+      "nav": "Village radar",
+      "title": "Village radar",
+      "eyebrow": "Village pulse",
+      "heading": "{village} — activity",
+      "lede": "Anonymous counts only — no names shown.",
+      "backVillage": "Back to village",
+      "demoNote": "Sparse data — showing a demo floor so the radar stays readable.",
+      "farms": "Farms",
+      "harvests": "Harvests",
+      "machinery": "Machinery",
+      "trucks": "Trucks",
+      "storage": "Storage",
+      "supplies": "Supply posts",
+      "risksTitle": "Local risks",
+      "frostVillage": "Frost risk in this village area — protect sensitive crops.",
+      "calmVillage": "No high frost alert for this village right now."
+    },
+    "villageTogether": {
+      "nav": "Village together",
+      "banner": "Join neighbors for shared goals — cold storage, machinery, bulk buy.",
+      "learn": "Learn more"
+    },
+    "yieldWhy": {
+      "title": "Why less yield?",
+      "lede": "Compare seasons and factors — diary and journey feed this view."
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "lede": "Your contact details, location and privacy.",
+    "loading": "Loading…",
+    "welcomeBanner": "Welcome — complete your profile to get better matches.",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved.",
+    "sections": {
+      "photo": "Photo",
+      "contact": "Contact",
+      "location": "Location",
+      "privacy": "Privacy"
+    },
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "marz": "Marz",
+      "village": "Village / city"
+    },
+    "placeholders": {
+      "phone": "+374…",
+      "marz": "Select marz",
+      "village": "Select village"
+    },
+    "hints": {
+      "emailReadonly": "Email cannot be changed here."
+    },
+    "privacy": {
+      "lede": "Control what others see on your public farm profile.",
+      "visibility": "Profile visibility",
+      "visibilityPublic": "Public",
+      "visibilityRegistered": "Signed-in users only",
+      "visibilityHidden": "Hidden",
+      "fieldToggles": "Field visibility",
+      "showAvatar": "Show avatar",
+      "showPhone": "Show phone",
+      "showMarz": "Show marz",
+      "showVillage": "Show village",
+      "hiddenNote": "When hidden, your profile is not shown publicly."
+    },
+    "photo": {
+      "change": "Change photo",
+      "remove": "Remove",
+      "uploading": "Uploading… {pct}%",
+      "hint": "JPEG, PNG or WebP · max 5 MB"
+    },
+    "errors": {
+      "load": "Could not load profile.",
+      "save": "Could not save.",
+      "INVALID_NAME": "Enter a valid name.",
+      "INVALID_AVATAR": "Invalid avatar URL.",
+      "INVALID_VILLAGE": "Village does not match marz.",
+      "INVALID_INPUT": "Check the form fields."
+    }
+  },
+  "share": {
+    "title": "Share",
+    "native": "Share…",
+    "facebook": "Facebook",
+    "whatsapp": "WhatsApp",
+    "telegram": "Telegram",
+    "viber": "Viber",
+    "x": "X",
+    "copy": "Copy link",
+    "copied": "Link copied",
+    "tip": "Share this listing with buyers and neighbors."
+  },
+  "my": {
+    "markActive": "Mark active",
+    "markSold": "Mark sold",
+    "hide": "Hide",
+    "delete": "Delete"
+  },
+  "reportListing": {
+    "button": "Report listing"
+  },
+  "resourceInterest": {
+    "send": "I’m interested",
+    "message": "Message",
+    "confirm": "Send",
+    "sending": "Sending…",
+    "cancel": "Cancel",
+    "error": "Could not send.",
+    "sent": "Interest sent.",
+    "needAuth": "Sign in to send interest"
+  },
+  "admin": {
+    "title": "Admin",
+    "subtitle": "Platform control",
+    "panelTitle": "Admin panel",
+    "backToSite": "Back to site",
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "listings": "Listings",
+    "payments": "Payments",
+    "plans": "Plans",
+    "dashboardLede": "Overview of users, listings and revenue.",
+    "viewPlans": "View plans",
+    "usersLede": "Search and moderate accounts.",
+    "searchUsers": "Search by name or email",
+    "search": "Search",
+    "noResults": "No results.",
+    "verified": "Verified",
+    "unverified": "Unverified",
+    "suspended": "Suspended",
+    "active": "Active",
+    "inactive": "Inactive",
+    "unsuspend": "Unsuspend",
+    "suspend": "Suspend",
+    "listingsLede": "Moderate marketplace listings.",
+    "tabSupply": "Supply",
+    "tabDemand": "Demand",
+    "tabAnimal": "Animals",
+    "tabMachinery": "Machinery",
+    "tabCatalog": "Shop",
+    "tabJob": "Jobs",
+    "tabFutureHarvest": "Future harvest",
+    "hide": "Hide",
+    "delete": "Delete",
+    "confirmDelete": "Delete this item?",
+    "plansLede": "Subscription plan catalog.",
+    "paymentsLede": "Payments and active subscriptions.",
+    "totalRevenue": "Revenue",
+    "paymentCount": "Payments",
+    "activeSubscriptions": "Active subscriptions",
+    "byProduct": "By product",
+    "recentPayments": "Recent payments",
+    "subscriptions": "Subscriptions",
+    "until": "until",
+    "stats": {
+      "users": "Users",
+      "recentUsers": "New (7d)",
+      "supplies": "Supply",
+      "demands": "Demand",
+      "animals": "Animals",
+      "machinery": "Machinery",
+      "catalog": "Shop",
+      "jobs": "Jobs",
+      "futureHarvests": "Future harvest",
+      "plots": "Plots",
+      "payments": "Payments",
+      "subscriptions": "Subscriptions",
+      "revenue": "Revenue",
+      "succeededPayments": "{count} succeeded",
+      "activePlans": "Active plans"
+    },
+    "col": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "verified": "Verified",
+      "status": "Status",
+      "joined": "Joined",
+      "actions": "Actions",
+      "title": "Title",
+      "owner": "Owner",
+      "created": "Created",
+      "code": "Code",
+      "kind": "Kind",
+      "price": "Price",
+      "interval": "Interval",
+      "active": "Active"
     }
   }
 }

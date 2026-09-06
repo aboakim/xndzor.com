@@ -1,10 +1,10 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { formatAmd, parseImageUrls } from "@/lib/utils";
+import { formatAmd, formatListingAge, parseImageUrls } from "@/lib/utils";
 import { tContent } from "@/lib/content-locale";
 import { MachineryTypeIcon } from "@/components/AgIcons";
-import { ClassifiedRow } from "@/components/ClassifiedRow";
+import { PostCard, truncateCardText } from "@/components/PostCard";
 import { VillageLink, type VillageRef } from "@/components/VillageLink";
 import { TrustedPill } from "@/components/FarmScoreBadge";
 import { MonetizationPills } from "@/components/MonetizationBadges";
@@ -14,6 +14,7 @@ type Place = { nameHy: string; nameEn: string; nameRu: string; slug?: string };
 export function MachineryCard({
   id,
   title,
+  description,
   machineryType,
   make,
   model,
@@ -31,9 +32,11 @@ export function MachineryCard({
   trusted,
   isPro,
   boosted,
+  createdAt,
 }: {
   id: string;
   title: string;
+  description?: string | null;
   machineryType: string;
   make: string;
   model: string;
@@ -51,42 +54,58 @@ export function MachineryCard({
   trusted?: boolean;
   isPro?: boolean;
   boosted?: boolean;
+  createdAt?: Date | string | null;
 }) {
   const t = useTranslations();
   const locale = useLocale();
   const marzLabel = marz.slug
     ? t(`marzes.${marz.slug}` as "marzes.Yerevan")
     : marz.nameEn;
-  const cover = parseImageUrls(imageUrls || "[]")[0];
+  const images = parseImageUrls(imageUrls || "[]");
+  const cover = images[0];
 
   const facts = [
-    t(`machineryTypes.${machineryType}` as "machineryTypes.TRACTOR"),
     `${make} ${model}`,
     String(year),
     t(`machineryConditions.${condition}` as "machineryConditions.USED"),
     powerHp != null ? `${powerHp} ${t("machinery.hp")}` : null,
     engineHours != null ? t("machinery.hours", { n: formatAmd(engineHours) }) : null,
     mileageKm != null ? t("machinery.km", { n: formatAmd(mileageKm) }) : null,
-  ]
-    .filter(Boolean)
-    .join(" · ");
+  ];
 
   let priceLabel: string | undefined;
   if (priceAmd != null) {
     priceLabel = `${formatAmd(priceAmd)} ֏`;
-    if (priceNegotiable) priceLabel += ` · ${t("machinery.negotiable")}`;
   } else if (priceNegotiable) {
     priceLabel = t("detail.priceOpen");
   }
 
+  const desc =
+    description != null && description.trim()
+      ? truncateCardText(tContent(locale, description))
+      : null;
+
+  const age = createdAt ? formatListingAge(createdAt, locale) : null;
+
   return (
-    <ClassifiedRow
+    <PostCard
       href={`/machinery/${id}`}
       title={tContent(locale, title)}
-      meta={facts}
-      value={priceLabel}
       thumb={cover}
-      icon={<MachineryTypeIcon type={machineryType} size={20} />}
+      icon={<MachineryTypeIcon type={machineryType} size={28} />}
+      categoryPill={t(`machineryTypes.${machineryType}` as "machineryTypes.TRACTOR")}
+      description={desc}
+      facts={facts}
+      value={priceLabel}
+      valueExtra={
+        priceNegotiable && priceAmd != null ? t("machinery.negotiable") : null
+      }
+      photoCount={images.length}
+      status={trusted ? "verified" : "active"}
+      footMeta={[
+        age,
+        trusted ? t("browse.verified") : null,
+      ]}
       badge={
         <>
           <MonetizationPills isPro={isPro} boosted={boosted} />
@@ -97,10 +116,10 @@ export function MachineryCard({
         village ? (
           <>
             <VillageLink village={village} locale={locale} />
-            <span className="classified-marz">{marzLabel}</span>
+            <span className="post-card-marz">{marzLabel}</span>
           </>
         ) : (
-          <span className="classified-marz">{marzLabel}</span>
+          <span className="post-card-marz">{marzLabel}</span>
         )
       }
     />

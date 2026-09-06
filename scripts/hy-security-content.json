@@ -1,0 +1,89 @@
+{
+  "title": "Անվտանգություն",
+  "introTitle": "Ձեր անվտանգությունը մեր առաջնահերթությունն է",
+  "introBody": "Xndzor-ը լուրջ է վերաբերվում օգտատերերի անվտանգությանը։ Մենք պաշտպանում ենք ձեր տվյալները և օգնում անվտանգ գործarքներ կատarել գyuaatntesakan շուկayում։",
+  "tipsHeading": "Անվտanգutyan xorhurdner",
+  "tips": [
+    {
+      "icon": "🔒",
+      "title": "Պաշտպanեք ձer hasivy",
+      "items": [
+        "Օgtagorseq ushegh ev ezaki gaxtnabar — arnvazan 10 nish, tarer ev tvanner։",
+        "Erbek mi bajanel gaxtnabary urishneri het։",
+        "Kanonyar poxeq gaxtnabary, hatkaphes kaskaceli mutqic heto։",
+        "Sxal mutqic heto hasivy jamanavorapes argelapakvum e (8 pordz / 15 rope)։"
+      ]
+    },
+    {
+      "icon": "🤝",
+      "title": "Anvtanq handipumner",
+      "items": [
+        "Handipeq miayn hanrayin vayrerum — shuka, srjaran, gyuxi kentron։",
+        "Teghkacreq ynkernerin kam entanikin dzer masin ev hascen։",
+        "Vstah eq dzer intuicinayin — yete inchvor ban kaskaceli e, hrazharveq։",
+        "Gyuxatntesakan gorcarqneri ev texnikayi ditman hamar vercneq inchvor mekin dzez het։"
+      ]
+    },
+    {
+      "icon": "💳",
+      "title": "Anvtanq vcharumner",
+      "items": [
+        "Erbek mi poxanceq gumar arajapes anzanot mardkanc։",
+        "TOP ev Pro patetneri hamar ogtagorseq Stripe-i anvtanq vcharum@ hartaki mijocov։",
+        "Stugeq apranq@, kendanin kam texnikan naxkanc vchar@։",
+        "Khusap eq anhayt dramapanakneric ev anvtanq poxanarjumneric։",
+        "Nakhapes nakhavely tvaleq Farm Passport-ov stugvats vacharoghnerin։"
+      ]
+    },
+    {
+      "icon": "🔍",
+      "title": "Zgushac eq xabeutyunneric",
+      "items": [
+        "Zgushac eq chapazanc lav arajarkneric — yete havanakan che, havatabar xabeutyun e։",
+        "Stugeq vacharoghi Farm Score-@, andznagiry ev nakhord haytararutyunner@։",
+        "Mi vstah eq miayn heraxosayin «stugman@» aranc hartaki profili։",
+        "Kaskaceli haytararutyunner@ haghord eq «Haghordel» kochak@ kam Kap bajnum։"
+      ]
+    },
+    {
+      "icon": "📱",
+      "title": "Andznakan tvjalner",
+      "items": [
+        "Mi teq aveli shat teghakutyun, qan anhrajesht e gorcarqi hamar։",
+        "Zruycum mi bajanel bankayin tvjalner ev qarti tvjalner։",
+        "Ogtagorseq hartaki kap@ ev WhatsApp-@ haytararutyan mijocov։",
+        "Zgushac eq, vor dzez email-ov gaxtnabar chen xntum — Xndzor.com-@ erbeq chi xntum gaxtnabar email-ov։"
+      ]
+    },
+    {
+      "icon": "⚠️",
+      "title": "Haytne q kaxtumneri masin",
+      "items": [
+        "Haghord eq kaskaceli, keghdz kam anorinakan haytararutyunneri masin։",
+        "Ogtagorseq «Haghordel haytararutyun@» kochak@ haytararutyan ejum։",
+        "Lurj kaxtumneri depkum kapveq ajakcutyani het anmijapes։",
+        "Ogn eq pahpanel hamayk@ anvtanq — dzer haghordagrutyun@ karevor e։"
+      ]
+    }
+  ],
+  "dataProtection": {
+    "title": "Tvjalneri pashtpanutyun",
+    "body": [
+      "Kayq@ ashxatum e apahov kapov (HTTPS) — dzer teghekatvutyun@ poxancvum e kodavorvats dzevov։",
+      "Gaxtnabanner@ pahvum en hatuk kodavorumamb — menq dzer gaxtnabary tesnel chenq karox։",
+      "Mutqi hamar ogtagorcvogh teghekatvutyun@ pashtpanvac e, vorpeszi ayl kayqer chkaroxanan ayn ogtagortsel։",
+      "Qartov vcharum@ katarvum e Stripe-i anvtanq ejov — qarti hamar@ mer mot chi pahvum։",
+      "Andznakan tvjalner@ chenq taradzum errord kogmneri het aranc dzer tuyultvutyan։"
+    ],
+    "learnMore": "Avelin imac eq",
+    "privacyLink": "Gaghtniutyan qaghakakanutyun",
+    "termsLink": "Ogtagorcman paymanner"
+  },
+  "cta": {
+    "title": "Khndir uneq?",
+    "body": "Yet e handipeq xabeutyan, kaskaceli haytararutyan kam texnikakan khndri — kapveq mez anmijapes։",
+    "button": "Zekuycel khndri masin",
+    "mailSubject": "Xndzor.com — anvtanqutyan haghordagrutyun",
+    "mailBody": "Barev,\n\nEs uzum em haghordagrutyun anvtanqutyan khndri masin Xndzor.com-um.\n\n[nkaragreq khndiry]\n\n---\n{email}"
+  }
+}

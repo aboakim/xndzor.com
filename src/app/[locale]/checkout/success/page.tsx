@@ -1,10 +1,10 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
-import { activatePayment } from "@/lib/monetization";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
+import { verifyStripeCheckoutSession, resolveUnlockInfo } from "@/lib/payments";
 import { redirect } from "next/navigation";
+import { CheckoutSuccessPoller } from "./CheckoutSuccessPoller";
 
 export default async function CheckoutSuccessPage({
   params,
@@ -24,25 +24,18 @@ export default async function CheckoutSuccessPage({
 
   let paymentId = sp.paymentId || "";
 
-  // Stripe return: ensure activation even if webhook is delayed (test mode)
   if (sp.session_id && isStripeConfigured()) {
     const stripe = getStripe();
     if (stripe) {
       try {
+        await verifyStripeCheckoutSession(stripe, sp.session_id, session.user.id);
         const cs = await stripe.checkout.sessions.retrieve(sp.session_id);
-        const pid =
+        paymentId =
           (cs.metadata?.paymentId as string | undefined) ||
           cs.client_reference_id ||
           paymentId;
-        if (pid && (cs.payment_status === "paid" || cs.status === "complete")) {
-          paymentId = pid;
-          const payment = await prisma.payment.findUnique({ where: { id: pid } });
-          if (payment && payment.userId === session.user.id && payment.status !== "SUCCEEDED") {
-            await activatePayment(pid);
-          }
-        }
       } catch {
-        // ignore retrieve errors; webhook may still activate
+        // webhook may still activate
       }
     }
   }
@@ -53,23 +46,22 @@ export default async function CheckoutSuccessPage({
       })
     : null;
 
+  const unlock = payment
+    ? await resolveUnlockInfo(payment, locale)
+    : null;
+
+  const unlockLabel = unlock ? t(unlock.labelKey as "success.activated") : undefined;
+
   return (
-    <div className="section checkout-result-page">
-      <p className="eyebrow">{t("success.eyebrow")}</p>
-      <h1>{t("success.title")}</h1>
-      <p className="lede">
-        {payment?.status === "SUCCEEDED"
-          ? t("success.activated")
-          : t("success.pending")}
-      </p>
-      <div className="pricing-actions">
-        <Link href="/account/billing" className="btn primary">
-          {t("myBilling")}
-        </Link>
-        <Link href="/pricing" className="btn ghost">
-          {t("title")}
-        </Link>
-      </div>
+    <div className="section">
+      <CheckoutSuccessPoller
+        initialStatus={payment?.status ?? "PENDING"}
+        paymentId={paymentId}
+        sessionId={sp.session_id}
+        unlockLabel={unlockLabel}
+        listingHref={unlock?.listingHref}
+        passportHref={unlock?.passportHref}
+      />
     </div>
   );
 }

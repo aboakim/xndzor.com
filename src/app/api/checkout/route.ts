@@ -4,13 +4,24 @@ import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import {
   amdToUsdCents,
+  arePackagesFree,
+  getEffectiveAmountAmd,
   getProduct,
+  isDemoModeAllowed,
   isStripeConfigured,
+  requirePaymentInProduction,
   type BoostTargetType,
   type ProductCode,
 } from "@/lib/pricing";
 import { assertListingOwnedBy } from "@/lib/monetization";
-import { getStripe } from "@/lib/stripe";
+import { validateCsrf } from "@/lib/csrf";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { fulfillPayment, logPaymentEvent } from "@/lib/payments";
+import { userQualifiesForFreePackages } from "@/lib/early-bird";
+import { isIdramConfigured, buildIdramCheckoutForm } from "@/lib/payments/idram";
+import { isTelcellConfigured, buildTelcellCheckoutForm } from "@/lib/payments/telcell";
+
+const localProviderSchema = z.enum(["idram", "telcell"]);
 
 const bodySchema = z.object({
   productCode: z.enum([
@@ -28,12 +39,49 @@ const bodySchema = z.object({
   targetId: z.string().min(1).optional(),
   /** When true and user is Pro with quota, apply free boost instead of paying */
   useProQuota: z.boolean().optional(),
+  /** Payment gateway: stripe (cards), idram, telcell */
+  paymentProvider: z.union([z.literal("stripe"), localProviderSchema]).optional(),
 });
 
+function productDescription(productCode: ProductCode, amountAmd: number): string {
+  return `Xndzor.com ${productCode} · ${amountAmd} AMD`;
+}
+
 export async function POST(req: Request) {
+  if (!(await validateCsrf(req))) {
+    return NextResponse.json({ error: "csrf_invalid" }, { status: 403 });
+  }
+
   const session = await getSession();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  const ip = clientIp(req);
+  const userLimit = rateLimit(`checkout:user:${session.user.id}`, {
+    limit: 15,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!userLimit.ok) {
+    return NextResponse.json(
+      { error: "rate_limited" },
+      { status: 429, headers: { "Retry-After": String(userLimit.retryAfterSec) } },
+    );
+  }
+  const ipLimit = rateLimit(`checkout:ip:${ip}`, {
+    limit: 30,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!ipLimit.ok) {
+    return NextResponse.json(
+      { error: "rate_limited" },
+      { status: 429, headers: { "Retry-After": String(ipLimit.retryAfterSec) } },
+    );
+  }
+
+  if (!requirePaymentInProduction()) {
+    logPaymentEvent("checkout_blocked_production", { userId: session.user.id });
+    return NextResponse.json({ error: "payment_required_in_production" }, { status: 503 });
   }
 
   let json: unknown;
@@ -48,11 +96,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "invalid_body" }, { status: 400 });
   }
 
-  const { productCode, locale = "hy", useProQuota } = parsed.data;
+  const { productCode, locale = "hy", useProQuota, paymentProvider = "stripe" } =
+    parsed.data;
   const product = getProduct(productCode);
   if (!product) {
     return NextResponse.json({ error: "unknown_product" }, { status: 400 });
   }
+
+  const demoMode = isDemoModeAllowed();
+  const effectiveProvider = demoMode ? "stripe" : paymentProvider;
 
   const targetType = parsed.data.targetType as BoostTargetType | undefined;
   const targetId = parsed.data.targetId;
@@ -81,17 +133,131 @@ export async function POST(req: Request) {
     }
   }
 
+  const userFree = await userQualifiesForFreePackages(session.user.id);
+  const amountAmd = getEffectiveAmountAmd(product.amountAmd, userFree);
   const metadata = {
     productCode,
     userId: session.user.id,
+    locale,
     ...(targetType && targetId ? { targetType, targetId } : {}),
+    ...(arePackagesFree() ? { packagesFree: true } : {}),
+    ...(userFree ? { earlyBirdFree: true } : {}),
   };
 
+  const origin = new URL(req.url).origin;
+  const description = productDescription(productCode, amountAmd);
+
+  // ── Free packages: activate immediately, skip Stripe / iDram / TelCell ───
+  if (arePackagesFree() || userFree || amountAmd === 0) {
+    const payment = await prisma.payment.create({
+      data: {
+        userId: session.user.id,
+        amountAmd: 0,
+        amountCharge: 0,
+        currencyCharge: "amd",
+        status: "PENDING",
+        provider: "FREE",
+        productCode: product.code,
+        metadataJson: JSON.stringify(metadata),
+      },
+    });
+    logPaymentEvent("checkout_created", {
+      paymentId: payment.id,
+      userId: session.user.id,
+      productCode,
+      provider: "FREE",
+      amountAmd: 0,
+    });
+    const result = await fulfillPayment(payment.id);
+    if (result !== "activated" && result !== "already") {
+      return NextResponse.json({ error: "generic" }, { status: 500 });
+    }
+    return NextResponse.json({
+      ok: true,
+      mode: "free",
+      paymentId: payment.id,
+    });
+  }
+
+  // ── iDram checkout ──────────────────────────────────────────────────────
+  if (effectiveProvider === "idram" && isIdramConfigured()) {
+    const payment = await prisma.payment.create({
+      data: {
+        userId: session.user.id,
+        amountAmd,
+        currencyCharge: "amd",
+        status: "PENDING",
+        provider: "IDRAM",
+        productCode: product.code,
+        metadataJson: JSON.stringify(metadata),
+      },
+    });
+    logPaymentEvent("checkout_created", {
+      paymentId: payment.id,
+      userId: session.user.id,
+      productCode,
+      provider: "IDRAM",
+      amountAmd,
+    });
+    const form = buildIdramCheckoutForm({
+      paymentId: payment.id,
+      amountAmd,
+      description,
+      locale,
+    });
+    return NextResponse.json({
+      mode: "idram",
+      paymentId: payment.id,
+      redirect: form,
+    });
+  }
+
+  // ── TelCell checkout ────────────────────────────────────────────────────
+  if (effectiveProvider === "telcell" && isTelcellConfigured()) {
+    const payment = await prisma.payment.create({
+      data: {
+        userId: session.user.id,
+        amountAmd,
+        currencyCharge: "amd",
+        status: "PENDING",
+        provider: "TELCELL",
+        productCode: product.code,
+        metadataJson: JSON.stringify(metadata),
+      },
+    });
+    logPaymentEvent("checkout_created", {
+      paymentId: payment.id,
+      userId: session.user.id,
+      productCode,
+      provider: "TELCELL",
+      amountAmd,
+    });
+    const form = buildTelcellCheckoutForm({
+      paymentId: payment.id,
+      amountAmd,
+      description,
+      locale,
+    });
+    return NextResponse.json({
+      mode: "telcell",
+      paymentId: payment.id,
+      redirect: form,
+    });
+  }
+
+  if (
+    (effectiveProvider === "idram" || effectiveProvider === "telcell") &&
+    !demoMode
+  ) {
+    return NextResponse.json({ error: "provider_not_configured" }, { status: 503 });
+  }
+
+  // ── Stripe / demo — create payment record ───────────────────────────────
   const payment = await prisma.payment.create({
     data: {
       userId: session.user.id,
-      amountAmd: product.amountAmd,
-      amountCharge: amdToUsdCents(product.amountAmd),
+      amountAmd,
+      amountCharge: amdToUsdCents(amountAmd),
       currencyCharge: "usd",
       status: "PENDING",
       provider: isStripeConfigured() ? "STRIPE" : "DEMO",
@@ -100,59 +266,24 @@ export async function POST(req: Request) {
     },
   });
 
-  const origin = new URL(req.url).origin;
-  const successUrl = `${origin}/${locale}/checkout/success?paymentId=${payment.id}`;
-  const cancelUrl = `${origin}/${locale}/checkout/cancel?paymentId=${payment.id}`;
+  logPaymentEvent("checkout_created", {
+    paymentId: payment.id,
+    userId: session.user.id,
+    productCode,
+    provider: payment.provider,
+    amountAmd,
+  });
 
-  if (!isStripeConfigured()) {
+  const cardCheckoutUrl = `${origin}/${locale}/checkout/card?paymentId=${payment.id}`;
+
+  // Card checkout: on-site form + ARCA OTP (demo) or Stripe Elements (production)
+  if (isDemoModeAllowed() || isStripeConfigured()) {
     return NextResponse.json({
-      mode: "demo",
+      mode: "card",
       paymentId: payment.id,
-      demoCheckoutUrl: `${origin}/${locale}/checkout/demo?paymentId=${payment.id}`,
+      cardCheckoutUrl,
     });
   }
 
-  const stripe = getStripe();
-  if (!stripe) {
-    return NextResponse.json({ error: "stripe_unavailable" }, { status: 500 });
-  }
-
-  const sessionCheckout = await stripe.checkout.sessions.create({
-    mode: "payment",
-    payment_method_types: ["card"],
-    line_items: [
-      {
-        quantity: 1,
-        price_data: {
-          currency: "usd",
-          unit_amount: amdToUsdCents(product.amountAmd),
-          product_data: {
-            name: `${product.code} · ${product.amountAmd} AMD`,
-            description: `FarmOS · ${product.amountAmd} AMD (charged in USD equivalent)`,
-          },
-        },
-      },
-    ],
-    success_url: successUrl + "&session_id={CHECKOUT_SESSION_ID}",
-    cancel_url: cancelUrl,
-    client_reference_id: payment.id,
-    metadata: {
-      paymentId: payment.id,
-      productCode: product.code as ProductCode,
-      userId: session.user.id,
-      ...(targetType ? { targetType } : {}),
-      ...(targetId ? { targetId } : {}),
-    },
-  });
-
-  await prisma.payment.update({
-    where: { id: payment.id },
-    data: { providerRef: sessionCheckout.id },
-  });
-
-  return NextResponse.json({
-    mode: "stripe",
-    paymentId: payment.id,
-    url: sessionCheckout.url,
-  });
+  return NextResponse.json({ error: "provider_not_configured" }, { status: 503 });
 }

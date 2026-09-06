@@ -37,14 +37,22 @@ export const RESOURCE_TYPES = [
 ] as const;
 export const RESOURCE_PRICE_UNITS = ["hour", "day", "ha", "job"] as const;
 
+export const MAX_LISTING_IMAGES = 15;
 export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+export const MAX_UPLOAD_TOTAL_BYTES = MAX_LISTING_IMAGES * MAX_IMAGE_BYTES;
 export const ALLOWED_IMAGE_TYPES = [
   "image/jpeg",
   "image/png",
   "image/webp",
 ] as const;
+export const ALLOWED_IMAGE_ACCEPT =
+  "image/jpeg,image/png,image/webp,image/*";
 
-const imageUrlsField = z.array(z.string().min(1)).max(8).optional().default([]);
+const imageUrlsField = z
+  .array(z.string().min(1))
+  .max(MAX_LISTING_IMAGES)
+  .optional()
+  .default([]);
 
 /** Armenian (+374…) or international phone; digits, spaces, +, -, () allowed. */
 const phoneField = z
@@ -177,6 +185,7 @@ export const futureHarvestSchema = z.object({
   villageId: z.string().optional().or(z.literal("")),
   phone: z.string().min(8).max(20),
   whatsapp: z.string().min(8).max(20).optional().or(z.literal("")),
+  imageUrls: imageUrlsField,
 });
 
 /** @deprecated alias */
@@ -335,4 +344,22 @@ export const commentSchema = z.object({
   targetId: z.string().min(1).max(40),
   body: z.string().min(2).max(2000),
   rating: z.coerce.number().int().min(1).max(5).optional().or(z.literal("")),
+});
+
+export const profileUpdateSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(2, { message: "INVALID_NAME" })
+    .max(80, { message: "INVALID_NAME" })
+    .optional(),
+  phone: phoneField.optional().or(z.literal("")),
+  marzId: z.enum(MARZES).optional().or(z.literal("")),
+  villageId: z.string().trim().optional().or(z.literal("")),
+  avatarUrl: z.string().max(500).optional().or(z.literal("")),
+  profileVisibility: z.enum(["PUBLIC", "REGISTERED", "HIDDEN"]).optional(),
+  showPhonePublic: z.boolean().optional(),
+  showAvatarPublic: z.boolean().optional(),
+  showMarzPublic: z.boolean().optional(),
+  showVillagePublic: z.boolean().optional(),
 });

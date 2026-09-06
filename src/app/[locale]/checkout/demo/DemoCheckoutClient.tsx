@@ -25,9 +25,14 @@ export default function DemoCheckoutClient() {
     setBusy(true);
     setError("");
     try {
+      const csrfRes = await fetch("/api/csrf");
+      const csrfData = (await csrfRes.json()) as { token?: string };
       const res = await fetch("/api/checkout/demo", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-csrf-token": csrfData.token || "",
+        },
         body: JSON.stringify({ paymentId }),
       });
       const data = (await res.json()) as { error?: string };

@@ -1,0 +1,47 @@
+{
+  "id": "/",
+  "name": "Խնձոր / Xndzor",
+  "short_name": "Խնձոր",
+  "description": "Հայաստանի գյուղատնտեսական շուկա — հողամաս, բերք, տեխնիկա և պահանջարկ։",
+  "start_url": "/hy",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a3329",
+  "theme_color": "#0a3329",
+  "lang": "hy",
+  "dir": "ltr",
+  "categories": ["business", "shopping", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

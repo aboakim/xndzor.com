@@ -88,7 +88,7 @@ export function GrowExchangeClient({
   return (
     <div className="grow-exchange">
       <div className="grow-board">
-        <section className="grow-panel grow-supply">
+        <section id="grow-rankings" className="grow-panel grow-supply">
           <h2>{t("grow.supplyBoardTitle")}</h2>
           <p className="muted">{t("grow.supplyBoardLede")}</p>
           <ol className="crop-rank-list">
@@ -116,7 +116,7 @@ export function GrowExchangeClient({
           </ol>
         </section>
 
-        <section className="grow-panel grow-demand">
+        <section id="grow-demand" className="grow-panel grow-demand">
           <h2>{t("grow.demandBoardTitle")}</h2>
           <p className="muted">{t("grow.demandBoardLede")}</p>
           <ol className="crop-rank-list">
@@ -149,7 +149,7 @@ export function GrowExchangeClient({
       </div>
 
       {selected ? (
-        <section className="grow-signal-block">
+        <section id="grow-signal" className="grow-signal-block">
           <OverproductionSignal
             row={selected}
             t={(k, v) => t(k as "grow.signalOverTitle", v)}
@@ -168,7 +168,7 @@ export function GrowExchangeClient({
         </section>
       ) : null}
 
-      <section className="grow-map-block">
+      <section id="grow-map" className="grow-map-block">
         <div className="grow-map-head">
           <h2>
             {t("grow.mapTitle")}

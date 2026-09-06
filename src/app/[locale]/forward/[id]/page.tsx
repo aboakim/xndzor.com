@@ -3,16 +3,20 @@ import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
 import { ContactActions } from "@/components/ContactActions";
+import { ShareButtons } from "@/components/ShareButtons";
 import { ForwardInterestForm } from "@/components/ForwardInterestForm";
-import { formatAmd } from "@/lib/utils";
+import { formatAmd, parseImageUrls } from "@/lib/utils";
 import { getSession } from "@/lib/session";
 import { VillageLink } from "@/components/VillageLink";
 import { CreateBatchButton } from "@/components/CreateBatchButton";
 import { TrustedPill } from "@/components/FarmScoreBadge";
 import { formatFarmId } from "@/lib/farm-id";
 import { getFarmScore } from "@/lib/farm-score";
+import { ListingGallery } from "@/components/ListingGallery";
 import { BoostButton } from "@/components/BoostButton";
 import { getActiveBoostMap, getUserEntitlements } from "@/lib/monetization";
+import { resolveOwnerFreeCheckout } from "@/lib/early-bird";
+import { TrackRecentView } from "@/components/TrackRecentView";
 
 export default async function ForwardDetailPage({
   params,
@@ -49,6 +53,10 @@ export default async function ForwardDetailPage({
   const boostedUntil = boostMap.get(crop.id);
   const ownerEnt =
     isOwner && session?.user?.id ? await getUserEntitlements(session.user.id) : null;
+  const ownerFreeCheckout =
+    isOwner && session?.user?.id
+      ? await resolveOwnerFreeCheckout(session.user.id)
+      : false;
   const viewerEnt = session?.user?.id
     ? await getUserEntitlements(session.user.id)
     : null;
@@ -57,6 +65,7 @@ export default async function ForwardDetailPage({
   );
   const earlyAccessLocked =
     !isOwner && daysToHarvest > 14 && !viewerEnt?.isBuyerPro;
+  const images = parseImageUrls(crop.imageUrls ?? "[]");
 
   const matchingDemand = await prisma.demand.findMany({
     where: { status: "ACTIVE", productId: crop.productId },
@@ -67,7 +76,16 @@ export default async function ForwardDetailPage({
 
   return (
     <div className="section detail-page">
+      <TrackRecentView
+        id={crop.id}
+        href={`/forward/${crop.id}`}
+        title={crop.title}
+        kind="forward"
+        thumb={images[0] ?? null}
+        subtitle={t(crop.product.nameKey as "products.tomato")}
+      />
       <p className="eyebrow">{t("actions.forward.title")}</p>
+      <ListingGallery images={images} />
       <h1>{crop.title}</h1>
       <p className="detail-product">{t(crop.product.nameKey as "products.tomato")}</p>
       <p className="detail-location">
@@ -103,6 +121,11 @@ export default async function ForwardDetailPage({
         </div>
       </div>
       <p className="pre-wrap">{crop.description}</p>
+      <ShareButtons
+        title={crop.title}
+        priceSnippet={`${formatAmd(crop.qtyExpected)} ${t(`units.${crop.unit}` as "units.kg")}`}
+      />
+
       {earlyAccessLocked ? (
         <div className="buyer-pro-gate">
           <p>{t("pricing.buyerPro.f1")}</p>
@@ -131,6 +154,7 @@ export default async function ForwardDetailPage({
             isPro={Boolean(ownerEnt?.isPro)}
             boostQuotaRemaining={ownerEnt?.boostQuotaRemaining ?? 0}
             currentlyBoostedUntil={boostedUntil?.toISOString() ?? null}
+            freeMode={ownerFreeCheckout}
           />
           <CreateBatchButton futureHarvestId={crop.id} />
         </div>

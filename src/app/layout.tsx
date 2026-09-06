@@ -56,40 +56,56 @@ const sans = Noto_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Գյուղատնտես — FarmOS Armenia",
-    template: "%s · Գյուղատնտես",
+    default: "Խնձոր — գյուղատնտեսական շուկա",
+    template: "%s · Խնձոր",
   },
   description:
-    "Ի՞նչ աճեցնել Հայաստանում՝ ըստ պահանջարկի։ Հողամաս, ապագա բերք, գերտրամադրության ազդանշան, նախնական վաճառք և ֆերմայի անձնագիր։",
-  applicationName: "FarmOS Armenia",
+    "Ի՞նչ աճեցնել Հայաստանում՝ ըստ պահանջարկի։ Հողամաս, ապագա բերք, գերտրամադրության ազդանշան, նախնական վաճառք և ֆերմերի շուկա։",
+  applicationName: "Խնձոր",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "Խնձոր",
+    statusBarStyle: "black-translucent",
+  },
   keywords: [
-    "Գյուղատնտես",
-    "FarmOS",
+    "Խնձոր",
+    "Xndzor",
+    "xndzor.com",
     "Հայաստան",
     "ֆերմեր",
     "բերք",
     "պահանջարկ",
     "գյուղատնտեսություն",
+    "գյուղատնտեսական շուկա",
   ],
-  authors: [{ name: "FarmOS Armenia" }],
+  authors: [{ name: "Xndzor" }],
   icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
   },
   openGraph: {
     type: "website",
     locale: "hy_AM",
     alternateLocale: ["ru_RU", "en_US"],
     url: siteUrl,
-    siteName: "Գյուղատնտես · FarmOS Armenia",
-    title: "Գյուղատնտես — FarmOS Armenia",
+    siteName: "Խնձոր · Xndzor",
+    title: "Խնձոր — գյուղատնտեսական շուկա",
     description:
       "Ի՞նչ աճեցնել՝ ըստ պահանջարկի։ Հողամաս → ազդանշան → նախնական վաճառք։ Հայաստանի ֆերմերների համար։",
   },
   twitter: {
     card: "summary",
-    title: "Գյուղատնտես — FarmOS Armenia",
+    title: "Xndzor — Agricultural Marketplace",
     description:
-      "Ի՞նչ աճեցնել՝ ըստ պահանջարկի։ Հողամաս → ազդանշան → նախնական վաճառք։",
+      "What to grow by demand. Plots, harvest, machinery, jobs — Armenia's agricultural marketplace.",
   },
   robots: {
     index: true,

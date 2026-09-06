@@ -20,6 +20,7 @@ export function PlotActions({
   const [price, setPrice] = useState("");
   const [busy, setBusy] = useState("");
   const [files, setFiles] = useState<File[]>([]);
+  const [uploadProgress, setUploadProgress] = useState<number | undefined>();
   const [msg, setMsg] = useState("");
 
   async function patch(body: Record<string, unknown>) {
@@ -73,8 +74,9 @@ export function PlotActions({
     if (!files.length) return;
     setBusy("photo");
     setMsg("");
+    setUploadProgress(undefined);
     try {
-      const urls = await uploadImages(files);
+      const urls = await uploadImages(files, { onProgress: setUploadProgress });
       const res = await patch({ action: "photo", imageUrl: urls[0] });
       setBusy("");
       if (!res.ok) {
@@ -129,6 +131,10 @@ export function PlotActions({
         <ImageUploadField
           files={files}
           onChange={(next) => setFiles(next.slice(0, 1))}
+          maxImages={1}
+          uploading={busy === "photo"}
+          uploadProgress={uploadProgress}
+          disabled={busy === "photo"}
         />
         <button type="submit" className="btn secondary dark" disabled={busy === "photo" || !files.length}>
           {busy === "photo" ? t("saving") : t("photoUpload")}

@@ -5,7 +5,7 @@ import { formatAmd, parseImageUrls } from "@/lib/utils";
 import { tContent } from "@/lib/content-locale";
 import { CATALOG_ROUTE, type CatalogCategory } from "@/lib/catalog";
 import { ActionIcon } from "@/components/AgIcons";
-import { ClassifiedRow } from "@/components/ClassifiedRow";
+import { PostCard, truncateCardText } from "@/components/PostCard";
 import { VillageLink, type VillageRef } from "@/components/VillageLink";
 import { MonetizationPills } from "@/components/MonetizationBadges";
 
@@ -15,6 +15,7 @@ export function CatalogCard({
   id,
   category,
   title,
+  description,
   subtype,
   brand,
   quantity,
@@ -31,6 +32,7 @@ export function CatalogCard({
   id: string;
   category: CatalogCategory;
   title: string;
+  description?: string | null;
   subtype: string;
   brand?: string | null;
   quantity?: number | null;
@@ -50,44 +52,52 @@ export function CatalogCard({
   const marzLabel = marz.slug
     ? t(`marzes.${marz.slug}` as "marzes.Yerevan")
     : marz.nameEn;
-  const cover = parseImageUrls(imageUrls || "[]")[0];
+  const images = parseImageUrls(imageUrls || "[]");
+  const cover = images[0];
 
   const facts = [
-    t(`catalogSubtypes.${category}.${subtype}` as "catalogSubtypes.FERTILIZER.NPK"),
     brand || null,
     quantity != null
       ? `${quantity}${unit ? ` ${t(`catalogUnits.${unit}` as "catalogUnits.kg")}` : ""}`
       : null,
-  ]
-    .filter(Boolean)
-    .join(" · ");
+  ];
 
   let priceLabel: string | undefined;
   if (priceAmd != null) {
     priceLabel = `${formatAmd(priceAmd, locale)} ֏`;
     priceLabel += ` · ${t(`catalogPriceUnits.${priceUnit}` as "catalogPriceUnits.LOT")}`;
-    if (priceNegotiable) priceLabel += ` · ${t("catalog.negotiable")}`;
   } else if (priceNegotiable) {
     priceLabel = t("detail.priceOpen");
   }
 
+  const desc =
+    description != null && description.trim()
+      ? truncateCardText(tContent(locale, description))
+      : null;
+
   return (
-    <ClassifiedRow
+    <PostCard
       href={`/shop/${route}/${id}`}
       title={tContent(locale, title)}
-      meta={facts}
-      value={priceLabel}
       thumb={cover}
-      icon={<ActionIcon action={route} size={20} />}
+      icon={<ActionIcon action={route} size={28} />}
+      categoryPill={t(`catalogSubtypes.${category}.${subtype}` as "catalogSubtypes.FERTILIZER.NPK")}
+      description={desc}
+      facts={facts}
+      value={priceLabel}
+      valueExtra={
+        priceNegotiable && priceAmd != null ? t("catalog.negotiable") : null
+      }
+      photoCount={images.length}
       badge={<MonetizationPills isPro={isPro} boosted={boosted} />}
       place={
         village ? (
           <>
             <VillageLink village={village} locale={locale} />
-            <span className="classified-marz">{marzLabel}</span>
+            <span className="post-card-marz">{marzLabel}</span>
           </>
         ) : (
-          <span className="classified-marz">{marzLabel}</span>
+          <span className="post-card-marz">{marzLabel}</span>
         )
       }
     />

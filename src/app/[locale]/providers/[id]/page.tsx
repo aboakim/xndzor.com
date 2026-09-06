@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
 import { ContactActions } from "@/components/ContactActions";
+import { ShareButtons } from "@/components/ShareButtons";
 import { findJobsForProvider, parseJobTypesJson } from "@/lib/matching";
 import { formatAmd } from "@/lib/utils";
 import { ApplyToJobButton } from "@/components/ApplyToJobButton";
@@ -52,6 +53,15 @@ export default async function ProviderDetailPage({
           </p>
         ) : null}
       </div>
+
+      <ShareButtons
+        title={provider.title}
+        priceSnippet={
+          provider.rateAmd != null
+            ? `${formatAmd(provider.rateAmd)} ֏ / ${provider.rateUnit}`
+            : null
+        }
+      />
 
       <ContactActions phone={provider.phone} whatsapp={provider.whatsapp} />
 

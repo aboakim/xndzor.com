@@ -1,4 +1,4 @@
-# Հրապարակում / Deploy — FarmOS Armenia (Gyuxatntes)
+# Հրապարակում / Deploy — Xndzor.com (Խնձոր․քոմ)
 
 Քայլ առ քայլ՝ սեփական դոմեյնով կայքը օդ բացելու համար։
 
@@ -52,7 +52,7 @@ yourfarm.am {
 | `NEXTAUTH_SECRET` / `AUTH_SECRET` | երկար պատահական գաղտնաբառ (տես `.env.example`) |
 | `DATABASE_URL` | Compose-ում ավտոմատ՝ `file:/data/prod.db` |
 | `ADMIN_EMAIL` | ձեր էլ․ հասցեն (ադմին վահանակ) |
-| `STRIPE_*` | դատարկ թողեք մինչև իրական վճարումներ |
+| `STRIPE_*` | **Production-ում պարտադիր** իրական վճարումների համար (տես `PAYMENTS.md`) |
 
 Գեներացնել գաղտնիք՝
 
@@ -78,16 +78,25 @@ Cloudflare օգտագործելիս Proxy-ն կարող է տալ ավտոմատ
 
 ## 5. Stripe webhook
 
+**Մանրամասն հրահանգներ՝ `PAYMENTS.md`**
+
 Երբ պատրաստ եք իրական վճարումների՝
 
 1. [Stripe Dashboard](https://dashboard.stripe.com) → Developers → Webhooks → Add endpoint  
 2. URL՝ **`https://YOUR_DOMAIN/api/checkout/webhook`**  
-3. Իրադարձություն՝ `checkout.session.completed` (և ըստ անհրաժեշտության այլ checkout իրադարձություններ)  
-4. Պատճենեք Signing secret → `STRIPE_WEBHOOK_SECRET`  
-5. Լրացրեք `STRIPE_SECRET_KEY` և `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`  
-6. Վերագործարկեք կոնտեյները՝ `docker compose up -d`
+3. Events՝ `checkout.session.completed`, `payment_intent.succeeded`, `payment_intent.payment_failed`, `customer.subscription.*`, `invoice.paid`  
+4. Signing secret → `STRIPE_WEBHOOK_SECRET`  
+5. `STRIPE_SECRET_KEY` + `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`  
+6. Վերագործարկեք՝ `docker compose up -d`
 
-Առանց բանալիների կայքը աշխատում է **փորձարկման վճարման** ռեժիմում (իրական գումար չի գանձվում)։
+**Local թեստ:**
+
+```bash
+stripe listen --forward-to localhost:3000/api/checkout/webhook
+```
+
+**Production-ում** Stripe բանալիները պարտադիր են — դեմո checkout-ը աշխատում է միայն local dev-ում (բանալիներ չլինելիս)։  
+Գումարը հասնում է **ձեր Stripe հաշվին** → Dashboard → Payments / Payouts։
 
 ---
 

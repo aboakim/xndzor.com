@@ -78,6 +78,9 @@ export default async function VillagePage({
           </p>
         </div>
         <div className="section-head-actions">
+          <Link href={`/villages/${slug}/radar`} className="btn primary">
+            {t("farmOs.radar.nav")}
+          </Link>
           <Link href={`/supply?marz=${village.marzId}&village=${village.id}`} className="btn ghost">
             {t("nav.supply")}
           </Link>

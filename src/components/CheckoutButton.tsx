@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
 import { Link } from "@/i18n/navigation";
-import type { ProductCode, BoostTargetType } from "@/lib/pricing";
+import { PaymentMethodPicker } from "@/components/AcceptedPayments";
+import { arePackagesFree, type ProductCode, type BoostTargetType } from "@/lib/pricing";
 
 type Props = {
   productCode: ProductCode;
@@ -14,7 +15,15 @@ type Props = {
   targetId?: string;
   useProQuota?: boolean;
   disabled?: boolean;
+  /** Override; defaults to arePackagesFree() */
+  freeMode?: boolean;
 };
+
+async function fetchCsrfToken(): Promise<string> {
+  const res = await fetch("/api/csrf");
+  const data = (await res.json()) as { token?: string };
+  return data.token || "";
+}
 
 export function CheckoutButton({
   productCode,
@@ -24,14 +33,17 @@ export function CheckoutButton({
   targetId,
   useProQuota,
   disabled,
+  freeMode,
 }: Props) {
   const t = useTranslations("pricing");
   const locale = useLocale();
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPicker, setShowPicker] = useState(false);
+  const isFree = freeMode ?? arePackagesFree();
 
-  async function startCheckout() {
+  async function startDirectCheckout(opts?: { useProQuota?: boolean }) {
     setError("");
     if (status === "unauthenticated" || !session) {
       window.location.href = `/${locale}/auth/login?callbackUrl=/${locale}/pricing`;
@@ -39,23 +51,26 @@ export function CheckoutButton({
     }
     setLoading(true);
     try {
+      const csrf = await fetchCsrfToken();
       const res = await fetch("/api/checkout", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-csrf-token": csrf,
+        },
         body: JSON.stringify({
           productCode,
           locale,
           targetType,
           targetId,
-          useProQuota,
+          useProQuota: opts?.useProQuota ?? false,
         }),
       });
       const data = (await res.json()) as {
         error?: string;
-        mode?: string;
-        url?: string;
-        demoCheckoutUrl?: string;
         ok?: boolean;
+        mode?: string;
+        paymentId?: string;
       };
       if (!res.ok) {
         setError(t(`errors.${data.error || "generic"}` as "errors.generic"));
@@ -65,12 +80,9 @@ export function CheckoutButton({
         window.location.reload();
         return;
       }
-      if (data.mode === "demo" && data.demoCheckoutUrl) {
-        window.location.href = data.demoCheckoutUrl;
-        return;
-      }
-      if (data.url) {
-        window.location.href = data.url;
+      if (data.mode === "free" && data.ok) {
+        const pid = data.paymentId ? `?paymentId=${data.paymentId}` : "";
+        window.location.href = `/${locale}/checkout/success${pid}`;
         return;
       }
       setError(t("errors.generic"));
@@ -81,16 +93,61 @@ export function CheckoutButton({
     }
   }
 
+  if (useProQuota) {
+    return (
+      <div className="checkout-btn-wrap">
+        <button
+          type="button"
+          className={className}
+          disabled={disabled || loading}
+          onClick={() => startDirectCheckout({ useProQuota: true })}
+        >
+          {loading ? t("processing") : label || t("buy")}
+        </button>
+        {error ? <p className="form-error tiny">{error}</p> : null}
+      </div>
+    );
+  }
+
+  if (isFree) {
+    return (
+      <div className="checkout-btn-wrap">
+        <button
+          type="button"
+          className={className}
+          disabled={disabled || loading}
+          onClick={() => startDirectCheckout()}
+        >
+          {loading ? t("processing") : label || t("activate")}
+        </button>
+        {error ? <p className="form-error tiny">{error}</p> : null}
+      </div>
+    );
+  }
+
   return (
     <div className="checkout-btn-wrap">
-      <button
-        type="button"
-        className={className}
-        disabled={disabled || loading}
-        onClick={startCheckout}
-      >
-        {loading ? t("processing") : label || t("buy")}
-      </button>
+      {!showPicker ? (
+        <button
+          type="button"
+          className={className}
+          disabled={disabled}
+          onClick={() => setShowPicker(true)}
+        >
+          {label || t("buy")}
+        </button>
+      ) : (
+        <PaymentMethodPicker
+          productCode={productCode}
+          targetType={targetType}
+          targetId={targetId}
+          disabled={disabled}
+          compact
+          onError={(code) =>
+            setError(t(`errors.${code || "generic"}` as "errors.generic"))
+          }
+        />
+      )}
       {error ? <p className="form-error tiny">{error}</p> : null}
     </div>
   );

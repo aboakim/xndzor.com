@@ -4,6 +4,8 @@ import locations from "../data/armenia-locations.json";
 import { estimateYieldTons } from "../src/lib/yield";
 import { buildTodaySuggestions } from "../src/lib/farm-today";
 
+/** Full demo seed — wipes all data. For production use: npm run db:seed:minimal */
+
 const prisma = new PrismaClient();
 
 const products = [
@@ -28,15 +30,45 @@ function findVillageId(marzId: string, nameEn: string): string {
   return match.id;
 }
 
-/** Crop icons (SVG) and machinery photos (JPEG under /seed/machinery/). */
-const photos = (...names: string[]) =>
-  JSON.stringify(
-    names.map((n) => (n.includes("/") ? `/seed/${n}` : `/seed/${n}.svg`))
-  );
+/** Local JPEG/WebP photos under /public/seed/ — always pass path with extension. */
+const photos = (...paths: string[]) =>
+  JSON.stringify(paths.map((p) => `/seed/${p}`));
+
+const cropPhoto = (slug: string) => photos(`crops/${slug}.jpg`);
+const harvestPhoto = (slug: string) => {
+  const map: Record<string, string> = {
+    tomato: "harvest/tomato-field.jpg",
+    wheat: "harvest/wheat-field.jpg",
+    grape: "harvest/grape-vineyard.jpg",
+    apple: "harvest/apple-orchard.jpg",
+    potato: "harvest/potato-field.jpg",
+    peach: "harvest/peach-orchard.jpg",
+    milk: "harvest/dairy-farm.jpg",
+    honey: "harvest/beehives.jpg",
+  };
+  return photos(map[slug] ?? `crops/${slug}.jpg`);
+};
+/** Per-listing animal photos — each path must match livestock type in title.
+ *  Source files: public/seed/animals/*.jpg (Wikimedia Commons; see scripts/fix-animal-listing-images.mjs) */
+const ANIMAL_PHOTOS = {
+  holsteinCow: photos("animals/cow.jpg"),
+  beefBull: photos("animals/bull.jpg"),
+  sheepFlock: photos("animals/sheep.jpg"),
+  saanenGoat: photos("animals/goat.jpg"),
+  meatPig: photos("animals/pig.jpg"),
+  workHorse: photos("animals/horse.jpg"),
+  layingChicken: photos("animals/chicken.jpg"),
+  beeColony: photos("animals/bees.jpg"),
+  guardDog: photos("animals/dog.jpg"),
+} as const;
 
 async function main() {
   await prisma.demandAlert.deleteMany();
   await prisma.boost.deleteMany();
+  await prisma.returnCapacityOffer.deleteMany();
+  await prisma.spaceListing.deleteMany();
+  await prisma.farmDiaryEntry.deleteMany();
+  await prisma.farmExpense.deleteMany();
   await prisma.payment.deleteMany();
   await prisma.subscription.deleteMany();
   await prisma.plan.deleteMany();
@@ -121,7 +153,7 @@ async function main() {
     data: {
       email: process.env.ADMIN_EMAIL?.trim().toLowerCase() || "admin@demo.am",
       passwordHash,
-      name: "FarmOS Admin",
+      name: "Xndzor Admin",
       phone: "+37490000000",
       role: "ADMIN",
       marzId: "Yerevan",
@@ -373,6 +405,7 @@ async function main() {
       villageId: v.kentron,
       phone: factory.phone!,
       userId: factory.id,
+      imageUrls: cropPhoto("tomato"),
     },
   });
 
@@ -391,6 +424,7 @@ async function main() {
       villageId: v.abovyan,
       phone: buyerB.phone!,
       userId: buyerB.id,
+      imageUrls: cropPhoto("tomato"),
     },
   });
 
@@ -409,6 +443,7 @@ async function main() {
       villageId: v.abovyan,
       phone: restaurant.phone!,
       userId: restaurant.id,
+      imageUrls: cropPhoto("tomato"),
     },
   });
 
@@ -427,6 +462,7 @@ async function main() {
       villageId: v.vagharshapat,
       phone: shop.phone!,
       userId: shop.id,
+      imageUrls: cropPhoto("wheat"),
     },
   });
 
@@ -445,6 +481,7 @@ async function main() {
       villageId: v.masis,
       phone: buyer.phone!,
       userId: buyer.id,
+      imageUrls: cropPhoto("grape"),
     },
   });
 
@@ -466,6 +503,7 @@ async function main() {
       phone: exporter.phone!,
       whatsapp: exporter.phone!,
       userId: exporter.id,
+      imageUrls: cropPhoto("apple"),
     },
   });
 
@@ -487,6 +525,7 @@ async function main() {
       villageId: v.artashat,
       phone: factory.phone!,
       userId: factory.id,
+      imageUrls: cropPhoto("peach"),
     },
   });
 
@@ -505,6 +544,7 @@ async function main() {
       villageId: v.vagharshapat,
       phone: exporter.phone!,
       userId: exporter.id,
+      imageUrls: cropPhoto("peach"),
     },
   });
 
@@ -523,6 +563,7 @@ async function main() {
       villageId: v.kentron,
       phone: shop.phone!,
       userId: shop.id,
+      imageUrls: cropPhoto("peach"),
     },
   });
 
@@ -541,6 +582,7 @@ async function main() {
       villageId: v.abovyan,
       phone: restaurant.phone!,
       userId: restaurant.id,
+      imageUrls: cropPhoto("peach"),
     },
   });
 
@@ -560,6 +602,7 @@ async function main() {
       villageId: v.gavar,
       phone: shop.phone!,
       userId: shop.id,
+      imageUrls: cropPhoto("milk"),
     },
   });
 
@@ -578,6 +621,7 @@ async function main() {
       villageId: v.vanadzor,
       phone: buyerB.phone!,
       userId: buyerB.id,
+      imageUrls: cropPhoto("potato"),
     },
   });
 
@@ -597,6 +641,7 @@ async function main() {
       villageId: v.ijevan,
       phone: shop.phone!,
       userId: shop.id,
+      imageUrls: cropPhoto("honey"),
     },
   });
 
@@ -613,7 +658,7 @@ async function main() {
       villageId: v.masis,
       phone: farmer.phone!,
       whatsapp: farmer.phone!,
-      imageUrls: photos("tomato"),
+      imageUrls: cropPhoto("tomato"),
       userId: farmer.id,
     },
   });
@@ -630,7 +675,7 @@ async function main() {
       marzId: "Lori",
       villageId: v.vanadzor,
       phone: farmer2.phone!,
-      imageUrls: photos("potato"),
+      imageUrls: cropPhoto("potato"),
       userId: farmer2.id,
     },
   });
@@ -648,7 +693,7 @@ async function main() {
       villageId: v.areni,
       phone: farmer4.phone!,
       whatsapp: farmer4.phone!,
-      imageUrls: photos("apple"),
+      imageUrls: cropPhoto("apple"),
       userId: farmer4.id,
     },
   });
@@ -665,7 +710,7 @@ async function main() {
       marzId: "Gegharkunik",
       villageId: v.sevan,
       phone: farmer3.phone!,
-      imageUrls: photos("milk"),
+      imageUrls: cropPhoto("milk"),
       userId: farmer3.id,
     },
   });
@@ -683,7 +728,7 @@ async function main() {
       villageId: v.ijevan,
       phone: farmer5.phone!,
       whatsapp: farmer5.phone!,
-      imageUrls: photos("honey"),
+      imageUrls: cropPhoto("honey"),
       userId: farmer5.id,
     },
   });
@@ -700,7 +745,7 @@ async function main() {
       marzId: "Ararat",
       villageId: v.artashat,
       phone: farmer.phone!,
-      imageUrls: photos("grape"),
+      imageUrls: cropPhoto("grape"),
       userId: farmer.id,
     },
   });
@@ -717,7 +762,7 @@ async function main() {
       marzId: "Shirak",
       villageId: v.artik,
       phone: provider2.phone!,
-      imageUrls: photos("wheat"),
+      imageUrls: cropPhoto("wheat"),
       userId: provider2.id,
     },
   });
@@ -1019,6 +1064,7 @@ async function main() {
       villageId: v.masis,
       phone: farmer.phone!,
       whatsapp: farmer.phone!,
+      imageUrls: harvestPhoto("tomato"),
       userId: farmer.id,
     },
   });
@@ -1040,6 +1086,83 @@ async function main() {
       qtyWanted: 15,
       message: "Մեծածախ — 15 տ",
       status: "SENT",
+    },
+  });
+
+  // ——— Farm OS demo expenses + space listing ———
+  await prisma.farmExpense.createMany({
+    data: [
+      {
+        userId: farmer.id,
+        plotId: plotTomato.id,
+        category: "diesel",
+        amountAmd: 85000,
+        note: "Տրակտոր · ոռոգման պոմպ",
+        date: new Date("2026-08-12"),
+      },
+      {
+        userId: farmer.id,
+        plotId: plotTomato.id,
+        category: "labor",
+        amountAmd: 120000,
+        note: "Բերքահավաքի աշխատողներ",
+        date: new Date("2026-08-18"),
+      },
+      {
+        userId: farmer.id,
+        plotId: plotWheat.id,
+        category: "seed",
+        amountAmd: 95000,
+        note: "Ցորենի սերմ",
+        date: new Date("2025-10-15"),
+      },
+      {
+        userId: farmer.id,
+        plotId: plotTomato.id,
+        category: "water",
+        amountAmd: 42000,
+        note: "Ոռոգման վարձ",
+        date: new Date("2026-08-05"),
+      },
+      {
+        userId: farmer.id,
+        category: "other",
+        amountAmd: 28000,
+        note: "Տարաներ / արկղեր",
+        date: new Date("2026-08-22"),
+      },
+    ],
+  });
+
+  await prisma.spaceListing.create({
+    data: {
+      title: "Սառը պահեստ — Մասիս (դեմո)",
+      description: "Դատարկ սառնարանային տարածք բերքի համար։ Farm OS դեմո հայտարարություն։",
+      spaceType: "COLD",
+      capacityNote: "~40 տ",
+      availableFrom: new Date("2026-09-01"),
+      availableTo: new Date("2026-11-30"),
+      priceAmd: 180000,
+      priceUnit: "PER_MONTH",
+      marzId: "Ararat",
+      villageId: v.masis,
+      phone: farmer.phone!,
+      userId: farmer.id,
+    },
+  });
+
+  await prisma.farmDiaryEntry.create({
+    data: {
+      userId: farmer.id,
+      plotId: plotTomato.id,
+      rawText: "Այսօր ոռոգեցի 1.5 հա, տվեցի 40 կգ պարարտանյութ, վաղը 3 աշխատող։",
+      parsedJson: JSON.stringify({
+        wateredHa: 1.5,
+        fertilizerKg: 40,
+        workersTomorrow: 3,
+        keywords: ["irrigation", "fertilizer", "workers"],
+      }),
+      entryDate: new Date("2026-08-24"),
     },
   });
 
@@ -1105,6 +1228,7 @@ async function main() {
       marzId: "Armavir",
       villageId: v.vagharshapat,
       phone: farmerArmavir.phone!,
+      imageUrls: harvestPhoto("tomato"),
       userId: farmerArmavir.id,
     },
   });
@@ -1122,6 +1246,7 @@ async function main() {
       marzId: "Armavir",
       villageId: v.metsamor,
       phone: farmerArmavir2.phone!,
+      imageUrls: harvestPhoto("tomato"),
       userId: farmerArmavir2.id,
     },
   });
@@ -1138,6 +1263,7 @@ async function main() {
       marzId: "Armavir",
       villageId: v.aygeshat,
       phone: farmerArmavir.phone!,
+      imageUrls: harvestPhoto("tomato"),
       userId: farmerArmavir.id,
     },
   });
@@ -1155,6 +1281,7 @@ async function main() {
       marzId: "Ararat",
       villageId: v.vedi,
       phone: farmer.phone!,
+      imageUrls: harvestPhoto("peach"),
       userId: farmer.id,
     },
   });
@@ -1172,6 +1299,7 @@ async function main() {
       marzId: "Armavir",
       villageId: v.vagharshapat,
       phone: farmer.phone!,
+      imageUrls: harvestPhoto("wheat"),
       userId: farmer.id,
     },
   });
@@ -1189,6 +1317,7 @@ async function main() {
       marzId: "Ararat",
       villageId: v.masis,
       phone: farmer.phone!,
+      imageUrls: harvestPhoto("grape"),
       userId: farmer.id,
     },
   });
@@ -1206,6 +1335,7 @@ async function main() {
       villageId: v.areni,
       phone: farmer4.phone!,
       whatsapp: farmer4.phone!,
+      imageUrls: harvestPhoto("apple"),
       userId: farmer4.id,
     },
   });
@@ -1232,6 +1362,7 @@ async function main() {
       marzId: "Lori",
       villageId: v.spitak,
       phone: farmer2.phone!,
+      imageUrls: harvestPhoto("potato"),
       userId: farmer2.id,
     },
   });
@@ -1248,6 +1379,7 @@ async function main() {
       marzId: "Gegharkunik",
       villageId: v.martuni,
       phone: farmer3.phone!,
+      imageUrls: harvestPhoto("milk"),
       userId: farmer3.id,
     },
   });
@@ -1264,6 +1396,7 @@ async function main() {
       marzId: "Tavush",
       villageId: v.berd,
       phone: farmer5.phone!,
+      imageUrls: harvestPhoto("honey"),
       userId: farmer5.id,
     },
   });
@@ -1671,7 +1804,7 @@ async function main() {
         villageId: v.masis,
         phone: farmer.phone!,
         whatsapp: farmer.phone!,
-        imageUrls: photos("animals/cow.svg"),
+        imageUrls: ANIMAL_PHOTOS.holsteinCow,
         userId: farmer.id,
         status: "ACTIVE",
       },
@@ -1696,7 +1829,7 @@ async function main() {
         villageId: v.vanadzor,
         phone: farmer2.phone!,
         whatsapp: farmer2.phone!,
-        imageUrls: photos("animals/bull.svg"),
+        imageUrls: ANIMAL_PHOTOS.beefBull,
         userId: farmer2.id,
         status: "ACTIVE",
       },
@@ -1719,7 +1852,7 @@ async function main() {
         villageId: v.gyumri,
         phone: farmer4.phone!,
         whatsapp: farmer4.phone!,
-        imageUrls: photos("animals/sheep.svg"),
+        imageUrls: ANIMAL_PHOTOS.sheepFlock,
         userId: farmer4.id,
         status: "ACTIVE",
       },
@@ -1743,7 +1876,7 @@ async function main() {
         marzId: "Kotayk",
         villageId: v.abovyan,
         phone: farmer.phone!,
-        imageUrls: photos("animals/goat.svg"),
+        imageUrls: ANIMAL_PHOTOS.saanenGoat,
         userId: farmer.id,
         status: "ACTIVE",
       },
@@ -1767,7 +1900,7 @@ async function main() {
         villageId: v.vagharshapat,
         phone: farmer3.phone!,
         whatsapp: farmer3.phone!,
-        imageUrls: photos("animals/pig.svg"),
+        imageUrls: ANIMAL_PHOTOS.meatPig,
         userId: farmer3.id,
         status: "ACTIVE",
       },
@@ -1792,7 +1925,7 @@ async function main() {
         villageId: v.areni,
         phone: farmer5.phone!,
         whatsapp: farmer5.phone!,
-        imageUrls: photos("animals/horse.svg"),
+        imageUrls: ANIMAL_PHOTOS.workHorse,
         userId: farmer5.id,
         status: "ACTIVE",
       },
@@ -1815,7 +1948,7 @@ async function main() {
         marzId: "Gegharkunik",
         villageId: v.sevan,
         phone: farmer3.phone!,
-        imageUrls: photos("animals/chicken.svg"),
+        imageUrls: ANIMAL_PHOTOS.layingChicken,
         userId: farmer3.id,
         status: "ACTIVE",
       },
@@ -1839,7 +1972,7 @@ async function main() {
         villageId: v.ijevan,
         phone: farmer5.phone!,
         whatsapp: farmer5.phone!,
-        imageUrls: photos("animals/bees.svg"),
+        imageUrls: ANIMAL_PHOTOS.beeColony,
         userId: farmer5.id,
         status: "ACTIVE",
       },
@@ -1864,7 +1997,7 @@ async function main() {
         villageId: v.goris,
         phone: farmer2.phone!,
         whatsapp: farmer2.phone!,
-        imageUrls: photos("animals/dog.svg"),
+        imageUrls: ANIMAL_PHOTOS.guardDog,
         userId: farmer2.id,
         status: "ACTIVE",
       },
@@ -1891,7 +2024,7 @@ async function main() {
       villageId: v.abovyan,
       phone: shop.phone!,
       whatsapp: shop.phone!,
-      imageUrls: photos("tomato"),
+      imageUrls: photos("catalog/npk-fertilizer.jpg"),
       userId: shop.id,
     },
   });
@@ -1914,7 +2047,7 @@ async function main() {
         marzId: "Armavir",
         villageId: v.vagharshapat,
         phone: shop.phone!,
-        imageUrls: photos("wheat"),
+        imageUrls: photos("catalog/urea-fertilizer.jpg"),
         userId: shop.id,
         status: "ACTIVE",
       },
@@ -1935,7 +2068,7 @@ async function main() {
         villageId: v.masis,
         phone: farmer.phone!,
         whatsapp: farmer.phone!,
-        imageUrls: photos("potato"),
+        imageUrls: photos("catalog/compost.jpg"),
         userId: farmer.id,
         status: "ACTIVE",
       },
@@ -1955,7 +2088,7 @@ async function main() {
         marzId: "Shirak",
         villageId: v.gyumri,
         phone: provider2.phone!,
-        imageUrls: photos("wheat"),
+        imageUrls: photos("catalog/wheat-seed.jpg"),
         userId: provider2.id,
         status: "ACTIVE",
       },
@@ -1975,7 +2108,7 @@ async function main() {
         marzId: "Ararat",
         villageId: v.masis,
         phone: farmer.phone!,
-        imageUrls: photos("tomato"),
+        imageUrls: photos("catalog/tomato-seedlings.jpg"),
         userId: farmer.id,
         status: "ACTIVE",
       },
@@ -1995,7 +2128,7 @@ async function main() {
         marzId: "Gegharkunik",
         villageId: v.sevan,
         phone: farmer3.phone!,
-        imageUrls: photos("honey"),
+        imageUrls: photos("catalog/hay-bales.jpg"),
         userId: farmer3.id,
         status: "ACTIVE",
       },
@@ -2019,7 +2152,7 @@ async function main() {
         marzId: "VayotsDzor",
         villageId: v.areni,
         phone: farmer4.phone!,
-        imageUrls: photos("apple"),
+        imageUrls: photos("catalog/fungicide.jpg"),
         userId: farmer4.id,
         status: "ACTIVE",
       },
@@ -2039,7 +2172,7 @@ async function main() {
         marzId: "Armavir",
         villageId: v.metsamor,
         phone: shop.phone!,
-        imageUrls: photos("grape"),
+        imageUrls: photos("catalog/drip-irrigation.jpg"),
         userId: shop.id,
         status: "ACTIVE",
       },
@@ -2064,7 +2197,7 @@ async function main() {
         villageId: v.artashat,
         phone: farmer.phone!,
         whatsapp: farmer.phone!,
-        imageUrls: photos("wheat"),
+        imageUrls: photos("catalog/farmland.jpg"),
         userId: farmer.id,
         status: "ACTIVE",
       },
@@ -2225,6 +2358,84 @@ async function main() {
     ],
   });
 
+  // Farm tools MVP demo (spaces, returns, journey, village goal)
+  const farmerVillageId = farmer.villageId;
+  if (farmerVillageId) {
+    await prisma.spaceListing.createMany({
+      data: [
+        {
+          title: "Cold room 40 t",
+          description: "Demo cold storage near Ararat.",
+          spaceType: "COLD",
+          area: 120,
+          capacityNote: "40 t",
+          priceAmd: 250000,
+          marzId: farmer.marzId || "Ararat",
+          villageId: farmerVillageId,
+          phone: farmer.phone || "",
+          userId: farmer.id,
+        },
+        {
+          title: "Empty greenhouse bay",
+          description: "Unused bay for seedlings.",
+          spaceType: "GREENHOUSE",
+          area: 200,
+          marzId: farmer.marzId || "Ararat",
+          villageId: farmerVillageId,
+          phone: farmer.phone || "",
+          userId: farmer.id,
+        },
+      ],
+    });
+    await prisma.villageGoal.create({
+      data: {
+        villageId: farmerVillageId,
+        title: "Shared cold storage — 200 t",
+        targetQty: 200,
+        unit: "ton",
+        progressQty: 45,
+      },
+    });
+  }
+  await prisma.returnCapacityOffer.create({
+    data: {
+      userId: farmer.id,
+      fromNote: "Yerevan market",
+      toNote: "Ararat villages",
+      fromMarzId: "Yerevan",
+      toMarzId: "Ararat",
+      freeTons: 12,
+      priceAmd: 40000,
+      departAt: new Date(Date.now() + 2 * 86400000),
+      capacityNote: "12 t free return",
+      phone: farmer.phone,
+    },
+  });
+  await prisma.cropJourney.create({
+    data: {
+      userId: farmer.id,
+      cropName: "Tomato",
+      seasonYear: new Date().getFullYear(),
+      stagesJson: JSON.stringify([
+        { id: "s1", title: "Seed", costAmd: 120000 },
+        { id: "s2", title: "Plant", costAmd: 80000 },
+        { id: "s3", title: "Care", costAmd: 200000 },
+        { id: "s4", title: "Harvest", costAmd: 150000 },
+        { id: "s5", title: "Sell", costAmd: 40000 },
+      ]),
+      totalCostAmd: 590000,
+      yieldKg: 4500,
+      revenueAmd: 900000,
+    },
+  });
+  await prisma.farmExpense.createMany({
+    data: [
+      { userId: farmer.id, category: "diesel", amountAmd: 85000, note: "Seed demo" },
+      { userId: farmer.id, category: "labor", amountAmd: 120000, note: "Seed demo" },
+      { userId: farmer.id, category: "water", amountAmd: 35000, note: "Seed demo" },
+    ],
+  });
+
   console.log({
     marzes: await prisma.marz.count(),
     villages: await prisma.village.count(),
@@ -2244,8 +2455,12 @@ async function main() {
     comments: await prisma.comment.count(),
     productBatches: await prisma.productBatch.count(),
     farmReviews: await prisma.farmReview.count(),
+    spaceListings: await prisma.spaceListing.count(),
+    returnOffers: await prisma.returnCapacityOffer.count(),
   });
   console.log("Demo: farmer@demo.am / password123 — plot → forecast → demand → pre-sale");
+  console.log("Farm tools: /hy/farm — risks, diary, costs, spaces, returns, score");
+  console.log("For production-like setup: npm run db:seed:minimal && npm run admin:promote");
   console.log("Farm passport: /hy/farms/AR-002184 (farmer@demo.am)");
   console.log("Batch: /hy/batches/TOMATO-AR-2026-00182");
   console.log("Machinery: /hy/machinery — John Deere, MTZ, Case, Claas…");

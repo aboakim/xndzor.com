@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Link } from "@/i18n/navigation";
 import { ContactActions } from "@/components/ContactActions";
+import { ShareButtons } from "@/components/ShareButtons";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ListingGallery } from "@/components/ListingGallery";
 import { CatalogListingActions } from "@/components/CatalogListingActions";
@@ -20,7 +21,11 @@ import { tContent, formatLocaleDate } from "@/lib/content-locale";
 import { formatAmd, parseImageUrls } from "@/lib/utils";
 import { getSession } from "@/lib/session";
 import { BoostButton } from "@/components/BoostButton";
+import { ReportListingButton } from "@/components/ReportListingButton";
 import { getActiveBoostMap, getUserEntitlements } from "@/lib/monetization";
+import { resolveOwnerFreeCheckout } from "@/lib/early-bird";
+import { SellerCard } from "@/components/SellerCard";
+import { USER_PROFILE_SELECT } from "@/lib/profile-privacy";
 
 export default async function CatalogDetailPage({
   params,
@@ -37,7 +42,7 @@ export default async function CatalogDetailPage({
 
   const listing = await prisma.catalogListing.findUnique({
     where: { id },
-    include: { marz: true, village: true, user: { select: { id: true, name: true } } },
+    include: { marz: true, village: true, user: { select: USER_PROFILE_SELECT } },
   });
   if (!listing || listing.status === "HIDDEN" || listing.category !== category) notFound();
 
@@ -51,6 +56,10 @@ export default async function CatalogDetailPage({
   const boostedUntil = boostMap.get(listing.id);
   const ownerEnt =
     isOwner && session?.user?.id ? await getUserEntitlements(session.user.id) : null;
+  const ownerFreeCheckout =
+    isOwner && session?.user?.id
+      ? await resolveOwnerFreeCheckout(session.user.id)
+      : false;
 
   const specCells: { label: string; value: string }[] = [
     {
@@ -170,12 +179,24 @@ export default async function CatalogDetailPage({
       <div className="detail-body">
         <h2>{t("detail.description")}</h2>
         <p className="pre-wrap detail-desc">{description}</p>
-        <p className="muted">
-          {t("detail.postedBy")} {listing.user.name}
-        </p>
+        <SellerCard
+          user={listing.user}
+          viewerId={session?.user?.id}
+          locale={locale}
+          compact
+        />
       </div>
 
+      <ShareButtons title={title} priceSnippet={priceLabel} />
+
       <ContactActions phone={listing.phone} whatsapp={listing.whatsapp} waText={waText} />
+
+      {!isOwner ? (
+        <ReportListingButton
+          listingPath={`/shop/${slug}/${listing.id}`}
+          listingTitle={title}
+        />
+      ) : null}
 
       <CommentSection targetType="CATALOG" targetId={listing.id} />
 
@@ -188,6 +209,7 @@ export default async function CatalogDetailPage({
             isPro={Boolean(ownerEnt?.isPro)}
             boostQuotaRemaining={ownerEnt?.boostQuotaRemaining ?? 0}
             currentlyBoostedUntil={boostedUntil?.toISOString() ?? null}
+            freeMode={ownerFreeCheckout}
           />
           <CatalogListingActions id={listing.id} status={listing.status} />
           <p className="muted">

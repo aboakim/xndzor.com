@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-import { isStripeConfigured } from "./pricing";
+import { isStripeConfigured, requireStripeInProduction } from "./pricing";
 
 let stripeSingleton: Stripe | null = null;
 
@@ -12,4 +12,4 @@ export function getStripe(): Stripe | null {
   return stripeSingleton;
 }
 
-export { isStripeConfigured };
+export { isStripeConfigured, requireStripeInProduction };

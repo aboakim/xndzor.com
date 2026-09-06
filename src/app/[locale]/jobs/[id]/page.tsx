@@ -3,12 +3,15 @@ import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
 import { ContactActions } from "@/components/ContactActions";
+import { ShareButtons } from "@/components/ShareButtons";
 import { findProvidersForJob, parseJobTypesJson } from "@/lib/matching";
 import { formatAmd } from "@/lib/utils";
 import { getSession } from "@/lib/session";
 import { ApplyToJobButton } from "@/components/ApplyToJobButton";
 import { JobTypeIcon } from "@/components/AgIcons";
 import { VillageLink } from "@/components/VillageLink";
+import { SellerCard } from "@/components/SellerCard";
+import { USER_PROFILE_SELECT } from "@/lib/profile-privacy";
 
 export default async function JobDetailPage({
   params,
@@ -22,7 +25,7 @@ export default async function JobDetailPage({
 
   const job = await prisma.jobRequest.findUnique({
     where: { id },
-    include: { marz: true, village: true, user: { select: { id: true, name: true } } },
+    include: { marz: true, village: true, user: { select: USER_PROFILE_SELECT } },
   });
   if (!job || job.status === "HIDDEN") notFound();
 
@@ -77,10 +80,20 @@ export default async function JobDetailPage({
       <div className="detail-body">
         <h2>{t("detail.description")}</h2>
         <p className="pre-wrap">{job.description}</p>
-        <p className="muted">
-          {t("detail.postedBy")} {job.user.name}
-        </p>
+        <SellerCard
+          user={job.user}
+          viewerId={session?.user?.id}
+          locale={locale}
+          compact
+        />
       </div>
+
+      <ShareButtons
+        title={job.title}
+        priceSnippet={
+          job.budgetAmd != null ? `${formatAmd(job.budgetAmd)} ֏` : t("detail.priceOpen")
+        }
+      />
 
       <ContactActions phone={job.phone} whatsapp={job.whatsapp} />
 

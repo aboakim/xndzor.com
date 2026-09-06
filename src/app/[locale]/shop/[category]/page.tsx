@@ -2,8 +2,10 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
+import { browseOrderBy } from "@/lib/browse-sort";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { EmptyState } from "@/components/EmptyState";
+import { ListingBrowseLayout } from "@/components/ListingBrowseLayout";
 import { CatalogCard } from "@/components/CatalogCard";
 import { CatalogFilters } from "@/components/CatalogFilters";
 import { ActionIcon } from "@/components/AgIcons";
@@ -31,6 +33,7 @@ export default async function CatalogBoardPage({
     q?: string;
     priceMin?: string;
     priceMax?: string;
+    sort?: string;
   }>;
 }) {
   const { locale, category: slug } = await params;
@@ -39,43 +42,47 @@ export default async function CatalogBoardPage({
   if (!category) notFound();
   setRequestLocale(locale);
   const t = await getTranslations();
-  const session = await getSession();
   const route = CATALOG_ROUTE[category];
 
-  const listings = await prisma.catalogListing.findMany({
-    where: {
-      category,
-      status: "ACTIVE",
-      ...(sp.subtype ? { subtype: sp.subtype } : {}),
-      ...(sp.marz ? { marzId: sp.marz } : {}),
-      ...(sp.village ? { villageId: sp.village } : {}),
-      ...(sp.priceMin || sp.priceMax
-        ? {
-            priceAmd: {
-              ...(sp.priceMin ? { gte: Number(sp.priceMin) } : {}),
-              ...(sp.priceMax ? { lte: Number(sp.priceMax) } : {}),
-            },
-          }
-        : {}),
-      ...(sp.q
-        ? {
-            OR: [
-              { title: { contains: sp.q } },
-              { description: { contains: sp.q } },
-              { brand: { contains: sp.q } },
-            ],
-          }
-        : {}),
-    },
-    include: { marz: true, village: true },
-    orderBy: { createdAt: "desc" },
-  });
+  const [session, listings] = await Promise.all([
+    getSession(),
+    prisma.catalogListing.findMany({
+      where: {
+        category,
+        status: "ACTIVE",
+        ...(sp.subtype ? { subtype: sp.subtype } : {}),
+        ...(sp.marz ? { marzId: sp.marz } : {}),
+        ...(sp.village ? { villageId: sp.village } : {}),
+        ...(sp.priceMin || sp.priceMax
+          ? {
+              priceAmd: {
+                ...(sp.priceMin ? { gte: Number(sp.priceMin) } : {}),
+                ...(sp.priceMax ? { lte: Number(sp.priceMax) } : {}),
+              },
+            }
+          : {}),
+        ...(sp.q
+          ? {
+              OR: [
+                { title: { contains: sp.q } },
+                { description: { contains: sp.q } },
+                { brand: { contains: sp.q } },
+              ],
+            }
+          : {}),
+      },
+      include: { marz: true, village: true },
+      orderBy: browseOrderBy(sp.sort),
+    }),
+  ]);
 
-  const boostMap = await getActiveBoostMap(
-    "CATALOG",
-    listings.map((r) => r.id),
-  );
-  const proIds = await getProUserIds(listings.map((r) => r.userId));
+  const [boostMap, proIds] = await Promise.all([
+    getActiveBoostMap(
+      "CATALOG",
+      listings.map((r) => r.id),
+    ),
+    getProUserIds(listings.map((r) => r.userId)),
+  ]);
   const ranked = sortByMonetization(listings, boostMap, proIds);
 
   return (
@@ -119,46 +126,51 @@ export default async function CatalogBoardPage({
         ))}
       </div>
 
-      <CatalogFilters
-        category={category}
-        subtype={sp.subtype}
-        marz={sp.marz}
-        village={sp.village}
-        q={sp.q}
-        priceMin={sp.priceMin}
-        priceMax={sp.priceMax}
-      />
-
-      {ranked.length === 0 ? (
-        <EmptyState
-          message={t("catalogBoard.empty")}
-          actionHref={`/shop/${route}/new`}
-          actionLabel={t("common.add")}
-        />
-      ) : (
-        <div className="classified-list">
-          {ranked.map((row) => (
-            <CatalogCard
-              key={row.id}
-              id={row.id}
-              category={category}
-              title={row.title}
-              subtype={row.subtype}
-              brand={row.brand}
-              quantity={row.quantity}
-              unit={row.unit}
-              priceAmd={row.priceAmd}
-              priceNegotiable={row.priceNegotiable}
-              priceUnit={row.priceUnit}
-              marz={{ ...row.marz, slug: row.marz.slug }}
-              village={row.village}
-              imageUrls={row.imageUrls}
-              isPro={proIds.has(row.userId)}
-              boosted={boostMap.has(row.id)}
-            />
-          ))}
-        </div>
-      )}
+      <ListingBrowseLayout
+        sort={sp.sort}
+        hasResults={ranked.length > 0}
+        resultCount={ranked.length}
+        empty={
+          <EmptyState
+            message={t("catalogBoard.empty")}
+            actionHref={`/shop/${route}/new`}
+            actionLabel={t("common.add")}
+          />
+        }
+        sidebar={
+          <CatalogFilters
+            category={category}
+            subtype={sp.subtype}
+            marz={sp.marz}
+            village={sp.village}
+            q={sp.q}
+            priceMin={sp.priceMin}
+            priceMax={sp.priceMax}
+          />
+        }
+      >
+        {ranked.map((row) => (
+          <CatalogCard
+            key={row.id}
+            id={row.id}
+            category={category}
+            title={row.title}
+            description={row.description}
+            subtype={row.subtype}
+            brand={row.brand}
+            quantity={row.quantity}
+            unit={row.unit}
+            priceAmd={row.priceAmd}
+            priceNegotiable={row.priceNegotiable}
+            priceUnit={row.priceUnit}
+            marz={{ ...row.marz, slug: row.marz.slug }}
+            village={row.village}
+            imageUrls={row.imageUrls}
+            isPro={proIds.has(row.userId)}
+            boosted={boostMap.has(row.id)}
+          />
+        ))}
+      </ListingBrowseLayout>
     </div>
   );
 }

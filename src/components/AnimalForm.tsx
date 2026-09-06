@@ -29,6 +29,7 @@ export function AnimalForm({
   const [villages, setVillages] = useState<LocationVillage[]>([]);
   const [loadingVillages, setLoadingVillages] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+  const [uploadProgress, setUploadProgress] = useState<number | undefined>();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [animalType, setAnimalType] = useState<(typeof ANIMAL_TYPES)[number]>("COW");
@@ -62,8 +63,9 @@ export function AnimalForm({
     e.preventDefault();
     setSaving(true);
     setError("");
+    setUploadProgress(undefined);
     try {
-      const imageUrls = await uploadImages(files);
+      const imageUrls = await uploadImages(files, { onProgress: setUploadProgress });
       const fd = new FormData(e.currentTarget);
       const body = {
         title: String(fd.get("title") || ""),
@@ -316,7 +318,13 @@ export function AnimalForm({
             placeholder={t("postAnimals.fields.descriptionHint")}
           />
         </label>
-        <ImageUploadField files={files} onChange={setFiles} />
+        <ImageUploadField
+          files={files}
+          onChange={setFiles}
+          uploading={saving}
+          uploadProgress={uploadProgress}
+          disabled={saving}
+        />
       </fieldset>
 
       {error ? <p className="form-error">{error}</p> : null}

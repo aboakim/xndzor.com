@@ -70,6 +70,11 @@ export async function POST(req: Request) {
       phone: d.phone,
       whatsapp: d.whatsapp || null,
       userId: session.user.id,
+      imageUrls: JSON.stringify(
+        (d.imageUrls || []).filter(
+          (u) => u.startsWith("/uploads/") && !u.includes("..") && !u.includes("//")
+        )
+      ),
     },
   });
   return NextResponse.json(crop, { status: 201 });

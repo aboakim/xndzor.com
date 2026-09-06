@@ -22,6 +22,8 @@ const securityHeaders = [
       "img-src 'self' data: blob: https://images.unsplash.com",
       "font-src 'self' data:",
       "connect-src 'self'",
+      "worker-src 'self'",
+      "manifest-src 'self'",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self' https://checkout.stripe.com https://*.stripe.com",
@@ -41,6 +43,35 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   // Standalone output is produced in Docker (linux). Local Windows builds use default output.
   ...(process.env.DOCKER_BUILD === "1" ? { output: "standalone" as const } : {}),
+  webpack: (config, { dev }) => {
+    if (dev) {
+      const extraIgnored = [
+        "**/node_modules/**",
+        "**/.git/**",
+        "C:/hiberfil.sys",
+        "C:/swapfile.sys",
+        "C:/pagefile.sys",
+        "C:/DumpStack.log.tmp",
+        "C:/$Recycle.Bin/**",
+        "C:/System Volume Information/**",
+        "C:/Windows/**",
+        "C:/Program Files/**",
+        "C:/Program Files (x86)/**",
+      ];
+      config.watchOptions = {
+        ...config.watchOptions,
+        ignored: extraIgnored,
+      };
+    }
+    return config;
+  },
+  // Expose PACKAGES_FREE to client so CheckoutButton / BoostButton skip payment UI when forced free.
+  env: {
+    NEXT_PUBLIC_PACKAGES_FREE:
+      process.env.NEXT_PUBLIC_PACKAGES_FREE ??
+      process.env.PACKAGES_FREE ??
+      "false",
+  },
   poweredByHeader: false,
   images: {
     remotePatterns: [
@@ -52,6 +83,20 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         headers: securityHeaders,
+      },
+      {
+        source: "/sw.js",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=0, must-revalidate" },
+          { key: "Service-Worker-Allowed", value: "/" },
+        ],
+      },
+      {
+        source: "/manifest.webmanifest",
+        headers: [
+          { key: "Content-Type", value: "application/manifest+json" },
+          { key: "Cache-Control", value: "public, max-age=86400" },
+        ],
       },
     ];
   },

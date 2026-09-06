@@ -33,6 +33,7 @@ export function CatalogForm({
   const [villages, setVillages] = useState<LocationVillage[]>([]);
   const [loadingVillages, setLoadingVillages] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+  const [uploadProgress, setUploadProgress] = useState<number | undefined>();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [subtype, setSubtype] = useState(subtypes[0]);
@@ -65,8 +66,9 @@ export function CatalogForm({
     e.preventDefault();
     setSaving(true);
     setError("");
+    setUploadProgress(undefined);
     try {
-      const imageUrls = await uploadImages(files);
+      const imageUrls = await uploadImages(files, { onProgress: setUploadProgress });
       const fd = new FormData(e.currentTarget);
       const specs: Record<string, string | number | boolean | null> = {};
       for (const field of CATALOG_SPEC_FIELDS[category]) {
@@ -262,7 +264,13 @@ export function CatalogForm({
           <span>{t("postCatalog.fields.description")}</span>
           <textarea name="description" required minLength={20} maxLength={12000} rows={10} />
         </label>
-        <ImageUploadField files={files} onChange={setFiles} />
+        <ImageUploadField
+          files={files}
+          onChange={setFiles}
+          uploading={saving}
+          uploadProgress={uploadProgress}
+          disabled={saving}
+        />
       </fieldset>
 
       {error ? <p className="form-error">{error}</p> : null}

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { CheckoutButton } from "@/components/CheckoutButton";
-import type { BoostTargetType } from "@/lib/pricing";
+import { arePackagesFree, type BoostTargetType } from "@/lib/pricing";
 
 type Props = {
   targetType: BoostTargetType;
@@ -11,6 +11,8 @@ type Props = {
   boostQuotaRemaining?: number;
   isPro?: boolean;
   currentlyBoostedUntil?: string | null;
+  /** Server-computed: owner qualifies for free checkout */
+  freeMode?: boolean;
 };
 
 export function BoostButton({
@@ -19,9 +21,11 @@ export function BoostButton({
   boostQuotaRemaining = 0,
   isPro = false,
   currentlyBoostedUntil,
+  freeMode: freeModeProp,
 }: Props) {
   const t = useTranslations("pricing");
   const [open, setOpen] = useState(false);
+  const freeMode = freeModeProp ?? arePackagesFree();
 
   return (
     <div className="boost-panel">
@@ -37,7 +41,9 @@ export function BoostButton({
       </button>
       {open ? (
         <div className="boost-choices">
-          <p className="tiny muted">{t("boost.choose")}</p>
+          <p className="tiny muted">
+            {freeMode ? t("boost.chooseFree") : t("boost.choose")}
+          </p>
           {isPro && boostQuotaRemaining > 0 ? (
             <CheckoutButton
               productCode="BOOST_7"
@@ -53,16 +59,20 @@ export function BoostButton({
             targetType={targetType}
             targetId={targetId}
             className="btn primary"
-            label={t("boost.buy7")}
+            label={freeMode ? t("boost.activate7") : t("boost.buy7")}
+            freeMode={freeMode}
           />
           <CheckoutButton
             productCode="BOOST_30"
             targetType={targetType}
             targetId={targetId}
             className="btn primary"
-            label={t("boost.buy30")}
+            label={freeMode ? t("boost.activate30") : t("boost.buy30")}
+            freeMode={freeMode}
           />
-          {!isPro ? <p className="tiny muted">{t("boost.proHint")}</p> : null}
+          {!isPro && !freeMode ? (
+            <p className="tiny muted">{t("boost.proHint")}</p>
+          ) : null}
         </div>
       ) : null}
     </div>

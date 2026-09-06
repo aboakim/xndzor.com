@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Link } from "@/i18n/navigation";
 import { ContactActions } from "@/components/ContactActions";
+import { ShareButtons } from "@/components/ShareButtons";
 import { OfferButton } from "@/components/OfferButton";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ListingGallery } from "@/components/ListingGallery";
@@ -11,9 +12,14 @@ import { formatAmd, formatPriceRange, formatQty, parseImageUrls } from "@/lib/ut
 import { localizedPlaceName } from "@/lib/places";
 import { getSession } from "@/lib/session";
 import { BoostButton } from "@/components/BoostButton";
+import { ReportListingButton } from "@/components/ReportListingButton";
 import { getActiveBoostMap, getUserEntitlements } from "@/lib/monetization";
+import { resolveOwnerFreeCheckout } from "@/lib/early-bird";
 import { ProductIcon } from "@/components/AgIcons";
 import { VillageLink } from "@/components/VillageLink";
+import { TrackRecentView } from "@/components/TrackRecentView";
+import { SellerCard } from "@/components/SellerCard";
+import { USER_PROFILE_SELECT } from "@/lib/profile-privacy";
 
 export default async function SupplyDetailPage({
   params,
@@ -31,7 +37,7 @@ export default async function SupplyDetailPage({
       product: true,
       marz: true,
       village: true,
-      user: { select: { id: true, name: true } },
+      user: { select: USER_PROFILE_SELECT },
     },
   });
   if (!supply || supply.status === "HIDDEN") notFound();
@@ -52,9 +58,21 @@ export default async function SupplyDetailPage({
   const boostedUntil = boostMap.get(supply.id);
   const ownerEnt =
     isOwner && session?.user?.id ? await getUserEntitlements(session.user.id) : null;
+  const ownerFreeCheckout =
+    isOwner && session?.user?.id
+      ? await resolveOwnerFreeCheckout(session.user.id)
+      : false;
 
   return (
     <div className="section detail-page">
+      <TrackRecentView
+        id={supply.id}
+        href={`/supply/${supply.id}`}
+        title={supply.title}
+        kind="supply"
+        thumb={images[0] ?? null}
+        subtitle={t(supply.product.nameKey as "products.tomato")}
+      />
       <Breadcrumbs
         items={[
           { href: "/", label: t("nav.home") },
@@ -116,10 +134,24 @@ export default async function SupplyDetailPage({
       <div className="detail-body">
         <h2>{t("detail.description")}</h2>
         <p className="pre-wrap detail-desc">{supply.description}</p>
-        <p className="muted">
-          {t("detail.postedBy")} {supply.user.name}
-        </p>
+        <SellerCard
+          user={supply.user}
+          viewerId={session?.user?.id}
+          locale={locale}
+          compact
+        />
       </div>
+
+      <ShareButtons
+        title={supply.title}
+        priceSnippet={
+          supply.priceAmd != null
+            ? formatPriceRange(supply.priceAmd, supply.priceAmd, supply.unit, (k) =>
+                t(k as "common.amd")
+              )
+            : t("detail.priceOpen")
+        }
+      />
 
       <ContactActions
         phone={supply.phone}
@@ -131,6 +163,13 @@ export default async function SupplyDetailPage({
         }
       />
 
+      {!isOwner ? (
+        <ReportListingButton
+          listingPath={`/supply/${supply.id}`}
+          listingTitle={supply.title}
+        />
+      ) : null}
+
       {isOwner ? (
         <section className="owner-panel">
           <h2>{t("pricing.boost.cta")}</h2>
@@ -140,6 +179,7 @@ export default async function SupplyDetailPage({
             isPro={Boolean(ownerEnt?.isPro)}
             boostQuotaRemaining={ownerEnt?.boostQuotaRemaining ?? 0}
             currentlyBoostedUntil={boostedUntil?.toISOString() ?? null}
+            freeMode={ownerFreeCheckout}
           />
         </section>
       ) : null}

@@ -1,12 +1,18 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
+import { isDemoModeAllowed } from "@/lib/pricing";
+import { validateCsrf } from "@/lib/csrf";
 import { activatePayment } from "@/lib/monetization";
-import { isStripeConfigured } from "@/lib/pricing";
+import { logPaymentEvent } from "@/lib/payments";
 
-/** Demo checkout: simulates successful payment when Stripe keys are absent. */
+/** Demo checkout: simulates successful payment when Stripe keys are absent (non-production only). */
 export async function POST(req: Request) {
-  if (isStripeConfigured()) {
+  if (!(await validateCsrf(req))) {
+    return NextResponse.json({ error: "csrf_invalid" }, { status: 403 });
+  }
+
+  if (!isDemoModeAllowed()) {
     return NextResponse.json(
       { error: "demo_disabled_when_stripe_configured" },
       { status: 400 },
@@ -38,5 +44,6 @@ export async function POST(req: Request) {
   }
 
   await activatePayment(payment.id);
+  logPaymentEvent("demo_payment_confirmed", { paymentId, userId: session.user.id });
   return NextResponse.json({ ok: true });
 }

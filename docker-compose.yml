@@ -1,4 +1,4 @@
-# FarmOS Armenia — VPS deploy (SQLite on volume)
+# Xndzor.com — VPS deploy (SQLite on volume)
 # 1. Copy .env.example → .env and fill secrets + NEXTAUTH_URL=https://your.domain
 # 2. docker compose up -d --build
 # 3. Point DNS A record to this server; terminate TLS (Caddy/nginx/Cloudflare)

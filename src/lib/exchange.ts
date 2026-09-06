@@ -3,6 +3,7 @@
  * All figures are platform registrations only (not national statistics).
  */
 
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { effectiveTons } from "@/lib/yield";
 import { MARZES } from "@/lib/locations";
@@ -263,12 +264,10 @@ function avg(nums: number[]): number | null {
   return Math.round(nums.reduce((a, b) => a + b, 0) / nums.length);
 }
 
-export async function getCropRankings(opts?: {
-  marzId?: string;
-}): Promise<CropExchangeRow[]> {
+async function computeCropRankings(marzId?: string): Promise<CropExchangeRow[]> {
   const { harvests, plots, demands } = await loadExchangeRaw();
-  const supply = aggregateSupply(harvests, plots, { marzId: opts?.marzId });
-  const demand = aggregateDemand(demands, { marzId: opts?.marzId });
+  const supply = aggregateSupply(harvests, plots, { marzId });
+  const demand = aggregateDemand(demands, { marzId });
 
   const productMeta = new Map<string, { slug: string; nameKey: string }>();
   for (const h of harvests) productMeta.set(h.productId, h.product);
@@ -312,6 +311,18 @@ export async function getCropRankings(opts?: {
   // Rank by open demand tons desc, then buyer count
   rows.sort((a, b) => b.demandTons - a.demandTons || b.buyerCount - a.buyerCount);
   return rows;
+}
+
+const getCachedCropRankings = unstable_cache(
+  async (marzId?: string) => computeCropRankings(marzId),
+  ["crop-rankings"],
+  { revalidate: 60 },
+);
+
+export async function getCropRankings(opts?: {
+  marzId?: string;
+}): Promise<CropExchangeRow[]> {
+  return getCachedCropRankings(opts?.marzId);
 }
 
 export async function getSignalForCrop(opts: {

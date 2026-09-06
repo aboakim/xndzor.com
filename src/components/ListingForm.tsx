@@ -4,10 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { MARZES, localizedPlaceName, type LocationVillage } from "@/lib/places";
+import { ImageUploadField, uploadImages } from "@/components/ImageUploadField";
 
 type Category = { id: string; slug: string; nameKey: string };
-
-const MAX_IMAGES = 8;
 
 export function ListingForm({
   categories,
@@ -23,11 +22,11 @@ export function ListingForm({
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | undefined>();
   const [marzId, setMarzId] = useState(defaultMarzId || "");
   const [villageId, setVillageId] = useState("");
   const [villages, setVillages] = useState<LocationVillage[]>([]);
   const [loadingVillages, setLoadingVillages] = useState(false);
-  const [previews, setPreviews] = useState<string[]>([]);
   const [files, setFiles] = useState<File[]>([]);
 
   useEffect(() => {
@@ -65,37 +64,14 @@ export function ListingForm({
     [villages, locale]
   );
 
-  function onImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const selected = Array.from(e.target.files || []);
-    const next = [...files, ...selected].slice(0, MAX_IMAGES);
-    setFiles(next);
-    setPreviews(next.map((f) => URL.createObjectURL(f)));
-    e.target.value = "";
-  }
-
-  function removeImage(index: number) {
-    setFiles((prev) => prev.filter((_, i) => i !== index));
-    setPreviews((prev) => prev.filter((_, i) => i !== index));
-  }
-
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSaving(true);
     setError(null);
+    setUploadProgress(undefined);
 
     try {
-      let imageUrls: string[] = [];
-      if (files.length > 0) {
-        const fd = new FormData();
-        for (const file of files) fd.append("files", file);
-        const up = await fetch("/api/upload", { method: "POST", body: fd });
-        if (!up.ok) {
-          const data = await up.json().catch(() => ({}));
-          throw new Error(data.error || t("post.uploadError"));
-        }
-        const data = await up.json();
-        imageUrls = data.urls || [];
-      }
+      const imageUrls = await uploadImages(files, { onProgress: setUploadProgress });
 
       const form = new FormData(e.currentTarget);
       const body = {
@@ -118,7 +94,7 @@ export function ListingForm({
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || t("auth.registerError"));
+        throw new Error(data.error || t("images.uploadError"));
       }
       const listing = await res.json();
       router.push(`/listings/${listing.id}`);
@@ -232,30 +208,13 @@ export function ListingForm({
         </label>
       </div>
 
-      <fieldset className="image-upload">
-        <legend>{t("post.fields.images")}</legend>
-        <p className="muted small">{t("post.fields.imagesHint")}</p>
-        <input
-          type="file"
-          accept="image/jpeg,image/png,image/webp,image/gif"
-          multiple
-          onChange={onImagesChange}
-          disabled={files.length >= MAX_IMAGES}
-        />
-        {previews.length > 0 && (
-          <ul className="image-preview-grid">
-            {previews.map((src, i) => (
-              <li key={src}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={src} alt="" />
-                <button type="button" className="btn ghost tiny" onClick={() => removeImage(i)}>
-                  {t("post.removeImage")}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </fieldset>
+      <ImageUploadField
+        files={files}
+        onChange={setFiles}
+        uploading={saving}
+        uploadProgress={uploadProgress}
+        disabled={saving}
+      />
 
       {error && <p className="form-error">{error}</p>}
       <button type="submit" className="btn primary" disabled={saving || !villageId}>

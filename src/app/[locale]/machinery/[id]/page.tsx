@@ -3,18 +3,25 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Link } from "@/i18n/navigation";
 import { ContactActions } from "@/components/ContactActions";
+import { ShareButtons } from "@/components/ShareButtons";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ListingGallery } from "@/components/ListingGallery";
-import { MachineryTypeIcon } from "@/components/AgIcons";
+import { MachineryTypeIcon, ActionIcon } from "@/components/AgIcons";
 import { MachineryListingActions } from "@/components/MachineryListingActions";
 import { CommentSection } from "@/components/CommentSection";
 import { VillageLink } from "@/components/VillageLink";
+import { PostCard } from "@/components/PostCard";
 import { formatAmd, parseImageUrls } from "@/lib/utils";
 import { tContent } from "@/lib/content-locale";
 import { getSession } from "@/lib/session";
 import { BoostButton } from "@/components/BoostButton";
 import { MonetizationPills } from "@/components/MonetizationBadges";
+import { ReportListingButton } from "@/components/ReportListingButton";
 import { getActiveBoostMap, getUserEntitlements } from "@/lib/monetization";
+import { resolveOwnerFreeCheckout } from "@/lib/early-bird";
+import { TrackRecentView } from "@/components/TrackRecentView";
+import { SellerCard } from "@/components/SellerCard";
+import { USER_PROFILE_SELECT } from "@/lib/profile-privacy";
 
 export default async function MachineryDetailPage({
   params,
@@ -31,7 +38,7 @@ export default async function MachineryDetailPage({
     include: {
       marz: true,
       village: true,
-      user: { select: { id: true, name: true } },
+      user: { select: USER_PROFILE_SELECT },
     },
   });
   if (!listing || listing.status === "HIDDEN") notFound();
@@ -49,9 +56,23 @@ export default async function MachineryDetailPage({
   });
   const sellerPro =
     Boolean(seller?.isPro && seller.proUntil && seller.proUntil > new Date());
-  const ownerEnt = isOwner && session?.user?.id
-    ? await getUserEntitlements(session.user.id)
-    : null;
+  const ownerEnt =
+    isOwner && session?.user?.id ? await getUserEntitlements(session.user.id) : null;
+  const ownerFreeCheckout =
+    isOwner && session?.user?.id
+      ? await resolveOwnerFreeCheckout(session.user.id)
+      : false;
+
+  const similar = await prisma.machineryListing.findMany({
+    where: {
+      status: "ACTIVE",
+      id: { not: listing.id },
+      OR: [{ machineryType: listing.machineryType }, { marzId: listing.marzId }],
+    },
+    include: { marz: true, village: true },
+    orderBy: { createdAt: "desc" },
+    take: 4,
+  });
 
   const specs: { label: string; value: string }[] = [
     {
@@ -112,8 +133,23 @@ export default async function MachineryDetailPage({
         ? null
         : listing.status;
 
+  const waText =
+    locale === "hy"
+      ? `Բարև, հետաքրքրված եմ տեխնիկայով՝ ${title}`
+      : locale === "ru"
+        ? `Здравствуйте, интересуюсь техникой: ${title}`
+        : `Hi, interested in machinery: ${title}`;
+
   return (
-    <div className="section detail-page machinery-detail">
+    <div className="section detail-page machinery-detail detail-listam">
+      <TrackRecentView
+        id={listing.id}
+        href={`/machinery/${listing.id}`}
+        title={title}
+        kind="machinery"
+        thumb={images[0] ?? null}
+        subtitle={`${listing.make} ${listing.model}`}
+      />
       <Breadcrumbs
         items={[
           { href: "/", label: t("nav.home") },
@@ -127,110 +163,126 @@ export default async function MachineryDetailPage({
         ]}
       />
 
-      <ListingGallery images={images} />
+      <div className="detail-split">
+        <div className="detail-split-main">
+          <ListingGallery images={images} />
 
-      <p className="eyebrow">
-        <MachineryTypeIcon type={listing.machineryType} size={16} />{" "}
-        {t("pillars.machinery")}
-        {statusBadge ? ` · ${statusBadge}` : null}
-      </p>
-      <h1>{title}</h1>
-      <p className="detail-product">
-        {listing.make} {listing.model} · {listing.year}{" "}
-        <MonetizationPills isPro={sellerPro} boosted={Boolean(boostedUntil)} />
-      </p>
-      <p className="detail-location">
-        {listing.village ? (
-          <>
-            <VillageLink village={listing.village} locale={locale} />
-            {", "}
-          </>
-        ) : null}
-        {marzLabel}
-      </p>
-
-      <div className="detail-stats">
-        <div>
-          <span>{t("detail.price")}</span>
-          <strong>{priceLabel}</strong>
-        </div>
-        <div>
-          <span>{t("machinery.detail.condition")}</span>
-          <strong>
-            {t(`machineryConditions.${listing.condition}` as "machineryConditions.USED")}
-          </strong>
-        </div>
-        {listing.powerHp != null ? (
-          <div>
-            <span>{t("machinery.detail.powerHp")}</span>
-            <strong>
-              {listing.powerHp} {t("machinery.hp")}
-            </strong>
+          <div className="specs-grid">
+            {specs.map((s) => (
+              <div key={s.label} className="spec-cell">
+                <span>{s.label}</span>
+                <strong>{s.value}</strong>
+              </div>
+            ))}
           </div>
-        ) : null}
-      </div>
 
-      <div className="specs-grid">
-        {specs.map((s) => (
-          <div key={s.label} className="spec-cell">
-            <span>{s.label}</span>
-            <strong>{s.value}</strong>
+          {listing.attachments ? (
+            <div className="detail-body">
+              <h2>{t("machinery.detail.attachments")}</h2>
+              <p className="pre-wrap detail-desc">{listing.attachments}</p>
+            </div>
+          ) : null}
+
+          {listing.documentsNote ? (
+            <div className="detail-body">
+              <h2>{t("machinery.detail.documentsNote")}</h2>
+              <p className="pre-wrap detail-desc">{listing.documentsNote}</p>
+            </div>
+          ) : null}
+
+          <div className="detail-body">
+            <h2>{t("detail.description")}</h2>
+            <p className="pre-wrap detail-desc">{description}</p>
           </div>
-        ))}
-      </div>
 
-      {listing.attachments ? (
-        <div className="detail-body">
-          <h2>{t("machinery.detail.attachments")}</h2>
-          <p className="pre-wrap detail-desc">{listing.attachments}</p>
+          <CommentSection targetType="MACHINERY" targetId={listing.id} />
         </div>
-      ) : null}
 
-      {listing.documentsNote ? (
-        <div className="detail-body">
-          <h2>{t("machinery.detail.documentsNote")}</h2>
-          <p className="pre-wrap detail-desc">{listing.documentsNote}</p>
-        </div>
-      ) : null}
+        <aside className="detail-split-aside">
+          <div className="detail-offer-card">
+            <p className="eyebrow">
+              <MachineryTypeIcon type={listing.machineryType} size={16} />{" "}
+              {t("pillars.machinery")}
+              {statusBadge ? ` · ${statusBadge}` : null}
+            </p>
+            <h1 className="detail-offer-title">{title}</h1>
+            <p className="detail-offer-price">{priceLabel}</p>
+            <p className="detail-product">
+              {listing.make} {listing.model} · {listing.year}{" "}
+              <MonetizationPills isPro={sellerPro} boosted={Boolean(boostedUntil)} />
+            </p>
+            <p className="detail-location">
+              {listing.village ? (
+                <>
+                  <VillageLink village={listing.village} locale={locale} />
+                  {", "}
+                </>
+              ) : null}
+              {marzLabel}
+            </p>
 
-      <div className="detail-body">
-        <h2>{t("detail.description")}</h2>
-        <p className="pre-wrap detail-desc">{description}</p>
-        <p className="muted">
-          {t("detail.postedBy")} {listing.user.name}
-        </p>
+            <SellerCard
+              user={listing.user}
+              viewerId={session?.user?.id}
+              locale={locale}
+            />
+
+            <ContactActions phone={listing.phone} whatsapp={listing.whatsapp} waText={waText} />
+            <ShareButtons title={title} priceSnippet={priceLabel} />
+
+            {!isOwner ? (
+              <ReportListingButton
+                listingPath={`/machinery/${listing.id}`}
+                listingTitle={title}
+              />
+            ) : null}
+          </div>
+
+          {similar.length > 0 ? (
+            <div className="detail-similar">
+              <h2>{t("home.machineryTitle")}</h2>
+              <div className="detail-similar-list">
+                {similar.map((m) => (
+                  <PostCard
+                    key={m.id}
+                    href={`/machinery/${m.id}`}
+                    title={tContent(locale, m.title)}
+                    thumb={parseImageUrls(m.imageUrls ?? "[]")[0]}
+                    icon={<ActionIcon action="machinery" size={22} />}
+                    categoryPill={t(
+                      `machineryTypes.${m.machineryType}` as "machineryTypes.TRACTOR",
+                    )}
+                    value={m.priceAmd != null ? `${formatAmd(m.priceAmd, locale)} ֏` : undefined}
+                    place={
+                      <span className="post-card-marz">
+                        {t(`marzes.${m.marz.slug}` as "marzes.Yerevan")}
+                      </span>
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {isOwner ? (
+            <section className="owner-panel">
+              <h2>{t("myMachinery.manage")}</h2>
+              <BoostButton
+                targetType="MACHINERY"
+                targetId={listing.id}
+                isPro={Boolean(ownerEnt?.isPro)}
+                boostQuotaRemaining={ownerEnt?.boostQuotaRemaining ?? 0}
+                currentlyBoostedUntil={boostedUntil?.toISOString() ?? null}
+                freeMode={ownerFreeCheckout}
+              />
+              <MachineryListingActions id={listing.id} status={listing.status} />
+              <p className="muted">
+                <Link href="/my/machinery">{t("myMachinery.title")}</Link>
+              </p>
+            </section>
+          ) : null}
+        </aside>
       </div>
-
-      <ContactActions
-        phone={listing.phone}
-        whatsapp={listing.whatsapp}
-        waText={
-          locale === "hy"
-            ? `Բարև, հետաքրքրված եմ տեխնիկայով՝ ${title}`
-            : locale === "ru"
-              ? `Здравствуйте, интересуюсь техникой: ${title}`
-              : `Hi, interested in machinery: ${title}`
-        }
-      />
-
-      <CommentSection targetType="MACHINERY" targetId={listing.id} />
-
-      {isOwner ? (
-        <section className="owner-panel">
-          <h2>{t("myMachinery.manage")}</h2>
-          <BoostButton
-            targetType="MACHINERY"
-            targetId={listing.id}
-            isPro={Boolean(ownerEnt?.isPro)}
-            boostQuotaRemaining={ownerEnt?.boostQuotaRemaining ?? 0}
-            currentlyBoostedUntil={boostedUntil?.toISOString() ?? null}
-          />
-          <MachineryListingActions id={listing.id} status={listing.status} />
-          <p className="muted">
-            <Link href="/my/machinery">{t("myMachinery.title")}</Link>
-          </p>
-        </section>
-      ) : null}
     </div>
   );
 }

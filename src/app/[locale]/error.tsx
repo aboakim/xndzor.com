@@ -13,7 +13,7 @@ export default function LocaleError({
   useEffect(() => {
     // Surface digest in logs for operators; avoid noisy UI.
     if (error?.digest) {
-      console.error("[FarmOS]", error.digest);
+      console.error("[Xndzor]", error.digest);
     }
   }, [error]);
 

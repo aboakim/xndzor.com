@@ -6,6 +6,11 @@ import { registerSchema, type RegisterErrorCode } from "@/lib/validations";
 import { cleanText } from "@/lib/sanitize";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { allocateFarmId } from "@/lib/farm-id";
+import {
+  getEarlyBirdStats,
+  getEarlyBirdFreeLimit,
+  isEarlyBirdEnabled,
+} from "@/lib/early-bird";
 
 function err(code: RegisterErrorCode, status: number, extra?: Record<string, string>) {
   return NextResponse.json(
@@ -79,20 +84,46 @@ export async function POST(req: Request) {
     const wantsFarm =
       role === "FARMER" || role === "BOTH" || role === "PROVIDER";
     const farmId = wantsFarm ? await allocateFarmId() : null;
-    const user = await prisma.user.create({
-      data: {
-        email: email.toLowerCase().trim(),
-        passwordHash,
-        name,
-        phone: phone ? cleanText(phone, 20) : null,
-        marzId: marz,
-        villageId: village.id,
-        role,
-        farmId,
-      },
-      select: { id: true, email: true, name: true, farmId: true },
+    const limit = getEarlyBirdFreeLimit();
+    const user = await prisma.$transaction(async (tx) => {
+      const totalBefore = await tx.user.count();
+      const qualifiesEarlyBird =
+        isEarlyBirdEnabled() && totalBefore < limit;
+      return tx.user.create({
+        data: {
+          email: email.toLowerCase().trim(),
+          passwordHash,
+          name,
+          phone: phone ? cleanText(phone, 20) : null,
+          marzId: marz,
+          villageId: village.id,
+          role,
+          farmId,
+          earlyBirdFree: qualifiesEarlyBird,
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          farmId: true,
+          earlyBirdFree: true,
+        },
+      });
     });
-    return NextResponse.json(user, { status: 201 });
+    const earlyBird = await getEarlyBirdStats();
+    return NextResponse.json(
+      {
+        ...user,
+        earlyBird: {
+          qualified: user.earlyBirdFree,
+          totalRegistered: earlyBird.totalRegistered,
+          freeLimit: earlyBird.freeLimit,
+          remaining: earlyBird.remaining,
+          slotsFull: earlyBird.slotsFull,
+        },
+      },
+      { status: 201 },
+    );
   } catch {
     return err("SERVER_ERROR", 500);
   }

@@ -14,6 +14,8 @@ import { DemandSnapshotPanel } from "@/components/DemandSnapshotPanel";
 import { getDemandSnapshot } from "@/lib/exchange";
 import { CreateBatchButton } from "@/components/CreateBatchButton";
 import { ensureFarmId } from "@/lib/farm-id";
+import { SeedToSaleTimeline } from "@/components/farm-os/SeedToSaleTimeline";
+import { buildSeedToSaleTimeline } from "@/lib/farm-os/timeline";
 
 export default async function PlotDetailPage({
   params,
@@ -64,6 +66,34 @@ export default async function PlotDetailPage({
     plot.harvestFrom &&
     plot.harvestFrom.getTime() - Date.now() < 45 * 86400000 &&
     plot.harvestFrom.getTime() + 30 * 86400000 > Date.now();
+
+  const [expenseSum, soldHarvests] = await Promise.all([
+    prisma.farmExpense.aggregate({
+      where: { userId: session.user.id, OR: [{ plotId: plot.id }, { plotId: null }] },
+      _sum: { amountAmd: true },
+    }),
+    prisma.futureHarvest.count({
+      where: { plotId: plot.id, status: "SOLD" },
+    }),
+  ]);
+  const hasExpense = (expenseSum._sum.amountAmd ?? 0) > 0;
+  const timeline = buildSeedToSaleTimeline({
+    plantDate: plot.plantDate,
+    lastIrrigationAt: plot.lastIrrigationAt,
+    lastFertilizer: plot.lastFertilizer,
+    harvestFrom: plot.harvestFrom,
+    harvestTo: plot.harvestTo,
+    hasFutureHarvest: plot.futureHarvests.length > 0,
+    hasExpense,
+    hasSale: soldHarvests > 0,
+  });
+  const revenueHint = plot.futureHarvests
+    .filter((h) => h.status === "SOLD" && h.priceAmd != null)
+    .reduce((s, h) => s + (h.priceAmd || 0) * h.qtyExpected, 0);
+  const profitAmd =
+    hasExpense && revenueHint > 0
+      ? revenueHint - (expenseSum._sum.amountAmd ?? 0)
+      : null;
 
   return (
     <div className="section detail-page plot-detail">
@@ -242,6 +272,8 @@ export default async function PlotDetailPage({
           <CreateBatchButton plotId={plot.id} />
         </div>
       </div>
+
+      <SeedToSaleTimeline stages={timeline} profitAmd={profitAmd} />
 
       {plot.irrigationNotes || plot.lastFertilizer ? (
         <section className="match-section">

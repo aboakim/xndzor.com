@@ -31,7 +31,11 @@ export default async function GroupBuyPage({
         <div>
           <h1>{t("groupBuy.title")}</h1>
           <p className="lede">{t("groupBuy.lede")}</p>
+          <p className="fos-village-together">{t("farmOs.villageTogether.banner")}</p>
         </div>
+        <Link href="/group-buy/about" className="btn ghost">
+          {t("farmOs.villageTogether.learn")}
+        </Link>
       </div>
 
       {campaigns.length === 0 ? (

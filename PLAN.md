@@ -1,6 +1,6 @@
-# FarmOS Armenia — Product Plan
+# Xndzor.com — Product Plan
 
-**Agricultural operating system** for Armenia (repo folder: Gyuxatntes).
+**Agricultural marketplace** for Armenia (repo folder: Gyuxatntes).
 
 ## Strategic moat
 

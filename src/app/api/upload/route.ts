@@ -3,7 +3,11 @@ import { randomBytes } from "crypto";
 import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { getSession } from "@/lib/session";
-import { MAX_IMAGE_BYTES } from "@/lib/validations";
+import {
+  MAX_IMAGE_BYTES,
+  MAX_LISTING_IMAGES,
+  MAX_UPLOAD_TOTAL_BYTES,
+} from "@/lib/validations";
 import { detectImageKind, KIND_TO_EXT } from "@/lib/image-magic";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 
@@ -15,7 +19,7 @@ export async function POST(req: Request) {
 
   const ip = clientIp(req);
   const limited = rateLimit(`upload:${session.user.id}:${ip}`, {
-    limit: 30,
+    limit: 45,
     windowMs: 15 * 60 * 1000,
   });
   if (!limited.ok) {
@@ -32,17 +36,32 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid form data" }, { status: 400 });
   }
 
+  const kind = form.get("kind");
+  const isAvatar = kind === "avatar";
+  const maxFiles = isAvatar ? 1 : MAX_LISTING_IMAGES;
+
   const files = form.getAll("files").filter((f): f is File => f instanceof File);
 
   if (files.length === 0) {
     return NextResponse.json({ error: "No files" }, { status: 400 });
   }
-  if (files.length > 8) {
-    return NextResponse.json({ error: "Max 8 images" }, { status: 400 });
+  if (files.length > maxFiles) {
+    return NextResponse.json(
+      { error: `Max ${maxFiles} images` },
+      { status: 400 }
+    );
   }
 
-  const uploadDir = path.join(process.cwd(), "public", "uploads");
-  // Resolve and ensure we never write outside uploads/
+  const totalBytes = files.reduce((sum, f) => sum + f.size, 0);
+  if (totalBytes > MAX_UPLOAD_TOTAL_BYTES) {
+    return NextResponse.json(
+      { error: "Total upload size exceeds limit" },
+      { status: 400 }
+    );
+  }
+
+  const subdir = isAvatar ? "avatars" : "listings";
+  const uploadDir = path.join(process.cwd(), "public", "uploads", subdir);
   const resolvedUpload = path.resolve(uploadDir);
   await mkdir(resolvedUpload, { recursive: true });
 
@@ -50,7 +69,10 @@ export async function POST(req: Request) {
 
   for (const file of files) {
     if (file.size <= 0 || file.size > MAX_IMAGE_BYTES) {
-      return NextResponse.json({ error: "Each image must be under 5 MB" }, { status: 400 });
+      return NextResponse.json(
+        { error: `Each image must be under ${MAX_IMAGE_BYTES / (1024 * 1024)} MB` },
+        { status: 400 }
+      );
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
@@ -62,7 +84,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Ignore client-claimed MIME; use magic bytes only
     const ext = KIND_TO_EXT[kind];
     const name = `${randomBytes(16).toString("hex")}.${ext}`;
     if (name.includes("..") || name.includes("/") || name.includes("\\")) {
@@ -75,7 +96,7 @@ export async function POST(req: Request) {
     }
 
     await writeFile(dest, buffer);
-    urls.push(`/uploads/${name}`);
+    urls.push(`/uploads/${subdir}/${name}`);
   }
 
   return NextResponse.json({ urls });

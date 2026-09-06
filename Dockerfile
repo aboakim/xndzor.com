@@ -1,4 +1,4 @@
-# FarmOS Armenia — production image (Next.js standalone + Prisma SQLite)
+# Xndzor.com — production image (Next.js standalone + Prisma SQLite)
 # Build: docker compose build
 # Run:   docker compose up -d
 

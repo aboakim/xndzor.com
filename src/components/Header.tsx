@@ -4,13 +4,11 @@ import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { ActionIcon } from "@/components/AgIcons";
-
-const locales = [
-  { code: "hy", label: "ՀԱՅ" },
-  { code: "ru", label: "РУС" },
-  { code: "en", label: "ENG" },
-] as const;
+import { IconApple } from "@/components/AgIcons";
+import { CategoriesMegaMenu } from "@/components/CategoriesMegaMenu";
+import { LanguageDropdown } from "@/components/LanguageDropdown";
+import { SearchBar } from "@/components/SearchBar";
+import { useMinWidth901 } from "@/hooks/useMinWidth901";
 
 export function Header() {
   const t = useTranslations("nav");
@@ -18,180 +16,147 @@ export function Header() {
   const pathname = usePathname();
   const locale = useLocale();
   const { data: session } = useSession();
-  const [open, setOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const isDesktop = useMinWidth901();
 
   useEffect(() => {
-    setOpen(false);
+    setMenuOpen(false);
   }, [pathname]);
 
-  useEffect(() => {
-    document.body.classList.toggle("nav-open", open);
-    return () => document.body.classList.remove("nav-open");
-  }, [open]);
-
   const postHref = session ? "/plots/new" : "/auth/login";
+  const isAdmin =
+    (session?.user as { isAdmin?: boolean; role?: string } | undefined)?.isAdmin ||
+    (session?.user as { role?: string } | undefined)?.role === "ADMIN";
 
   return (
-    <header className="site-header list-style-header">
+    <header className={`site-header vendo-header${menuOpen ? " mega-menu-active" : ""}`}>
       <div className="header-utility">
         <div className="header-utility-inner">
           <span className="utility-brand">{brand("brandLatin")}</span>
+
           <div className="utility-right">
-            <div className="locale-switch" role="navigation" aria-label="Language">
-              {locales.map((l) => (
-                <Link
-                  key={l.code}
-                  href={pathname}
-                  locale={l.code}
-                  className={locale === l.code ? "active" : undefined}
-                  prefetch={false}
-                >
-                  {l.label}
-                </Link>
-              ))}
-            </div>
-            {session ? (
-              <>
-                <Link href="/pricing" className="utility-link utility-pro">
-                  {t("pricing")}
-                </Link>
-                <Link href="/farms/me" className="utility-link">
-                  {t("myPassport")}
-                </Link>
-                <Link href="/account/billing" className="utility-link">
-                  {t("billing")}
-                </Link>
+            <LanguageDropdown />
+
+            <nav className="utility-nav" aria-label={t("utilityNav")}>
+              <Link href="/help" className="utility-link">
+                {t("help")}
+              </Link>
+              <Link href="/security" className="utility-link">
+                {t("security")}
+              </Link>
+              <Link href="/pricing" className="utility-link utility-pro">
+                {t("pricing")}
+              </Link>
+              <span className="utility-sep" aria-hidden />
+              <Link href="/farm" className="utility-link">
+                {t("myFarm")}
+              </Link>
+              {session ? (
+                <>
+                  <Link href="/today" className="utility-link">
+                    {t("today")}
+                  </Link>
+                  <Link href="/farms/me" className="utility-link">
+                    {t("myPassport")}
+                  </Link>
+                  <Link href="/account/profile" className="utility-link">
+                    {t("profile")}
+                  </Link>
+                  <Link href="/account/billing" className="utility-link">
+                    {t("billing")}
+                  </Link>
+                  {isAdmin ? (
+                    <Link href="/admin" className="utility-link utility-admin">
+                      {t("admin")}
+                    </Link>
+                  ) : null}
+                </>
+              ) : null}
+            </nav>
+
+            <div className="utility-auth-group">
+              {session ? (
                 <button
                   type="button"
-                  className="linkish utility-auth"
+                  className="utility-btn utility-btn-ghost"
                   onClick={() => signOut({ callbackUrl: `/${locale}` })}
                 >
                   {t("logout")}
                 </button>
-              </>
-            ) : (
-              <>
-                <Link href="/pricing" className="utility-link">
-                  {t("pricing")}
-                </Link>
-                <Link href="/auth/login" className="utility-link">
-                  {t("login")}
-                </Link>
-                <Link href="/auth/register" className="utility-link">
-                  {t("register")}
-                </Link>
-              </>
-            )}
+              ) : (
+                <>
+                  <Link href="/auth/login" className="utility-btn utility-btn-ghost">
+                    {t("login")}
+                  </Link>
+                  <Link href="/auth/register" className="utility-btn utility-btn-primary">
+                    {t("register")}
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="header-inner">
-        <Link href="/" className="logo">
-          <span className="logo-mark" aria-hidden>
-            <ActionIcon action="plot" size={20} />
-          </span>
-          <span className="logo-text">
-            <strong>{brand("brand")}</strong>
-            <em>FarmOS</em>
-          </span>
-        </Link>
+      <div className="header-main">
+        <div className="header-inner header-brand-row">
+          <Link href="/" className="logo">
+            <span className="logo-mark" aria-hidden>
+              <IconApple size={32} />
+            </span>
+            <span className="logo-text">
+              <strong>{brand("brand")}</strong>
+              {brand("brandLatin") !== brand("brand") ? (
+                <em>{brand("brandLatin")}</em>
+              ) : null}
+            </span>
+          </Link>
 
-        <button
-          type="button"
-          className="nav-toggle"
-          aria-expanded={open}
-          aria-controls="main-nav-drawer"
-          onClick={() => setOpen((v) => !v)}
-        >
-          <span className="nav-toggle-bars" aria-hidden />
-          <span className="sr-only">{open ? "Close" : "Menu"}</span>
-        </button>
+          <button
+            type="button"
+            className="btn sections-btn"
+            aria-expanded={menuOpen}
+            aria-haspopup="dialog"
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            <MenuIcon />
+            <span>{t("sections")}</span>
+          </button>
 
-        <nav
-          id="main-nav-drawer"
-          className={`main-nav ${open ? "is-open" : ""}`}
-          aria-label="Main"
-        >
-          <Link href="/" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
-            {t("home")}
+          <Link href={postHref} className="btn btn-add header-post-cta">
+            + {t("post")}
           </Link>
-          <Link href="/farms/me" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
-            {t("myPassport")}
-          </Link>
-          <Link href="/grow" className="nav-item" onClick={() => setOpen(false)}>
-            {t("grow")}
-          </Link>
-          <Link href="/plots" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
-            {t("plots")}
-          </Link>
-          <Link href="/forward" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
-            {t("forward")}
-          </Link>
-          <Link href="/demand" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
-            {t("demand")}
-          </Link>
-          <Link href="/supply" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
-            {t("supply")}
-          </Link>
-          <Link href="/jobs" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
-            {t("jobs")}
-          </Link>
-          <Link href="/machinery" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
-            {t("machinery")}
-          </Link>
-          <Link href="/animals" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
-            {t("animals")}
-          </Link>
-          <Link href="/shop/fertilizers" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
-            {t("fertilizers")}
-          </Link>
-          <Link href="/shop/seeds" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
-            {t("seeds")}
-          </Link>
-          <Link href="/shop/feed" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
-            {t("feed")}
-          </Link>
-          <Link href="/shop/chemicals" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
-            {t("chemicals")}
-          </Link>
-          <Link href="/shop/tools" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
-            {t("tools")}
-          </Link>
-          <Link href="/shop/land" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
-            {t("land")}
-          </Link>
-          <Link href="/group-buy" className="nav-item nav-drawer-only" onClick={() => setOpen(false)}>
-            {t("groupBuy")}
-          </Link>
-          <div className="locale-switch locale-mobile" role="navigation" aria-label="Language">
-            {locales.map((l) => (
-              <Link
-                key={l.code}
-                href={pathname}
-                locale={l.code}
-                className={locale === l.code ? "active" : undefined}
-                prefetch={false}
-                onClick={() => setOpen(false)}
-              >
-                {l.label}
-              </Link>
-            ))}
-          </div>
-        </nav>
 
-        <Link href={postHref} className="btn primary header-post-cta">
-          {t("post")}
-        </Link>
-      </div>
-      {open ? (
-        <button
-          type="button"
-          className="nav-backdrop"
-          aria-label="Close menu"
-          onClick={() => setOpen(false)}
+          <button
+            type="button"
+            className="nav-toggle"
+            aria-expanded={menuOpen}
+            aria-haspopup="dialog"
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            <span className="nav-toggle-bars" aria-hidden />
+            <span className="sr-only">{menuOpen ? "Close" : "Menu"}</span>
+          </button>
+        </div>
+
+        <div className="header-search-row">
+          <SearchBar header />
+        </div>
+
+        <CategoriesMegaMenu
+          open={menuOpen}
+          onClose={() => setMenuOpen(false)}
+          variant={isDesktop ? "desktop" : "mobile"}
         />
-      ) : null}
+      </div>
     </header>
+  );
+}
+
+function MenuIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
   );
 }

@@ -2,12 +2,9 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { MARZES, localizedPlaceName, type LocationVillage } from "@/lib/places";
-import {
-  ANIMAL_PURPOSES,
-  ANIMAL_TYPES,
-} from "@/lib/animals";
+import { ANIMAL_PURPOSES, ANIMAL_TYPES } from "@/lib/animals";
 import { AnimalTypeIcon } from "@/components/AgIcons";
 
 export function AnimalFilters({
@@ -46,6 +43,18 @@ export function AnimalFilters({
   const [pMax, setPMax] = useState(priceMax || "");
 
   useEffect(() => {
+    setAnimalType(type || "");
+    setMarzId(marz || "");
+    setVillageId(village || "");
+    setPurp(purpose || "");
+    setQuery(q || "");
+    setAMin(ageMin || "");
+    setAMax(ageMax || "");
+    setPMin(priceMin || "");
+    setPMax(priceMax || "");
+  }, [type, marz, village, purpose, q, ageMin, ageMax, priceMin, priceMax]);
+
+  useEffect(() => {
     if (!marzId) {
       setVillages([]);
       return;
@@ -81,7 +90,12 @@ export function AnimalFilters({
   }
 
   return (
-    <form className="filters-bar machinery-filters" onSubmit={apply}>
+    <form className="browse-filter-form" onSubmit={apply}>
+      <div className="browse-filter-clear-row">
+        <Link href="/animals" className="browse-clear">
+          {t("browse.clearAll")}
+        </Link>
+      </div>
       <label>
         <span>{t("board.search")}</span>
         <input value={query} onChange={(e) => setQuery(e.target.value)} />
@@ -143,6 +157,19 @@ export function AnimalFilters({
           ))}
         </select>
       </label>
+      <fieldset className="browse-price-range">
+        <legend>{t("browse.price")}</legend>
+        <div className="browse-price-inputs">
+          <label>
+            <span>{t("browse.priceFrom")}</span>
+            <input type="number" min={0} value={pMin} onChange={(e) => setPMin(e.target.value)} />
+          </label>
+          <label>
+            <span>{t("browse.priceTo")}</span>
+            <input type="number" min={0} value={pMax} onChange={(e) => setPMax(e.target.value)} />
+          </label>
+        </div>
+      </fieldset>
       <label>
         <span>{t("animalsBoard.ageFrom")}</span>
         <input type="number" min={0} value={aMin} onChange={(e) => setAMin(e.target.value)} />
@@ -151,15 +178,7 @@ export function AnimalFilters({
         <span>{t("animalsBoard.ageTo")}</span>
         <input type="number" min={0} value={aMax} onChange={(e) => setAMax(e.target.value)} />
       </label>
-      <label>
-        <span>{t("animalsBoard.priceFrom")}</span>
-        <input type="number" min={0} value={pMin} onChange={(e) => setPMin(e.target.value)} />
-      </label>
-      <label>
-        <span>{t("animalsBoard.priceTo")}</span>
-        <input type="number" min={0} value={pMax} onChange={(e) => setPMax(e.target.value)} />
-      </label>
-      <button type="submit" className="btn primary">
+      <button type="submit" className="btn primary browse-apply">
         {t("board.apply")}
       </button>
     </form>

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Link } from "@/i18n/navigation";
 import { ContactActions } from "@/components/ContactActions";
+import { ShareButtons } from "@/components/ShareButtons";
 import { OfferButton } from "@/components/OfferButton";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ListingGallery } from "@/components/ListingGallery";
@@ -12,6 +13,8 @@ import { localizedPlaceName } from "@/lib/places";
 import { getSession } from "@/lib/session";
 import { ProductIcon } from "@/components/AgIcons";
 import { VillageLink } from "@/components/VillageLink";
+import { SellerCard } from "@/components/SellerCard";
+import { USER_PROFILE_SELECT } from "@/lib/profile-privacy";
 
 export default async function DemandDetailPage({
   params,
@@ -29,7 +32,7 @@ export default async function DemandDetailPage({
       product: true,
       marz: true,
       village: true,
-      user: { select: { id: true, name: true } },
+      user: { select: USER_PROFILE_SELECT },
     },
   });
   if (!demand || demand.status === "HIDDEN") notFound();
@@ -105,10 +108,22 @@ export default async function DemandDetailPage({
       <div className="detail-body">
         <h2>{t("detail.description")}</h2>
         <p className="pre-wrap detail-desc">{demand.description}</p>
-        <p className="muted">
-          {t("detail.postedBy")} {demand.user.name}
-        </p>
+        <SellerCard
+          user={demand.user}
+          viewerId={session?.user?.id}
+          locale={locale}
+          compact
+        />
       </div>
+
+      <ShareButtons
+        title={demand.title}
+        priceSnippet={
+          formatPriceRange(demand.priceMinAmd, demand.priceMaxAmd, demand.unit, (k) =>
+            t(k as "common.amd")
+          ) || t("detail.priceOpen")
+        }
+      />
 
       <ContactActions
         phone={demand.phone}

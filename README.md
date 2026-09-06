@@ -1,4 +1,4 @@
-# FarmOS Armenia (Gyuxatntes)
+# Xndzor.com (Խնձոր․քոմ)
 
 **Primary product:** «Ի՞նչ աճեցնել» — future harvest exchange and **overproduction signal**.  
 Marketplace (machinery, animals, shop, jobs) is secondary.

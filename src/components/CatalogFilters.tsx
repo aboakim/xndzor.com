@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { MARZES, localizedPlaceName, type LocationVillage } from "@/lib/places";
 import {
   CATALOG_ROUTE,
@@ -40,6 +40,15 @@ export function CatalogFilters({
   const [pMax, setPMax] = useState(priceMax || "");
 
   useEffect(() => {
+    setSub(subtype || "");
+    setMarzId(marz || "");
+    setVillageId(village || "");
+    setQuery(q || "");
+    setPMin(priceMin || "");
+    setPMax(priceMax || "");
+  }, [subtype, marz, village, q, priceMin, priceMax]);
+
+  useEffect(() => {
     if (!marzId) {
       setVillages([]);
       return;
@@ -72,7 +81,12 @@ export function CatalogFilters({
   }
 
   return (
-    <form className="filters-bar machinery-filters" onSubmit={apply}>
+    <form className="browse-filter-form" onSubmit={apply}>
+      <div className="browse-filter-clear-row">
+        <Link href={`/shop/${route}`} className="browse-clear">
+          {t("browse.clearAll")}
+        </Link>
+      </div>
       <label>
         <span>{t("board.search")}</span>
         <input value={query} onChange={(e) => setQuery(e.target.value)} />
@@ -116,15 +130,20 @@ export function CatalogFilters({
           ))}
         </select>
       </label>
-      <label>
-        <span>{t("catalogBoard.priceFrom")}</span>
-        <input type="number" min={0} value={pMin} onChange={(e) => setPMin(e.target.value)} />
-      </label>
-      <label>
-        <span>{t("catalogBoard.priceTo")}</span>
-        <input type="number" min={0} value={pMax} onChange={(e) => setPMax(e.target.value)} />
-      </label>
-      <button type="submit" className="btn primary">
+      <fieldset className="browse-price-range">
+        <legend>{t("browse.price")}</legend>
+        <div className="browse-price-inputs">
+          <label>
+            <span>{t("browse.priceFrom")}</span>
+            <input type="number" min={0} value={pMin} onChange={(e) => setPMin(e.target.value)} />
+          </label>
+          <label>
+            <span>{t("browse.priceTo")}</span>
+            <input type="number" min={0} value={pMax} onChange={(e) => setPMax(e.target.value)} />
+          </label>
+        </div>
+      </fieldset>
+      <button type="submit" className="btn primary browse-apply">
         {t("board.apply")}
       </button>
     </form>

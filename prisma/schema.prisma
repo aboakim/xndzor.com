@@ -20,8 +20,21 @@ model User {
   farmVerified     Boolean            @default(false)
   /// Optional: show phone on public Farm Passport (default hidden)
   showPhoneOnPassport Boolean         @default(false)
+  /// Profile photo URL (public/uploads/avatars/…)
+  avatarUrl        String?
+  /// PUBLIC | REGISTERED | HIDDEN — who can see profile on listings
+  profileVisibility String           @default("PUBLIC")
+  /// Per-field public visibility (when profile is not hidden)
+  showPhonePublic   Boolean           @default(false)
+  showAvatarPublic  Boolean           @default(true)
+  showMarzPublic    Boolean           @default(true)
+  showVillagePublic Boolean           @default(false)
   /// Optional public farm display name (falls back to user name)
   farmName         String?
+  /// Admin can suspend account — login blocked while true
+  suspended        Boolean            @default(false)
+  /// First N registrants keep free package access forever (see EARLY_BIRD_FREE_LIMIT)
+  earlyBirdFree    Boolean            @default(false)
   /// Monetization entitlements (synced from Subscription / Payment)
   isPro            Boolean            @default(false)
   proUntil         DateTime?
@@ -55,6 +68,12 @@ model User {
   boosts           Boost[]
   payments         Payment[]
   demandAlerts     DemandAlert[]
+  farmExpenses     FarmExpense[]
+  farmDiaryEntries FarmDiaryEntry[]
+  spaceListings    SpaceListing[]
+  returnOffers     ReturnCapacityOffer[]
+  cropJourneys     CropJourney[]
+  villageGoalJoins VillageGoalJoin[]
 
   @@index([villageId])
   @@index([farmId])
@@ -80,6 +99,7 @@ model Marz {
   machineryListings MachineryListing[]
   animalListings    AnimalListing[]
   catalogListings   CatalogListing[]
+  spaceListings     SpaceListing[]
 }
 
 model Village {
@@ -104,6 +124,8 @@ model Village {
   machineryListings MachineryListing[]
   animalListings    AnimalListing[]
   catalogListings   CatalogListing[]
+  spaceListings     SpaceListing[]
+  villageGoals      VillageGoal[]
 
   @@index([marzId])
   @@index([nameEn])
@@ -310,6 +332,9 @@ model Plot {
   yieldEstimate    YieldEstimate?
   futureHarvests   FutureHarvest[]
   productBatches   ProductBatch[]
+  farmExpenses     FarmExpense[]
+  farmDiaryEntries FarmDiaryEntry[]
+  cropJourneys     CropJourney[]
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
 
@@ -372,6 +397,7 @@ model FutureHarvest {
   village     Village?   @relation(fields: [villageId], references: [id])
   phone       String
   whatsapp    String?
+  imageUrls   String     @default("[]")
   userId      String
   user        User       @relation(fields: [userId], references: [id])
   preOffers   PreOffer[]
@@ -660,16 +686,18 @@ model Plan {
 }
 
 model Subscription {
-  id               String   @id @default(cuid())
-  userId           String
-  user             User     @relation(fields: [userId], references: [id])
+  id                   String   @id @default(cuid())
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id])
   /// Plan code e.g. FARM_PRO_MONTHLY
-  planCode         String
+  planCode             String
   /// ACTIVE | CANCELED | EXPIRED | PAST_DUE
-  status           String   @default("ACTIVE")
-  currentPeriodEnd DateTime
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  status               String   @default("ACTIVE")
+  currentPeriodEnd     DateTime
+  stripeSubscriptionId String?  @unique
+  stripeCustomerId     String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   @@index([userId])
   @@index([status])
@@ -699,29 +727,49 @@ model Boost {
 }
 
 model Payment {
-  id             String   @id @default(cuid())
-  userId         String
-  user           User     @relation(fields: [userId], references: [id])
-  amountAmd      Int
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  amountAmd       Int
   /// Stripe charge amount in smallest currency unit (e.g. USD cents)
-  amountCharge   Int?
-  currencyCharge String   @default("usd")
+  amountCharge    Int?
+  currencyCharge  String   @default("usd")
   /// PENDING | SUCCEEDED | FAILED | CANCELED
-  status         String   @default("PENDING")
-  /// STRIPE | DEMO
-  provider       String
-  providerRef    String?
+  status          String   @default("PENDING")
+  /// STRIPE | DEMO | IDRAM | TELCELL | FREE
+  provider        String
+  providerRef     String?
+  /// Stripe Checkout Session id (idempotency)
+  stripeSessionId String?  @unique
   /// Product / SKU code from pricing config
-  productCode    String
-  metadataJson   String   @default("{}")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  boosts         Boost[]
+  productCode     String
+  metadataJson    String   @default("{}")
+  /// Last 4 digits of card (never store full PAN/CVV)
+  cardLast4       String?
+  cardholderName  String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  boosts          Boost[]
+  otpVerification OtpVerification?
 
   @@index([userId])
   @@index([status])
   @@index([providerRef])
   @@index([createdAt])
+}
+
+/// ARCA / bank SMS OTP for card checkout (demo + future ArCa gateway)
+model OtpVerification {
+  id        String   @id @default(cuid())
+  paymentId String   @unique
+  payment   Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  otpHash   String
+  attempts  Int      @default(0)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([expiresAt])
 }
 
 /// Pro farmers: crop demand alerts (gated behind Farm Pro)
@@ -735,5 +783,152 @@ model DemandAlert {
   createdAt DateTime @default(now())
 
   @@unique([userId, productId])
+  @@index([userId])
+}
+
+/// Farm OS — expense logging («Ո՞ւր է գնում իմ փողը»)
+model FarmExpense {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  plotId    String?
+  plot      Plot?    @relation(fields: [plotId], references: [id], onDelete: SetNull)
+  /// diesel | labor | seed | water | other
+  category  String
+  amountAmd Int
+  note      String?
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([plotId])
+  @@index([category])
+  @@index([date])
+}
+
+/// Farm OS — voice / text diary day report
+model FarmDiaryEntry {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  plotId          String?
+  plot            Plot?    @relation(fields: [plotId], references: [id], onDelete: SetNull)
+  rawText         String
+  /// JSON: { wateredHa?, fertilizerKg?, workersTomorrow?, keywords[] }
+  parsedJson      String   @default("{}")
+  entryDate       DateTime @default(now())
+  createdAt       DateTime @default(now())
+
+  @@index([userId])
+  @@index([plotId])
+  @@index([entryDate])
+}
+
+/// Empty warehouse / cold / silo / greenhouse / dryer / land space listings
+model SpaceListing {
+  id              String    @id @default(cuid())
+  title           String
+  description     String    @default("")
+  /// WAREHOUSE | COLD | SILO | GREENHOUSE | DRYER | LAND
+  spaceType       String
+  /// Optional area (m² or ha — see areaUnit)
+  area            Float?
+  areaUnit        String    @default("m2")
+  capacityNote    String?
+  availableFrom   DateTime?
+  availableTo     DateTime?
+  priceAmd        Int?
+  /// PER_DAY | PER_MONTH | LOT
+  priceUnit       String    @default("PER_MONTH")
+  status          String    @default("ACTIVE") // ACTIVE | BOOKED | HIDDEN
+  marzId          String
+  marz            Marz      @relation(fields: [marzId], references: [id])
+  villageId       String?
+  village         Village?  @relation(fields: [villageId], references: [id])
+  phone           String    @default("")
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([spaceType])
+  @@index([marzId])
+  @@index([status])
+  @@index([userId])
+}
+
+/// Empty-return truck capacity («դատարկ վերադարձ»)
+model ReturnCapacityOffer {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id])
+  fromNote     String
+  toNote       String
+  fromMarzId   String?
+  toMarzId     String?
+  freeTons     Float?
+  priceAmd     Int?
+  departAt     DateTime?
+  dateHint     String?
+  capacityNote String?
+  phone        String?
+  status       String    @default("OPEN") // OPEN | MATCHED | CLOSED
+  createdAt    DateTime  @default(now())
+
+  @@index([userId])
+  @@index([status])
+  @@index([departAt])
+}
+
+/// Seed-to-sale crop journey with stage costs
+model CropJourney {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  plotId       String?
+  plot         Plot?    @relation(fields: [plotId], references: [id], onDelete: SetNull)
+  cropName     String
+  seasonYear   Int
+  /// JSON stages: [{ id, title, costAmd, note? }]
+  stagesJson   String   @default("[]")
+  totalCostAmd Int      @default(0)
+  yieldKg      Float?
+  revenueAmd   Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId])
+  @@index([plotId])
+  @@index([seasonYear])
+}
+
+/// Shared village goals («Գյուղը միասին»)
+model VillageGoal {
+  id          String            @id @default(cuid())
+  villageId   String
+  village     Village           @relation(fields: [villageId], references: [id])
+  title       String
+  targetQty   Float
+  unit        String            @default("ton")
+  progressQty Float             @default(0)
+  status      String            @default("OPEN") // OPEN | DONE | CANCELLED
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  joins       VillageGoalJoin[]
+
+  @@index([villageId])
+  @@index([status])
+}
+
+model VillageGoalJoin {
+  id        String      @id @default(cuid())
+  goalId    String
+  goal      VillageGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User        @relation(fields: [userId], references: [id])
+  qty       Float
+  createdAt DateTime    @default(now())
+
+  @@unique([goalId, userId])
   @@index([userId])
 }

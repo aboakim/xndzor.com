@@ -16,6 +16,8 @@ import { GoProLink } from "@/components/CheckoutButton";
 import { ProBadge } from "@/components/MonetizationBadges";
 import { DemandAlertForm } from "@/components/DemandAlertForm";
 import { getUserEntitlements } from "@/lib/monetization";
+import { getXndzorScore } from "@/lib/farm-os/xndzor-score";
+import { XndzorScoreCard } from "@/components/farm-os/XndzorScoreCard";
 
 export default async function FarmPassportPage({
   params,
@@ -58,6 +60,7 @@ export default async function FarmPassportPage({
 
   const score = await getFarmScore(user.id);
   if (!score) notFound();
+  const xndzorScore = await getXndzorScore(user.id);
 
   const hdrs = await headers();
   const host = hdrs.get("x-forwarded-host") || hdrs.get("host") || "localhost:3000";
@@ -114,16 +117,18 @@ export default async function FarmPassportPage({
               ? t(`marzes.${user.marz.slug}` as "marzes.Yerevan")
               : null}
           </p>
+          <div id="farm-score">
           <FarmScoreBadge
             score={score.score}
             band={score.band}
             color={score.bandColor}
             size="lg"
           />
+          </div>
           <p className="muted farm-score-disclaimer">{t("farmPassport.scoreDisclaimer")}</p>
         </div>
 
-        <aside className="passport-qr-block print-friendly">
+        <aside id="farm-qr" className="passport-qr-block print-friendly">
           <p className="scan-farm-label">{t("farmPassport.scanFarm")}</p>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={qr} alt={t("farmPassport.qrAlt")} className="passport-qr" width={200} height={200} />
@@ -176,6 +181,16 @@ export default async function FarmPassportPage({
       </div>
       {score.stats.onTimeIsEstimate ? (
         <p className="muted tiny">{t("farmPassport.onTimeEstimateNote")}</p>
+      ) : null}
+
+      {xndzorScore ? (
+        <div id="xndzor-score" style={{ marginTop: "1.5rem" }}>
+          <XndzorScoreCard
+            overall={xndzorScore.overall}
+            axes={xndzorScore.axes}
+            tips={xndzorScore.tips}
+          />
+        </div>
       ) : null}
 
       {score.stats.mainCrops.length > 0 ? (
@@ -259,7 +274,7 @@ export default async function FarmPassportPage({
       ) : null}
 
       {user.productBatches.length > 0 ? (
-        <section className="match-section">
+        <section id="farm-batches" className="match-section">
           <h2>{t("farmPassport.batches")}</h2>
           <div className="classified-list">
             {user.productBatches.map((b) => (

@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { MARZES, localizedPlaceName, type LocationVillage } from "@/lib/places";
 import { MACHINERY_CONDITIONS, MACHINERY_TYPES } from "@/lib/machinery";
 import { MachineryTypeIcon } from "@/components/AgIcons";
@@ -43,6 +43,18 @@ export function MachineryFilters({
   const [pMax, setPMax] = useState(priceMax || "");
 
   useEffect(() => {
+    setMachineryType(type || "");
+    setMarzId(marz || "");
+    setVillageId(village || "");
+    setCond(condition || "");
+    setQuery(q || "");
+    setYMin(yearMin || "");
+    setYMax(yearMax || "");
+    setPMin(priceMin || "");
+    setPMax(priceMax || "");
+  }, [type, marz, village, condition, q, yearMin, yearMax, priceMin, priceMax]);
+
+  useEffect(() => {
     if (!marzId) {
       setVillages([]);
       return;
@@ -78,7 +90,12 @@ export function MachineryFilters({
   }
 
   return (
-    <form className="filters-bar machinery-filters" onSubmit={apply}>
+    <form className="browse-filter-form" onSubmit={apply}>
+      <div className="browse-filter-clear-row">
+        <Link href="/machinery" className="browse-clear">
+          {t("browse.clearAll")}
+        </Link>
+      </div>
       <label>
         <span>{t("board.search")}</span>
         <input value={query} onChange={(e) => setQuery(e.target.value)} />
@@ -140,6 +157,19 @@ export function MachineryFilters({
           ))}
         </select>
       </label>
+      <fieldset className="browse-price-range">
+        <legend>{t("browse.price")}</legend>
+        <div className="browse-price-inputs">
+          <label>
+            <span>{t("browse.priceFrom")}</span>
+            <input type="number" min={0} value={pMin} onChange={(e) => setPMin(e.target.value)} />
+          </label>
+          <label>
+            <span>{t("browse.priceTo")}</span>
+            <input type="number" min={0} value={pMax} onChange={(e) => setPMax(e.target.value)} />
+          </label>
+        </div>
+      </fieldset>
       <label>
         <span>{t("machineryBoard.yearFrom")}</span>
         <input type="number" min={1950} max={2100} value={yMin} onChange={(e) => setYMin(e.target.value)} />
@@ -148,15 +178,7 @@ export function MachineryFilters({
         <span>{t("machineryBoard.yearTo")}</span>
         <input type="number" min={1950} max={2100} value={yMax} onChange={(e) => setYMax(e.target.value)} />
       </label>
-      <label>
-        <span>{t("machineryBoard.priceFrom")}</span>
-        <input type="number" min={0} value={pMin} onChange={(e) => setPMin(e.target.value)} />
-      </label>
-      <label>
-        <span>{t("machineryBoard.priceTo")}</span>
-        <input type="number" min={0} value={pMax} onChange={(e) => setPMax(e.target.value)} />
-      </label>
-      <button type="submit" className="btn primary">
+      <button type="submit" className="btn primary browse-apply">
         {t("board.apply")}
       </button>
     </form>

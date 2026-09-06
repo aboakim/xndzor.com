@@ -27,6 +27,7 @@ export function SupplyForm({
   const [villages, setVillages] = useState<LocationVillage[]>([]);
   const [loadingVillages, setLoadingVillages] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+  const [uploadProgress, setUploadProgress] = useState<number | undefined>();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [productId, setProductId] = useState(products[0]?.id || "");
@@ -59,8 +60,9 @@ export function SupplyForm({
     e.preventDefault();
     setSaving(true);
     setError("");
+    setUploadProgress(undefined);
     try {
-      const imageUrls = await uploadImages(files);
+      const imageUrls = await uploadImages(files, { onProgress: setUploadProgress });
       const fd = new FormData(e.currentTarget);
       const body = {
         title: String(fd.get("title") || ""),
@@ -212,7 +214,13 @@ export function SupplyForm({
           <input name="whatsapp" defaultValue={defaultPhone || ""} />
         </label>
       </div>
-      <ImageUploadField files={files} onChange={setFiles} />
+      <ImageUploadField
+        files={files}
+        onChange={setFiles}
+        uploading={saving}
+        uploadProgress={uploadProgress}
+        disabled={saving}
+      />
       {error ? <p className="form-error">{error}</p> : null}
       <button type="submit" className="btn primary" disabled={saving || !marzId || !villageId}>
         {saving ? t("postSupply.saving") : t("postSupply.submit")}

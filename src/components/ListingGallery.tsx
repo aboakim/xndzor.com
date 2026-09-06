@@ -15,20 +15,25 @@ export function ListingGallery({ images }: { images: string[] }) {
     <div className="detail-gallery">
       <div className="gallery-main">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={images[active]} alt="" className="detail-image" />
+        <img
+          src={images[active]}
+          alt={t("previewAlt", { n: active + 1 })}
+          className="detail-image"
+        />
       </div>
       {images.length > 1 && (
-        <ul className="gallery-thumbs">
+        <ul className="gallery-thumbs" aria-label={t("previewLabel")}>
           {images.map((src, i) => (
             <li key={src}>
               <button
                 type="button"
                 className={i === active ? "active" : undefined}
                 onClick={() => setActive(i)}
-                aria-label={`${i + 1}`}
+                aria-label={t("previewAlt", { n: i + 1 })}
+                aria-current={i === active ? "true" : undefined}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={src} alt="" />
+                <img src={src} alt="" aria-hidden />
               </button>
             </li>
           ))}

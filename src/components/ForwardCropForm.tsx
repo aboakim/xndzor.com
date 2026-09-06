@@ -7,6 +7,7 @@ import { MARZES } from "@/lib/locations";
 import { UNITS } from "@/lib/validations";
 import { ProductIcon } from "@/components/AgIcons";
 import { LiveCropSignal } from "@/components/LiveCropSignal";
+import { ImageUploadField, uploadImages } from "@/components/ImageUploadField";
 
 type Product = { id: string; slug: string; nameKey: string };
 
@@ -22,22 +23,37 @@ export function ForwardCropForm({
   const t = useTranslations();
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [uploadProgress, setUploadProgress] = useState<number | undefined>();
+  const [files, setFiles] = useState<File[]>([]);
   const [productId, setProductId] = useState(products[0]?.id || "");
   const selected = products.find((p) => p.id === productId);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSaving(true);
-    const fd = new FormData(e.currentTarget);
-    const res = await fetch("/api/forward", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...Object.fromEntries(fd.entries()), productId }),
-    });
-    setSaving(false);
-    if (!res.ok) return;
-    const crop = await res.json();
-    router.push(`/forward/${crop.id}`);
+    setError("");
+    setUploadProgress(undefined);
+    try {
+      const imageUrls = await uploadImages(files, { onProgress: setUploadProgress });
+      const fd = new FormData(e.currentTarget);
+      const res = await fetch("/api/forward", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...Object.fromEntries(fd.entries()), productId, imageUrls }),
+      });
+      if (!res.ok) {
+        setError(t("images.uploadError"));
+        setSaving(false);
+        return;
+      }
+      const crop = await res.json();
+      router.push(`/forward/${crop.id}`);
+      router.refresh();
+    } catch {
+      setError(t("images.uploadError"));
+      setSaving(false);
+    }
   }
 
   return (
@@ -131,6 +147,14 @@ export function ForwardCropForm({
           <input name="whatsapp" defaultValue={defaultPhone || ""} />
         </label>
       </div>
+      <ImageUploadField
+        files={files}
+        onChange={setFiles}
+        uploading={saving}
+        uploadProgress={uploadProgress}
+        disabled={saving}
+      />
+      {error ? <p className="form-error">{error}</p> : null}
       <button type="submit" className="btn primary" disabled={saving}>
         {saving ? t("forwardForm.saving") : t("forwardForm.submit")}
       </button>

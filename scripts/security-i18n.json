@@ -1,0 +1,269 @@
+{
+  "hy": {
+    "title": "Անվտանգություն",
+    "introTitle": "Ձեր անվտանգությունը մեր առաջնահերթությունն է",
+    "introBody": "Xndzor.com / Գյուղատնտեսը լուրջ է վերաբերվում օգտատերերի անվտանգությանը։ Մենք պաշտպանում ենք ձեր տվյալները современ տեխнologiанerով և օգնում անվտanգ գործarքներ անել գyուղատնtեսական շուկayում։",
+    "tipsHeading": "Անվտanգutyan xorhurdner",
+    "tips": [
+      {
+        "icon": "🔒",
+        "title": "Պաշտպanեք ձer hasivy",
+        "items": [
+          "Օgտagorseq ushegh ev ezaki gaxtnaban — arnvazan 10 nish.",
+          "Erbek mi share gaxtnaban@.",
+          "Kanonyar poxeq gaxtnaban@.",
+          "Sxal mutqic heto argelapakum e (8 pordz / 15 rope)."
+        ]
+      },
+      {
+        "icon": "🤝",
+        "title": "Anvtanq handipumner",
+        "items": [
+          "Handipeq miayn hanrayin vayrerum.",
+          "Teghkacreq ynkernerin kam entanikin.",
+          "Vstah eq dzer intuicinayin.",
+          "Gyuxatntesakan gorcarqneri hamar vercneq inchvor mekin dzez het."
+        ]
+      },
+      {
+        "icon": "💳",
+        "title": "Anvtanq vcharumner",
+        "items": [
+          "Erbek mi poxanceq gumar arajapes.",
+          "TOP ev Pro hamar ogtagorseq Stripe checkout.",
+          "Stugeq naxkanc vchar@.",
+          "Khusap eq anhayt dramapanakneric.",
+          "Nakhapes tvaleq Farm Passport-ov stugvats vacharoghnerin."
+        ]
+      },
+      {
+        "icon": "🔍",
+        "title": "Zgushac eq xabeutyunneric",
+        "items": [
+          "Zgushac eq chapazanc lav arajarkneric.",
+          "Stugeq Farm Score ev vacharoghi patmutyun@.",
+          "Mi vstah eq miayn heraxosayin stugman@.",
+          "Haghord eq kaskaceli haytararutyunner@."
+        ]
+      },
+      {
+        "icon": "📱",
+        "title": "Andznakan tvjalner",
+        "items": [
+          "Mi teq aveli shat teghakutyun.",
+          "Chat-um mi share bankayin tvjalner.",
+          "Ogtagorseq hartaki kontakt@.",
+          "Zgushac eq phishing-ic."
+        ]
+      },
+      {
+        "icon": "⚠️",
+        "title": "Haytne q kaxtumneri masin",
+        "items": [
+          "Haghord eq kaskaceli haytararutyunner@.",
+          "Ogtagorseq Haghordel kochak@.",
+          "Kapveq ajakcutyani het.",
+          "Ogn eq pahpanel hamayk@ anvtanq."
+        ]
+      }
+    ],
+    "dataProtection": {
+      "title": "Tvjalneri pashtpanutyun",
+      "body": [
+        "Kayq@ ashxatum e HTTPS / SSL/TLS-ov.",
+        "Gaxtnabanner@ bcrypt hash en (12 rounds).",
+        "Cookie-ner@ httpOnly, SameSite=Lax, Secure en production-um.",
+        "Vcharumner@ Stripe Hosted Checkout-ov en.",
+        "Tvjalner@ chenq taradzum errord kogmnerin aranc tuyultvutyan."
+      ],
+      "learnMore": "Avelin imac eq",
+      "privacyLink": "Gaghtniutyan qaghakakanutyun",
+      "termsLink": "Ogtagorcman paymanner"
+    },
+    "cta": {
+      "title": "Khndir uneq?",
+      "body": "Kapveq mez anmijapes.",
+      "button": "Zekuycel khndri masin",
+      "mailSubject": "Xndzor.com — anvtanqutyan haghordagrutyun",
+      "mailBody": "Barev,\n\n{email}"
+    }
+  },
+  "en": {
+    "title": "Security",
+    "introTitle": "Your security is our priority",
+    "introBody": "Xndzor.com takes user security seriously. We protect your data with modern technology and help you trade safely in the agricultural marketplace.",
+    "tipsHeading": "Security tips",
+    "tips": [
+      {
+        "icon": "🔒",
+        "title": "Protect your account",
+        "items": [
+          "Use a strong, unique password — at least 10 characters with letters and numbers.",
+          "Never share your password with anyone.",
+          "Change your password regularly, especially after suspicious login attempts.",
+          "After failed logins your account is temporarily locked (8 attempts / 15 minutes)."
+        ]
+      },
+      {
+        "icon": "🤝",
+        "title": "Safe meetings",
+        "items": [
+          "Meet only in public places — markets, cafés, village centers.",
+          "Tell friends or family where you are going and when you expect to return.",
+          "Trust your intuition — if something feels wrong, walk away.",
+          "For farm deals and equipment viewings, bring someone with you when possible."
+        ]
+      },
+      {
+        "icon": "💳",
+        "title": "Safe payments",
+        "items": [
+          "Never send money in advance to strangers.",
+          "Use Stripe / platform checkout for TOP and Pro packages.",
+          "Inspect the product, animal, or machinery before you pay.",
+          "Avoid unknown wallets and unsafe transfer methods.",
+          "Prefer sellers verified through Farm Passport."
+        ]
+      },
+      {
+        "icon": "🔍",
+        "title": "Beware of scams",
+        "items": [
+          "Be wary of offers that are too good to be true.",
+          "Check the seller's Farm Score, passport, and listing history.",
+          "Do not trust phone-only “verification” without a platform profile.",
+          "Report suspicious listings with the Report button or via Contact."
+        ]
+      },
+      {
+        "icon": "📱",
+        "title": "Personal data",
+        "items": [
+          "Share only the information needed for the deal.",
+          "Do not send bank details or card numbers in chat.",
+          "Use platform contact details and WhatsApp from the listing.",
+          "Watch for phishing — Xndzor.com will never ask for your password by email."
+        ]
+      },
+      {
+        "icon": "⚠️",
+        "title": "Report violations",
+        "items": [
+          "Report suspicious, fake, or illegal listings.",
+          "Use the Report listing button on the listing page.",
+          "Contact support immediately for serious violations.",
+          "Help keep the community safe — your report matters."
+        ]
+      }
+    ],
+    "dataProtection": {
+      "title": "Data protection",
+      "body": [
+        "The site runs on HTTPS / SSL/TLS — data is transmitted over encrypted connections.",
+        "Passwords are stored as bcrypt hashes (12 rounds) — we never see your plain password.",
+        "Session cookies are httpOnly, SameSite=Lax, and Secure in production.",
+        "Payments use Stripe Hosted Checkout — card data is not stored on our servers.",
+        "We do not share personal data with third parties without your permission."
+      ],
+      "learnMore": "Learn more in our",
+      "privacyLink": "Privacy Policy",
+      "termsLink": "Terms of Use"
+    },
+    "cta": {
+      "title": "Have a problem?",
+      "body": "If you encountered a scam, suspicious listing, or technical issue — contact us right away.",
+      "button": "Report a problem",
+      "mailSubject": "Xndzor.com — security report",
+      "mailBody": "Hello,\n\nI would like to report a security issue on Xndzor.com.\n\n[describe the issue]\n\n---\n{email}"
+    }
+  },
+  "ru": {
+    "title": "Безопасность",
+    "introTitle": "Ваша безопасность — наш приоритет",
+    "introBody": "Xndzor.com / Գյուղատնտես серьёзно относится к безопасности пользователей. Мы защищаем ваши данные современными технологиями и помогаем безопасно торговать на agrарном рынке.",
+    "tipsHeading": "Советы по безопасности",
+    "tips": [
+      {
+        "icon": "🔒",
+        "title": "Защитите аккаунт",
+        "items": [
+          "Используйте надёжный уникальный пароль — минимум 10 символов, буквы и цифры.",
+          "Никогда не сообщайте пароль другим людям.",
+          "Регулярно меняйте пароль, особенно после подозрительных входов.",
+          "После неудачных попыток входа аккаунт временно блокируется (8 попыток / 15 минут)."
+        ]
+      },
+      {
+        "icon": "🤝",
+        "title": "Безопасные встречи",
+        "items": [
+          "Встречайтесь только в людных местах — рынок, кафе, центр села.",
+          "Сообщите близким, куда идёте и когда вернётесь.",
+          "Доверяйте интуиции — если что-то не так, откажитесь.",
+          "При сделках с техникой или на ферме по возможности возьмите с собой знакомого."
+        ]
+      },
+      {
+        "icon": "💳",
+        "title": "Безопасные платежи",
+        "items": [
+          "Никогда не переводите деньги заранее незнакомым людям.",
+          "Для TOP и Pro используйте Stripe / checkout платформы.",
+          "Проверяйте товар, животное или технику до оплаты.",
+          "Избегайте неизвестных кошельков и небезопасных переводов.",
+          "Отдавайте предпочтение продавцам с Farm Passport."
+        ]
+      },
+      {
+        "icon": "🔍",
+        "title": "Остерегайтесь мошенничества",
+        "items": [
+          "Остерегайтесь слишком выгодных предложений.",
+          "Проверяйте Farm Score, паспорт фермы и историю объявлений.",
+          "Не доверяйте «проверке» только по телефону без профиля на платформе.",
+          "Сообщайте о подозрительных объявлениях через кнопку или раздел Контакты."
+        ]
+      },
+      {
+        "icon": "📱",
+        "title": "Личные данные",
+        "items": [
+          "Делитесь только необходимой для сделки информацией.",
+          "Не отправляйте банковские реквизиты и данные карты в чате.",
+          "Используйте контакты платформы и WhatsApp из объявления.",
+          "Берегитесь фишинга — Xndzor.com никогда не запросит пароль по email."
+        ]
+      },
+      {
+        "icon": "⚠️",
+        "title": "Сообщайте о нарушениях",
+        "items": [
+          "Сообщайте о подозрительных, ложных или незаконных объявлениях.",
+          "Используйте кнопку «Пожаловаться» на странице объявления.",
+          "При серьёзных нарушениях сразу свяжитесь с поддержкой.",
+          "Помогайте сохранять сообщество в безопасности — ваш сигнал важен."
+        ]
+      }
+    ],
+    "dataProtection": {
+      "title": "Защита данных",
+      "body": [
+        "Сайт работает по HTTPS / SSL/TLS — данные передаются по зашифрованному каналу.",
+        "Пароли хранятся как bcrypt-хеш (12 rounds) — мы не видим ваш пароль.",
+        "Session-cookie: httpOnly, SameSite=Lax и Secure в production.",
+        "Платежи через Stripe Hosted Checkout — данные карты не хранятся у нас.",
+        "Личные данные не передаются третьим лицам без вашего согласия."
+      ],
+      "learnMore": "Подробнее:",
+      "privacyLink": "Политика конфиденциальности",
+      "termsLink": "Условия использования"
+    },
+    "cta": {
+      "title": "Есть проблема?",
+      "body": "Если вы столкнулись с мошенничеством, подозрительным объявлением или технической проблемой — свяжитесь с нами сразу.",
+      "button": "Сообщить о проблеме",
+      "mailSubject": "Xndzor.com — сообщение о безопасности",
+      "mailBody": "Здравствуйте,\n\nХочу сообщить о проблеме безопасности на Xndzor.com.\n\n[опишите проблему]\n\n---\n{email}"
+    }
+  }
+}

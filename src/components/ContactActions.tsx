@@ -17,11 +17,11 @@ export function ContactActions({
 
   return (
     <div className="contact-actions">
-      <a className="btn primary" href={telUrl(phone)}>
-        {t("call")}
-      </a>
       <a className="btn whatsapp" href={whatsappUrl(wa, waText)} target="_blank" rel="noreferrer">
         {t("whatsapp")}
+      </a>
+      <a className="btn primary" href={telUrl(phone)}>
+        {t("call")}
       </a>
     </div>
   );

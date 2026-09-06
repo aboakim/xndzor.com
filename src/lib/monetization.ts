@@ -1,10 +1,10 @@
 import { prisma } from "./prisma";
 import {
   FARM_PRO_BOOST_QUOTA,
-  getProduct,
   type BoostTargetType,
   type ProductCode,
 } from "./pricing";
+import { addDays, fulfillPayment } from "./payments";
 
 export type UserEntitlements = {
   isPro: boolean;
@@ -162,110 +162,12 @@ export async function assertListingOwnedBy(
   }
 }
 
-function addDays(from: Date, days: number): Date {
-  const d = new Date(from);
-  d.setUTCDate(d.getUTCDate() + days);
-  return d;
-}
-
-function extendFrom(current: Date | null | undefined, days: number): Date {
-  const base = current && current.getTime() > Date.now() ? current : new Date();
-  return addDays(base, days);
+function addDaysLocal(from: Date, days: number): Date {
+  return addDays(from, days);
 }
 
 export async function activatePayment(paymentId: string): Promise<void> {
-  const payment = await prisma.payment.findUnique({ where: { id: paymentId } });
-  if (!payment || payment.status === "SUCCEEDED") return;
-
-  const product = getProduct(payment.productCode);
-  if (!product) {
-    await prisma.payment.update({
-      where: { id: paymentId },
-      data: { status: "FAILED" },
-    });
-    return;
-  }
-
-  let meta: Record<string, unknown> = {};
-  try {
-    meta = JSON.parse(payment.metadataJson || "{}") as Record<string, unknown>;
-  } catch {
-    meta = {};
-  }
-
-  await prisma.$transaction(async (tx) => {
-    await tx.payment.update({
-      where: { id: paymentId },
-      data: { status: "SUCCEEDED" },
-    });
-
-    if (product.kind === "FARM_PRO") {
-      const user = await tx.user.findUnique({ where: { id: payment.userId } });
-      const until = extendFrom(user?.proUntil, product.periodDays);
-      await tx.user.update({
-        where: { id: payment.userId },
-        data: { isPro: true, proUntil: until },
-      });
-      await tx.subscription.create({
-        data: {
-          userId: payment.userId,
-          planCode: product.code,
-          status: "ACTIVE",
-          currentPeriodEnd: until,
-        },
-      });
-    } else if (product.kind === "BUYER_PRO") {
-      const user = await tx.user.findUnique({ where: { id: payment.userId } });
-      const until = extendFrom(user?.buyerProUntil, product.periodDays);
-      await tx.user.update({
-        where: { id: payment.userId },
-        data: { buyerProUntil: until },
-      });
-      await tx.subscription.create({
-        data: {
-          userId: payment.userId,
-          planCode: product.code,
-          status: "ACTIVE",
-          currentPeriodEnd: until,
-        },
-      });
-    } else if (product.kind === "VERIFIED_FARM") {
-      const until = addDays(new Date(), product.periodDays);
-      await tx.user.update({
-        where: { id: payment.userId },
-        data: {
-          isVerifiedPaid: true,
-          verifiedPaidUntil: until,
-          farmVerified: true,
-        },
-      });
-      await tx.subscription.create({
-        data: {
-          userId: payment.userId,
-          planCode: product.code,
-          status: "ACTIVE",
-          currentPeriodEnd: until,
-        },
-      });
-    } else if (product.kind === "BOOST") {
-      const targetType = String(meta.targetType || "") as BoostTargetType;
-      const targetId = String(meta.targetId || "");
-      if (targetType && targetId) {
-        const endsAt = addDays(new Date(), product.periodDays);
-        await tx.boost.create({
-          data: {
-            userId: payment.userId,
-            targetType,
-            targetId,
-            days: product.periodDays,
-            endsAt,
-            source: "PAID",
-            paymentId: payment.id,
-          },
-        });
-      }
-    }
-  });
+  await fulfillPayment(paymentId);
 }
 
 /** Apply a free Pro-quota boost (no payment). Returns error message or null. */
@@ -287,7 +189,7 @@ export async function applyProQuotaBoost(
       targetType,
       targetId,
       days,
-      endsAt: addDays(new Date(), days),
+      endsAt: addDaysLocal(new Date(), days),
       source: "PRO_QUOTA",
     },
   });

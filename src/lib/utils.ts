@@ -54,3 +54,23 @@ export function formatPriceRange(
   const v = min ?? max!;
   return `${formatAmd(v)} ${amd}/${u}`;
 }
+
+/** Short relative age for listing cards (today / N days / N months). */
+export function formatListingAge(date: Date | string | number, locale = "hy"): string {
+  const d = date instanceof Date ? date : new Date(date);
+  if (Number.isNaN(d.getTime())) return "";
+  const tag = locale.includes("-") ? locale : localeTag(locale);
+  const diffMs = d.getTime() - Date.now();
+  const absMs = Math.abs(diffMs);
+  const rtf = new Intl.RelativeTimeFormat(tag, { numeric: "auto" });
+  const minute = 60_000;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+  if (absMs < hour) {
+    const m = Math.round(diffMs / minute) || (diffMs < 0 ? -1 : 0);
+    return rtf.format(m, "minute");
+  }
+  if (absMs < day) return rtf.format(Math.round(diffMs / hour), "hour");
+  if (absMs < 30 * day) return rtf.format(Math.round(diffMs / day), "day");
+  return rtf.format(Math.round(diffMs / (30 * day)), "month");
+}
