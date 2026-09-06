@@ -5,6 +5,8 @@ import { getSession } from "@/lib/session";
 import { FarmPageShell } from "@/components/farm/FarmPageShell";
 import { ReturnForm } from "@/components/farm/ReturnForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function NewReturnPage({
   params,
 }: {

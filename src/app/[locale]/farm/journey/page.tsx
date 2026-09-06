@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { FarmPageShell } from "@/components/farm/FarmPageShell";
 
+export const dynamic = "force-dynamic";
+
 type Stage = { id: string; title: string; costAmd: number; note?: string };
 
 export default async function JourneyPage({

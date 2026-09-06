@@ -1,8 +1,9 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 import type { ComponentProps } from "react";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
+import { safeQuery } from "@/lib/safe-query";
 import { getSession } from "@/lib/session";
 import { ActionIcon, JobTypeIcon, ProductIcon } from "@/components/AgIcons";
 import { CategoryScroll } from "@/components/CategoryScroll";
@@ -29,7 +30,7 @@ import { HomeWeatherCard } from "@/components/xndzor/HomeWeatherCard";
 import { HomeBannerSkeleton, HomeStripSkeleton } from "@/components/HomeBannerSkeleton";
 import { PrefetchLink } from "@/components/PrefetchLink";
 
-const HeroPromoSlider = dynamic(
+const HeroPromoSlider = nextDynamic(
   () =>
     import("@/components/xndzor/HeroPromoSlider").then((m) => ({
       default: m.HeroPromoSlider,
@@ -37,7 +38,7 @@ const HeroPromoSlider = dynamic(
   { loading: () => <div className="skeleton home-promo-skel" aria-hidden /> },
 );
 
-const WelcomeTrustBanner = dynamic(
+const WelcomeTrustBanner = nextDynamic(
   () =>
     import("@/components/xndzor/WelcomeTrustBanner").then((m) => ({
       default: m.WelcomeTrustBanner,
@@ -45,7 +46,7 @@ const WelcomeTrustBanner = dynamic(
   { loading: () => <HomeStripSkeleton /> },
 );
 
-const TrustValueStrip = dynamic(
+const TrustValueStrip = nextDynamic(
   () =>
     import("@/components/xndzor/TrustValueStrip").then((m) => ({
       default: m.TrustValueStrip,
@@ -53,7 +54,7 @@ const TrustValueStrip = dynamic(
   { loading: () => <HomeStripSkeleton /> },
 );
 
-const BannerGallery = dynamic(
+const BannerGallery = nextDynamic(
   () =>
     import("@/components/xndzor/BannerGallery").then((m) => ({
       default: m.BannerGallery,
@@ -61,7 +62,7 @@ const BannerGallery = dynamic(
   { loading: () => <HomeBannerSkeleton /> },
 );
 
-const RecentlyViewedStrip = dynamic(
+const RecentlyViewedStrip = nextDynamic(
   () =>
     import("@/components/RecentlyViewedStrip").then((m) => ({
       default: m.RecentlyViewedStrip,
@@ -89,8 +90,8 @@ const CATEGORIES = [
 const FEED_TAKE = 6;
 const FEED_FETCH = 18;
 
-/** Soft revalidate — listings stay fresh without blocking every request. */
-export const revalidate = 60;
+/** Always render on request — Prisma feeds must not run at build against empty SQLite. */
+export const dynamic = "force-dynamic";
 
 export default async function HomePage({
   params,
@@ -120,178 +121,212 @@ export default async function HomePage({
     defaultWeather,
   ] = await Promise.all([
     getSession(),
-    prisma.futureHarvest.findMany({
-      where: { status: "ACTIVE" },
-      select: {
-        id: true,
-        userId: true,
-        title: true,
-        qtyExpected: true,
-        unit: true,
-        harvestDate: true,
-        priceAmd: true,
-        imageUrls: true,
-        product: { select: { slug: true, nameKey: true } },
-        marz: { select: { slug: true } },
-        village: {
+    safeQuery(
+      () =>
+        prisma.futureHarvest.findMany({
+          where: { status: "ACTIVE" },
           select: {
-            slug: true,
-            nameHy: true,
-            nameRu: true,
-            nameEn: true,
+            id: true,
+            userId: true,
+            title: true,
+            qtyExpected: true,
+            unit: true,
+            harvestDate: true,
+            priceAmd: true,
+            imageUrls: true,
+            product: { select: { slug: true, nameKey: true } },
+            marz: { select: { slug: true } },
+            village: {
+              select: {
+                slug: true,
+                nameHy: true,
+                nameRu: true,
+                nameEn: true,
+              },
+            },
+            preOffers: { select: { status: true, qtyWanted: true } },
           },
-        },
-        preOffers: { select: { status: true, qtyWanted: true } },
-      },
-      orderBy: { harvestDate: "asc" },
-      take: FEED_FETCH,
-    }),
-    prisma.supply.findMany({
-      where: { status: "ACTIVE" },
-      select: {
-        id: true,
-        userId: true,
-        title: true,
-        qtyAvailable: true,
-        unit: true,
-        readyInDays: true,
-        priceAmd: true,
-        imageUrls: true,
-        product: { select: { slug: true, nameKey: true } },
-        marz: { select: { slug: true } },
-        village: {
+          orderBy: { harvestDate: "asc" },
+          take: FEED_FETCH,
+        }),
+      [],
+    ),
+    safeQuery(
+      () =>
+        prisma.supply.findMany({
+          where: { status: "ACTIVE" },
           select: {
-            slug: true,
-            nameHy: true,
-            nameRu: true,
-            nameEn: true,
+            id: true,
+            userId: true,
+            title: true,
+            qtyAvailable: true,
+            unit: true,
+            readyInDays: true,
+            priceAmd: true,
+            imageUrls: true,
+            product: { select: { slug: true, nameKey: true } },
+            marz: { select: { slug: true } },
+            village: {
+              select: {
+                slug: true,
+                nameHy: true,
+                nameRu: true,
+                nameEn: true,
+              },
+            },
           },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-      take: FEED_FETCH,
-    }),
-    prisma.demand.findMany({
-      where: { status: "ACTIVE" },
-      select: {
-        id: true,
-        title: true,
-        qtyMin: true,
-        qtyMax: true,
-        unit: true,
-        neededBy: true,
-        timingNote: true,
-        priceMinAmd: true,
-        priceMaxAmd: true,
-        imageUrls: true,
-        product: { select: { slug: true } },
-        marz: { select: { slug: true } },
-        village: {
+          orderBy: { createdAt: "desc" },
+          take: FEED_FETCH,
+        }),
+      [],
+    ),
+    safeQuery(
+      () =>
+        prisma.demand.findMany({
+          where: { status: "ACTIVE" },
           select: {
-            slug: true,
-            nameHy: true,
-            nameRu: true,
-            nameEn: true,
+            id: true,
+            title: true,
+            qtyMin: true,
+            qtyMax: true,
+            unit: true,
+            neededBy: true,
+            timingNote: true,
+            priceMinAmd: true,
+            priceMaxAmd: true,
+            imageUrls: true,
+            product: { select: { slug: true } },
+            marz: { select: { slug: true } },
+            village: {
+              select: {
+                slug: true,
+                nameHy: true,
+                nameRu: true,
+                nameEn: true,
+              },
+            },
           },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-      take: FEED_TAKE,
-    }),
-    prisma.jobRequest.findMany({
-      where: { status: "ACTIVE" },
-      select: {
-        id: true,
-        title: true,
-        jobType: true,
-        areaNote: true,
-        hectares: true,
-        workDate: true,
-        dateFrom: true,
-        budgetAmd: true,
-        marz: { select: { slug: true } },
-        village: {
+          orderBy: { createdAt: "desc" },
+          take: FEED_TAKE,
+        }),
+      [],
+    ),
+    safeQuery(
+      () =>
+        prisma.jobRequest.findMany({
+          where: { status: "ACTIVE" },
           select: {
-            slug: true,
-            nameHy: true,
-            nameRu: true,
-            nameEn: true,
+            id: true,
+            title: true,
+            jobType: true,
+            areaNote: true,
+            hectares: true,
+            workDate: true,
+            dateFrom: true,
+            budgetAmd: true,
+            marz: { select: { slug: true } },
+            village: {
+              select: {
+                slug: true,
+                nameHy: true,
+                nameRu: true,
+                nameEn: true,
+              },
+            },
           },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-      take: FEED_TAKE,
-    }),
-    prisma.groupBuyCampaign.findMany({
-      where: { status: { in: ["OPEN", "QUOTED"] } },
-      select: {
-        id: true,
-        title: true,
-        targetQty: true,
-        unit: true,
-        deadline: true,
-        pricePerUnitAmd: true,
-        product: { select: { slug: true } },
-        marz: { select: { slug: true } },
-        joins: { where: { status: "JOINED" }, select: { qty: true } },
-      },
-      orderBy: { createdAt: "desc" },
-      take: 4,
-    }),
-    prisma.machineryListing.findMany({
-      where: { status: "ACTIVE" },
-      select: {
-        id: true,
-        userId: true,
-        title: true,
-        machineryType: true,
-        make: true,
-        model: true,
-        priceAmd: true,
-        imageUrls: true,
-        marz: { select: { slug: true } },
-        village: {
+          orderBy: { createdAt: "desc" },
+          take: FEED_TAKE,
+        }),
+      [],
+    ),
+    safeQuery(
+      () =>
+        prisma.groupBuyCampaign.findMany({
+          where: { status: { in: ["OPEN", "QUOTED"] } },
           select: {
-            slug: true,
-            nameHy: true,
-            nameRu: true,
-            nameEn: true,
+            id: true,
+            title: true,
+            targetQty: true,
+            unit: true,
+            deadline: true,
+            pricePerUnitAmd: true,
+            product: { select: { slug: true } },
+            marz: { select: { slug: true } },
+            joins: { where: { status: "JOINED" }, select: { qty: true } },
           },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-      take: FEED_FETCH,
-    }),
-    prisma.animalListing.findMany({
-      where: { status: "ACTIVE" },
-      select: {
-        id: true,
-        userId: true,
-        title: true,
-        animalType: true,
-        breed: true,
-        priceAmd: true,
-        imageUrls: true,
-        marz: { select: { slug: true } },
-        village: {
+          orderBy: { createdAt: "desc" },
+          take: 4,
+        }),
+      [],
+    ),
+    safeQuery(
+      () =>
+        prisma.machineryListing.findMany({
+          where: { status: "ACTIVE" },
           select: {
-            slug: true,
-            nameHy: true,
-            nameRu: true,
-            nameEn: true,
+            id: true,
+            userId: true,
+            title: true,
+            machineryType: true,
+            make: true,
+            model: true,
+            priceAmd: true,
+            imageUrls: true,
+            marz: { select: { slug: true } },
+            village: {
+              select: {
+                slug: true,
+                nameHy: true,
+                nameRu: true,
+                nameEn: true,
+              },
+            },
           },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-      take: FEED_FETCH,
-    }),
-    prisma.futureHarvest.count({ where: { status: "ACTIVE" } }),
-    prisma.supply.count({ where: { status: "ACTIVE" } }),
-    prisma.demand.count({ where: { status: "ACTIVE" } }),
-    prisma.jobRequest.count({ where: { status: "ACTIVE" } }),
-    prisma.groupBuyCampaign.count({ where: { status: { in: ["OPEN", "QUOTED"] } } }),
-    prisma.machineryListing.count({ where: { status: "ACTIVE" } }),
-    prisma.animalListing.count({ where: { status: "ACTIVE" } }),
+          orderBy: { createdAt: "desc" },
+          take: FEED_FETCH,
+        }),
+      [],
+    ),
+    safeQuery(
+      () =>
+        prisma.animalListing.findMany({
+          where: { status: "ACTIVE" },
+          select: {
+            id: true,
+            userId: true,
+            title: true,
+            animalType: true,
+            breed: true,
+            priceAmd: true,
+            imageUrls: true,
+            marz: { select: { slug: true } },
+            village: {
+              select: {
+                slug: true,
+                nameHy: true,
+                nameRu: true,
+                nameEn: true,
+              },
+            },
+          },
+          orderBy: { createdAt: "desc" },
+          take: FEED_FETCH,
+        }),
+      [],
+    ),
+    safeQuery(() => prisma.futureHarvest.count({ where: { status: "ACTIVE" } }), 0),
+    safeQuery(() => prisma.supply.count({ where: { status: "ACTIVE" } }), 0),
+    safeQuery(() => prisma.demand.count({ where: { status: "ACTIVE" } }), 0),
+    safeQuery(() => prisma.jobRequest.count({ where: { status: "ACTIVE" } }), 0),
+    safeQuery(
+      () =>
+        prisma.groupBuyCampaign.count({
+          where: { status: { in: ["OPEN", "QUOTED"] } },
+        }),
+      0,
+    ),
+    safeQuery(() => prisma.machineryListing.count({ where: { status: "ACTIVE" } }), 0),
+    safeQuery(() => prisma.animalListing.count({ where: { status: "ACTIVE" } }), 0),
     fetchMarzWeather("Ararat", locale),
   ]);
 
@@ -923,26 +958,30 @@ export default async function HomePage({
 }
 
 function loadPlots(userId: string) {
-  return prisma.plot.findMany({
-    where: { userId, status: "ACTIVE" },
-    select: {
-      id: true,
-      name: true,
-      hectares: true,
-      marzId: true,
-      cropProduct: { select: { slug: true } },
-      marz: { select: { slug: true } },
-      yieldEstimate: true,
-      tasks: {
-        where: { status: "OPEN" },
-        orderBy: { priority: "desc" },
-        take: 4,
-        select: { id: true, title: true },
-      },
-    },
-    orderBy: { updatedAt: "desc" },
-    take: 6,
-  });
+  return safeQuery(
+    () =>
+      prisma.plot.findMany({
+        where: { userId, status: "ACTIVE" },
+        select: {
+          id: true,
+          name: true,
+          hectares: true,
+          marzId: true,
+          cropProduct: { select: { slug: true } },
+          marz: { select: { slug: true } },
+          yieldEstimate: true,
+          tasks: {
+            where: { status: "OPEN" },
+            orderBy: { priority: "desc" },
+            take: 4,
+            select: { id: true, title: true },
+          },
+        },
+        orderBy: { updatedAt: "desc" },
+        take: 6,
+      }),
+    [],
+  );
 }
 
 type RecommendedEntry = {

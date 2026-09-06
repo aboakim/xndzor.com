@@ -6,6 +6,8 @@ import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { effectiveTons } from "@/lib/yield";
 
+export const dynamic = "force-dynamic";
+
 export default async function SellDecisionPage({
   params,
 }: {

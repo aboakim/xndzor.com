@@ -6,6 +6,8 @@ import { prisma } from "@/lib/prisma";
 import { getCropRankings } from "@/lib/exchange";
 import { ProductIcon } from "@/components/AgIcons";
 
+export const dynamic = "force-dynamic";
+
 /** Thin rule-based tip stub — full AI advisor deferred. */
 export default async function AdvisorStubPage({
   params,

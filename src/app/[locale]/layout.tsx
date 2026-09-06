@@ -11,6 +11,9 @@ import { Providers } from "@/components/Providers";
 import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 import { PwaServiceWorkerRegister } from "@/components/PwaServiceWorkerRegister";
 
+/** Marketplace pages hit Prisma; skip static prerender (empty SQLite on Vercel breaks build). */
+export const dynamic = "force-dynamic";
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }

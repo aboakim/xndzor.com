@@ -5,6 +5,8 @@ import { getSession } from "@/lib/session";
 import { FarmPageShell } from "@/components/farm/FarmPageShell";
 import { TogetherJoinButton } from "@/components/farm/TogetherJoinButton";
 
+export const dynamic = "force-dynamic";
+
 export default async function TogetherPage({
   params,
 }: {

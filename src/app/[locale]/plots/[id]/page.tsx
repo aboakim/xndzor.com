@@ -17,6 +17,8 @@ import { ensureFarmId } from "@/lib/farm-id";
 import { SeedToSaleTimeline } from "@/components/farm-os/SeedToSaleTimeline";
 import { buildSeedToSaleTimeline } from "@/lib/farm-os/timeline";
 
+export const dynamic = "force-dynamic";
+
 export default async function PlotDetailPage({
   params,
 }: {

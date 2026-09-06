@@ -27,6 +27,8 @@ import { resolveOwnerFreeCheckout } from "@/lib/early-bird";
 import { SellerCard } from "@/components/SellerCard";
 import { USER_PROFILE_SELECT } from "@/lib/profile-privacy";
 
+export const dynamic = "force-dynamic";
+
 export default async function CatalogDetailPage({
   params,
 }: {

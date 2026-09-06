@@ -9,6 +9,8 @@ import { JobTypeIcon, ProductIcon } from "@/components/AgIcons";
 import { localizedPlaceName } from "@/lib/places";
 import { formatAmd, formatPriceRange, formatQty, parseImageUrls } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function VillagePage({
   params,
 }: {

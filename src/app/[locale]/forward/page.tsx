@@ -16,6 +16,7 @@ import {
   sortByMonetization,
 } from "@/lib/monetization";
 
+export const dynamic = "force-dynamic";
 export default async function ForwardBoardPage({
   params,
   searchParams,

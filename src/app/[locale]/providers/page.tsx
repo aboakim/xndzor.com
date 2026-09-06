@@ -1,10 +1,13 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
+import { safeQuery } from "@/lib/safe-query";
 import { parseJobTypesJson } from "@/lib/matching";
 import { formatAmd } from "@/lib/utils";
 import { JobTypeIcon } from "@/components/AgIcons";
 import { VillageLink } from "@/components/VillageLink";
+
+export const dynamic = "force-dynamic";
 
 export default async function ProvidersBoardPage({
   params,
@@ -15,11 +18,15 @@ export default async function ProvidersBoardPage({
   setRequestLocale(locale);
   const t = await getTranslations();
 
-  const providers = await prisma.serviceProvider.findMany({
-    where: { status: "ACTIVE" },
-    include: { marz: true, village: true },
-    orderBy: { createdAt: "desc" },
-  });
+  const providers = await safeQuery(
+    () =>
+      prisma.serviceProvider.findMany({
+        where: { status: "ACTIVE" },
+        include: { marz: true, village: true },
+        orderBy: { createdAt: "desc" },
+      }),
+    [],
+  );
 
   return (
     <div className="section page-board">

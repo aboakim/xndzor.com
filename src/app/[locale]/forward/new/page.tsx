@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { ForwardCropForm } from "@/components/ForwardCropForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function NewForwardPage({
   params,
 }: {

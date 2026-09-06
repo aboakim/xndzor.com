@@ -6,6 +6,8 @@ import { getSession } from "@/lib/session";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { DiaryRecorder } from "@/components/farm-os/DiaryRecorder";
 
+export const dynamic = "force-dynamic";
+
 export default async function DiaryPage({
   params,
 }: {

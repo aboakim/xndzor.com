@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import type { ListingKind } from "@/lib/admin";
 import { AdminListingsTable, type AdminListingRow } from "./AdminListingsTable";
 
+export const dynamic = "force-dynamic";
+
 const TABS: { key: ListingKind; labelKey: string; hrefPrefix: string }[] = [
   { key: "supply", labelKey: "tabSupply", hrefPrefix: "/supply" },
   { key: "demand", labelKey: "tabDemand", hrefPrefix: "/demand" },

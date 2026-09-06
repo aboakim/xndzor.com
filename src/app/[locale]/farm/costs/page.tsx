@@ -5,6 +5,8 @@ import { getSession } from "@/lib/session";
 import { FarmPageShell } from "@/components/farm/FarmPageShell";
 import { ExpenseForm } from "@/components/farm/ExpenseForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function FarmCostsPage({
   params,
 }: {

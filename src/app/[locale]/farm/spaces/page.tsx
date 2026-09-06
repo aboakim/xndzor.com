@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { FarmPageShell } from "@/components/farm/FarmPageShell";
 
+export const dynamic = "force-dynamic";
+
 export default async function SpacesPage({
   params,
 }: {

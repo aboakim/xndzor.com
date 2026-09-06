@@ -1,11 +1,14 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
+import { safeQuery } from "@/lib/safe-query";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { formatAmd } from "@/lib/utils";
 import { localizedPlaceName } from "@/lib/places";
 import { getSession } from "@/lib/session";
 import { SpaceListingForm } from "@/components/farm-os/SpaceListingForm";
+
+export const dynamic = "force-dynamic";
 
 export default async function SpacesPage({
   params,
@@ -18,13 +21,17 @@ export default async function SpacesPage({
   const session = await getSession();
 
   const [listings, marzes] = await Promise.all([
-    prisma.spaceListing.findMany({
-      where: { status: "ACTIVE" },
-      include: { marz: true, village: true },
-      orderBy: { createdAt: "desc" },
-      take: 40,
-    }),
-    prisma.marz.findMany({ orderBy: { sortOrder: "asc" } }),
+    safeQuery(
+      () =>
+        prisma.spaceListing.findMany({
+          where: { status: "ACTIVE" },
+          include: { marz: true, village: true },
+          orderBy: { createdAt: "desc" },
+          take: 40,
+        }),
+      [],
+    ),
+    safeQuery(() => prisma.marz.findMany({ orderBy: { sortOrder: "asc" } }), []),
   ]);
 
   return (

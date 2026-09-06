@@ -21,6 +21,8 @@ import { TrackRecentView } from "@/components/TrackRecentView";
 import { SellerCard } from "@/components/SellerCard";
 import { USER_PROFILE_SELECT } from "@/lib/profile-privacy";
 
+export const dynamic = "force-dynamic";
+
 export default async function SupplyDetailPage({
   params,
 }: {

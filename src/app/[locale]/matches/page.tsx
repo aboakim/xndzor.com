@@ -6,6 +6,8 @@ import { getSession } from "@/lib/session";
 import { findMatchesForDemand, findMatchesForSupply } from "@/lib/matching";
 import { formatQty } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function MatchesPage({
   params,
 }: {

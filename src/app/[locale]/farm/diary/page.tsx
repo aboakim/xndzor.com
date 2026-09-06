@@ -6,6 +6,8 @@ import { getSession } from "@/lib/session";
 import { FarmPageShell } from "@/components/farm/FarmPageShell";
 import { DiaryForm } from "@/components/farm/DiaryForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function FarmDiaryPage({
   params,
 }: {

@@ -7,6 +7,8 @@ import { WeatherWidget, RiskCards } from "@/components/farm/WeatherWidget";
 import { fetchFarmWeather } from "@/lib/weather";
 import { PrefetchLink } from "@/components/PrefetchLink";
 
+export const dynamic = "force-dynamic";
+
 export default async function RadarPage({
   params,
 }: {

@@ -11,6 +11,8 @@ import { CATALOG_ROUTE, type CatalogCategory } from "@/lib/catalog";
 import { tContent } from "@/lib/content-locale";
 import { formatAmd, parseImageUrls } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function MyShopPage({
   params,
 }: {

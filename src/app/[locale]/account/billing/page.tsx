@@ -8,6 +8,8 @@ import { getUserEntitlements } from "@/lib/monetization";
 import { formatAmd } from "@/lib/utils";
 import { GoProLink } from "@/components/CheckoutButton";
 
+export const dynamic = "force-dynamic";
+
 export default async function BillingPage({
   params,
 }: {

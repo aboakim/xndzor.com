@@ -6,6 +6,8 @@ import { verifyStripeCheckoutSession, resolveUnlockInfo } from "@/lib/payments";
 import { redirect } from "next/navigation";
 import { CheckoutSuccessPoller } from "./CheckoutSuccessPoller";
 
+export const dynamic = "force-dynamic";
+
 export default async function CheckoutSuccessPage({
   params,
   searchParams,

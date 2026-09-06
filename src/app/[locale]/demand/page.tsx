@@ -8,6 +8,8 @@ import { ProductIcon } from "@/components/AgIcons";
 import { EmptyState } from "@/components/EmptyState";
 import { formatPriceRange, formatQty } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function DemandBoardPage({
   params,
   searchParams,

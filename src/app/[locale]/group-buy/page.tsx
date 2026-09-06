@@ -1,9 +1,12 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
+import { safeQuery } from "@/lib/safe-query";
 import { formatAmd } from "@/lib/utils";
 import { GroupBuyJoinForm } from "@/components/GroupBuyJoinForm";
 import { ProductIcon } from "@/components/AgIcons";
+
+export const dynamic = "force-dynamic";
 
 export default async function GroupBuyPage({
   params,
@@ -14,16 +17,20 @@ export default async function GroupBuyPage({
   setRequestLocale(locale);
   const t = await getTranslations();
 
-  const campaigns = await prisma.groupBuyCampaign.findMany({
-    where: { status: { in: ["OPEN", "QUOTED"] } },
-    include: {
-      product: true,
-      marz: true,
-      joins: { where: { status: "JOINED" } },
-      organizer: { select: { name: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  const campaigns = await safeQuery(
+    () =>
+      prisma.groupBuyCampaign.findMany({
+        where: { status: { in: ["OPEN", "QUOTED"] } },
+        include: {
+          product: true,
+          marz: true,
+          joins: { where: { status: "JOINED" } },
+          organizer: { select: { name: true } },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+    [],
+  );
 
   return (
     <div className="section page-board">

@@ -5,6 +5,8 @@ import { getSession } from "@/lib/session";
 import { FarmPageShell } from "@/components/farm/FarmPageShell";
 import { SpaceForm } from "@/components/farm/SpaceForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function NewSpacePage({
   params,
 }: {

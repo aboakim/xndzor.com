@@ -1,4 +1,5 @@
 import { prisma } from "./prisma";
+import { safeQuery } from "./safe-query";
 import {
   FARM_PRO_BOOST_QUOTA,
   type BoostTargetType,
@@ -74,14 +75,18 @@ export async function getActiveBoostMap(
   const map = new Map<string, Date>();
   if (!targetIds.length) return map;
   const now = new Date();
-  const rows = await prisma.boost.findMany({
-    where: {
-      targetType,
-      targetId: { in: targetIds },
-      endsAt: { gt: now },
-    },
-    select: { targetId: true, endsAt: true },
-  });
+  const rows = await safeQuery(
+    () =>
+      prisma.boost.findMany({
+        where: {
+          targetType,
+          targetId: { in: targetIds },
+          endsAt: { gt: now },
+        },
+        select: { targetId: true, endsAt: true },
+      }),
+    [],
+  );
   for (const r of rows) {
     const prev = map.get(r.targetId);
     if (!prev || r.endsAt > prev) map.set(r.targetId, r.endsAt);
@@ -92,10 +97,14 @@ export async function getActiveBoostMap(
 export async function getProUserIds(userIds: string[]): Promise<Set<string>> {
   if (!userIds.length) return new Set();
   const now = new Date();
-  const ok = await prisma.user.findMany({
-    where: { id: { in: userIds }, isPro: true, proUntil: { gt: now } },
-    select: { id: true },
-  });
+  const ok = await safeQuery(
+    () =>
+      prisma.user.findMany({
+        where: { id: { in: userIds }, isPro: true, proUntil: { gt: now } },
+        select: { id: true },
+      }),
+    [],
+  );
   return new Set(ok.map((u) => u.id));
 }
 

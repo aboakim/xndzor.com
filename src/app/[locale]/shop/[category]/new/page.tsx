@@ -6,6 +6,8 @@ import { CatalogForm } from "@/components/CatalogForm";
 import { Link } from "@/i18n/navigation";
 import { CATALOG_ROUTE, categoryFromRoute } from "@/lib/catalog";
 
+export const dynamic = "force-dynamic";
+
 export default async function NewCatalogPage({
   params,
 }: {

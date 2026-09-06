@@ -18,6 +18,8 @@ import { getActiveBoostMap, getUserEntitlements } from "@/lib/monetization";
 import { resolveOwnerFreeCheckout } from "@/lib/early-bird";
 import { TrackRecentView } from "@/components/TrackRecentView";
 
+export const dynamic = "force-dynamic";
+
 export default async function ForwardDetailPage({
   params,
 }: {

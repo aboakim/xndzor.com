@@ -13,6 +13,8 @@ import { VillageLink } from "@/components/VillageLink";
 import { SellerCard } from "@/components/SellerCard";
 import { USER_PROFILE_SELECT } from "@/lib/profile-privacy";
 
+export const dynamic = "force-dynamic";
+
 export default async function JobDetailPage({
   params,
 }: {

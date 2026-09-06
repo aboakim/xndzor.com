@@ -5,6 +5,8 @@ import { getSession } from "@/lib/session";
 import { SupplyForm } from "@/components/SupplyForm";
 import { Link } from "@/i18n/navigation";
 
+export const dynamic = "force-dynamic";
+
 export default async function NewSupplyPage({
   params,
 }: {

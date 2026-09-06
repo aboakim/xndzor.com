@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { JobRequestForm } from "@/components/JobRequestForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function NewJobPage({
   params,
   searchParams,

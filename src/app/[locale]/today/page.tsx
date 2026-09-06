@@ -19,6 +19,8 @@ import { EmptyReturnTeaser } from "@/components/farm-os/EmptyReturnTeaser";
 import { PlotSelector } from "@/components/farm-os/PlotSelector";
 import { SellDecisionCalculator } from "@/components/farm-os/SellDecisionCalculator";
 
+export const dynamic = "force-dynamic";
+
 export default async function FarmOsTodayPage({
   params,
   searchParams,

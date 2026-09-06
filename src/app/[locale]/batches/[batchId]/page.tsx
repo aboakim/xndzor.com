@@ -11,6 +11,8 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ProductIcon } from "@/components/AgIcons";
 import { VillageLink } from "@/components/VillageLink";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProductBatchPage({
   params,
 }: {

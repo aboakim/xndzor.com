@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { ProviderForm } from "@/components/ProviderForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function NewProviderPage({
   params,
 }: {

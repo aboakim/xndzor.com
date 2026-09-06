@@ -7,6 +7,8 @@ import { localizedPlaceName } from "@/lib/places";
 import { fetchWeatherForecast, resolveWeatherCoordsAsync } from "@/lib/weather";
 import { WeatherPanel } from "@/components/farm-os/WeatherPanel";
 
+export const dynamic = "force-dynamic";
+
 export default async function VillageRadarPage({
   params,
 }: {

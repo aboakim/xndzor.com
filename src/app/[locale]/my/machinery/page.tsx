@@ -9,6 +9,8 @@ import { MachineryTypeIcon } from "@/components/AgIcons";
 import { MachineryListingActions } from "@/components/MachineryListingActions";
 import { formatAmd, parseImageUrls } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function MyMachineryPage({
   params,
 }: {

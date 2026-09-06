@@ -10,6 +10,8 @@ import { AnimalListingActions } from "@/components/AnimalListingActions";
 import { tContent } from "@/lib/content-locale";
 import { formatAmd, parseImageUrls } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function MyAnimalsPage({
   params,
 }: {

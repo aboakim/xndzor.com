@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { markPaymentCanceled } from "@/lib/payments";
 
+export const dynamic = "force-dynamic";
+
 export default async function CheckoutCancelPage({
   params,
   searchParams,

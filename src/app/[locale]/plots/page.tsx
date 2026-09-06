@@ -10,6 +10,8 @@ import { EmptyState } from "@/components/EmptyState";
 import { VillageLink } from "@/components/VillageLink";
 import { effectiveTons } from "@/lib/yield";
 
+export const dynamic = "force-dynamic";
+
 export default async function PlotsPage({
   params,
 }: {

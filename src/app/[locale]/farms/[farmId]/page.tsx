@@ -19,6 +19,8 @@ import { getUserEntitlements } from "@/lib/monetization";
 import { getXndzorScore } from "@/lib/farm-os/xndzor-score";
 import { XndzorScoreCard } from "@/components/farm-os/XndzorScoreCard";
 
+export const dynamic = "force-dynamic";
+
 export default async function FarmPassportPage({
   params,
 }: {

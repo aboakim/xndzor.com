@@ -9,6 +9,8 @@ import { EmptyState } from "@/components/EmptyState";
 import { VillageLink } from "@/components/VillageLink";
 import { JOB_TYPES } from "@/lib/matching";
 
+export const dynamic = "force-dynamic";
+
 export default async function JobsBoardPage({
   params,
   searchParams,

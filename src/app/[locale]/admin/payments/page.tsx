@@ -4,6 +4,8 @@ import { formatAmd } from "@/lib/utils";
 import { maskEmail } from "@/lib/payments";
 import { getProduct } from "@/lib/pricing";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPaymentsPage({
   params,
 }: {

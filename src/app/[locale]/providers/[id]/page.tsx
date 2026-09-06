@@ -9,6 +9,8 @@ import { formatAmd } from "@/lib/utils";
 import { ApplyToJobButton } from "@/components/ApplyToJobButton";
 import { getSession } from "@/lib/session";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProviderDetailPage({
   params,
 }: {
