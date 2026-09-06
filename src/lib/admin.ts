@@ -1,17 +1,17 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getSession } from "./session";
 import { prisma } from "./prisma";
 import { userIsAdmin } from "./monetization";
 import { getEarlyBirdStats } from "./early-bird";
 
-export async function requireAdmin(_locale: string) {
+export async function requireAdmin(locale: string) {
   const session = await getSession();
   if (!session?.user?.id) {
-    // Stealth: do not advertise the admin URL via login redirect
-    notFound();
+    redirect(`/${locale}/auth/login?callbackUrl=/${locale}/admin`);
   }
   const admin = await userIsAdmin(session.user.id);
   if (!admin) {
+    // Stealth: signed-in non-admins still see a normal 404
     notFound();
   }
   return { session, userId: session.user.id };

@@ -20,7 +20,7 @@ The admin panel is **not linked** anywhere in the public UI (header, footer, meg
 
 After promotion, log out and log back in so the session includes admin privileges.
 
-**Stealth:** Unauthenticated or non-admin visitors hitting `/hy/admin` get a normal **404** (no login redirect that would advertise the URL).
+**Access gate:** Unauthenticated visitors hitting `/hy/admin` are redirected to login (with callback back to admin). Signed-in non-admins still get a normal **404**.
 
 **Password:** Default admin password is **`Akim1234`** (override with `ADMIN_PASSWORD` in `.env`).
 
