@@ -407,7 +407,7 @@ module.exports = {
         prev: "Նախորդ",
         next: "Հաջորդ",
         goTo: "Անցնել {n} սլայդ",
-        cta: "Իմանել ավելին",
+        cta: "Իմանալ ավելին",
         items: {
           groupBuy: {
             badge: "Խմբային",
@@ -485,7 +485,7 @@ module.exports = {
       },
       featureBanners: {
         exclusive: "Միայն Խնձորում",
-        ctaLearnMore: "Իմանել ավելին",
+        ctaLearnMore: "Իմանալ ավելին",
         sectionLabel: "Հարթակի հնարավորություններ",
         solve: {
           brand: "Լուծում",
