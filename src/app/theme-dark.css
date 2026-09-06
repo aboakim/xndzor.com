@@ -339,17 +339,7 @@ html[data-theme="dark"] .xndzor-mode-toggle {
   box-shadow: none;
 }
 
-html.dark .gbb-cta,
-html[data-theme="dark"] .gbb-cta {
-  background: color-mix(in srgb, var(--pine) 16%, var(--surface-solid)) !important;
-  color: var(--pine-deep) !important;
-}
-
-html.dark .wtb-cta-secondary,
-html[data-theme="dark"] .wtb-cta-secondary {
-  background: color-mix(in srgb, var(--pine) 14%, var(--surface-solid)) !important;
-  color: var(--pine-deep) !important;
-}
+/* gbb-cta / wtb-cta-secondary: contrast fixed later in light-chip + dark-banner blocks */
 
 html.dark .xndzor-hero,
 html[data-theme="dark"] .xndzor-hero {
@@ -749,13 +739,466 @@ html[data-theme="dark"] .xz-promo-dot.is-active {
   background: #9fe0c4;
 }
 
+/*
+  ——— Light banner / panel surfaces ———
+  Keep cream/pastel canvases but force dark ink (#0a3329).
+  Beats the main h*/p/span safety net that paints near-white text.
+  Do NOT include .home-quick-actions (dark-looking panel; light text OK).
+*/
+html.dark .market-pulse,
+html.dark .home-weather-card,
+html.dark .home-weather-card.is-demo,
+html.dark .wtb,
+html.dark .tvs-item,
+html.dark .tvs-item-green,
+html.dark .tvs-item-gold,
+html.dark .tvs-item-sky,
+html.dark .wtb-card,
+html.dark .wtb-card-farmer,
+html.dark .wtb-card-buyer,
+html.dark .market-pulse-card,
+html.dark .early-bird-user-banner,
+html.dark .early-bird-register-success,
+html.dark .form-success,
+html.dark .profile-early-bird-badge,
+html.dark .pricing-card,
+html[data-theme="dark"] .market-pulse,
+html[data-theme="dark"] .home-weather-card,
+html[data-theme="dark"] .home-weather-card.is-demo,
+html[data-theme="dark"] .wtb,
+html[data-theme="dark"] .tvs-item,
+html[data-theme="dark"] .tvs-item-green,
+html[data-theme="dark"] .tvs-item-gold,
+html[data-theme="dark"] .tvs-item-sky,
+html[data-theme="dark"] .wtb-card,
+html[data-theme="dark"] .wtb-card-farmer,
+html[data-theme="dark"] .wtb-card-buyer,
+html[data-theme="dark"] .market-pulse-card,
+html[data-theme="dark"] .early-bird-user-banner,
+html[data-theme="dark"] .early-bird-register-success,
+html[data-theme="dark"] .form-success,
+html[data-theme="dark"] .profile-early-bird-badge,
+html[data-theme="dark"] .pricing-card {
+  color: #0a3329 !important;
+}
+
+/* Explicit light canvases (token remaps must not wash these out) */
+html.dark .market-pulse,
+html[data-theme="dark"] .market-pulse {
+  background:
+    radial-gradient(ellipse 70% 80% at 100% 0%, rgba(184, 146, 42, 0.12), transparent 55%),
+    linear-gradient(155deg, #f7fbf9 0%, #eef6f2 55%, #faf6ec 100%) !important;
+  border-color: rgba(10, 51, 41, 0.14) !important;
+}
+
+html.dark .home-weather-card,
+html[data-theme="dark"] .home-weather-card {
+  background:
+    radial-gradient(ellipse 60% 70% at 100% 0%, rgba(74, 140, 170, 0.14), transparent 55%),
+    linear-gradient(150deg, #eaf4f0 0%, #f7fbf9 100%) !important;
+  border-color: rgba(10, 51, 41, 0.14) !important;
+}
+
+html.dark .home-weather-card.is-demo,
+html[data-theme="dark"] .home-weather-card.is-demo {
+  background:
+    radial-gradient(ellipse 60% 70% at 100% 0%, rgba(184, 146, 42, 0.12), transparent 55%),
+    linear-gradient(150deg, #f5f0e6 0%, #fbf9f5 100%) !important;
+}
+
+html.dark .wtb,
+html[data-theme="dark"] .wtb {
+  background:
+    radial-gradient(ellipse 75% 65% at 12% 8%, rgba(15, 74, 60, 0.1), transparent 58%),
+    radial-gradient(ellipse 60% 55% at 92% 18%, rgba(61, 143, 168, 0.12), transparent 52%),
+    radial-gradient(ellipse 50% 45% at 50% 100%, rgba(212, 168, 67, 0.14), transparent 55%),
+    linear-gradient(155deg, #faf6ee 0%, #f7f3ea 38%, #eef6f2 100%) !important;
+  border-color: rgba(10, 51, 41, 0.14) !important;
+}
+
+html.dark .tvs-item,
+html.dark .tvs-item-green,
+html.dark .tvs-item-gold,
+html.dark .tvs-item-sky,
+html[data-theme="dark"] .tvs-item,
+html[data-theme="dark"] .tvs-item-green,
+html[data-theme="dark"] .tvs-item-gold,
+html[data-theme="dark"] .tvs-item-sky {
+  background: linear-gradient(135deg, #ffffff, #f3f8f5) !important;
+  border-color: rgba(10, 51, 41, 0.12) !important;
+}
+
+html.dark .market-pulse-card,
+html[data-theme="dark"] .market-pulse-card {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(10, 51, 41, 0.1) !important;
+  color: #0a3329 !important;
+}
+
+html.dark .wtb-card,
+html.dark .wtb-card-farmer,
+html.dark .wtb-card-buyer,
+html[data-theme="dark"] .wtb-card,
+html[data-theme="dark"] .wtb-card-farmer,
+html[data-theme="dark"] .wtb-card-buyer {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), #eef6f2) !important;
+  border-color: rgba(10, 51, 41, 0.12) !important;
+  color: #0a3329 !important;
+}
+
+/* All copy inside light banners → dark ink (beats main safety net) */
+html.dark .market-pulse :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label, dt, dd),
+html.dark .home-weather-card :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label),
+html.dark .wtb :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label),
+html.dark .tvs-item :is(p, span, strong),
+html.dark .market-pulse-title,
+html.dark .market-pulse-sub,
+html.dark .market-pulse-live,
+html.dark .market-pulse-count,
+html.dark .market-pulse-label,
+html.dark .home-weather-eyebrow,
+html.dark .home-weather-temp,
+html.dark .home-weather-summary,
+html.dark .home-weather-metrics,
+html.dark .wtb-headline,
+html.dark .wtb-subheadline,
+html.dark .wtb-card-title,
+html.dark .wtb-card-desc,
+html.dark .tvs-text,
+html.dark .early-bird-user-banner-title,
+html.dark .early-bird-user-banner-note,
+html[data-theme="dark"] .market-pulse :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label, dt, dd),
+html[data-theme="dark"] .home-weather-card :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label),
+html[data-theme="dark"] .wtb :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label),
+html[data-theme="dark"] .tvs-item :is(p, span, strong),
+html[data-theme="dark"] .market-pulse-title,
+html[data-theme="dark"] .market-pulse-sub,
+html[data-theme="dark"] .market-pulse-live,
+html[data-theme="dark"] .market-pulse-count,
+html[data-theme="dark"] .market-pulse-label,
+html[data-theme="dark"] .home-weather-eyebrow,
+html[data-theme="dark"] .home-weather-temp,
+html[data-theme="dark"] .home-weather-summary,
+html[data-theme="dark"] .home-weather-metrics,
+html[data-theme="dark"] .wtb-headline,
+html[data-theme="dark"] .wtb-subheadline,
+html[data-theme="dark"] .wtb-card-title,
+html[data-theme="dark"] .wtb-card-desc,
+html[data-theme="dark"] .tvs-text,
+html[data-theme="dark"] .early-bird-user-banner-title,
+html[data-theme="dark"] .early-bird-user-banner-note {
+  color: #0a3329 !important;
+}
+
+/* Soft secondary copy on light panels */
+html.dark .market-pulse-sub,
+html.dark .market-pulse-label,
+html.dark .home-weather-summary,
+html.dark .home-weather-metrics,
+html.dark .wtb-subheadline,
+html.dark .wtb-card-desc,
+html.dark .tvs-text,
+html[data-theme="dark"] .market-pulse-sub,
+html[data-theme="dark"] .market-pulse-label,
+html[data-theme="dark"] .home-weather-summary,
+html[data-theme="dark"] .home-weather-metrics,
+html[data-theme="dark"] .wtb-subheadline,
+html[data-theme="dark"] .wtb-card-desc,
+html[data-theme="dark"] .tvs-text {
+  color: #3d4a45 !important;
+}
+
+html.dark .market-pulse-live,
+html.dark .home-weather-eyebrow,
+html[data-theme="dark"] .market-pulse-live,
+html[data-theme="dark"] .home-weather-eyebrow {
+  color: #1a6b55 !important;
+}
+
+html.dark .market-pulse-count,
+html.dark .home-weather-temp,
+html.dark .home-weather-metrics strong,
+html.dark .wtb-headline,
+html.dark .wtb-card-title,
+html[data-theme="dark"] .market-pulse-count,
+html[data-theme="dark"] .home-weather-temp,
+html[data-theme="dark"] .home-weather-metrics strong,
+html[data-theme="dark"] .wtb-headline,
+html[data-theme="dark"] .wtb-card-title {
+  color: #0a3329 !important;
+}
+
+html.dark .market-pulse-card.accent-gold .market-pulse-count,
+html[data-theme="dark"] .market-pulse-card.accent-gold .market-pulse-count {
+  color: #9a7a1e !important;
+}
+
+html.dark .market-pulse-card.accent-wheat .market-pulse-count,
+html[data-theme="dark"] .market-pulse-card.accent-wheat .market-pulse-count {
+  color: #8a7040 !important;
+}
+
+html.dark .market-pulse-card.accent-sky .market-pulse-count,
+html[data-theme="dark"] .market-pulse-card.accent-sky .market-pulse-count {
+  color: #3a6f88 !important;
+}
+
+html.dark .market-pulse-card.accent-pine .market-pulse-count,
+html[data-theme="dark"] .market-pulse-card.accent-pine .market-pulse-count {
+  color: #0f4a3c !important;
+}
+
+/* Green text links on light banners (not the global sage link color) */
+html.dark .home-weather-cta,
+html.dark .home-weather-card a:not(.btn),
+html.dark .wtb a:not(.btn):not(.wtb-cta):not(.wtb-cta-primary),
+html.dark .market-pulse-card,
+html.dark .market-pulse a.market-pulse-card,
+html[data-theme="dark"] .home-weather-cta,
+html[data-theme="dark"] .home-weather-card a:not(.btn),
+html[data-theme="dark"] .wtb a:not(.btn):not(.wtb-cta):not(.wtb-cta-primary),
+html[data-theme="dark"] .market-pulse-card,
+html[data-theme="dark"] .market-pulse a.market-pulse-card {
+  color: #1a6b55 !important;
+}
+
+html.dark .wtb-card-farmer .wtb-perks li,
+html[data-theme="dark"] .wtb-card-farmer .wtb-perks li {
+  color: #1a6b55 !important;
+  background: rgba(26, 107, 85, 0.1) !important;
+}
+
+html.dark .wtb-card-buyer .wtb-card-title,
+html[data-theme="dark"] .wtb-card-buyer .wtb-card-title {
+  color: #2a6f88 !important;
+}
+
+html.dark .wtb-card-buyer .wtb-perks li,
+html[data-theme="dark"] .wtb-card-buyer .wtb-perks li {
+  color: #2a6f88 !important;
+  background: rgba(61, 143, 168, 0.12) !important;
+}
+
+html.dark .tvs-item-green .tvs-icon,
+html[data-theme="dark"] .tvs-item-green .tvs-icon {
+  color: #1a6b55 !important;
+  background: #ffffff !important;
+}
+
+html.dark .tvs-item-gold .tvs-icon,
+html[data-theme="dark"] .tvs-item-gold .tvs-icon {
+  color: #a67c00 !important;
+  background: #ffffff !important;
+}
+
+html.dark .tvs-item-sky .tvs-icon,
+html[data-theme="dark"] .tvs-item-sky .tvs-icon {
+  color: #3a6f88 !important;
+  background: #ffffff !important;
+}
+
+/*
+  Dark banners (group-buy, feature, early-bird): restore dark pine surfaces
+  and keep light text. --pine-deep remaps to near-white and can bleach them.
+*/
+html.dark .early-bird-banner,
+html[data-theme="dark"] .early-bird-banner {
+  background: linear-gradient(
+    135deg,
+    #072820 0%,
+    #0f4a3c 45%,
+    #1a6b55 100%
+  ) !important;
+  color: #fff !important;
+  border-color: color-mix(in srgb, #e0c05a 55%, #0f4a3c) !important;
+}
+
+html.dark .early-bird-banner :is(h1, h2, h3, h4, p, span, strong, em, small, li),
+html.dark .early-bird-banner-headline,
+html.dark .early-bird-banner-sub,
+html.dark .early-bird-banner-note,
+html.dark .early-bird-banner-counter,
+html.dark .early-bird-banner-progress,
+html[data-theme="dark"] .early-bird-banner :is(h1, h2, h3, h4, p, span, strong, em, small, li),
+html[data-theme="dark"] .early-bird-banner-headline,
+html[data-theme="dark"] .early-bird-banner-sub,
+html[data-theme="dark"] .early-bird-banner-note,
+html[data-theme="dark"] .early-bird-banner-counter,
+html[data-theme="dark"] .early-bird-banner-progress {
+  color: rgba(255, 255, 255, 0.94) !important;
+}
+
+html.dark .early-bird-banner-eyebrow,
+html.dark .early-bird-banner-counter-big,
+html[data-theme="dark"] .early-bird-banner-eyebrow,
+html[data-theme="dark"] .early-bird-banner-counter-big {
+  color: #e0c05a !important;
+}
+
+html.dark .early-bird-banner-cta-secondary,
+html[data-theme="dark"] .early-bird-banner-cta-secondary {
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.45) !important;
+}
+
+html.dark .gbb,
+html.dark .fxb,
+html.dark .fxb-solve,
+html.dark .fxb-route,
+html.dark .fxb-grow,
+html.dark .fxb-passport,
+html[data-theme="dark"] .gbb,
+html[data-theme="dark"] .fxb,
+html[data-theme="dark"] .fxb-solve,
+html[data-theme="dark"] .fxb-route,
+html[data-theme="dark"] .fxb-grow,
+html[data-theme="dark"] .fxb-passport {
+  color: #f4fbf8 !important;
+}
+
+html.dark .gbb :is(h1, h2, h3, h4, p, span, strong, em, small, li):not(.gbb-badge):not(.gbb-save-chip),
+html.dark .fxb :is(h1, h2, h3, h4, p, span, strong, em, small, li):not(.fxb-badge),
+html.dark .gbb-title,
+html.dark .gbb-brand,
+html.dark .gbb-lede,
+html.dark .fxb-title,
+html.dark .fxb-brand,
+html.dark .fxb-lede,
+html.dark .fxb-hook,
+html[data-theme="dark"] .gbb :is(h1, h2, h3, h4, p, span, strong, em, small, li):not(.gbb-badge):not(.gbb-save-chip),
+html[data-theme="dark"] .fxb :is(h1, h2, h3, h4, p, span, strong, em, small, li):not(.fxb-badge),
+html[data-theme="dark"] .gbb-title,
+html[data-theme="dark"] .gbb-brand,
+html[data-theme="dark"] .gbb-lede,
+html[data-theme="dark"] .fxb-title,
+html[data-theme="dark"] .fxb-brand,
+html[data-theme="dark"] .fxb-lede,
+html[data-theme="dark"] .fxb-hook {
+  color: #f4fbf8 !important;
+}
+
+html.dark .gbb-exclusive,
+html.dark .fxb-hook,
+html.dark .fxb-brand,
+html[data-theme="dark"] .gbb-exclusive,
+html[data-theme="dark"] .fxb-hook,
+html[data-theme="dark"] .fxb-brand {
+  color: rgba(250, 236, 180, 0.95) !important;
+}
+
+/* Light CTA / badge chips on dark banners → real dark ink (not remapped --pine-deep) */
+html.dark .gbb-cta,
+html.dark .fxb-cta,
+html.dark .gbb-badge,
+html.dark .fxb-badge,
+html[data-theme="dark"] .gbb-cta,
+html[data-theme="dark"] .fxb-cta,
+html[data-theme="dark"] .gbb-badge,
+html[data-theme="dark"] .fxb-badge {
+  background: #f4fbf8 !important;
+  color: #0a3329 !important;
+}
+
+html.dark .gbb-cta:hover,
+html.dark .fxb-cta:hover,
+html[data-theme="dark"] .gbb-cta:hover,
+html[data-theme="dark"] .fxb-cta:hover {
+  background: #e8f5f0 !important;
+  color: #0a3329 !important;
+}
+
+html.dark .gbb-cta-learn,
+html.dark .fxb-cta-learn,
+html.dark .gbb-cta-secondary,
+html[data-theme="dark"] .gbb-cta-learn,
+html[data-theme="dark"] .fxb-cta-learn,
+html[data-theme="dark"] .gbb-cta-secondary {
+  color: #f4fbf8 !important;
+  border-color: rgba(244, 251, 248, 0.55) !important;
+  background: transparent !important;
+}
+
+html.dark .wtb-cta,
+html.dark .wtb-cta-primary,
+html[data-theme="dark"] .wtb-cta,
+html[data-theme="dark"] .wtb-cta-primary {
+  color: #f5f7f4 !important;
+}
+
+html.dark .wtb-cta-secondary,
+html[data-theme="dark"] .wtb-cta-secondary {
+  background: rgba(15, 74, 60, 0.1) !important;
+  color: #0a3329 !important;
+  border-color: rgba(10, 51, 41, 0.2) !important;
+}
+
+html.dark .wtb-trust-badge,
+html[data-theme="dark"] .wtb-trust-badge {
+  background: rgba(15, 74, 60, 0.1) !important;
+  color: #0a3329 !important;
+  border-color: rgba(10, 51, 41, 0.16) !important;
+}
+
+/* Hero side rails stay dark surfaces with light text */
+html.dark .xndzor-hero-rail-feature,
+html[data-theme="dark"] .xndzor-hero-rail-feature {
+  background: #1f322a !important;
+  border-color: rgba(180, 220, 200, 0.22) !important;
+  color: #f4f6f2 !important;
+}
+
+html.dark .xndzor-hero-rail-link,
+html.dark .xndzor-hero-rail-badge,
+html[data-theme="dark"] .xndzor-hero-rail-link,
+html[data-theme="dark"] .xndzor-hero-rail-badge {
+  color: #f4f6f2 !important;
+}
+
+/* Cockpit cue text on dark page */
+html.dark .home-quick-cue,
+html.dark .home-section-cue,
+html.dark .home-search-hint,
+html[data-theme="dark"] .home-quick-cue,
+html[data-theme="dark"] .home-section-cue,
+html[data-theme="dark"] .home-search-hint {
+  color: #b9d0c4 !important;
+}
+
+/* Quick actions: keep light text on dark-tinted panel; chips already handled */
+html.dark .home-quick-actions,
+html[data-theme="dark"] .home-quick-actions {
+  background: linear-gradient(160deg, rgba(24, 40, 32, 0.92), rgba(30, 48, 40, 0.88)) !important;
+  border-color: rgba(180, 220, 200, 0.22) !important;
+  color: #f4f6f2 !important;
+}
+
+html.dark .home-quick-eyebrow,
+html.dark .home-quick-actions :is(h2, h3, p, span, strong),
+html[data-theme="dark"] .home-quick-eyebrow,
+html[data-theme="dark"] .home-quick-actions :is(h2, h3, p, span, strong) {
+  color: #f4f6f2 !important;
+}
+
+html.dark .home-quick-chip:not(.home-quick-chip-farm),
+html[data-theme="dark"] .home-quick-chip:not(.home-quick-chip-farm) {
+  background: #1f322a !important;
+  color: #f4f6f2 !important;
+  border-color: rgba(180, 220, 200, 0.28) !important;
+}
+
+html.dark .home-quick-chip-farm,
+html[data-theme="dark"] .home-quick-chip-farm {
+  background: linear-gradient(145deg, #0f4a3c, #1a6b55) !important;
+  color: #f4fbf8 !important;
+  border-color: transparent !important;
+}
+
 /* Other light chips / pills / badges across the app */
 html.dark .xndzor-chip,
 html.dark .home-quick-chip,
 html.dark .listing-meta-chip,
 html.dark .listing-meta-chip--md,
 html.dark .farm-hub-start-chip,
-html.dark .wtb-trust-badge,
 html.dark .gbb-save-chip,
 html.dark .xndzor-hero-rail-badge,
 html[data-theme="dark"] .xndzor-chip,
@@ -763,12 +1206,19 @@ html[data-theme="dark"] .home-quick-chip,
 html[data-theme="dark"] .listing-meta-chip,
 html[data-theme="dark"] .listing-meta-chip--md,
 html[data-theme="dark"] .farm-hub-start-chip,
-html[data-theme="dark"] .wtb-trust-badge,
 html[data-theme="dark"] .gbb-save-chip,
 html[data-theme="dark"] .xndzor-hero-rail-badge {
   background: #1f322a !important;
   color: #f4f6f2 !important;
   border-color: rgba(180, 220, 200, 0.22) !important;
+}
+
+/* Trust badges sit on light .wtb → keep light chip + dark ink */
+html.dark .wtb-trust-badge,
+html[data-theme="dark"] .wtb-trust-badge {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #0a3329 !important;
+  border-color: rgba(10, 51, 41, 0.14) !important;
 }
 
 html.dark .farm-hub-start-chip strong,
@@ -837,6 +1287,22 @@ html.dark [class*="hint"]:not(.search-kbd-hint),
 html[data-theme="dark"] .muted,
 html[data-theme="dark"] .text-muted {
   color: #b9d0c4 !important;
+}
+
+/* Muted copy on light banners must stay dark (not sage-on-cream) */
+html.dark .market-pulse .muted,
+html.dark .market-pulse .text-muted,
+html.dark .home-weather-card .muted,
+html.dark .wtb .muted,
+html.dark .tvs-item .muted,
+html.dark .early-bird-user-banner .muted,
+html[data-theme="dark"] .market-pulse .muted,
+html[data-theme="dark"] .market-pulse .text-muted,
+html[data-theme="dark"] .home-weather-card .muted,
+html[data-theme="dark"] .wtb .muted,
+html[data-theme="dark"] .tvs-item .muted,
+html[data-theme="dark"] .early-bird-user-banner .muted {
+  color: #3d4a45 !important;
 }
 
 @media (max-width: 520px) {
