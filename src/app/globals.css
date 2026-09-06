@@ -1,12 +1,11 @@
 @import "tailwindcss";
 @import "./xndzor.css";
-@import "./theme-dark.css";
 
 /* FarmOS — clean white marketplace / pine & earth green */
 :root {
-  --ink: #121a1f;
-  --ink-soft: #243038;
-  --muted: #5a6b72;
+  --ink: #0b1210;
+  --ink-soft: #1a2420;
+  --muted: #3f524c;
   --pine: #0f4a3c;
   --pine-deep: #0a3329;
   --pine-bright: #1a6b55;

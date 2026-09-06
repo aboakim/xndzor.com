@@ -24,8 +24,11 @@ export function resolveTheme(): ThemeMode {
 
 export function applyTheme(theme: ThemeMode) {
   if (typeof document === "undefined") return;
-  document.documentElement.classList.toggle("dark", theme === "dark");
-  document.documentElement.style.colorScheme = theme;
+  const root = document.documentElement;
+  const isDark = theme === "dark";
+  root.classList.toggle("dark", isDark);
+  root.dataset.theme = theme;
+  root.style.colorScheme = theme;
 }
 
 export function persistTheme(theme: ThemeMode) {
@@ -37,4 +40,4 @@ export function persistTheme(theme: ThemeMode) {
 }
 
 /** Inline FOUC guard — keep in sync with resolveTheme / applyTheme. */
-export const THEME_BOOT_SCRIPT = `(function(){try{var k=${JSON.stringify(THEME_STORAGE_KEY)};var s=localStorage.getItem(k);var d=s==="dark"||(s!=="light"&&window.matchMedia("(prefers-color-scheme: dark)").matches);var r=document.documentElement;r.classList.toggle("dark",d);r.style.colorScheme=d?"dark":"light";}catch(e){}})();`;
+export const THEME_BOOT_SCRIPT = `(function(){try{var k=${JSON.stringify(THEME_STORAGE_KEY)};var s=localStorage.getItem(k);var d=s==="dark"||(s!=="light"&&window.matchMedia("(prefers-color-scheme: dark)").matches);var r=document.documentElement;r.classList.toggle("dark",d);r.dataset.theme=d?"dark":"light";r.style.colorScheme=d?"dark":"light";}catch(e){}})();`;

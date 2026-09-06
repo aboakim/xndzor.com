@@ -10,6 +10,8 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 import "./globals.css";
+/* Load after globals so dark tokens/overrides beat later :root and component colors */
+import "./theme-dark.css";
 
 /** Canonical production origin — required for absolute og:image URLs. */
 const PRODUCTION_SITE_URL = "https://www.xndzor.com";
