@@ -782,6 +782,32 @@ html[data-theme="dark"] .pricing-card {
   color: #0a3329 !important;
 }
 
+/* Pricing + early-bird light canvases (token remaps wash gold-soft to near-transparent) */
+html.dark .pricing-card,
+html[data-theme="dark"] .pricing-card {
+  background: linear-gradient(165deg, #f7faf8 0%, #fff 55%) !important;
+  border-color: rgba(10, 51, 41, 0.18) !important;
+}
+
+html.dark .pricing-card-top,
+html[data-theme="dark"] .pricing-card-top {
+  background: linear-gradient(165deg, #fff8e8 0%, #fff 60%) !important;
+  border-color: rgba(180, 120, 20, 0.5) !important;
+}
+
+html.dark .early-bird-user-banner,
+html.dark .early-bird-register-success,
+html.dark .form-success,
+html.dark .profile-early-bird-badge,
+html[data-theme="dark"] .early-bird-user-banner,
+html[data-theme="dark"] .early-bird-register-success,
+html[data-theme="dark"] .form-success,
+html[data-theme="dark"] .profile-early-bird-badge {
+  background: linear-gradient(135deg, #faf6e8 0%, #f7f3ea 100%) !important;
+  border-color: #c9a227 !important;
+  color: #0a3329 !important;
+}
+
 /* Explicit light canvases (token remaps must not wash these out) */
 html.dark .market-pulse,
 html[data-theme="dark"] .market-pulse {
@@ -851,6 +877,13 @@ html.dark .market-pulse :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, 
 html.dark .home-weather-card :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label),
 html.dark .wtb :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label),
 html.dark .tvs-item :is(p, span, strong),
+html.dark .pricing-card :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label):not(.pricing-pill):not(.btn),
+html.dark .pricing-tagline,
+html.dark .pricing-amount,
+html.dark .pricing-amount strong,
+html.dark .pricing-amount span,
+html.dark .pricing-alt,
+html.dark .pricing-features li,
 html.dark .market-pulse-title,
 html.dark .market-pulse-sub,
 html.dark .market-pulse-live,
@@ -867,10 +900,18 @@ html.dark .wtb-card-desc,
 html.dark .tvs-text,
 html.dark .early-bird-user-banner-title,
 html.dark .early-bird-user-banner-note,
+html.dark .early-bird-user-banner :is(p, span, strong, em, small),
 html[data-theme="dark"] .market-pulse :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label, dt, dd),
 html[data-theme="dark"] .home-weather-card :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label),
 html[data-theme="dark"] .wtb :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label),
 html[data-theme="dark"] .tvs-item :is(p, span, strong),
+html[data-theme="dark"] .pricing-card :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label):not(.pricing-pill):not(.btn),
+html[data-theme="dark"] .pricing-tagline,
+html[data-theme="dark"] .pricing-amount,
+html[data-theme="dark"] .pricing-amount strong,
+html[data-theme="dark"] .pricing-amount span,
+html[data-theme="dark"] .pricing-alt,
+html[data-theme="dark"] .pricing-features li,
 html[data-theme="dark"] .market-pulse-title,
 html[data-theme="dark"] .market-pulse-sub,
 html[data-theme="dark"] .market-pulse-live,
@@ -886,8 +927,35 @@ html[data-theme="dark"] .wtb-card-title,
 html[data-theme="dark"] .wtb-card-desc,
 html[data-theme="dark"] .tvs-text,
 html[data-theme="dark"] .early-bird-user-banner-title,
-html[data-theme="dark"] .early-bird-user-banner-note {
+html[data-theme="dark"] .early-bird-user-banner-note,
+html[data-theme="dark"] .early-bird-user-banner :is(p, span, strong, em, small) {
   color: #0a3329 !important;
+}
+
+/* Soft secondary copy on pricing cards */
+html.dark .pricing-tagline,
+html.dark .pricing-amount span,
+html.dark .pricing-alt,
+html[data-theme="dark"] .pricing-tagline,
+html[data-theme="dark"] .pricing-amount span,
+html[data-theme="dark"] .pricing-alt {
+  color: #3d4a45 !important;
+}
+
+html.dark .pricing-pill,
+html[data-theme="dark"] .pricing-pill {
+  color: #7a4f0a !important;
+  background: rgba(180, 120, 20, 0.16) !important;
+  border-color: rgba(180, 120, 20, 0.35) !important;
+}
+
+/* Ghost CTAs on white pricing cards need dark ink (global --ink is light in dark mode) */
+html.dark .pricing-card .btn.ghost,
+html.dark .pricing-card a.btn.ghost,
+html[data-theme="dark"] .pricing-card .btn.ghost,
+html[data-theme="dark"] .pricing-card a.btn.ghost {
+  color: #0a3329 !important;
+  border-color: rgba(10, 51, 41, 0.28) !important;
 }
 
 /* Soft secondary copy on light panels */
@@ -1296,12 +1364,18 @@ html.dark .home-weather-card .muted,
 html.dark .wtb .muted,
 html.dark .tvs-item .muted,
 html.dark .early-bird-user-banner .muted,
+html.dark .pricing-card .muted,
+html.dark .pricing-card .text-muted,
+html.dark .pricing-card .tiny.muted,
 html[data-theme="dark"] .market-pulse .muted,
 html[data-theme="dark"] .market-pulse .text-muted,
 html[data-theme="dark"] .home-weather-card .muted,
 html[data-theme="dark"] .wtb .muted,
 html[data-theme="dark"] .tvs-item .muted,
-html[data-theme="dark"] .early-bird-user-banner .muted {
+html[data-theme="dark"] .early-bird-user-banner .muted,
+html[data-theme="dark"] .pricing-card .muted,
+html[data-theme="dark"] .pricing-card .text-muted,
+html[data-theme="dark"] .pricing-card .tiny.muted {
   color: #3d4a45 !important;
 }
 
