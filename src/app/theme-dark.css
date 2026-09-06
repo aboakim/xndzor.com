@@ -305,7 +305,7 @@ html.dark input::placeholder,
 html.dark textarea::placeholder,
 html[data-theme="dark"] input::placeholder,
 html[data-theme="dark"] textarea::placeholder {
-  color: color-mix(in srgb, var(--muted) 90%, transparent);
+  color: #c8ddd2;
   opacity: 1;
 }
 
@@ -518,6 +518,325 @@ html[data-theme="dark"] .mobile-tab-bar {
   background: var(--header-bg);
   color: var(--ink);
   border-color: var(--line);
+}
+
+/*
+  ——— High-contrast component overrides ———
+  Dark tokens remapped --pine-deep to near-white for page chrome, but many
+  light-surface components (promo chips, badges) still use that token for text
+  → white-on-white. Force readable pairs below.
+*/
+
+/* Safety net: main marketplace copy stays light on dark page */
+html.dark main,
+html.dark .home-vendo,
+html.dark .home-vendo-clean,
+html[data-theme="dark"] main,
+html[data-theme="dark"] .home-vendo,
+html[data-theme="dark"] .home-vendo-clean {
+  color: #f4f6f2;
+}
+
+html.dark main :is(h1, h2, h3, h4, h5, h6, p, dt, dd, label, th, td, summary, figcaption, strong, em, small),
+html.dark main li:not(.xz-promo-chip),
+html.dark main span:not(.xz-promo-slide-badge):not(.xz-promo-stat-value):not(.xz-promo-stat-label):not(.cat-icon),
+html[data-theme="dark"] main :is(h1, h2, h3, h4, h5, h6, p, dt, dd, label, th, td, summary, figcaption, strong, em, small),
+html[data-theme="dark"] main li:not(.xz-promo-chip),
+html[data-theme="dark"] main span:not(.xz-promo-slide-badge):not(.xz-promo-stat-value):not(.xz-promo-stat-label):not(.cat-icon) {
+  color: #f4f6f2;
+}
+
+html.dark main a:not(.btn):not(.logo-mark):not(.xndzor-mode-btn):not(.xz-promo-slide-cta),
+html[data-theme="dark"] main a:not(.btn):not(.logo-mark):not(.xndzor-mode-btn):not(.xz-promo-slide-cta) {
+  color: #9fe0c4;
+}
+
+/* Search: typed text + placeholder + Ctrl+K hint */
+html.dark .search-input-wrap,
+html[data-theme="dark"] .search-input-wrap {
+  background: #1a2c24 !important;
+  border-color: rgba(180, 220, 200, 0.28) !important;
+  color: #f4f6f2;
+}
+
+html.dark .search-bar input,
+html.dark .search-bar.header-search input,
+html.dark .search-input-wrap input,
+html[data-theme="dark"] .search-bar input,
+html[data-theme="dark"] .search-bar.header-search input,
+html[data-theme="dark"] .search-input-wrap input {
+  background: transparent !important;
+  color: #f4f6f2 !important;
+  -webkit-text-fill-color: #f4f6f2;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder,
+html.dark .search-bar input::placeholder,
+html.dark .search-bar.header-search input::placeholder,
+html.dark .search-input-wrap input::placeholder,
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder,
+html[data-theme="dark"] .search-bar input::placeholder,
+html[data-theme="dark"] .search-bar.header-search input::placeholder,
+html[data-theme="dark"] .search-input-wrap input::placeholder {
+  color: #c8ddd2 !important;
+  -webkit-text-fill-color: #c8ddd2;
+  opacity: 1 !important;
+}
+
+html.dark .search-kbd-hint,
+html[data-theme="dark"] .search-kbd-hint {
+  color: #d5e8de !important;
+  border-color: rgba(180, 220, 200, 0.35) !important;
+  background: rgba(244, 246, 242, 0.08) !important;
+}
+
+html.dark .search-filter-btn,
+html[data-theme="dark"] .search-filter-btn {
+  color: #e8f5f0 !important;
+}
+
+/* Category scroll tiles — brighter labels */
+html.dark .category-scroll-item,
+html[data-theme="dark"] .category-scroll-item {
+  background: #182820 !important;
+  border-color: rgba(180, 220, 200, 0.2) !important;
+  color: #f4f6f2 !important;
+}
+
+html.dark .category-scroll-label,
+html.dark .category-scroll-item .category-scroll-label,
+html.dark .category-scroll-item span,
+html[data-theme="dark"] .category-scroll-label,
+html[data-theme="dark"] .category-scroll-item .category-scroll-label,
+html[data-theme="dark"] .category-scroll-item span {
+  color: #f4f6f2 !important;
+}
+
+html.dark .category-scroll-nav,
+html[data-theme="dark"] .category-scroll-nav {
+  background: #1a2c24 !important;
+  border-color: rgba(180, 220, 200, 0.28) !important;
+  color: #9fe0c4 !important;
+}
+
+/*
+  HeroPromoSlider: darken slide canvases so titles stay light;
+  light chips/badges/stats get explicit dark ink (never white-on-white).
+*/
+html.dark .xz-promo-slide,
+html.dark .xz-promo-slide-gold,
+html.dark .xz-promo-slide-pine,
+html.dark .xz-promo-slide-sage,
+html.dark .xz-promo-slide-sky,
+html.dark .xz-promo-slide-wheat,
+html.dark .xz-promo-slide-apple,
+html[data-theme="dark"] .xz-promo-slide,
+html[data-theme="dark"] .xz-promo-slide-gold,
+html[data-theme="dark"] .xz-promo-slide-pine,
+html[data-theme="dark"] .xz-promo-slide-sage,
+html[data-theme="dark"] .xz-promo-slide-sky,
+html[data-theme="dark"] .xz-promo-slide-wheat,
+html[data-theme="dark"] .xz-promo-slide-apple {
+  color: #f4f6f2 !important;
+  background:
+    linear-gradient(145deg, #1a2c24 0%, #122018 55%, #0e1a15 100%) !important;
+}
+
+html.dark .xz-promo-slide-gold,
+html[data-theme="dark"] .xz-promo-slide-gold {
+  background:
+    linear-gradient(145deg, #2a2418 0%, #1c2218 55%, #152018 100%) !important;
+}
+
+html.dark .xz-promo-slide-sky,
+html[data-theme="dark"] .xz-promo-slide-sky {
+  background:
+    linear-gradient(145deg, #182830 0%, #15241e 55%, #121f1a 100%) !important;
+}
+
+html.dark .xz-promo-slide-apple,
+html[data-theme="dark"] .xz-promo-slide-apple {
+  background:
+    linear-gradient(145deg, #2a1c1c 0%, #1c2218 55%, #152018 100%) !important;
+}
+
+html.dark .xz-promo-slide-title,
+html.dark .xz-promo-slide-copy > .xz-promo-slide-title,
+html[data-theme="dark"] .xz-promo-slide-title,
+html[data-theme="dark"] .xz-promo-slide-copy > .xz-promo-slide-title {
+  color: #f4f6f2 !important;
+}
+
+html.dark .xz-promo-slide-hook,
+html.dark .xz-promo-slide-copy > .xz-promo-slide-hook,
+html[data-theme="dark"] .xz-promo-slide-hook,
+html[data-theme="dark"] .xz-promo-slide-copy > .xz-promo-slide-hook {
+  color: #d5e8de !important;
+}
+
+/* Light chips / badge / stat boxes → dark text (beats main span safety net) */
+html.dark .xz-promo-chip,
+html.dark .xz-promo-slide-badge,
+html.dark .xz-promo-slide-stat,
+html.dark .xz-promo-slide-icon,
+html.dark .xz-promo-slide-copy .xz-promo-slide-badge,
+html.dark .xz-promo-slide-highlights .xz-promo-chip,
+html.dark .xz-promo-slide-aside .xz-promo-slide-stat,
+html[data-theme="dark"] .xz-promo-chip,
+html[data-theme="dark"] .xz-promo-slide-badge,
+html[data-theme="dark"] .xz-promo-slide-stat,
+html[data-theme="dark"] .xz-promo-slide-icon,
+html[data-theme="dark"] .xz-promo-slide-copy .xz-promo-slide-badge,
+html[data-theme="dark"] .xz-promo-slide-highlights .xz-promo-chip,
+html[data-theme="dark"] .xz-promo-slide-aside .xz-promo-slide-stat {
+  background: #eef4f0 !important;
+  color: #0a3329 !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(10, 51, 41, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+html.dark .xz-promo-chip,
+html.dark .xz-promo-chip::before,
+html.dark li.xz-promo-chip,
+html.dark .xz-promo-slide-highlights li.xz-promo-chip,
+html.dark .xz-promo-slide-badge,
+html.dark .xz-promo-slide-copy .xz-promo-slide-badge,
+html.dark .xz-promo-stat-value,
+html.dark .xz-promo-stat-label,
+html.dark .xz-promo-slide-stat .xz-promo-stat-value,
+html.dark .xz-promo-slide-stat .xz-promo-stat-label,
+html[data-theme="dark"] .xz-promo-chip,
+html[data-theme="dark"] .xz-promo-chip::before,
+html[data-theme="dark"] li.xz-promo-chip,
+html[data-theme="dark"] .xz-promo-slide-highlights li.xz-promo-chip,
+html[data-theme="dark"] .xz-promo-slide-badge,
+html[data-theme="dark"] .xz-promo-slide-copy .xz-promo-slide-badge,
+html[data-theme="dark"] .xz-promo-stat-value,
+html[data-theme="dark"] .xz-promo-stat-label,
+html[data-theme="dark"] .xz-promo-slide-stat .xz-promo-stat-value,
+html[data-theme="dark"] .xz-promo-slide-stat .xz-promo-stat-label {
+  color: #0a3329 !important;
+}
+
+html.dark .xz-promo-chip::before,
+html[data-theme="dark"] .xz-promo-chip::before {
+  color: #a67c00 !important;
+}
+
+html.dark .xz-promo-slide-cta,
+html[data-theme="dark"] .xz-promo-slide-cta {
+  color: #f5f7f4 !important;
+  background: linear-gradient(145deg, #2f9e78, #155c47) !important;
+}
+
+html.dark .xz-promo-nav,
+html[data-theme="dark"] .xz-promo-nav {
+  background: #1a2c24 !important;
+  border-color: rgba(180, 220, 200, 0.3) !important;
+  color: #f4f6f2 !important;
+}
+
+html.dark .xz-promo-dot,
+html[data-theme="dark"] .xz-promo-dot {
+  background: rgba(244, 246, 242, 0.35);
+}
+
+html.dark .xz-promo-dot.is-active,
+html[data-theme="dark"] .xz-promo-dot.is-active {
+  background: #9fe0c4;
+}
+
+/* Other light chips / pills / badges across the app */
+html.dark .xndzor-chip,
+html.dark .home-quick-chip,
+html.dark .listing-meta-chip,
+html.dark .listing-meta-chip--md,
+html.dark .farm-hub-start-chip,
+html.dark .wtb-trust-badge,
+html.dark .gbb-save-chip,
+html.dark .xndzor-hero-rail-badge,
+html[data-theme="dark"] .xndzor-chip,
+html[data-theme="dark"] .home-quick-chip,
+html[data-theme="dark"] .listing-meta-chip,
+html[data-theme="dark"] .listing-meta-chip--md,
+html[data-theme="dark"] .farm-hub-start-chip,
+html[data-theme="dark"] .wtb-trust-badge,
+html[data-theme="dark"] .gbb-save-chip,
+html[data-theme="dark"] .xndzor-hero-rail-badge {
+  background: #1f322a !important;
+  color: #f4f6f2 !important;
+  border-color: rgba(180, 220, 200, 0.22) !important;
+}
+
+html.dark .farm-hub-start-chip strong,
+html.dark .farm-hub-start-chip span,
+html.dark .home-quick-chip,
+html.dark .xndzor-chip,
+html[data-theme="dark"] .farm-hub-start-chip strong,
+html[data-theme="dark"] .farm-hub-start-chip span,
+html[data-theme="dark"] .home-quick-chip,
+html[data-theme="dark"] .xndzor-chip {
+  color: #f4f6f2 !important;
+}
+
+/* Mega menu / drawers / forms — readable text + placeholders */
+html.dark .mega-menu--desktop,
+html.dark .mega-menu--mobile,
+html.dark .mega-panel,
+html.dark .categories-mega,
+html.dark .nav-drawer,
+html.dark .dropdown-panel,
+html.dark .search-suggest,
+html[data-theme="dark"] .mega-menu--desktop,
+html[data-theme="dark"] .mega-menu--mobile,
+html[data-theme="dark"] .mega-panel,
+html[data-theme="dark"] .nav-drawer,
+html[data-theme="dark"] .dropdown-panel,
+html[data-theme="dark"] .search-suggest {
+  color: #f4f6f2 !important;
+}
+
+html.dark .mega-menu--desktop :is(a, span, p, li, strong, button),
+html.dark .mega-menu--mobile :is(a, span, p, li, strong, button),
+html.dark .nav-drawer :is(a, span, p, li, strong, button),
+html.dark .search-suggest :is(a, span, p, li, strong, button),
+html[data-theme="dark"] .mega-menu--desktop :is(a, span, p, li, strong, button),
+html[data-theme="dark"] .mega-menu--mobile :is(a, span, p, li, strong, button),
+html[data-theme="dark"] .nav-drawer :is(a, span, p, li, strong, button),
+html[data-theme="dark"] .search-suggest :is(a, span, p, li, strong, button) {
+  color: #f4f6f2 !important;
+}
+
+html.dark .post-card,
+html.dark .pastel-card,
+html.dark .detail-seller-card,
+html.dark .home-signal-card,
+html.dark .home-quick-card,
+html[data-theme="dark"] .post-card,
+html[data-theme="dark"] .pastel-card,
+html[data-theme="dark"] .detail-seller-card,
+html[data-theme="dark"] .home-signal-card,
+html[data-theme="dark"] .home-quick-card {
+  color: #f4f6f2 !important;
+}
+
+html.dark .post-card :is(h2, h3, h4, p, span, li, strong, a:not(.btn)),
+html.dark .pastel-card :is(h2, h3, h4, p, span, li, strong, a:not(.btn)),
+html[data-theme="dark"] .post-card :is(h2, h3, h4, p, span, li, strong, a:not(.btn)),
+html[data-theme="dark"] .pastel-card :is(h2, h3, h4, p, span, li, strong, a:not(.btn)) {
+  color: #f4f6f2 !important;
+}
+
+/* Hardcoded light-theme muted grays → readable in dark */
+html.dark .muted,
+html.dark .text-muted,
+html.dark [class*="hint"]:not(.search-kbd-hint),
+html[data-theme="dark"] .muted,
+html[data-theme="dark"] .text-muted {
+  color: #b9d0c4 !important;
 }
 
 @media (max-width: 520px) {
