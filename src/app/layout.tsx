@@ -10,19 +10,36 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
+/** Canonical production origin — required for absolute og:image URLs. */
+const PRODUCTION_SITE_URL = "https://www.xndzor.com";
+
 function resolveSiteUrl(): string {
   const raw =
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
     process.env.NEXTAUTH_URL?.replace(/\/$/, "") ||
     process.env.AUTH_URL?.replace(/\/$/, "") ||
-    "http://localhost:3000";
+    (process.env.VERCEL_ENV === "production" ? PRODUCTION_SITE_URL : null) ||
+    PRODUCTION_SITE_URL;
   try {
-    return new URL(raw).origin;
+    const origin = new URL(raw).origin;
+    // Localhost metadataBase breaks social crawlers; prefer production canonical.
+    if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
+      return PRODUCTION_SITE_URL;
+    }
+    return origin;
   } catch {
-    return "http://localhost:3000";
+    return PRODUCTION_SITE_URL;
   }
 }
 
 const siteUrl = resolveSiteUrl();
+const ogImage = {
+  url: "/og.png",
+  width: 1200,
+  height: 630,
+  alt: "Խնձոր — Xndzor",
+  type: "image/png" as const,
+};
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -102,12 +119,14 @@ export const metadata: Metadata = {
     title: "Խնձոր — գյուղատնտեսական շուկա",
     description:
       "Ի՞նչ աճեցնել՝ ըստ պահանջարկի։ Հողամաս → ազդանշան → նախնական վաճառք։ Հայաստանի ֆերմերների համար։",
+    images: [ogImage],
   },
   twitter: {
-    card: "summary",
-    title: "Xndzor — Agricultural Marketplace",
+    card: "summary_large_image",
+    title: "Խնձոր — Xndzor",
     description:
       "What to grow by demand. Plots, harvest, machinery, jobs — Armenia's agricultural marketplace.",
+    images: [ogImage.url],
   },
   robots: {
     index: true,
