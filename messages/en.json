@@ -35,7 +35,7 @@
     "chemicals": "Plant protection",
     "tools": "Tools & equipment",
     "land": "Land / orchard",
-    "naturalProducts": "Oils & natural products",
+    "naturalProducts": "Village products",
     "shop": "Market",
     "grow": "What to grow",
     "myPassport": "My farm passport",
@@ -85,8 +85,8 @@
         "desc": "Fertilizers, seeds, feed and crop protection"
       },
       "naturalProducts": {
-        "label": "Oils & natural products",
-        "desc": "Flax oil, honey, homemade and farm food goods"
+        "label": "Village products",
+        "desc": "Milk, butter, cheese, matzoon, oils, honey and other village-made goods"
       },
       "toolsLand": {
         "label": "Tools & land",
@@ -125,7 +125,7 @@
       "otherAnimals": "Other",
       "cropInputs": "Crop inputs",
       "animalInputs": "Feed",
-      "farmFood": "Oils & food goods",
+      "farmFood": "Village products",
       "equipmentShop": "Tools",
       "landShop": "Land",
       "hire": "Hire",
@@ -176,9 +176,11 @@
       "chemicals": "Crop protection",
       "tools": "Tools",
       "land": "Land / orchard",
-      "naturalProducts": "Oils & natural products",
-      "naturalProductsOils": "Oils (flax & more)",
+      "naturalProducts": "Village products",
+      "naturalProductsDairy": "Dairy",
+      "naturalProductsOils": "Oils & fat",
       "naturalProductsHoney": "Honey",
+      "naturalProductsOther": "Other village goods",
       "orderWork": "Order work",
       "providers": "Providers",
       "harvest": "Harvest",
@@ -228,7 +230,7 @@
     "chemicals": "Plant protection",
     "tools": "Tools & equipment",
     "land": "Land / orchard",
-    "naturalProducts": "Oils & natural products",
+    "naturalProducts": "Village products",
     "grow": "What to grow",
     "growDesc": "Future harvest exchange and demand"
   },
@@ -1142,7 +1144,7 @@
     "CHEMICAL": "Plant protection",
     "TOOL": "Tools & equipment",
     "LAND": "Land / orchard",
-    "NATURAL_PRODUCT": "Oils & natural products"
+    "NATURAL_PRODUCT": "Village products"
   },
   "catalogLedes": {
     "FERTILIZER": "Organic and mineral fertilizers with detailed composition.",
@@ -1151,7 +1153,7 @@
     "CHEMICAL": "Crop protection products. Not medical advice.",
     "TOOL": "Hand tools, irrigation parts and small equipment.",
     "LAND": "Plot or orchard for sale / rent.",
-    "NATURAL_PRODUCT": "Flax oil, sunflower oil, honey and other homemade / farm food goods."
+    "NATURAL_PRODUCT": "Village-made milk, butter, cheese, matzoon, oils, honey, preserves and other homemade goods."
   },
   "catalogSubtypes": {
     "FERTILIZER": {
@@ -1207,10 +1209,22 @@
       "FLAX_OIL": "Flaxseed oil",
       "SUNFLOWER_OIL": "Sunflower oil",
       "OTHER_OIL": "Other oil",
+      "FAT": "Fat / lard",
+      "MILK": "Milk",
+      "BUTTER": "Butter",
+      "CHEESE": "Cheese",
+      "MATZOON": "Matzoon / yogurt",
+      "CREAM": "Cream",
+      "OTHER_DAIRY": "Other dairy",
       "HONEY": "Honey",
       "PRESERVE": "Jam / preserve",
-      "DRIED": "Dried fruit / herbs",
-      "OTHER": "Other"
+      "DRIED": "Dried fruit",
+      "EGGS": "Eggs",
+      "HERBS": "Herbs",
+      "FLOUR_GRAIN": "Flour / grain products",
+      "BREAD": "Homemade bread",
+      "PICKLE": "Pickles",
+      "OTHER": "Other village product"
     }
   },
   "catalogSpecs": {
@@ -1302,12 +1316,12 @@
       "CHEMICAL": "e.g. herbicide for field crops",
       "TOOL": "e.g. drip irrigation kit",
       "LAND": "e.g. 2.5 ha irrigated arable land",
-      "NATURAL_PRODUCT": "e.g. cold-pressed flaxseed oil · 1 L"
+      "NATURAL_PRODUCT": "e.g. village matzoon · 1 L or cold-pressed flaxseed oil · 1 L"
     }
   },
   "myCatalog": {
     "title": "My market listings",
-    "lede": "Manage fertilizer, seed, oil and other listings.",
+    "lede": "Manage fertilizer, seed, village product and other listings.",
     "empty": "No listings yet.",
     "manage": "Manage",
     "markActive": "Mark active",

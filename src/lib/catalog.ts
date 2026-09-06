@@ -1,4 +1,4 @@
-/** Unified ag catalog marketplace — fertilizers, seeds, feed, chemicals, tools, land, natural products. */
+/** Unified ag catalog marketplace — fertilizers, seeds, feed, chemicals, tools, land, village products. */
 
 export const CATALOG_CATEGORIES = [
   "FERTILIZER",
@@ -40,7 +40,27 @@ export const CATALOG_SUBTYPES: Record<CatalogCategory, readonly string[]> = {
   CHEMICAL: ["HERBICIDE", "FUNGICIDE", "INSECTICIDE", "FERTILIZER_ADJ", "OTHER"],
   TOOL: ["HAND", "IRRIGATION", "GREENHOUSE", "STORAGE", "OTHER"],
   LAND: ["ARABLE", "ORCHARD", "PASTURE", "GREENHOUSE", "OTHER"],
-  NATURAL_PRODUCT: ["FLAX_OIL", "SUNFLOWER_OIL", "OTHER_OIL", "HONEY", "PRESERVE", "DRIED", "OTHER"],
+  NATURAL_PRODUCT: [
+    "FLAX_OIL",
+    "SUNFLOWER_OIL",
+    "OTHER_OIL",
+    "FAT",
+    "MILK",
+    "BUTTER",
+    "CHEESE",
+    "MATZOON",
+    "CREAM",
+    "OTHER_DAIRY",
+    "HONEY",
+    "PRESERVE",
+    "DRIED",
+    "EGGS",
+    "HERBS",
+    "FLOUR_GRAIN",
+    "BREAD",
+    "PICKLE",
+    "OTHER",
+  ],
 };
 
 export const CATALOG_PRICE_UNITS = ["PER_KG", "PER_BAG", "PER_LITER", "PER_HA", "LOT", "OTHER"] as const;

@@ -182,8 +182,10 @@ export const MEGA_MENU_CATEGORIES: MegaMenuCategory[] = [
         id: "farmFood",
         subs: [
           { id: "naturalProducts", href: "/shop/natural-products" },
+          { id: "naturalProductsDairy", href: "/shop/natural-products?subtype=MILK" },
           { id: "naturalProductsOils", href: "/shop/natural-products?subtype=FLAX_OIL" },
           { id: "naturalProductsHoney", href: "/shop/natural-products?subtype=HONEY" },
+          { id: "naturalProductsOther", href: "/shop/natural-products?subtype=OTHER" },
         ],
       },
     ],
