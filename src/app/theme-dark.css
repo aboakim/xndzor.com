@@ -742,7 +742,7 @@ html[data-theme="dark"] .xz-promo-dot.is-active {
 /*
   ——— Light banner / panel surfaces ———
   Keep cream/pastel canvases but force dark ink (#0a3329).
-  Beats the main h*/p/span safety net that paints near-white text.
+  Beats the main heading/paragraph/span safety net that paints near-white text.
   Do NOT include .home-quick-actions (dark-looking panel; light text OK).
 */
 html.dark .market-pulse,
