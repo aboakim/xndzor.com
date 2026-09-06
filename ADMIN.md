@@ -27,9 +27,17 @@ After promotion, log out and log back in so the session includes admin privilege
 ```bash
 # Set/reset password + ensure ADMIN role (uses ADMIN_EMAIL from .env)
 npm run admin:set-password
+# same: node scripts/set-admin-password.mjs
 
 # Production Neon DB (password never committed — pass URL only for the run):
 # DATABASE_URL="postgresql://..." npm run admin:set-password
+
+# If you cannot reach Neon from your machine: set ADMIN_BOOTSTRAP_SECRET on Vercel,
+# redeploy, then once:
+# curl -X POST https://www.xndzor.com/api/admin/bootstrap \
+#   -H "Authorization: Bearer YOUR_SECRET" -H "Content-Type: application/json" \
+#   -d "{\"password\":\"Akim1234\"}"
+# Then delete ADMIN_BOOTSTRAP_SECRET from Vercel.
 ```
 
 ## What you can manage

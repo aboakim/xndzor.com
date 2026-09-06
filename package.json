@@ -12,7 +12,8 @@
     "db:seed:minimal": "tsx prisma/seed-minimal.ts",
     "db:reset": "prisma db push --force-reset && tsx prisma/seed.ts",
     "admin:promote": "tsx prisma/promote-admin.ts",
-    "admin:set-password": "tsx scripts/set-admin-password.ts",
+    "admin:set-password": "node scripts/set-admin-password.mjs",
+    "admin:set-password:ts": "tsx scripts/set-admin-password.ts",
     "postinstall": "prisma generate"
   },
   "prisma": {

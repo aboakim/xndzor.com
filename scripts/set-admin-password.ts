@@ -50,7 +50,7 @@ async function main() {
         passwordHash,
         name: "Xndzor Admin",
         role: "ADMIN",
-        marzId: "Yerevan",
+        // marzId omitted — empty Neon DB may have no Marz rows yet
       },
     });
     console.log(`✓ Created admin user ${email}`);
