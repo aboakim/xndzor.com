@@ -8317,6 +8317,19 @@ body.mega-menu-open {
   margin: 1.25rem 0;
 }
 
+.admin-activity {
+  margin-top: 1.75rem;
+}
+
+.admin-activity h2 {
+  margin-bottom: 0.65rem;
+}
+
+.admin-activity .linkish {
+  display: inline-block;
+  margin-top: 0.65rem;
+}
+
 .admin-highlight-row {
   display: grid;
   gap: 0.75rem;
@@ -8324,7 +8337,7 @@ body.mega-menu-open {
 
 @media (min-width: 768px) {
   .admin-highlight-row {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 

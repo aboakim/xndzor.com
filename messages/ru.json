@@ -3170,6 +3170,11 @@
     "payments": "Платежи",
     "plans": "Планы",
     "dashboardLede": "Обзор пользователей, объявлений и выручки.",
+    "recentUsersTitle": "Недавние пользователи",
+    "recentListingsTitle": "Недавние объявления",
+    "viewAllUsers": "Все пользователи",
+    "viewAllListings": "Все объявления",
+    "earlyBirdBadge": "Early bird",
     "viewPlans": "Смотреть планы",
     "usersLede": "Поиск и модерация аккаунтов.",
     "searchUsers": "Поиск по имени или email",
@@ -3217,7 +3222,12 @@
       "subscriptions": "Подписки",
       "revenue": "Выручка",
       "succeededPayments": "{count} успешных",
-      "activePlans": "Активные планы"
+      "activePlans": "Активные планы",
+      "earlyBird": "Early bird",
+      "earlyBirdRemaining": "Early bird осталось",
+      "earlyBirdOpen": "{remaining} осталось / {limit}",
+      "earlyBirdFull": "Слоты заполнены",
+      "earlyBirdClaimed": "{count} early-bird аккаунтов"
     },
     "col": {
       "name": "Имя",

@@ -3170,6 +3170,11 @@
     "payments": "Payments",
     "plans": "Plans",
     "dashboardLede": "Overview of users, listings and revenue.",
+    "recentUsersTitle": "Recent users",
+    "recentListingsTitle": "Recent listings",
+    "viewAllUsers": "All users",
+    "viewAllListings": "All listings",
+    "earlyBirdBadge": "Early bird",
     "viewPlans": "View plans",
     "usersLede": "Search and moderate accounts.",
     "searchUsers": "Search by name or email",
@@ -3217,7 +3222,12 @@
       "subscriptions": "Subscriptions",
       "revenue": "Revenue",
       "succeededPayments": "{count} succeeded",
-      "activePlans": "Active plans"
+      "activePlans": "Active plans",
+      "earlyBird": "Early bird",
+      "earlyBirdRemaining": "Early bird left",
+      "earlyBirdOpen": "{remaining} left / {limit}",
+      "earlyBirdFull": "Slots full",
+      "earlyBirdClaimed": "{count} early-bird accounts"
     },
     "col": {
       "name": "Name",

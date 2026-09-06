@@ -63,7 +63,7 @@ docker compose up -d --build
 | 🟢 Undersupply | `/hy/grow` → peach | Strong peach demand, ~3 t registered supply |
 
 Login (seed only): `farmer@demo.am` / `password123`.  
-Admin earnings: `admin@demo.am` / `password123` → `/hy/admin/earnings` (or your `ADMIN_EMAIL`).
+Private admin (not in nav): log in as `ADMIN_EMAIL` → open `/hy/admin` directly (see [ADMIN.md](./ADMIN.md)).
 
 ### Monetization
 
@@ -76,7 +76,7 @@ Admin earnings: `admin@demo.am` / `password123` → `/hy/admin/earnings` (or you
 
 - Pricing: `/hy/pricing`
 - **Stripe** when keys set; otherwise labeled test checkout (no real charge)
-- Owner: `/hy/admin/earnings`
+- Owner: `/hy/admin` (direct URL only; see ADMIN.md)
 
 HTTPS required in production. See [SECURITY.md](./SECURITY.md), [DEPLOY.md](./DEPLOY.md), [PLAN.md](./PLAN.md).
 

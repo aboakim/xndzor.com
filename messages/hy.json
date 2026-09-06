@@ -3171,6 +3171,11 @@
     "payments": "Վճարումներ",
     "plans": "Փաթեթներ",
     "dashboardLede": "Օգտատերերի, հայտարարությունների և եկամտի ակնարկ։",
+    "recentUsersTitle": "Վերջին օգտատերեր",
+    "recentListingsTitle": "Վերջին հայտարարություններ",
+    "viewAllUsers": "Բոլոր օգտատերերը",
+    "viewAllListings": "Բոլոր հայտարարությունները",
+    "earlyBirdBadge": "Early bird",
     "viewPlans": "Դիտել փաթեթները",
     "usersLede": "Որոնել և մոդերացնել հաշիվները։",
     "searchUsers": "Որոնել անունով կամ էլ․ փոստով",
@@ -3218,7 +3223,12 @@
       "subscriptions": "Բաժանորդագրություններ",
       "revenue": "Եկամուտ",
       "succeededPayments": "{count} հաջողված",
-      "activePlans": "Ակտիվ փաթեթներ"
+      "activePlans": "Ակտիվ փաթեթներ",
+      "earlyBird": "Early bird",
+      "earlyBirdRemaining": "Early bird մնաց",
+      "earlyBirdOpen": "{remaining} մնաց / {limit}",
+      "earlyBirdFull": "Սլոտերը լրացված են",
+      "earlyBirdClaimed": "{count} early bird հաշիվ"
     },
     "col": {
       "name": "Անուն",

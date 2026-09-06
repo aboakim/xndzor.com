@@ -25,9 +25,6 @@ export function Header() {
   }, [pathname]);
 
   const postHref = session ? "/plots/new" : "/auth/login";
-  const isAdmin =
-    (session?.user as { isAdmin?: boolean; role?: string } | undefined)?.isAdmin ||
-    (session?.user as { role?: string } | undefined)?.role === "ADMIN";
 
   return (
     <header className={`site-header vendo-header${menuOpen ? " mega-menu-active" : ""}`}>
@@ -67,11 +64,6 @@ export function Header() {
                   <Link href="/account/billing" className="utility-link">
                     {t("billing")}
                   </Link>
-                  {isAdmin ? (
-                    <Link href="/admin" className="utility-link utility-admin">
-                      {t("admin")}
-                    </Link>
-                  ) : null}
                 </>
               ) : null}
             </nav>
