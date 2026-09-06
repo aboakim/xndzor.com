@@ -127,19 +127,17 @@ export default function RegisterForm({ callbackUrl }: Props) {
       }
 
       const eb = data.earlyBird;
-      if (eb?.qualified) {
+      if (eb && !eb.slotsFull && eb.remaining != null) {
         setSuccess(
-          eb.remaining != null && eb.freeLimit != null
-            ? eb.remaining === 0
-              ? tEarly("registerSuccessFull")
-              : `${tEarly("registerSuccess")} ${tEarly("registerSuccessRemaining", {
-                  remaining: eb.remaining,
-                  limit: eb.freeLimit,
-                })}`
-            : tEarly("registerSuccess"),
+          `${tEarly("registerSuccess")} ${tEarly("registerSuccessRemaining", {
+            remaining: eb.remaining,
+            limit: eb.freeLimit ?? 100,
+          })}`,
         );
       } else if (eb?.slotsFull) {
         setSuccess(tEarly("registerNoSlot"));
+      } else {
+        setSuccess(tEarly("registerSuccess"));
       }
 
       const login = await signIn("credentials", {
@@ -154,8 +152,7 @@ export default function RegisterForm({ callbackUrl }: Props) {
       }
 
       const qs = new URLSearchParams({ welcome: "1" });
-      if (eb?.qualified) {
-        qs.set("earlyBird", "1");
+      if (eb && !eb.slotsFull && eb.remaining != null) {
         if (eb.remaining != null) qs.set("remaining", String(eb.remaining));
         if (eb.freeLimit != null) qs.set("limit", String(eb.freeLimit));
       }
@@ -164,7 +161,7 @@ export default function RegisterForm({ callbackUrl }: Props) {
         : `/${locale}/account/profile?${qs.toString()}`;
       window.setTimeout(() => {
         window.location.href = dest;
-      }, eb?.qualified || eb?.slotsFull ? 1800 : 0);
+      }, eb ? 1800 : 0);
       setBusy(false);
     } catch {
       setBusy(false);

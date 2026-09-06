@@ -5,7 +5,8 @@
  *
  * Free launch modes:
  * - PACKAGES_FREE=true → everything free (dev / override)
- * - EARLY_BIRD_FREE_LIMIT=100 → first N registrants free forever; see src/lib/early-bird.ts
+ * - EARLY_BIRD_FREE_LIMIT=100 → first N users who *claim/activate* a package get free forever
+ *   (registration alone does not reduce remaining spots — see src/lib/early-bird.ts)
  */
 
 export const AMD_PER_USD = 400;

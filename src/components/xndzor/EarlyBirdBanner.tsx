@@ -17,7 +17,8 @@ export async function EarlyBirdBanner({ variant = "hero" }: Props) {
     if (ctx.stats.freeLimit <= 0) return null;
 
     const initial = {
-      totalRegistered: ctx.stats.totalRegistered,
+      totalRegistered: ctx.stats.earlyBirdClaimed,
+      earlyBirdClaimed: ctx.stats.earlyBirdClaimed,
       freeLimit: ctx.stats.freeLimit,
       remaining: ctx.stats.remaining,
       slotsFull: ctx.stats.slotsFull,

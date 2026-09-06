@@ -33,8 +33,10 @@ model User {
   farmName         String?
   /// Admin can suspend account — login blocked while true
   suspended        Boolean            @default(false)
-  /// First N registrants keep free package access forever (see EARLY_BIRD_FREE_LIMIT)
+  /// True after user successfully claims a free early-bird package (not on register)
   earlyBirdFree    Boolean            @default(false)
+  /// When the user claimed their free early-bird slot (decrements remaining spots)
+  earlyBirdClaimedAt DateTime?
   /// Monetization entitlements (synced from Subscription / Payment)
   isPro            Boolean            @default(false)
   proUntil         DateTime?

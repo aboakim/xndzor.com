@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 
 export type EarlyBirdApi = {
   totalRegistered: number;
+  earlyBirdClaimed?: number;
   freeLimit: number;
   remaining: number;
   slotsFull: boolean;
@@ -52,7 +53,7 @@ export function EarlyBirdBannerClient({
 
   if (data.packagesFreeOverride || !data.earlyBirdEnabled) return null;
 
-  const registered = data.totalRegistered;
+  const claimed = data.earlyBirdClaimed ?? data.totalRegistered;
   const limit = data.freeLimit;
   const remaining = data.remaining;
   const slotsFull = data.slotsFull;
@@ -71,7 +72,7 @@ export function EarlyBirdBannerClient({
           <p className="early-bird-banner-eyebrow">{t("slotsFullEyebrow")}</p>
           <h2 className="early-bird-banner-headline">{t("slotsFullHeadline")}</h2>
           <p className="early-bird-banner-counter">
-            {t("registeredCount", { registered, limit })}
+            {t("claimedCount", { claimed, limit })}
           </p>
           <Link href="/pricing" className="btn primary early-bird-banner-cta">
             {t("ctaPricing")}
@@ -117,16 +118,16 @@ export function EarlyBirdBannerClient({
               {t("remaining", { remaining })}
             </p>
             <p className="early-bird-banner-progress">
-              {t("registeredCount", { registered, limit })}
+              {t("claimedCount", { claimed, limit })}
             </p>
           </div>
         ) : null}
         <div className="early-bird-banner-actions">
-          <Link href="/auth/register" className="btn primary early-bird-banner-cta">
-            {t("ctaRegister")}
+          <Link href="/pricing" className="btn primary early-bird-banner-cta">
+            {t("ctaActivate")}
           </Link>
-          <Link href="/pricing" className="btn ghost early-bird-banner-cta-secondary">
-            {t("ctaPricing")}
+          <Link href="/auth/register" className="btn ghost early-bird-banner-cta-secondary">
+            {t("ctaRegister")}
           </Link>
         </div>
       </div>

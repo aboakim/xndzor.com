@@ -32,8 +32,11 @@ export default async function PricingPage({
   const globalFree = arePackagesFree();
   const earlyBirdCtx = await getEarlyBirdUserContext(session?.user?.id);
   const { stats, showFreePricing, earlyBirdFree, checkoutFree } = earlyBirdCtx;
-  const freeMode = globalFree || showFreePricing;
-  const userCheckoutFree = globalFree || checkoutFree;
+  /** Public early-bird offer still open (spots remain) */
+  const earlyBirdOfferOpen = !globalFree && showFreePricing && stats.remaining > 0;
+  /** Cards show free-now UI (global free OR early-bird spots left OR user already claimed) */
+  const showFreeOfferUi = globalFree || earlyBirdOfferOpen || earlyBirdFree;
+  const userCheckoutFree = globalFree || checkoutFree || earlyBirdOfferOpen;
 
   const farmMonthly = PRICING_PRODUCTS.FARM_PRO_MONTHLY;
   const farmYearly = PRICING_PRODUCTS.FARM_PRO_YEARLY;
@@ -42,13 +45,38 @@ export default async function PricingPage({
   const boost7 = PRICING_PRODUCTS.BOOST_7;
   const boost30 = PRICING_PRODUCTS.BOOST_30;
 
+  function remainingSpotsLine() {
+    if (!earlyBirdOfferOpen) return null;
+    return (
+      <p className="pricing-remaining-spots">
+        {t("pricing.remainingFreeSpots", { remaining: stats.remaining })}
+      </p>
+    );
+  }
+
   function priceLabel(amountAmd: number, suffix: string) {
-    if (freeMode) {
+    if (globalFree) {
       return (
         <p className="pricing-amount">
           <strong>{t("pricing.free")}</strong>
           <span>{suffix ? ` ${suffix}` : ""}</span>
         </p>
+      );
+    }
+    if (earlyBirdOfferOpen || earlyBirdFree) {
+      return (
+        <div className="pricing-amount-block">
+          <p className="pricing-amount pricing-amount-early">
+            <span className="pricing-regular-price">
+              <s>
+                {formatAmd(amountAmd)} ֏
+              </s>
+            </span>
+            <strong className="pricing-free-now">{t("pricing.freeNow")}</strong>
+            <span>{suffix ? ` ${suffix}` : ""}</span>
+          </p>
+          {remainingSpotsLine()}
+        </div>
       );
     }
     return (
@@ -77,7 +105,7 @@ export default async function PricingPage({
           <p className="lede">
             {globalFree
               ? t("pricing.ledeFree")
-              : freeMode
+              : earlyBirdOfferOpen
                 ? t("pricing.ledeEarlyBird", { remaining: stats.remaining })
                 : t("pricing.lede")}
           </p>
@@ -107,14 +135,14 @@ export default async function PricingPage({
           <p className="demo-mode-banner-title">{t("pricing.freeBannerTitle")}</p>
           <p className="demo-mode-banner-note">{t("pricing.freeBanner")}</p>
         </div>
-      ) : freeMode && stats.remaining > 0 ? (
+      ) : earlyBirdOfferOpen ? (
         <div className="demo-mode-banner early-bird-pricing-badge" role="status">
           <p className="demo-mode-banner-title">
             {t("earlyBird.pricingBadge", { remaining: stats.remaining })}
           </p>
           <p className="demo-mode-banner-note">
             {t("earlyBird.pricingBadgeNote", {
-              registered: stats.totalRegistered,
+              claimed: stats.earlyBirdClaimed,
               limit: stats.freeLimit,
             })}
           </p>
@@ -128,17 +156,17 @@ export default async function PricingPage({
         <p className="tiny muted">{t("pricing.stripeNote", { rate: AMD_PER_USD })}</p>
       )}
 
-      {!freeMode ? <AcceptedPayments badgesOnly /> : null}
+      {!showFreeOfferUi ? <AcceptedPayments badgesOnly /> : null}
 
       {/* TOP BOOST — primary monetization: pay site to appear at top of lists */}
       <article className="pricing-card pricing-card-featured pricing-card-top">
         <p className="pricing-pill">{t("pricing.boost.heroPill")}</p>
         <h2>{t("pricing.boost.name")}</h2>
         <p className="pricing-tagline">
-          {freeMode ? t("pricing.boost.taglineFree") : t("pricing.boost.tagline")}
+          {showFreeOfferUi ? t("pricing.boost.taglineFree") : t("pricing.boost.tagline")}
         </p>
         <div className="pricing-amount-row">
-          {freeMode ? (
+          {globalFree ? (
             <>
               <p className="pricing-amount">
                 <strong>{t("pricing.free")}</strong>
@@ -148,6 +176,31 @@ export default async function PricingPage({
                 <strong>{t("pricing.free")}</strong>
                 <span>/ 30 {t("pricing.days")}</span>
               </p>
+            </>
+          ) : earlyBirdOfferOpen || earlyBirdFree ? (
+            <>
+              <div className="pricing-amount-block">
+                <p className="pricing-amount pricing-amount-early">
+                  <span className="pricing-regular-price">
+                    <s>
+                      {formatAmd(boost7.amountAmd)} ֏
+                    </s>
+                  </span>
+                  <strong className="pricing-free-now">{t("pricing.freeNow")}</strong>
+                  <span>/ 7 {t("pricing.days")}</span>
+                </p>
+              </div>
+              <div className="pricing-amount-block">
+                <p className="pricing-amount pricing-amount-early">
+                  <span className="pricing-regular-price">
+                    <s>
+                      {formatAmd(boost30.amountAmd)} ֏
+                    </s>
+                  </span>
+                  <strong className="pricing-free-now">{t("pricing.freeNow")}</strong>
+                  <span>/ 30 {t("pricing.days")}</span>
+                </p>
+              </div>
             </>
           ) : (
             <>
@@ -162,14 +215,17 @@ export default async function PricingPage({
             </>
           )}
         </div>
+        {earlyBirdOfferOpen ? remainingSpotsLine() : null}
         <ul className="pricing-features">
           <li>{t("pricing.boost.f1")}</li>
           <li>{t("pricing.boost.f2")}</li>
-          <li>{freeMode ? t("pricing.boost.f3Free") : t("pricing.boost.f3")}</li>
+          <li>{showFreeOfferUi ? t("pricing.boost.f3Free") : t("pricing.boost.f3")}</li>
           <li>{t("pricing.boost.f4")}</li>
         </ul>
         <p className="tiny muted">
-          {freeMode ? t("pricing.boost.fromListingFree") : t("pricing.boost.fromListing")}
+          {showFreeOfferUi
+            ? t("pricing.boost.fromListingFree")
+            : t("pricing.boost.fromListing")}
         </p>
         <div className="pricing-actions">
           {session ? (
@@ -207,13 +263,21 @@ export default async function PricingPage({
           <h2>{t("pricing.farmPro.name")}</h2>
           <p className="pricing-tagline">{t("pricing.farmPro.tagline")}</p>
           {priceLabel(farmMonthly.amountAmd, `/${t("pricing.perMonth")}`)}
-          {!freeMode ? (
+          {globalFree ? (
             <p className="pricing-alt">
-              {formatAmd(farmYearly.amountAmd)} ֏ / {t("pricing.perYear")}
+              {t("pricing.free")} / {t("pricing.perYear")}
+            </p>
+          ) : earlyBirdOfferOpen || earlyBirdFree ? (
+            <p className="pricing-alt pricing-alt-early">
+              <s>
+                {formatAmd(farmYearly.amountAmd)} ֏
+              </s>{" "}
+              <span className="pricing-free-now">{t("pricing.freeNow")}</span> /{" "}
+              {t("pricing.perYear")}
             </p>
           ) : (
             <p className="pricing-alt">
-              {t("pricing.free")} / {t("pricing.perYear")}
+              {formatAmd(farmYearly.amountAmd)} ֏ / {t("pricing.perYear")}
             </p>
           )}
           <ul className="pricing-features">
@@ -251,7 +315,7 @@ export default async function PricingPage({
         <article className="pricing-card">
           <h2>{t("pricing.verifiedFarm.name")}</h2>
           <p className="pricing-tagline">
-            {freeMode
+            {showFreeOfferUi
               ? t("pricing.verifiedFarm.taglineFree")
               : t("pricing.verifiedFarm.tagline")}
           </p>
@@ -259,7 +323,7 @@ export default async function PricingPage({
           <ul className="pricing-features">
             <li>{t("pricing.verifiedFarm.f1")}</li>
             <li>
-              {freeMode
+              {showFreeOfferUi
                 ? t("pricing.verifiedFarm.f2Free")
                 : t("pricing.verifiedFarm.f2")}
             </li>
@@ -293,7 +357,7 @@ export default async function PricingPage({
       </div>
 
       <p className="tiny muted pricing-footnote">
-        {freeMode ? t("pricing.offlineNoteFree") : t("pricing.offlineNote")}
+        {showFreeOfferUi ? t("pricing.offlineNoteFree") : t("pricing.offlineNote")}
       </p>
     </div>
   );

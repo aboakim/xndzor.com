@@ -6878,6 +6878,47 @@ a.listing-card-title::after {
   font-size: 0.88rem;
 }
 
+.pricing-amount-block {
+  margin: 0 0 0.35rem;
+}
+
+.pricing-amount-early {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.55rem;
+}
+
+.pricing-regular-price {
+  color: var(--muted, #5a6570);
+  font-size: 0.95rem;
+}
+
+.pricing-regular-price s {
+  text-decoration-thickness: 1.5px;
+}
+
+.pricing-free-now {
+  color: var(--pine, #0f4a3c);
+  font-size: 1.35rem;
+}
+
+.pricing-remaining-spots {
+  margin: 0.15rem 0 0.5rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--pine, #0f4a3c);
+}
+
+.pricing-alt-early s {
+  color: var(--muted, #5a6570);
+  text-decoration-thickness: 1.5px;
+}
+
+.pricing-alt-early .pricing-free-now {
+  font-size: 1rem;
+}
+
 .pricing-features {
   margin: 1rem 0;
   padding-left: 1.1rem;

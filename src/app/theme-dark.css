@@ -883,6 +883,9 @@ html.dark .pricing-amount,
 html.dark .pricing-amount strong,
 html.dark .pricing-amount span,
 html.dark .pricing-alt,
+html.dark .pricing-regular-price,
+html.dark .pricing-free-now,
+html.dark .pricing-remaining-spots,
 html.dark .pricing-features li,
 html.dark .market-pulse-title,
 html.dark .market-pulse-sub,
@@ -911,6 +914,9 @@ html[data-theme="dark"] .pricing-amount,
 html[data-theme="dark"] .pricing-amount strong,
 html[data-theme="dark"] .pricing-amount span,
 html[data-theme="dark"] .pricing-alt,
+html[data-theme="dark"] .pricing-regular-price,
+html[data-theme="dark"] .pricing-free-now,
+html[data-theme="dark"] .pricing-remaining-spots,
 html[data-theme="dark"] .pricing-features li,
 html[data-theme="dark"] .market-pulse-title,
 html[data-theme="dark"] .market-pulse-sub,
@@ -936,10 +942,19 @@ html[data-theme="dark"] .early-bird-user-banner :is(p, span, strong, em, small) 
 html.dark .pricing-tagline,
 html.dark .pricing-amount span,
 html.dark .pricing-alt,
+html.dark .pricing-regular-price,
 html[data-theme="dark"] .pricing-tagline,
 html[data-theme="dark"] .pricing-amount span,
-html[data-theme="dark"] .pricing-alt {
+html[data-theme="dark"] .pricing-alt,
+html[data-theme="dark"] .pricing-regular-price {
   color: #3d4a45 !important;
+}
+
+html.dark .pricing-free-now,
+html.dark .pricing-remaining-spots,
+html[data-theme="dark"] .pricing-free-now,
+html[data-theme="dark"] .pricing-remaining-spots {
+  color: #0f4a3c !important;
 }
 
 html.dark .pricing-pill,

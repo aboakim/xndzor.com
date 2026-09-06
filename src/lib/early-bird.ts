@@ -3,15 +3,19 @@ import { arePackagesFree } from "@/lib/pricing";
 import { safeQuery } from "@/lib/safe-query";
 
 export type EarlyBirdStats = {
+  /** @deprecated Prefer earlyBirdClaimed — kept for API compatibility */
   totalRegistered: number;
   freeLimit: number;
   remaining: number;
   slotsFull: boolean;
-  /** Users who claimed an early-bird slot */
+  /** Distinct users who successfully claimed a free early-bird package */
   earlyBirdClaimed: number;
 };
 
-let backfillDone = false;
+/** Postgres advisory lock key for serializing early-bird slot claims. */
+const EARLY_BIRD_LOCK_KEY = 87201401;
+
+let reconcileDone = false;
 
 /** Default 100; set EARLY_BIRD_FREE_LIMIT=0 to disable early-bird mode. */
 export function getEarlyBirdFreeLimit(): number {
@@ -26,41 +30,71 @@ export function isEarlyBirdEnabled(): boolean {
 }
 
 /**
- * One-time backfill: mark the first N users (by createdAt) as earlyBirdFree.
- * Safe to call on every stats read — runs at most once per process.
+ * One-time per process: align earlyBirdFree with actual free package claims.
+ * - Users with SUCCEEDED FREE payments (not global PACKAGES_FREE) get claim timestamps.
+ * - Registration-only earlyBirdFree flags without a claim are cleared.
  */
-export async function backfillEarlyBirdFlagsIfNeeded(): Promise<void> {
-  if (backfillDone || !isEarlyBirdEnabled()) return;
-  const limit = getEarlyBirdFreeLimit();
-  const flagged = await safeQuery(
-    () => prisma.user.count({ where: { earlyBirdFree: true } }),
-    0,
-  );
-  const total = await safeQuery(() => prisma.user.count(), 0);
-  if (flagged >= Math.min(total, limit)) {
-    backfillDone = true;
-    return;
+async function reconcileEarlyBirdClaimsIfNeeded(): Promise<void> {
+  if (reconcileDone || !isEarlyBirdEnabled()) return;
+  reconcileDone = true;
+
+  try {
+    const freePayments = await prisma.payment.findMany({
+      where: {
+        status: "SUCCEEDED",
+        provider: "FREE",
+        amountAmd: 0,
+      },
+      select: {
+        userId: true,
+        createdAt: true,
+        metadataJson: true,
+      },
+      orderBy: { createdAt: "asc" },
+    });
+
+    const firstClaimByUser = new Map<string, Date>();
+    for (const p of freePayments) {
+      let meta: Record<string, unknown> = {};
+      try {
+        meta = JSON.parse(p.metadataJson || "{}") as Record<string, unknown>;
+      } catch {
+        meta = {};
+      }
+      // Global PACKAGES_FREE activations should not consume early-bird slots
+      if (meta.packagesFree === true) continue;
+      // Prefer explicit early-bird free activations; also accept legacy FREE rows
+      if (meta.earlyBirdFree === true || meta.earlyBirdClaim === true || !meta.packagesFree) {
+        if (!firstClaimByUser.has(p.userId)) {
+          firstClaimByUser.set(p.userId, p.createdAt);
+        }
+      }
+    }
+
+    for (const [userId, claimedAt] of firstClaimByUser) {
+      await prisma.user.updateMany({
+        where: {
+          id: userId,
+          OR: [{ earlyBirdClaimedAt: null }, { earlyBirdFree: false }],
+        },
+        data: {
+          earlyBirdFree: true,
+          earlyBirdClaimedAt: claimedAt,
+        },
+      });
+    }
+
+    // Drop registration-only flags — slots are claim-based, not signup-based
+    await prisma.user.updateMany({
+      where: {
+        earlyBirdFree: true,
+        earlyBirdClaimedAt: null,
+      },
+      data: { earlyBirdFree: false },
+    });
+  } catch (err) {
+    console.warn("[Xndzor] early-bird reconcile skipped", err);
   }
-  const oldest = await safeQuery(
-    () =>
-      prisma.user.findMany({
-        orderBy: { createdAt: "asc" },
-        take: limit,
-        select: { id: true },
-      }),
-    [],
-  );
-  if (oldest.length > 0) {
-    await safeQuery(
-      () =>
-        prisma.user.updateMany({
-          where: { id: { in: oldest.map((u) => u.id) } },
-          data: { earlyBirdFree: true },
-        }),
-      { count: 0 },
-    );
-  }
-  backfillDone = true;
 }
 
 export async function getEarlyBirdStats(): Promise<EarlyBirdStats> {
@@ -74,19 +108,64 @@ export async function getEarlyBirdStats(): Promise<EarlyBirdStats> {
       earlyBirdClaimed: 0,
     };
   }
-  await backfillEarlyBirdFlagsIfNeeded();
-  const [totalRegistered, earlyBirdClaimed] = await Promise.all([
-    safeQuery(() => prisma.user.count(), 0),
-    safeQuery(() => prisma.user.count({ where: { earlyBirdFree: true } }), 0),
-  ]);
-  const remaining = Math.max(0, freeLimit - totalRegistered);
+
+  await reconcileEarlyBirdClaimsIfNeeded();
+
+  const earlyBirdClaimed = await safeQuery(
+    () =>
+      prisma.user.count({
+        where: { earlyBirdClaimedAt: { not: null } },
+      }),
+    0,
+  );
+  const remaining = Math.max(0, freeLimit - earlyBirdClaimed);
   return {
-    totalRegistered,
+    totalRegistered: earlyBirdClaimed,
     freeLimit,
     remaining,
-    slotsFull: totalRegistered >= freeLimit,
+    slotsFull: earlyBirdClaimed >= freeLimit,
     earlyBirdClaimed,
   };
+}
+
+/**
+ * Atomically reserve one early-bird free slot for this user (first successful claim).
+ * Registration does not call this — only package activate/checkout does.
+ */
+export async function tryClaimEarlyBirdSlot(
+  userId: string,
+): Promise<"claimed" | "already" | "full" | "disabled"> {
+  if (arePackagesFree()) return "already";
+  if (!isEarlyBirdEnabled()) return "disabled";
+  const limit = getEarlyBirdFreeLimit();
+
+  await reconcileEarlyBirdClaimsIfNeeded();
+
+  return prisma.$transaction(async (tx) => {
+    await tx.$executeRawUnsafe(`SELECT pg_advisory_xact_lock(${EARLY_BIRD_LOCK_KEY})`);
+
+    const user = await tx.user.findUnique({
+      where: { id: userId },
+      select: { earlyBirdFree: true, earlyBirdClaimedAt: true },
+    });
+    if (!user) throw new Error("user_not_found");
+    // Only a real claim (timestamp) counts as already reserved
+    if (user.earlyBirdClaimedAt) return "already";
+
+    const claimed = await tx.user.count({
+      where: { earlyBirdClaimedAt: { not: null } },
+    });
+    if (claimed >= limit) return "full";
+
+    await tx.user.update({
+      where: { id: userId },
+      data: {
+        earlyBirdFree: true,
+        earlyBirdClaimedAt: new Date(),
+      },
+    });
+    return "claimed";
+  });
 }
 
 /** Whether public pricing UI should show plans as free (slots still open). */
@@ -97,22 +176,33 @@ export async function shouldShowFreePricing(): Promise<boolean> {
   return !stats.slotsFull;
 }
 
-/** Whether this user may activate packages without payment. */
+/**
+ * Whether this user may activate packages without payment right now.
+ * - Already claimed early-bird → free forever
+ * - Slots still open → may claim on checkout
+ */
 export async function userQualifiesForFreePackages(
   userId: string | null | undefined,
 ): Promise<boolean> {
   if (arePackagesFree()) return true;
   if (!userId || !isEarlyBirdEnabled()) return false;
-  await backfillEarlyBirdFlagsIfNeeded();
+
+  await reconcileEarlyBirdClaimsIfNeeded();
+
   const user = await safeQuery(
     () =>
       prisma.user.findUnique({
         where: { id: userId },
-        select: { earlyBirdFree: true },
+        select: { earlyBirdFree: true, earlyBirdClaimedAt: true },
       }),
     null,
   );
-  return Boolean(user?.earlyBirdFree);
+  if (user?.earlyBirdClaimedAt) return true;
+  // Legacy earlyBirdFree without a claim timestamp does not qualify
+  if (user?.earlyBirdFree && !user.earlyBirdClaimedAt) return false;
+
+  const stats = await getEarlyBirdStats();
+  return !stats.slotsFull;
 }
 
 /** Checkout / BoostButton: skip payment UI for this owner. */
@@ -133,20 +223,20 @@ export async function getEarlyBirdUserContext(
   userId: string | null | undefined,
 ): Promise<EarlyBirdUserContext> {
   const stats = await getEarlyBirdStats();
-  const showFreePricing = arePackagesFree() || (isEarlyBirdEnabled() && !stats.slotsFull);
+  const showFreePricing =
+    arePackagesFree() || (isEarlyBirdEnabled() && !stats.slotsFull);
   const checkoutFree = await userQualifiesForFreePackages(userId);
   let earlyBirdFree = false;
   if (userId) {
-    await backfillEarlyBirdFlagsIfNeeded();
     const user = await safeQuery(
       () =>
         prisma.user.findUnique({
           where: { id: userId },
-          select: { earlyBirdFree: true },
+          select: { earlyBirdFree: true, earlyBirdClaimedAt: true },
         }),
       null,
     );
-    earlyBirdFree = Boolean(user?.earlyBirdFree);
+    earlyBirdFree = Boolean(user?.earlyBirdClaimedAt);
   }
   return { earlyBirdFree, stats, showFreePricing, checkoutFree };
 }

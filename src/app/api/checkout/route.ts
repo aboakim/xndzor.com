@@ -17,7 +17,10 @@ import { assertListingOwnedBy } from "@/lib/monetization";
 import { validateCsrf } from "@/lib/csrf";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { fulfillPayment, logPaymentEvent } from "@/lib/payments";
-import { userQualifiesForFreePackages } from "@/lib/early-bird";
+import {
+  isEarlyBirdEnabled,
+  tryClaimEarlyBirdSlot,
+} from "@/lib/early-bird";
 import { isIdramConfigured, buildIdramCheckoutForm } from "@/lib/payments/idram";
 import { isTelcellConfigured, buildTelcellCheckoutForm } from "@/lib/payments/telcell";
 
@@ -79,11 +82,6 @@ export async function POST(req: Request) {
     );
   }
 
-  if (!requirePaymentInProduction()) {
-    logPaymentEvent("checkout_blocked_production", { userId: session.user.id });
-    return NextResponse.json({ error: "payment_required_in_production" }, { status: 503 });
-  }
-
   let json: unknown;
   try {
     json = await req.json();
@@ -133,22 +131,33 @@ export async function POST(req: Request) {
     }
   }
 
-  const userFree = await userQualifiesForFreePackages(session.user.id);
-  const amountAmd = getEffectiveAmountAmd(product.amountAmd, userFree);
+  // Free path: PACKAGES_FREE override, or early-bird claim on activate (not signup)
+  let earlyBirdClaim: "claimed" | "already" | "full" | "disabled" | null = null;
+  let checkoutIsFree = arePackagesFree();
+
+  if (!checkoutIsFree && isEarlyBirdEnabled()) {
+    earlyBirdClaim = await tryClaimEarlyBirdSlot(session.user.id);
+    checkoutIsFree =
+      earlyBirdClaim === "claimed" || earlyBirdClaim === "already";
+  }
+
+  const amountAmd = getEffectiveAmountAmd(product.amountAmd, checkoutIsFree);
   const metadata = {
     productCode,
     userId: session.user.id,
     locale,
     ...(targetType && targetId ? { targetType, targetId } : {}),
     ...(arePackagesFree() ? { packagesFree: true } : {}),
-    ...(userFree ? { earlyBirdFree: true } : {}),
+    ...(checkoutIsFree && !arePackagesFree()
+      ? { earlyBirdFree: true, earlyBirdClaim: true }
+      : {}),
   };
 
   const origin = new URL(req.url).origin;
   const description = productDescription(productCode, amountAmd);
 
   // ── Free packages: activate immediately, skip Stripe / iDram / TelCell ───
-  if (arePackagesFree() || userFree || amountAmd === 0) {
+  if (checkoutIsFree || amountAmd === 0) {
     const payment = await prisma.payment.create({
       data: {
         userId: session.user.id,
@@ -167,6 +176,7 @@ export async function POST(req: Request) {
       productCode,
       provider: "FREE",
       amountAmd: 0,
+      earlyBirdClaim: earlyBirdClaim ?? undefined,
     });
     const result = await fulfillPayment(payment.id);
     if (result !== "activated" && result !== "already") {
@@ -176,7 +186,14 @@ export async function POST(req: Request) {
       ok: true,
       mode: "free",
       paymentId: payment.id,
+      earlyBirdClaimed: earlyBirdClaim === "claimed",
     });
+  }
+
+  // Paid path requires a configured payment provider in production
+  if (!requirePaymentInProduction()) {
+    logPaymentEvent("checkout_blocked_production", { userId: session.user.id });
+    return NextResponse.json({ error: "payment_required_in_production" }, { status: 503 });
   }
 
   // ── iDram checkout ──────────────────────────────────────────────────────
