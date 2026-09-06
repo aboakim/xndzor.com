@@ -183,7 +183,10 @@ export function CatalogForm({
             )}
           </label>
         ))}
-        {category === "FERTILIZER" || category === "CHEMICAL" || category === "SEED" ? (
+        {category === "FERTILIZER" ||
+        category === "CHEMICAL" ||
+        category === "SEED" ||
+        category === "NATURAL_PRODUCT" ? (
           <label>
             <span>{t("postCatalog.fields.expiryDate")}</span>
             <input name="expiryDate" type="date" />

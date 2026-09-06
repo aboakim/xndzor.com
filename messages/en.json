@@ -35,6 +35,7 @@
     "chemicals": "Plant protection",
     "tools": "Tools & equipment",
     "land": "Land / orchard",
+    "naturalProducts": "Oils & natural products",
     "shop": "Market",
     "grow": "What to grow",
     "myPassport": "My farm passport",
@@ -83,6 +84,10 @@
         "label": "Inputs & seeds",
         "desc": "Fertilizers, seeds, feed and crop protection"
       },
+      "naturalProducts": {
+        "label": "Oils & natural products",
+        "desc": "Flax oil, honey, homemade and farm food goods"
+      },
       "toolsLand": {
         "label": "Tools & land",
         "desc": "Farm tools and land listings"
@@ -120,6 +125,7 @@
       "otherAnimals": "Other",
       "cropInputs": "Crop inputs",
       "animalInputs": "Feed",
+      "farmFood": "Oils & food goods",
       "equipmentShop": "Tools",
       "landShop": "Land",
       "hire": "Hire",
@@ -170,6 +176,9 @@
       "chemicals": "Crop protection",
       "tools": "Tools",
       "land": "Land / orchard",
+      "naturalProducts": "Oils & natural products",
+      "naturalProductsOils": "Oils (flax & more)",
+      "naturalProductsHoney": "Honey",
       "orderWork": "Order work",
       "providers": "Providers",
       "harvest": "Harvest",
@@ -219,6 +228,7 @@
     "chemicals": "Plant protection",
     "tools": "Tools & equipment",
     "land": "Land / orchard",
+    "naturalProducts": "Oils & natural products",
     "grow": "What to grow",
     "growDesc": "Future harvest exchange and demand"
   },
@@ -1131,7 +1141,8 @@
     "FEED": "Feed / fodder",
     "CHEMICAL": "Plant protection",
     "TOOL": "Tools & equipment",
-    "LAND": "Land / orchard"
+    "LAND": "Land / orchard",
+    "NATURAL_PRODUCT": "Oils & natural products"
   },
   "catalogLedes": {
     "FERTILIZER": "Organic and mineral fertilizers with detailed composition.",
@@ -1139,7 +1150,8 @@
     "FEED": "Hay, silage, concentrate and other feed.",
     "CHEMICAL": "Crop protection products. Not medical advice.",
     "TOOL": "Hand tools, irrigation parts and small equipment.",
-    "LAND": "Plot or orchard for sale / rent."
+    "LAND": "Plot or orchard for sale / rent.",
+    "NATURAL_PRODUCT": "Flax oil, sunflower oil, honey and other homemade / farm food goods."
   },
   "catalogSubtypes": {
     "FERTILIZER": {
@@ -1190,6 +1202,15 @@
       "PASTURE": "Pasture",
       "GREENHOUSE": "Greenhouse",
       "OTHER": "Other"
+    },
+    "NATURAL_PRODUCT": {
+      "FLAX_OIL": "Flaxseed oil",
+      "SUNFLOWER_OIL": "Sunflower oil",
+      "OTHER_OIL": "Other oil",
+      "HONEY": "Honey",
+      "PRESERVE": "Jam / preserve",
+      "DRIED": "Dried fruit / herbs",
+      "OTHER": "Other"
     }
   },
   "catalogSpecs": {
@@ -1207,7 +1228,10 @@
     "hectares": "Hectares",
     "waterAccess": "Water access",
     "dealType": "Sale / rent",
-    "soilNote": "Soil note"
+    "soilNote": "Soil note",
+    "origin": "Origin / region",
+    "organic": "Organic",
+    "homemade": "Homemade"
   },
   "catalogUnits": {
     "kg": "kg",
@@ -1277,12 +1301,13 @@
       "FEED": "e.g. alpine hay · 20 t",
       "CHEMICAL": "e.g. herbicide for field crops",
       "TOOL": "e.g. drip irrigation kit",
-      "LAND": "e.g. 2.5 ha irrigated arable land"
+      "LAND": "e.g. 2.5 ha irrigated arable land",
+      "NATURAL_PRODUCT": "e.g. cold-pressed flaxseed oil · 1 L"
     }
   },
   "myCatalog": {
     "title": "My market listings",
-    "lede": "Manage fertilizer, seed and other listings.",
+    "lede": "Manage fertilizer, seed, oil and other listings.",
     "empty": "No listings yet.",
     "manage": "Manage",
     "markActive": "Mark active",

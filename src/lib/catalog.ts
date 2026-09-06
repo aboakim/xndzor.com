@@ -1,4 +1,4 @@
-/** Unified ag catalog marketplace — fertilizers, seeds, feed, chemicals, tools, land. */
+/** Unified ag catalog marketplace — fertilizers, seeds, feed, chemicals, tools, land, natural products. */
 
 export const CATALOG_CATEGORIES = [
   "FERTILIZER",
@@ -7,6 +7,7 @@ export const CATALOG_CATEGORIES = [
   "CHEMICAL",
   "TOOL",
   "LAND",
+  "NATURAL_PRODUCT",
 ] as const;
 
 export type CatalogCategory = (typeof CATALOG_CATEGORIES)[number];
@@ -19,6 +20,7 @@ export const CATALOG_ROUTE: Record<CatalogCategory, string> = {
   CHEMICAL: "chemicals",
   TOOL: "tools",
   LAND: "land",
+  NATURAL_PRODUCT: "natural-products",
 };
 
 export const CATALOG_FROM_ROUTE: Record<string, CatalogCategory> = {
@@ -28,6 +30,7 @@ export const CATALOG_FROM_ROUTE: Record<string, CatalogCategory> = {
   chemicals: "CHEMICAL",
   tools: "TOOL",
   land: "LAND",
+  "natural-products": "NATURAL_PRODUCT",
 };
 
 export const CATALOG_SUBTYPES: Record<CatalogCategory, readonly string[]> = {
@@ -37,6 +40,7 @@ export const CATALOG_SUBTYPES: Record<CatalogCategory, readonly string[]> = {
   CHEMICAL: ["HERBICIDE", "FUNGICIDE", "INSECTICIDE", "FERTILIZER_ADJ", "OTHER"],
   TOOL: ["HAND", "IRRIGATION", "GREENHOUSE", "STORAGE", "OTHER"],
   LAND: ["ARABLE", "ORCHARD", "PASTURE", "GREENHOUSE", "OTHER"],
+  NATURAL_PRODUCT: ["FLAX_OIL", "SUNFLOWER_OIL", "OTHER_OIL", "HONEY", "PRESERVE", "DRIED", "OTHER"],
 };
 
 export const CATALOG_PRICE_UNITS = ["PER_KG", "PER_BAG", "PER_LITER", "PER_HA", "LOT", "OTHER"] as const;
@@ -98,5 +102,10 @@ export const CATALOG_SPEC_FIELDS: Record<
     { key: "waterAccess", kind: "text" },
     { key: "dealType", kind: "text" },
     { key: "soilNote", kind: "text" },
+  ],
+  NATURAL_PRODUCT: [
+    { key: "origin", kind: "text" },
+    { key: "organic", kind: "bool" },
+    { key: "homemade", kind: "bool" },
   ],
 };

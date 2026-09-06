@@ -2004,7 +2004,7 @@ async function main() {
     ],
   });
 
-  // —— Unified catalog marketplace (fertilizer, seed, feed, chemical, tool, land) ——
+  // —— Unified catalog marketplace (fertilizer, seed, feed, chemical, tool, land, natural products) ——
   const catFertNpk = await prisma.catalogListing.create({
     data: {
       category: "FERTILIZER",
@@ -2198,6 +2198,91 @@ async function main() {
         phone: farmer.phone!,
         whatsapp: farmer.phone!,
         imageUrls: photos("catalog/farmland.jpg"),
+        userId: farmer.id,
+        status: "ACTIVE",
+      },
+      {
+        category: "NATURAL_PRODUCT",
+        subtype: "FLAX_OIL",
+        title: "Կտավատի ձեթ · սառը մամլված · 1 լ",
+        description:
+          "Տնային սառը մամլված կտավատի ձեթ։ Պահվում է մութ տեղում։ Հարմար է խոհանոցի և առողջ սննդի համար։ Կարող եք վերցնել Արարատից կամ առաքել մարզեր։",
+        brand: "Geghama Flax",
+        specsJson: JSON.stringify({ origin: "Gegharkunik", organic: true, homemade: true }),
+        quantity: 80,
+        unit: "liter",
+        packageSize: "1 L",
+        priceAmd: 4_500,
+        priceNegotiable: true,
+        priceUnit: "PER_LITER",
+        marzId: "Gegharkunik",
+        villageId: v.sevan,
+        phone: farmer3.phone!,
+        whatsapp: farmer3.phone!,
+        imageUrls: photos("crops/wheat.jpg"),
+        userId: farmer3.id,
+        status: "ACTIVE",
+      },
+      {
+        category: "NATURAL_PRODUCT",
+        subtype: "SUNFLOWER_OIL",
+        title: "Արևածաղկի ձեթ · սառը մամլված · 5 լ",
+        description:
+          "Տեղական արևածաղկի ձեթ՝ սառը մամլումով։ Խոշոր փաթեթավորում՝ ընտանիքի և խանութների համար։",
+        brand: null,
+        specsJson: JSON.stringify({ origin: "Armavir", organic: false, homemade: true }),
+        quantity: 40,
+        unit: "liter",
+        packageSize: "5 L",
+        priceAmd: 3_200,
+        priceNegotiable: true,
+        priceUnit: "PER_LITER",
+        marzId: "Armavir",
+        villageId: v.metsamor,
+        phone: farmer.phone!,
+        imageUrls: photos("crops/wheat.jpg"),
+        userId: farmer.id,
+        status: "ACTIVE",
+      },
+      {
+        category: "NATURAL_PRODUCT",
+        subtype: "HONEY",
+        title: "Լեռնային մեղր · 1 կգ բանկա",
+        description:
+          "Լեռնային ծաղկային մեղր՝ Վայոց ձորից։ Առանց շաքարի հավելումների։ Կարող եք պատվիրել մի քանի բանկա։",
+        brand: "Areni Bees",
+        specsJson: JSON.stringify({ origin: "VayotsDzor", organic: true, homemade: true }),
+        quantity: 60,
+        unit: "kg",
+        packageSize: "1 kg",
+        priceAmd: 6_500,
+        priceNegotiable: false,
+        priceUnit: "PER_KG",
+        marzId: "VayotsDzor",
+        villageId: v.areni,
+        phone: farmer4.phone!,
+        whatsapp: farmer4.phone!,
+        imageUrls: photos("crops/honey.jpg"),
+        userId: farmer4.id,
+        status: "ACTIVE",
+      },
+      {
+        category: "NATURAL_PRODUCT",
+        subtype: "PRESERVE",
+        title: "Ծիրանի մուրաբա · 0.7 լ",
+        description: "Տնային ծիրանի մուրաբա՝ առանց արհեստական ներկերի։ Սեզոնային արտադրանք։",
+        brand: null,
+        specsJson: JSON.stringify({ origin: "Ararat", organic: false, homemade: true }),
+        quantity: 50,
+        unit: "piece",
+        packageSize: "0.7 L jar",
+        priceAmd: 2_200,
+        priceNegotiable: true,
+        priceUnit: "LOT",
+        marzId: "Ararat",
+        villageId: v.masis,
+        phone: farmer.phone!,
+        imageUrls: photos("crops/peach.jpg"),
         userId: farmer.id,
         status: "ACTIVE",
       },
@@ -2465,7 +2550,7 @@ async function main() {
   console.log("Batch: /hy/batches/TOMATO-AR-2026-00182");
   console.log("Machinery: /hy/machinery — John Deere, MTZ, Case, Claas…");
   console.log("Animals: /hy/animals — cows, sheep, goats, bees…");
-  console.log("Shop: /hy/shop/fertilizers, /hy/shop/seeds, … + comments on detail pages");
+  console.log("Shop: /hy/shop/fertilizers, /hy/shop/natural-products, … + comments on detail pages");
 }
 
 main()

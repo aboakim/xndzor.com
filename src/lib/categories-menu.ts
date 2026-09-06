@@ -173,6 +173,22 @@ export const MEGA_MENU_CATEGORIES: MegaMenuCategory[] = [
     ],
   },
   {
+    id: "naturalProducts",
+    href: "/shop/natural-products",
+    icon: "naturalProducts",
+    iconTone: "gold",
+    groups: [
+      {
+        id: "farmFood",
+        subs: [
+          { id: "naturalProducts", href: "/shop/natural-products" },
+          { id: "naturalProductsOils", href: "/shop/natural-products?subtype=FLAX_OIL" },
+          { id: "naturalProductsHoney", href: "/shop/natural-products?subtype=HONEY" },
+        ],
+      },
+    ],
+  },
+  {
     id: "toolsLand",
     href: "/shop/tools",
     icon: "tools",

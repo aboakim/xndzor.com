@@ -4847,6 +4847,10 @@ a.post-card-title::after {
   background: rgba(15, 74, 60, 0.12);
   color: var(--pine);
 }
+.cat-icon.action-naturalProducts {
+  background: rgba(184, 146, 42, 0.2);
+  color: #7a5a12;
+}
 
 .home-feed-icon.action-fertilizers {
   background: rgba(184, 146, 42, 0.18);
@@ -4871,6 +4875,10 @@ a.post-card-title::after {
 .home-feed-icon.action-land {
   background: rgba(15, 74, 60, 0.12);
   color: var(--pine);
+}
+.home-feed-icon.action-naturalProducts {
+  background: rgba(184, 146, 42, 0.2);
+  color: #7a5a12;
 }
 
 .machinery-detail .eyebrow {

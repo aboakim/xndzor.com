@@ -82,6 +82,11 @@ const CATEGORIES = [
   { href: "/shop/seeds", action: "seeds", labelKey: "menu.seeds" as const },
   { href: "/shop/feed", action: "feed", labelKey: "menu.feed" as const },
   { href: "/shop/chemicals", action: "chemicals", labelKey: "menu.chemicals" as const },
+  {
+    href: "/shop/natural-products",
+    action: "naturalProducts",
+    labelKey: "menu.naturalProducts" as const,
+  },
   { href: "/shop/tools", action: "tools", labelKey: "menu.tools" as const },
   { href: "/shop/land", action: "land", labelKey: "menu.land" as const },
   { href: "/group-buy", action: "groupBuy", labelKey: "menu.groupBuy" as const },

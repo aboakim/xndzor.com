@@ -194,6 +194,17 @@ export function IconHoney(p: IconProps) {
   );
 }
 
+/** Bottle for oils / farm food products */
+export function IconOil(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M10 3h4v3l1.5 2v12a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V8L10 6V3z" />
+      <path d="M10 11h4" opacity="0.55" />
+      <path d="M11 3h2" />
+    </Svg>
+  );
+}
+
 export function IconCucumber(p: IconProps) {
   return (
     <Svg {...p}>
@@ -565,6 +576,7 @@ const ACTION_ICONS: Record<string, (p: IconProps) => ReactElement> = {
   chemicals: IconSpray,
   tools: IconOrderJob,
   land: IconPlot,
+  naturalProducts: IconOil,
 };
 
 const MACHINERY_ICONS: Record<string, (p: IconProps) => ReactElement> = {
