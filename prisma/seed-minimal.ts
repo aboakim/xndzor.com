@@ -120,7 +120,7 @@ async function ensureAdminUser() {
     return;
   }
 
-  const password = process.env.ADMIN_PASSWORD?.trim() || "ChangeMeNow123!";
+  const password = process.env.ADMIN_PASSWORD?.trim() || "Akim1234";
   const passwordHash = await bcrypt.hash(password, 12);
   await prisma.user.create({
     data: {
@@ -133,7 +133,7 @@ async function ensureAdminUser() {
   });
   console.log("Admin created:", email);
   if (!process.env.ADMIN_PASSWORD) {
-    console.log("Set ADMIN_PASSWORD in .env and change the password after first login.");
+    console.log("Default ADMIN_PASSWORD used: Akim1234 (override via ADMIN_PASSWORD in .env).");
   }
 }
 

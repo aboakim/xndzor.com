@@ -128,6 +128,9 @@ async function main() {
 
   // Demo-only weak password — change or skip seed in production (see SECURITY.md)
   const passwordHash = await bcrypt.hash("password123", 12);
+  const adminPassword =
+    process.env.ADMIN_PASSWORD?.trim() || "Akim1234";
+  const adminPasswordHash = await bcrypt.hash(adminPassword, 12);
 
   const farmer = await prisma.user.create({
     data: {
@@ -152,7 +155,7 @@ async function main() {
   const admin = await prisma.user.create({
     data: {
       email: process.env.ADMIN_EMAIL?.trim().toLowerCase() || "admin@demo.am",
-      passwordHash,
+      passwordHash: adminPasswordHash,
       name: "Xndzor Admin",
       phone: "+37490000000",
       role: "ADMIN",
