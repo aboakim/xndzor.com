@@ -53,6 +53,12 @@
       "hy": "Armenian",
       "ru": "Russian",
       "en": "English"
+    },
+    "theme": {
+      "toLight": "Switch to light mode",
+      "toDark": "Switch to dark mode",
+      "light": "Light",
+      "dark": "Dark"
     }
   },
   "megaMenu": {

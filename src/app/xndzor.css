@@ -188,7 +188,7 @@
 
 .xndzor-hero-rail-link:hover {
   border-color: rgba(15, 74, 60, 0.2);
-  background: #fff;
+  background: var(--surface-solid);
   transform: translateX(2px);
   box-shadow: 0 4px 14px rgba(10, 51, 41, 0.08);
 }
@@ -248,7 +248,7 @@
   margin-top: 0.45rem;
   padding: 0.5rem 0.65rem;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--pine) 8%, white);
+  background: color-mix(in srgb, var(--pine) 8%, var(--mix-canvas));
   border: 1px solid color-mix(in srgb, var(--pine) 14%, transparent);
   font-size: 0.76rem;
   font-weight: 600;
@@ -259,7 +259,7 @@
 }
 
 .xndzor-hero-rail-feature:hover {
-  background: color-mix(in srgb, var(--pine) 12%, white);
+  background: color-mix(in srgb, var(--pine) 12%, var(--mix-canvas));
   transform: translateY(-1px);
 }
 
@@ -362,7 +362,7 @@
 }
 
 .xndzor-mode-btn.is-active {
-  background: var(--pine);
+  background: var(--fill-pine);
   color: #f4fbf8;
   box-shadow: var(--shadow-card);
 }
@@ -1073,7 +1073,7 @@
 }
 
 .wtb-card-farmer .wtb-card-icon {
-  background: color-mix(in srgb, var(--pine) 12%, white);
+  background: color-mix(in srgb, var(--pine) 12%, var(--mix-canvas));
 }
 
 .wtb-card-buyer .wtb-card-icon {
@@ -1129,7 +1129,7 @@
 
 .wtb-card-farmer .wtb-perks li {
   color: var(--pine);
-  background: color-mix(in srgb, var(--pine) 9%, white);
+  background: color-mix(in srgb, var(--pine) 9%, var(--mix-canvas));
 }
 
 .wtb-card-buyer .wtb-perks li {
@@ -1197,12 +1197,12 @@
 
 .wtb-trust-badge:nth-child(2) {
   border-color: color-mix(in srgb, var(--color-harvest-gold) 35%, transparent);
-  background: color-mix(in srgb, var(--color-harvest-gold-soft) 65%, white);
+  background: color-mix(in srgb, var(--color-harvest-gold-soft) 65%, var(--mix-canvas));
 }
 
 .wtb-trust-badge:nth-child(3) {
   border-color: color-mix(in srgb, var(--color-buyer-sky) 28%, transparent);
-  background: color-mix(in srgb, var(--color-buyer-sky-soft) 55%, white);
+  background: color-mix(in srgb, var(--color-buyer-sky-soft) 55%, var(--mix-canvas));
 }
 
 .wtb-trust-badge-pulse {
@@ -1251,7 +1251,7 @@
 }
 
 .wtb-cta-secondary:hover {
-  background: #fff !important;
+  background: var(--surface-solid) !important;
   border-color: var(--pine) !important;
 }
 
@@ -1365,7 +1365,7 @@
 
 .tvs-item-green {
   border-color: color-mix(in srgb, var(--pine-bright) 22%, transparent);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), color-mix(in srgb, var(--pine) 6%, white));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), color-mix(in srgb, var(--pine) 6%, var(--mix-canvas)));
 }
 
 .tvs-item-gold {
@@ -1616,7 +1616,7 @@
 }
 
 .gbb-cta:hover {
-  background: #fff !important;
+  background: var(--surface-solid) !important;
   transform: translateY(-1px);
 }
 
@@ -1966,7 +1966,7 @@
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
-  background: var(--pine);
+  background: var(--fill-pine);
   color: #eef8f4;
   font-size: 0.9rem;
   font-weight: 700;
@@ -2184,7 +2184,7 @@
 }
 
 .gba-cta .btn.primary:hover {
-  background: #fff;
+  background: var(--surface-solid);
 }
 
 .gba-cta .btn.ghost {
@@ -2552,7 +2552,7 @@
 }
 
 .fxb-cta:hover {
-  background: #fff !important;
+  background: var(--surface-solid) !important;
   transform: translateY(-1px);
 }
 
@@ -3193,7 +3193,7 @@
   overflow: hidden;
   color: var(--pine-deep);
   background:
-    linear-gradient(145deg, #f4faf7 0%, color-mix(in srgb, var(--pine) 10%, white) 100%);
+    linear-gradient(145deg, #f4faf7 0%, color-mix(in srgb, var(--pine) 10%, var(--mix-canvas)) 100%);
 }
 
 .xz-promo-slide-glow {
@@ -3581,7 +3581,7 @@
 
 .xz-promo-slide-gold {
   background:
-    linear-gradient(145deg, #fff8eb 0%, color-mix(in srgb, var(--color-harvest-gold) 22%, white) 55%, #f3faf6 100%);
+    linear-gradient(145deg, #fff8eb 0%, color-mix(in srgb, var(--color-harvest-gold) 22%, var(--mix-canvas)) 55%, #f3faf6 100%);
 }
 
 .xz-promo-slide-gold .xz-promo-slide-cta {
@@ -3591,17 +3591,17 @@
 
 .xz-promo-slide-pine {
   background:
-    linear-gradient(145deg, #eef8f3 0%, color-mix(in srgb, var(--pine) 16%, white) 100%);
+    linear-gradient(145deg, #eef8f3 0%, color-mix(in srgb, var(--pine) 16%, var(--mix-canvas)) 100%);
 }
 
 .xz-promo-slide-sage {
   background:
-    linear-gradient(145deg, #f3faf3 0%, color-mix(in srgb, var(--sage) 22%, white) 100%);
+    linear-gradient(145deg, #f3faf3 0%, color-mix(in srgb, var(--sage) 22%, var(--mix-canvas)) 100%);
 }
 
 .xz-promo-slide-sky {
   background:
-    linear-gradient(145deg, #eef7fb 0%, color-mix(in srgb, var(--color-buyer-sky) 18%, white) 100%);
+    linear-gradient(145deg, #eef7fb 0%, color-mix(in srgb, var(--color-buyer-sky) 18%, var(--mix-canvas)) 100%);
 }
 
 .xz-promo-slide-wheat {
@@ -3611,7 +3611,7 @@
 
 .xz-promo-slide-apple {
   background:
-    linear-gradient(145deg, #fff6f5 0%, color-mix(in srgb, #c23b3b 12%, white) 55%, #f7faf8 100%);
+    linear-gradient(145deg, #fff6f5 0%, color-mix(in srgb, #c23b3b 12%, var(--mix-canvas)) 55%, #f7faf8 100%);
 }
 
 .xz-promo-slide-apple .xz-promo-slide-cta {
@@ -3658,7 +3658,7 @@
 
 .xz-promo-nav:hover,
 .xz-promo-nav:focus-visible {
-  background: white;
+  background: var(--surface-solid);
   transform: scale(1.05);
   outline: none;
 }
@@ -3808,7 +3808,7 @@
   max-width: 40rem;
   margin: 0 auto;
   padding: 1.35rem 1.25rem 1.5rem;
-  background: #fff;
+  background: var(--surface-solid);
   border: 1px solid rgba(15, 74, 60, 0.08);
   border-radius: 1.25rem;
   box-shadow: 0 4px 24px rgba(10, 51, 41, 0.05);
@@ -3909,7 +3909,7 @@
   height: 2.35rem;
   border-radius: 999px;
   border: 1px solid var(--line);
-  background: #fff;
+  background: var(--surface-solid);
   color: var(--pine);
   box-shadow: var(--shadow-card);
   cursor: pointer;
@@ -4062,7 +4062,7 @@
 .fos-sell,
 .fos-return-teaser,
 .fos-timeline {
-  background: linear-gradient(165deg, #fff 0%, color-mix(in srgb, var(--pine) 5%, white) 100%);
+  background: linear-gradient(165deg, var(--surface-solid) 0%, color-mix(in srgb, var(--pine) 5%, var(--mix-canvas)) 100%);
   border: 1px solid color-mix(in srgb, var(--pine) 14%, transparent);
   border-radius: 14px;
   padding: 1.15rem 1.25rem;
@@ -4165,7 +4165,7 @@
   border: 1px solid color-mix(in srgb, var(--pine) 18%, transparent);
   border-radius: 10px;
   padding: 0.55rem 0.7rem;
-  background: #fff;
+  background: var(--surface-solid);
   color: var(--pine-deep);
 }
 .fos-sell-form {
@@ -4188,7 +4188,7 @@
   border: 1px solid color-mix(in srgb, var(--pine) 14%, transparent);
   border-radius: 12px;
   padding: 0.9rem;
-  background: #fff;
+  background: var(--surface-solid);
 }
 .fos-sell-card.is-best {
   border-color: var(--pine);
@@ -4218,7 +4218,7 @@
   margin: 0.75rem 0;
   padding: 0.75rem;
   border-radius: 10px;
-  background: color-mix(in srgb, var(--pine) 7%, white);
+  background: color-mix(in srgb, var(--pine) 7%, var(--mix-canvas));
 }
 .fos-timeline-track {
   list-style: none;
@@ -4270,7 +4270,7 @@
 .fos-sell,
 .fos-return-teaser,
 .fos-timeline {
-  background: linear-gradient(165deg, #fff 0%, color-mix(in srgb, var(--pine) 5%, white) 100%);
+  background: linear-gradient(165deg, var(--surface-solid) 0%, color-mix(in srgb, var(--pine) 5%, var(--mix-canvas)) 100%);
   border: 1px solid color-mix(in srgb, var(--pine) 14%, transparent);
   border-radius: 14px;
   padding: 1.15rem 1.25rem;
@@ -4373,7 +4373,7 @@
   border: 1px solid color-mix(in srgb, var(--pine) 18%, transparent);
   border-radius: 10px;
   padding: 0.55rem 0.7rem;
-  background: #fff;
+  background: var(--surface-solid);
   color: var(--pine-deep);
 }
 .fos-sell-form {
@@ -4396,7 +4396,7 @@
   border: 1px solid color-mix(in srgb, var(--pine) 14%, transparent);
   border-radius: 12px;
   padding: 0.9rem;
-  background: #fff;
+  background: var(--surface-solid);
 }
 .fos-sell-card.is-best {
   border-color: var(--pine);
@@ -4426,7 +4426,7 @@
   margin: 0.75rem 0;
   padding: 0.75rem;
   border-radius: 10px;
-  background: color-mix(in srgb, var(--pine) 7%, white);
+  background: color-mix(in srgb, var(--pine) 7%, var(--mix-canvas));
 }
 .fos-timeline-track {
   list-style: none;
@@ -4697,7 +4697,7 @@
 .home-quick-chip:hover {
   transform: translateY(-1px);
   border-color: var(--pine-bright, #1a6b55);
-  background: #fff;
+  background: var(--surface-solid);
 }
 
 .home-quick-chip-farm {
@@ -4749,7 +4749,7 @@
   border-radius: 14px;
   text-decoration: none;
   color: inherit;
-  background: #fff;
+  background: var(--surface-solid);
   border: 1px solid rgba(15, 74, 60, 0.1);
   scroll-snap-align: start;
   transition: transform var(--motion-fast, 160ms) ease, box-shadow var(--motion-fast, 160ms) ease;
@@ -4765,7 +4765,7 @@
   height: 52px;
   border-radius: 10px;
   overflow: hidden;
-  background: color-mix(in srgb, var(--pine) 10%, white);
+  background: color-mix(in srgb, var(--pine) 10%, var(--mix-canvas));
 }
 
 .home-recent-media img {

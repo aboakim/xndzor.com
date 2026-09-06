@@ -7,6 +7,7 @@ import { signOut, useSession } from "next-auth/react";
 import { IconApple } from "@/components/AgIcons";
 import { CategoriesMegaMenu } from "@/components/CategoriesMegaMenu";
 import { LanguageDropdown } from "@/components/LanguageDropdown";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { SearchBar } from "@/components/SearchBar";
 import { useMinWidth901 } from "@/hooks/useMinWidth901";
 
@@ -35,6 +36,7 @@ export function Header() {
           <span className="utility-brand">{brand("brandLatin")}</span>
 
           <div className="utility-right">
+            <ThemeToggle />
             <LanguageDropdown />
 
             <nav className="utility-nav" aria-label={t("utilityNav")}>
