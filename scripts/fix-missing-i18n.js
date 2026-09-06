@@ -92,7 +92,7 @@ const footerExtras = {
     privacy: "Գաղտնիություն",
     cookiesNote: "Cookies-ը օգտագործվում է մուտքի և լեզվի ընտրության համար։",
     cookies: "Cookies",
-    copyright: "© {year} FarmOS Armenia / Խնտոր",
+    copyright: "© {year} FarmOS Armenia / Խնձոր",
   },
   ru: {
     note: "FarmOS Armenia · участок → прогноз → продажа",

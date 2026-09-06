@@ -304,9 +304,9 @@ module.exports = {
     },
     pwa: {
       install: "Տեղադրել հավելված",
-      iosHint: "Ավելացրեք Խնտորը հիմնական էկրանին արագ մուտքի համար։",
+      iosHint: "Ավելացրեք Խնձորը հիմնական էկրանին արագ մուտքի համար։",
       androidHint: "Տեղադրեք հավելվածը արագ և offline մուտքի համար։",
-      genericHint: "Պահպանեք Խնտորը սարքի հիմնական էկրանին։",
+      genericHint: "Պահպանեք Խնձորը սարքի հիմնական էկրանին։",
       iosStep1: "Սեղմեք Share Safari-ում",
       iosStep2: "Ընտրեք «Add to Home Screen»",
       iosStep3: "Սեղմեք Add",
@@ -315,7 +315,7 @@ module.exports = {
       dismiss: "Փակել",
     },
     xndzor: {
-      heroTitle: "Խնտոր — գյուղատնտեսական շուկա",
+      heroTitle: "Խնձոր — գյուղատնտեսական շուկա",
       heroTagline: "Ի՞նչ աճեցնել՝ ըստ պահանջարկի. հողամաս → ազդանշան → նախնական վաճառք",
       heroSide: { quickLabel: "Արագ հղումներ" },
       modeLabel: "Ռեժիմ",
@@ -465,11 +465,11 @@ module.exports = {
           farmer: "Farm Score և ստուգված նշան",
           supplier: "Նախապես վաճառք և pre-offer",
         },
-        badgesLabel: "Ինչու Խնտոր",
+        badgesLabel: "Ինչու Խնձոր",
         badges: {
           verified: "Ստուգված ֆերմաներ",
           amd: "Գներ դրամով",
-          exclusive: "Միայն Խնտորում",
+          exclusive: "Միայն Խնձորում",
         },
         ctaPrimary: "Ավելացնել հայտարարություն",
         ctaListings: "Դիտել շուկան",
@@ -480,11 +480,11 @@ module.exports = {
         items: {
           community: "Գյուղի մասշտաբի գործիքներ — ոչ պարզապես հայտարարություններ",
           prices: "Թափանցիկ գներ դրամով և խմբային խնայողություն",
-          exclusive: "Farm OS միայն Խնտորում",
+          exclusive: "Farm OS միայն Խնձորում",
         },
       },
       featureBanners: {
-        exclusive: "Միայն Խնտորում",
+        exclusive: "Միայն Խնձորում",
         ctaLearnMore: "Իմանել ավելին",
         sectionLabel: "Հարթակի հնարավորություններ",
         solve: {
@@ -569,7 +569,7 @@ module.exports = {
         brand: "Xndzor Group",
         headline: "Գնեք դիզել, սերմ և կեր միասին",
         lede: "Գործարանները մեկ գին են տալիս ամբողջ գյուղի համար։",
-        exclusive: "Խմբային գին միայն Խնտորում",
+        exclusive: "Խմբային գին միայն Խնձորում",
         cta: "Միացել քամփեյնին",
         ctaLearnMore: "Ինչպես է աշխատում",
         ctaSecondary: "Բաց քամփեյններ",

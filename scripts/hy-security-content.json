@@ -1,89 +1,89 @@
 {
   "title": "Անվտանգություն",
   "introTitle": "Ձեր անվտանգությունը մեր առաջնահերթությունն է",
-  "introBody": "Xndzor-ը լուրջ է վերաբերվում օգտատերերի անվտանգությանը։ Մենք պաշտպանում ենք ձեր տվյալները և օգնում անվտանգ գործarքներ կատarել գyuaatntesakan շուկayում։",
-  "tipsHeading": "Անվտanգutyan xorhurdner",
+  "introBody": "Խնձորը լուրջ է վերաբերվում օգտատերերի անվտանգությանը։ Մենք պաշտպանում ենք ձեր տվյալները և օգնում անվտանգ գործարքներ կատարել գյուղատնտեսական շուկայում։",
+  "tipsHeading": "Անվտանգության խորհուրդներ",
   "tips": [
     {
       "icon": "🔒",
-      "title": "Պաշտպanեք ձer hasivy",
+      "title": "Պաշտպանեք ձեր հաշիվը",
       "items": [
-        "Օgtagorseq ushegh ev ezaki gaxtnabar — arnvazan 10 nish, tarer ev tvanner։",
-        "Erbek mi bajanel gaxtnabary urishneri het։",
-        "Kanonyar poxeq gaxtnabary, hatkaphes kaskaceli mutqic heto։",
-        "Sxal mutqic heto hasivy jamanavorapes argelapakvum e (8 pordz / 15 rope)։"
+        "Օգտագործեք ուժեղ և եզակի գաղտնաբառ — առնվազն 10 նիշ, տառեր և թվեր։",
+        "Երբեք մի կիսվեք գաղտնաբառը ուրիշների հետ։",
+        "Կանոնավոր փոխեք գաղտնաբառը, հատկապես կասկածելի մուտքից հետո։",
+        "Սխալ մուտքից հետո հաշիվը ժամանակավորապես արգելափակվում է (8 փորձ / 15 րոպե)։"
       ]
     },
     {
       "icon": "🤝",
-      "title": "Anvtanq handipumner",
+      "title": "Անվտանգ հանդիպումներ",
       "items": [
-        "Handipeq miayn hanrayin vayrerum — shuka, srjaran, gyuxi kentron։",
-        "Teghkacreq ynkernerin kam entanikin dzer masin ev hascen։",
-        "Vstah eq dzer intuicinayin — yete inchvor ban kaskaceli e, hrazharveq։",
-        "Gyuxatntesakan gorcarqneri ev texnikayi ditman hamar vercneq inchvor mekin dzez het։"
+        "Հանդիպեք միայն հանրային վայրերում — շուկա, սրճարան, գյուղի կենտրոն։",
+        "Տեղեկացրեք ընկերներին կամ ընտանիքին՝ որտեղ եք և երբ եք վերադառնալու։",
+        "Վստահեք ձեր ինտուիցիային — եթե ինչ-որ բան կասկածելի է, հեռացեք։",
+        "Գյուղատնտեսական գործարքների և տեխնիկայի դիտման համար հնարավորության դեպքում վերցրեք ինչ-որ մեկին ձեզ հետ։"
       ]
     },
     {
       "icon": "💳",
-      "title": "Anvtanq vcharumner",
+      "title": "Անվտանգ վճարումներ",
       "items": [
-        "Erbek mi poxanceq gumar arajapes anzanot mardkanc։",
-        "TOP ev Pro patetneri hamar ogtagorseq Stripe-i anvtanq vcharum@ hartaki mijocov։",
-        "Stugeq apranq@, kendanin kam texnikan naxkanc vchar@։",
-        "Khusap eq anhayt dramapanakneric ev anvtanq poxanarjumneric։",
-        "Nakhapes nakhavely tvaleq Farm Passport-ov stugvats vacharoghnerin։"
+        "Երբեք մի փոխանցեք գումար նախապես անծանոթ մարդկանց։",
+        "TOP և Pro փաթեթների համար օգտագործեք Stripe-ի անվտանգ վճարումը հարթակի միջոցով։",
+        "Ստուգեք ապրանքը, կենդանին կամ տեխնիկան նախքան վճարելը։",
+        "Խուսափեք անհայտ դրամապանակներից և անվտանգ փոխանցումներից։",
+        "Նախընտրեք Farm Passport-ով ստուգված վաճառողներին։"
       ]
     },
     {
       "icon": "🔍",
-      "title": "Zgushac eq xabeutyunneric",
+      "title": "Զգուշացեք խաբեություններից",
       "items": [
-        "Zgushac eq chapazanc lav arajarkneric — yete havanakan che, havatabar xabeutyun e։",
-        "Stugeq vacharoghi Farm Score-@, andznagiry ev nakhord haytararutyunner@։",
-        "Mi vstah eq miayn heraxosayin «stugman@» aranc hartaki profili։",
-        "Kaskaceli haytararutyunner@ haghord eq «Haghordel» kochak@ kam Kap bajnum։"
+        "Զգուշացեք չափազանց լավ առաջարկներից — եթե չափազանց լավ է թվում, հավանաբար խաբեություն է։",
+        "Ստուգեք վաճառողի Farm Score-ը, անձնագիրը և նախորդ հայտարարությունները։",
+        "Մի վստահեք միայն հեռախոսային «ստուգմանը»՝ առանց հարթակի պրոֆիլի։",
+        "Կասկածելի հայտարարությունները հաղորդեք «Հաղորդել» կոճակով կամ Կապ բաժնում։"
       ]
     },
     {
       "icon": "📱",
-      "title": "Andznakan tvjalner",
+      "title": "Անձնական տվյալներ",
       "items": [
-        "Mi teq aveli shat teghakutyun, qan anhrajesht e gorcarqi hamar։",
-        "Zruycum mi bajanel bankayin tvjalner ev qarti tvjalner։",
-        "Ogtagorseq hartaki kap@ ev WhatsApp-@ haytararutyan mijocov։",
-        "Zgushac eq, vor dzez email-ov gaxtnabar chen xntum — Xndzor.com-@ erbeq chi xntum gaxtnabar email-ov։"
+        "Տվեք միայն այն տեղեկությունը, որն անհրաժեշտ է գործարքի համար։",
+        "Զրույցում մի կիսվեք բանկային տվյալներ և քարտի տվյալներ։",
+        "Օգտագործեք հարթակի կապը և WhatsApp-ը հայտարարության միջոցով։",
+        "Զգուշացեք ֆիշինգից — Xndzor.com-ը երբեք չի խնդրի գաղտնաբառ էլ. փոստով։"
       ]
     },
     {
       "icon": "⚠️",
-      "title": "Haytne q kaxtumneri masin",
+      "title": "Հայտնեք խախտումների մասին",
       "items": [
-        "Haghord eq kaskaceli, keghdz kam anorinakan haytararutyunneri masin։",
-        "Ogtagorseq «Haghordel haytararutyun@» kochak@ haytararutyan ejum։",
-        "Lurj kaxtumneri depkum kapveq ajakcutyani het anmijapes։",
-        "Ogn eq pahpanel hamayk@ anvtanq — dzer haghordagrutyun@ karevor e։"
+        "Հաղորդեք կասկածելի, կեղծ կամ արգելված հայտարարությունների մասին։",
+        "Օգտագործեք «Հաղորդել հայտարարությունը» կոճակը հայտարարության էջում։",
+        "Լուրջ խախտումների դեպքում կապվեք աջակցության հետ անմիջապես։",
+        "Օգնեք պահպանել համայնքը անվտանգ — ձեր հաղորդումը կարևոր է։"
       ]
     }
   ],
   "dataProtection": {
-    "title": "Tvjalneri pashtpanutyun",
+    "title": "Տվյալների պաշտպանություն",
     "body": [
-      "Kayq@ ashxatum e apahov kapov (HTTPS) — dzer teghekatvutyun@ poxancvum e kodavorvats dzevov։",
-      "Gaxtnabanner@ pahvum en hatuk kodavorumamb — menq dzer gaxtnabary tesnel chenq karox։",
-      "Mutqi hamar ogtagorcvogh teghekatvutyun@ pashtpanvac e, vorpeszi ayl kayqer chkaroxanan ayn ogtagortsel։",
-      "Qartov vcharum@ katarvum e Stripe-i anvtanq ejov — qarti hamar@ mer mot chi pahvum։",
-      "Andznakan tvjalner@ chenq taradzum errord kogmneri het aranc dzer tuyultvutyan։"
+      "Կայքը աշխատում է ապահով կապով (HTTPS) — ձեր տեղեկությունը փոխանցվում է կոդավորված ձևով։",
+      "Գաղտնաբառերը պահվում են հատուկ կոդավորմամբ — մենք ձեր գաղտնաբառը տեսնել չենք կարող։",
+      "Մուտքի համար օգտագործվող տեղեկությունը պաշտպանված է, որպեսզի այլ կայքեր չկարողանան այն օգտագործել։",
+      "Քարտով վճարումը կատարվում է Stripe-ի անվտանգ էջում — քարտի համարը մեր մոտ չի պահվում։",
+      "Անձնական տվյալները չենք կիսում երրորդ կողմերի հետ առանց ձեր թույլտվության։"
     ],
-    "learnMore": "Avelin imac eq",
-    "privacyLink": "Gaghtniutyan qaghakakanutyun",
-    "termsLink": "Ogtagorcman paymanner"
+    "learnMore": "Ավելին իմացեք",
+    "privacyLink": "Գաղտնիության քաղաքականություն",
+    "termsLink": "Օգտագործման պայմաններ"
   },
   "cta": {
-    "title": "Khndir uneq?",
-    "body": "Yet e handipeq xabeutyan, kaskaceli haytararutyan kam texnikakan khndri — kapveq mez anmijapes։",
-    "button": "Zekuycel khndri masin",
-    "mailSubject": "Xndzor.com — anvtanqutyan haghordagrutyun",
-    "mailBody": "Barev,\n\nEs uzum em haghordagrutyun anvtanqutyan khndri masin Xndzor.com-um.\n\n[nkaragreq khndiry]\n\n---\n{email}"
+    "title": "Խնդիր ունե՞ք",
+    "body": "Եթե հանդիպել եք խաբեության, կասկածելի հայտարարության կամ տեխնիկական խնդրի — կապվեք մեզ անմիջապես։",
+    "button": "Զեկուցել խնդրի մասին",
+    "mailSubject": "Xndzor.com — անվտանգության հաղորդագրություն",
+    "mailBody": "Բարև,\n\nԵս ուզում եմ հաղորդել անվտանգության խնդրի մասին Xndzor.com-ում.\n\n[նկարագրեք խնդիրը]\n\n---\n{email}"
   }
 }
