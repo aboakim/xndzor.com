@@ -1,16 +1,22 @@
 import type { MetadataRoute } from "next";
+import { resolveSiteUrl } from "@/lib/site-url";
 
-const siteUrl =
-  process.env.NEXTAUTH_URL?.replace(/\/$/, "") ||
-  process.env.AUTH_URL?.replace(/\/$/, "") ||
-  "http://localhost:3000";
+const siteUrl = resolveSiteUrl();
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/hy/account/", "/ru/account/", "/en/account/", "/hy/admin/", "/ru/admin/", "/en/admin/"],
+      disallow: [
+        "/api/",
+        "/hy/account/",
+        "/ru/account/",
+        "/en/account/",
+        "/hy/admin/",
+        "/ru/admin/",
+        "/en/admin/",
+      ],
     },
     sitemap: `${siteUrl}/sitemap.xml`,
     host: siteUrl,

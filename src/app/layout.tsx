@@ -8,32 +8,11 @@ import {
 } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { resolveSiteUrl } from "@/lib/site-url";
 import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 /* Load after globals so dark tokens/overrides beat later :root and component colors */
 import "./theme-dark.css";
-
-/** Canonical production origin — required for absolute og:image URLs. */
-const PRODUCTION_SITE_URL = "https://www.xndzor.com";
-
-function resolveSiteUrl(): string {
-  const raw =
-    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-    process.env.NEXTAUTH_URL?.replace(/\/$/, "") ||
-    process.env.AUTH_URL?.replace(/\/$/, "") ||
-    (process.env.VERCEL_ENV === "production" ? PRODUCTION_SITE_URL : null) ||
-    PRODUCTION_SITE_URL;
-  try {
-    const origin = new URL(raw).origin;
-    // Localhost metadataBase breaks social crawlers; prefer production canonical.
-    if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
-      return PRODUCTION_SITE_URL;
-    }
-    return origin;
-  } catch {
-    return PRODUCTION_SITE_URL;
-  }
-}
 
 const siteUrl = resolveSiteUrl();
 const ogImage = {
@@ -78,11 +57,11 @@ const sans = Noto_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Խնձոր — գյուղատնտեսական շուկա",
+    default: "Խնձոր (Xndzor) — գյուղատնտեսական շուկա | xndzor.com",
     template: "%s · Խնձոր",
   },
   description:
-    "Ի՞նչ աճեցնել Հայաստանում՝ ըստ պահանջարկի։ Հողամաս, ապագա բերք, գերտրամադրության ազդանշան, նախնական վաճառք և ֆերմերի շուկա։",
+    "Խնձոր (Xndzor, xndzor.com) — Հայաստանի գյուղատնտեսական շուկա։ Ի՞նչ աճեցնել՝ ըստ պահանջարկի։ Հողամաս, ապագա բերք, գերտրամադրության ազդանշան, նախնական վաճառք և ֆերմերի շուկա։",
   applicationName: "Խնձոր",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
@@ -94,14 +73,25 @@ export const metadata: Metadata = {
     "Խնձոր",
     "Xndzor",
     "xndzor.com",
+    "www.xndzor.com",
     "Հայաստան",
     "ֆերմեր",
     "բերք",
     "պահանջարկ",
     "գյուղատնտեսություն",
     "գյուղատնտեսական շուկա",
+    "Armenia agriculture marketplace",
   ],
-  authors: [{ name: "Xndzor" }],
+  authors: [{ name: "Xndzor", url: siteUrl }],
+  alternates: {
+    canonical: siteUrl,
+    languages: {
+      hy: `${siteUrl}/hy`,
+      ru: `${siteUrl}/ru`,
+      en: `${siteUrl}/en`,
+      "x-default": `${siteUrl}/hy`,
+    },
+  },
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
@@ -117,23 +107,27 @@ export const metadata: Metadata = {
     type: "website",
     locale: "hy_AM",
     alternateLocale: ["ru_RU", "en_US"],
-    url: siteUrl,
+    url: `${siteUrl}/hy`,
     siteName: "Խնձոր · Xndzor",
-    title: "Խնձոր — գյուղատնտեսական շուկա",
+    title: "Խնձոր (Xndzor) — գյուղատնտեսական շուկա | xndzor.com",
     description:
-      "Ի՞նչ աճեցնել՝ ըստ պահանջարկի։ Հողամաս → ազդանշան → նախնական վաճառք։ Հայաստանի ֆերմերների համար։",
+      "Խնձոր — xndzor.com։ Ի՞նչ աճեցնել՝ ըստ պահանջարկի։ Հողամաս → ազդանշան → նախնական վաճառք։ Հայաստանի ֆերմերների համար։",
     images: [ogImage],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Խնձոր — Xndzor",
+    title: "Խնձոր — Xndzor | xndzor.com",
     description:
-      "What to grow by demand. Plots, harvest, machinery, jobs — Armenia's agricultural marketplace.",
+      "Xndzor (xndzor.com) — what to grow by demand. Plots, harvest, machinery, jobs — Armenia's agricultural marketplace.",
     images: [ogImage.url],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
   },
 };
 

@@ -1,9 +1,7 @@
 import type { MetadataRoute } from "next";
+import { resolveSiteUrl } from "@/lib/site-url";
 
-const siteUrl =
-  process.env.NEXTAUTH_URL?.replace(/\/$/, "") ||
-  process.env.AUTH_URL?.replace(/\/$/, "") ||
-  "http://localhost:3000";
+const siteUrl = resolveSiteUrl();
 
 const locales = ["hy", "ru", "en"] as const;
 
@@ -21,11 +19,19 @@ const paths = [
   "/jobs",
   "/auth/register",
   "/auth/login",
-];
+] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [];
   const now = new Date();
+
+  // Apex / www root (redirects to default locale)
+  entries.push({
+    url: siteUrl,
+    lastModified: now,
+    changeFrequency: "daily",
+    priority: 1,
+  });
 
   for (const locale of locales) {
     for (const path of paths) {
@@ -33,7 +39,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
         url: `${siteUrl}/${locale}${path}`,
         lastModified: now,
         changeFrequency: path === "" || path === "/grow" ? "daily" : "weekly",
-        priority: path === "" ? 1 : path === "/grow" || path === "/pricing" ? 0.9 : 0.7,
+        priority:
+          path === ""
+            ? locale === "hy"
+              ? 1
+              : 0.95
+            : path === "/grow" || path === "/pricing"
+              ? 0.9
+              : 0.7,
       });
     }
   }
