@@ -136,7 +136,7 @@
       "landShop": "Land",
       "hire": "Hire",
       "jobTypes": "Job types",
-      "groupBuyLinks": "Campaigns",
+      "groupBuyLinks": "Group buys",
       "farmOs": "Farm OS",
       "farmVillage": "Village",
       "trust": "Trust",
@@ -193,7 +193,7 @@
       "plow": "Plow",
       "spray": "Spray",
       "transport": "Transport",
-      "openCampaigns": "Open campaigns",
+      "openCampaigns": "Open group buys",
       "groupBuyAbout": "How it works",
       "farmHub": "My farm",
       "farmRisks": "Tomorrow’s dangers",
@@ -370,7 +370,7 @@
     "groupBuy": {
       "emoji": "📦",
       "title": "Group buy",
-      "desc": "Join a campaign, pool quantity, get a quote"
+      "desc": "Join a group buy, pool quantity, get a quote"
     }
   },
   "pillars": {
@@ -569,8 +569,8 @@
   },
   "groupBuy": {
     "title": "Group buy",
-    "lede": "Join a campaign, pool quantity, get a supplier quote. Payment offline.",
-    "empty": "No open campaigns",
+    "lede": "Join a group buy, pool quantity, get a supplier quote. Payment offline.",
+    "empty": "No open group buys",
     "progress": "{joined} / {target} {unit}",
     "participants": "participants",
     "supplier": "Supplier",
@@ -582,7 +582,7 @@
       "badge": "Group buy",
       "eyebrow": "Buy together",
       "title": "Group buy — cheaper together",
-      "lede": "Join a campaign, pool quantity, get a supplier quote. Pay offline.",
+      "lede": "Join a group buy, pool quantity, get a supplier quote. Pay offline.",
       "whatTitle": "What is it?",
       "whatBody": [
         "Neighbors join the same purchase — diesel, seed, feed or inputs.",
@@ -592,7 +592,7 @@
       "howTitle": "How it works",
       "steps": [
         {
-          "title": "Open a campaign",
+          "title": "Open a group buy",
           "body": "Pick product, target qty and unit price hint."
         },
         {
@@ -635,13 +635,13 @@
         },
         {
           "q": "What if the target is not met?",
-          "a": "The campaign stays open or closes without obligation."
+          "a": "The group buy stays open or closes without obligation."
         }
       ],
       "ctaTitle": "Ready to join?",
-      "ctaLede": "See open campaigns or start with neighbors.",
-      "ctaOffers": "Open campaigns",
-      "ctaJoin": "Join a campaign"
+      "ctaLede": "See open group buys or start with neighbors.",
+      "ctaOffers": "Open group buys",
+      "ctaJoin": "Join a group buy"
     }
   },
   "detail": {
@@ -2182,9 +2182,9 @@
       "headline": "Buy diesel, seed, and feed together",
       "lede": "Factories quote one price for the whole village.",
       "exclusive": "Exclusive group pricing on Xndzor",
-      "cta": "Join a campaign",
+      "cta": "Join a group buy",
       "ctaLearnMore": "How it works",
-      "ctaSecondary": "Browse open campaigns",
+      "ctaSecondary": "Browse open group buys",
       "soloLabel": "Solo",
       "groupLabel": "Group",
       "perFarm": "per farm",

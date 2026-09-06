@@ -29,7 +29,7 @@ export async function POST(req: Request) {
       where: { id: parsed.data.campaignId },
     });
     if (!campaign || campaign.status !== "OPEN") {
-      return NextResponse.json({ error: "Campaign closed" }, { status: 400 });
+      return NextResponse.json({ error: "Group buy closed" }, { status: 400 });
     }
     const join = await prisma.groupBuyJoin.upsert({
       where: {
