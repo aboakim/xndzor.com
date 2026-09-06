@@ -6,6 +6,8 @@ import {
   Noto_Serif,
   Noto_Serif_Armenian,
 } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 function resolveSiteUrl(): string {
@@ -120,6 +122,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         className={`${displayHy.variable} ${displayLat.variable} ${sansHy.variable} ${sans.variable}`}
       >
         {children}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
