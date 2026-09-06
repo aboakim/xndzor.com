@@ -1,4 +1,4 @@
-# Xndzor.com — production image (Next.js standalone + Prisma SQLite)
+# Xndzor.com — production image (Next.js standalone + Prisma Postgres)
 # Build: docker compose build
 # Run:   docker compose up -d
 
@@ -17,9 +17,9 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 ENV DOCKER_BUILD=1
-# Placeholder URL for generate; real DB is created at container start.
-ENV DATABASE_URL="file:/data/prod.db"
-RUN npx prisma generate
+# Placeholder for prisma generate (real URL comes from compose at runtime).
+# db-prepare soft-fails when Postgres is unreachable during image build.
+ENV DATABASE_URL="postgresql://xndzor:xndzor@127.0.0.1:5432/xndzor"
 RUN npm run build
 
 FROM node:20-alpine AS runner
@@ -30,12 +30,11 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
-ENV DATABASE_URL="file:/data/prod.db"
 
 RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs \
-  && mkdir -p /data /app/public/uploads \
-  && chown -R nextjs:nodejs /data /app
+  && mkdir -p /app/public/uploads \
+  && chown -R nextjs:nodejs /app
 
 # Standalone server
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
@@ -55,6 +54,6 @@ RUN chmod +x ./docker-entrypoint.sh
 USER nextjs
 EXPOSE 3000
 
-VOLUME ["/data", "/app/public/uploads"]
+VOLUME ["/app/public/uploads"]
 
 ENTRYPOINT ["sh", "./docker-entrypoint.sh"]

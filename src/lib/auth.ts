@@ -47,31 +47,39 @@ export const authOptions: any = {
         const failKey = `auth:${email}`;
         if (isLocked(failKey).locked) return null;
 
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (!user) {
-          recordAuthFailure(failKey);
+        try {
+          const user = await prisma.user.findUnique({ where: { email } });
+          if (!user) {
+            recordAuthFailure(failKey);
+            return null;
+          }
+
+          if (user.suspended) {
+            recordAuthFailure(failKey);
+            return null;
+          }
+
+          const ok = await bcrypt.compare(String(credentials.password), user.passwordHash);
+          if (!ok) {
+            recordAuthFailure(failKey);
+            return null;
+          }
+
+          clearAuthFailures(failKey);
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            isAdmin: user.role === "ADMIN" || isAdminEmail(user.email),
+          };
+        } catch (error) {
+          console.error(
+            "[Xndzor] authorize DB error",
+            error instanceof Error ? error.message : error,
+          );
           return null;
         }
-
-        if (user.suspended) {
-          recordAuthFailure(failKey);
-          return null;
-        }
-
-        const ok = await bcrypt.compare(String(credentials.password), user.passwordHash);
-        if (!ok) {
-          recordAuthFailure(failKey);
-          return null;
-        }
-
-        clearAuthFailures(failKey);
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          isAdmin: user.role === "ADMIN" || isAdminEmail(user.email),
-        };
       },
     }),
   ],
@@ -90,14 +98,21 @@ export const authOptions: any = {
         token.isAdmin = user.isAdmin;
       } else if (token.id) {
         // Refresh role/admin flag so promotion takes effect without re-login
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { role: true, email: true },
-        });
-        if (dbUser) {
-          token.role = dbUser.role;
-          token.isAdmin =
-            dbUser.role === "ADMIN" || isAdminEmail(dbUser.email);
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: { role: true, email: true },
+          });
+          if (dbUser) {
+            token.role = dbUser.role;
+            token.isAdmin =
+              dbUser.role === "ADMIN" || isAdminEmail(dbUser.email);
+          }
+        } catch (error) {
+          console.error(
+            "[Xndzor] jwt callback DB error — using token claims",
+            error instanceof Error ? error.message : error,
+          );
         }
       }
       return token;
@@ -106,15 +121,24 @@ export const authOptions: any = {
     async session({ session, token }: any) {
       if (session.user && token.id) {
         session.user.id = token.id as string;
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { role: true, email: true },
-        });
-        if (dbUser) {
-          session.user.role = dbUser.role;
-          session.user.isAdmin =
-            dbUser.role === "ADMIN" || isAdminEmail(dbUser.email);
-        } else {
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: { role: true, email: true },
+          });
+          if (dbUser) {
+            session.user.role = dbUser.role;
+            session.user.isAdmin =
+              dbUser.role === "ADMIN" || isAdminEmail(dbUser.email);
+          } else {
+            session.user.role = token.role as string | undefined;
+            session.user.isAdmin = Boolean(token.isAdmin);
+          }
+        } catch (error) {
+          console.error(
+            "[Xndzor] session callback DB error — using token claims",
+            error instanceof Error ? error.message : error,
+          );
           session.user.role = token.role as string | undefined;
           session.user.isAdmin = Boolean(token.isAdmin);
         }

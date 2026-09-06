@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { arePackagesFree } from "@/lib/pricing";
+import { safeQuery } from "@/lib/safe-query";
 
 export type EarlyBirdStats = {
   totalRegistered: number;
@@ -31,22 +32,33 @@ export function isEarlyBirdEnabled(): boolean {
 export async function backfillEarlyBirdFlagsIfNeeded(): Promise<void> {
   if (backfillDone || !isEarlyBirdEnabled()) return;
   const limit = getEarlyBirdFreeLimit();
-  const flagged = await prisma.user.count({ where: { earlyBirdFree: true } });
-  const total = await prisma.user.count();
+  const flagged = await safeQuery(
+    () => prisma.user.count({ where: { earlyBirdFree: true } }),
+    0,
+  );
+  const total = await safeQuery(() => prisma.user.count(), 0);
   if (flagged >= Math.min(total, limit)) {
     backfillDone = true;
     return;
   }
-  const oldest = await prisma.user.findMany({
-    orderBy: { createdAt: "asc" },
-    take: limit,
-    select: { id: true },
-  });
+  const oldest = await safeQuery(
+    () =>
+      prisma.user.findMany({
+        orderBy: { createdAt: "asc" },
+        take: limit,
+        select: { id: true },
+      }),
+    [],
+  );
   if (oldest.length > 0) {
-    await prisma.user.updateMany({
-      where: { id: { in: oldest.map((u) => u.id) } },
-      data: { earlyBirdFree: true },
-    });
+    await safeQuery(
+      () =>
+        prisma.user.updateMany({
+          where: { id: { in: oldest.map((u) => u.id) } },
+          data: { earlyBirdFree: true },
+        }),
+      { count: 0 },
+    );
   }
   backfillDone = true;
 }
@@ -64,8 +76,8 @@ export async function getEarlyBirdStats(): Promise<EarlyBirdStats> {
   }
   await backfillEarlyBirdFlagsIfNeeded();
   const [totalRegistered, earlyBirdClaimed] = await Promise.all([
-    prisma.user.count(),
-    prisma.user.count({ where: { earlyBirdFree: true } }),
+    safeQuery(() => prisma.user.count(), 0),
+    safeQuery(() => prisma.user.count({ where: { earlyBirdFree: true } }), 0),
   ]);
   const remaining = Math.max(0, freeLimit - totalRegistered);
   return {
@@ -92,10 +104,14 @@ export async function userQualifiesForFreePackages(
   if (arePackagesFree()) return true;
   if (!userId || !isEarlyBirdEnabled()) return false;
   await backfillEarlyBirdFlagsIfNeeded();
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { earlyBirdFree: true },
-  });
+  const user = await safeQuery(
+    () =>
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: { earlyBirdFree: true },
+      }),
+    null,
+  );
   return Boolean(user?.earlyBirdFree);
 }
 
@@ -122,10 +138,14 @@ export async function getEarlyBirdUserContext(
   let earlyBirdFree = false;
   if (userId) {
     await backfillEarlyBirdFlagsIfNeeded();
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { earlyBirdFree: true },
-    });
+    const user = await safeQuery(
+      () =>
+        prisma.user.findUnique({
+          where: { id: userId },
+          select: { earlyBirdFree: true },
+        }),
+      null,
+    );
     earlyBirdFree = Boolean(user?.earlyBirdFree);
   }
   return { earlyBirdFree, stats, showFreePricing, checkoutFree };

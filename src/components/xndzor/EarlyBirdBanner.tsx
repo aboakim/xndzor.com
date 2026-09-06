@@ -10,22 +10,30 @@ type Props = {
 export async function EarlyBirdBanner({ variant = "hero" }: Props) {
   if (arePackagesFree()) return null;
 
-  const session = await getSession();
-  const ctx = await getEarlyBirdUserContext(session?.user?.id);
+  try {
+    const session = await getSession();
+    const ctx = await getEarlyBirdUserContext(session?.user?.id);
 
-  if (ctx.stats.freeLimit <= 0) return null;
+    if (ctx.stats.freeLimit <= 0) return null;
 
-  const initial = {
-    totalRegistered: ctx.stats.totalRegistered,
-    freeLimit: ctx.stats.freeLimit,
-    remaining: ctx.stats.remaining,
-    slotsFull: ctx.stats.slotsFull,
-    earlyBirdEnabled: true,
-    packagesFreeOverride: false,
-    showFreePricing: ctx.showFreePricing,
-    userEarlyBirdFree: ctx.earlyBirdFree,
-    userCheckoutFree: ctx.checkoutFree,
-  };
+    const initial = {
+      totalRegistered: ctx.stats.totalRegistered,
+      freeLimit: ctx.stats.freeLimit,
+      remaining: ctx.stats.remaining,
+      slotsFull: ctx.stats.slotsFull,
+      earlyBirdEnabled: true,
+      packagesFreeOverride: false,
+      showFreePricing: ctx.showFreePricing,
+      userEarlyBirdFree: ctx.earlyBirdFree,
+      userCheckoutFree: ctx.checkoutFree,
+    };
 
-  return <EarlyBirdBannerClient initial={initial} variant={variant} />;
+    return <EarlyBirdBannerClient initial={initial} variant={variant} />;
+  } catch (error) {
+    console.error(
+      "[Xndzor] EarlyBirdBanner skipped",
+      error instanceof Error ? error.message : error,
+    );
+    return null;
+  }
 }

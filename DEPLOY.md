@@ -1,148 +1,63 @@
-# Հրապարակում / Deploy — Xndzor.com (Խնձոր․քոմ)
+# Deploy — Xndzor.com (Խնձոր․քոմ)
 
-Քայլ առ քայլ՝ սեփական դոմեյնով կայքը օդ բացելու համար։
+## Recommended: Vercel + Neon Postgres
 
-**Ընտրված ուղի:** VPS + Docker (`Dockerfile` + `docker-compose.yml`) + **SQLite** ծավալի վրա։  
-Պատճառը՝ մեկ հիմնադիրի համար ամենապարզն է՝ ցանկացած հոսթում (Hetzner, DigitalOcean, տեղական VPS), սեփական `.am` դոմեյն, առանց Neon/Postgres-ի պարտադիր տեղափոխման։
+SQLite (`file:./dev.db`) **does not work** on Vercel serverless — no durable writable disk.
+Use **PostgreSQL** (Neon free tier or Vercel Postgres).
 
----
+### 1. Create a Neon database
 
-## 1. Գնեք դոմեյն
+1. Sign up at [neon.tech](https://neon.tech) → create project **xndzor**
+2. Copy the **connection string** (prefer pooled / `-pooler` host for serverless)
+3. It looks like:
+   `postgresql://USER:PASSWORD@ep-….aws.neon.tech/neondb?sslmode=require`
 
-Օրինակ՝ [amnic.am](https://www.amnic.am) կամ այլ ռեգիստրատոր — `yourfarm.am` / `farmos.am`։  
-Պահեք մուտքի տվյալները DNS կառավարման համար։
+### 2. Vercel environment variables
 
----
+In [Vercel → Project → Settings → Environment Variables](https://vercel.com) set for **Production**:
 
-## 2. Հոսթինգ (VPS)
+| Variable | Value |
+|----------|--------|
+| `DATABASE_URL` | Neon connection string from step 1 |
+| `NEXTAUTH_URL` | `https://www.xndzor.com` (apex redirects to www) |
+| `AUTH_URL` | same as `NEXTAUTH_URL` |
+| `NEXTAUTH_SECRET` / `AUTH_SECRET` | long random secret |
+| `ADMIN_EMAIL` | your admin email |
 
-1. Վարձեք VPS (Ubuntu 22.04+, ~1–2 GB RAM բավարար է սկզբի համար)։
-2. Տեղադրեք Docker + Compose:
-   ```bash
-   curl -fsSL https://get.docker.com | sh
-   ```
-3. Կլոնավորեք/պատճենեք նախագիծը սերվերում։
-4. Պատրաստեք `.env` (տես բաժին 3)։
-5. Գործարկեք՝
-   ```bash
-   docker compose up -d --build
-   ```
-6. Ստուգեք՝ `http://SERVER_IP:3000/hy`
+Redeploy after saving env vars. Build runs `prisma db push` when `DATABASE_URL` is Postgres.
 
-**TLS (HTTPS):** առաջարկվում է Caddy կամ nginx + Let’s Encrypt, կամ Cloudflare Proxy։  
-Օրինակ Caddyfile՝
+### 3. Optional seed
 
-```
-yourfarm.am {
-  reverse_proxy localhost:3000
-}
-```
-
-> Այլընտրանք (Vercel + Postgres)՝ հնարավոր է ավելի ուշ։ Այս թողարկման համար Docker+SQLite-ն է պաշտոնական ուղին։ Մանրամասն՝ README «Հրապարակում»։
-
----
-
-## 3. Environment փոփոխականներ
-
-Պատճենեք `.env.example` → `.env` և լրացրեք՝
-
-| Փոփոխական | Արժեք |
-|-----------|--------|
-| `NEXTAUTH_URL` / `AUTH_URL` | `https://yourfarm.am` |
-| `NEXTAUTH_SECRET` / `AUTH_SECRET` | երկար պատահական գաղտնաբառ (տես `.env.example`) |
-| `DATABASE_URL` | Compose-ում ավտոմատ՝ `file:/data/prod.db` |
-| `ADMIN_EMAIL` | ձեր էլ․ հասցեն (ադմին վահանակ) |
-| `STRIPE_*` | **Production-ում պարտադիր** իրական վճարումների համար (տես `PAYMENTS.md`) |
-
-Գեներացնել գաղտնիք՝
+From your machine (with the same `DATABASE_URL`):
 
 ```bash
-node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
+npx prisma db push
+npm run db:seed:minimal
+# or full demo: npm run db:seed
 ```
 
----
+Without seed the site shows an **empty marketplace** (no 500).
 
-## 4. DNS գրառումներ
+### 4. Auth URL note
 
-Եթե VPS IP-ն է `A.B.C.D`՝
-
-| Տեսակ | Անուն | Արժեք |
-|-------|--------|--------|
-| **A** | `@` | `A.B.C.D` |
-| **A** կամ **CNAME** | `www` | նույն IP կամ `@` |
-
-Cloudflare օգտագործելիս Proxy-ն կարող է տալ ավտոմատ HTTPS։  
-Սպասեք DNS տարածմանը (րոպեներ–ժամեր)։
+Use **`https://www.xndzor.com`** if DNS redirects apex → www. A mismatch can break login redirects; it does **not** cause the homepage 500 (that was the missing Postgres DB).
 
 ---
 
-## 5. Stripe webhook
-
-**Մանրամասն հրահանգներ՝ `PAYMENTS.md`**
-
-Երբ պատրաստ եք իրական վճարումների՝
-
-1. [Stripe Dashboard](https://dashboard.stripe.com) → Developers → Webhooks → Add endpoint  
-2. URL՝ **`https://YOUR_DOMAIN/api/checkout/webhook`**  
-3. Events՝ `checkout.session.completed`, `payment_intent.succeeded`, `payment_intent.payment_failed`, `customer.subscription.*`, `invoice.paid`  
-4. Signing secret → `STRIPE_WEBHOOK_SECRET`  
-5. `STRIPE_SECRET_KEY` + `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`  
-6. Վերագործարկեք՝ `docker compose up -d`
-
-**Local թեստ:**
+## Alternative: VPS + Docker + Postgres
 
 ```bash
-stripe listen --forward-to localhost:3000/api/checkout/webhook
+cp .env.example .env
+# NEXTAUTH_URL=https://www.xndzor.com + secrets
+docker compose up -d --build
 ```
 
-**Production-ում** Stripe բանալիները պարտադիր են — դեմո checkout-ը աշխատում է միայն local dev-ում (բանալիներ չլինելիս)։  
-Գումարը հասնում է **ձեր Stripe հաշվին** → Dashboard → Payments / Payouts։
+Compose starts Postgres + the app; entrypoint runs `prisma db push`.
+
+TLS: Caddy / nginx / Cloudflare in front of port 3000.
 
 ---
 
-## 6. Առաջին ադմին հաշիվ
+## Stripe webhook
 
-**Առաջարկվող (դատարկ prod):**
-
-1. Բացեք `https://YOUR_DOMAIN/hy/auth/register` և գրանցվեք։  
-2. `.env`-ում դրեք `ADMIN_EMAIL=your@email.com` և վերագործարկեք։  
-3. Կամ SQLite-ում նշանակեք `role = 'ADMIN'` ձեր օգտատիրոջը։  
-4. Բացեք `/hy/admin/earnings`։
-
-**Սերմ (seed)՝ միայն թեստի համար:**
-
-```bash
-# մի գործարկեք հանրային թողարկումից առաջ առանց գաղտնաբառերը փոխելու
-npm run db:seed
-```
-
-Seed-ը ստեղծում է `*@demo.am` հաշիվներ հայտնի գաղտնաբառով — **մի թողեք այդպես հանրայինում**։
-
----
-
-## 7. Գործարկումից առաջ՝ ստուգացանկ
-
-- [ ] `NEXTAUTH_URL` = `https://…` (ոչ `http://localhost`)
-- [ ] Ուժեղ `NEXTAUTH_SECRET` / `AUTH_SECRET`
-- [ ] HTTPS աշխատում է (կանաչ կողպեք)
-- [ ] Գրանցում + մուտք աշխատում են
-- [ ] Seed չի գործարկվել **կամ** դեմո գաղտնաբառերը փոխված են
-- [ ] Stripe բանալիներ (եթե վճարում եք վերցնում) + webhook
-- [ ] Backup՝ Docker volume `farmos_db` (SQLite ֆայլ)
-
----
-
-## Արագ հրամաններ
-
-```bash
-docker compose up -d --build   # կառուցել և գործարկել
-docker compose logs -f app     # լոգեր
-docker compose restart app     # վերագործարկում .env-ից հետո
-docker compose down            # կանգնեցնել (volume-ները մնում են)
-```
-
-Տեղական առանց Docker-ի՝
-
-```bash
-npm install && npx prisma db push && npm run build && npm start
-```
+See `PAYMENTS.md`. Endpoint: `https://YOUR_DOMAIN/api/checkout/webhook`.

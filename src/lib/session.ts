@@ -12,6 +12,14 @@ export type AppSession = {
   };
 };
 
-export function getSession(): Promise<AppSession | null> {
-  return getServerSession(authOptions) as Promise<AppSession | null>;
+export async function getSession(): Promise<AppSession | null> {
+  try {
+    return (await getServerSession(authOptions)) as AppSession | null;
+  } catch (error) {
+    console.error(
+      "[Xndzor] getSession failed — continuing as signed out.",
+      error instanceof Error ? error.message : error,
+    );
+    return null;
+  }
 }

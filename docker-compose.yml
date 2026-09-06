@@ -1,9 +1,25 @@
-# Xndzor.com — VPS deploy (SQLite on volume)
-# 1. Copy .env.example → .env and fill secrets + NEXTAUTH_URL=https://your.domain
+# Xndzor.com — VPS deploy (Postgres)
+# 1. Copy .env.example → .env and fill secrets + NEXTAUTH_URL=https://www.xndzor.com
 # 2. docker compose up -d --build
 # 3. Point DNS A record to this server; terminate TLS (Caddy/nginx/Cloudflare)
 
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: farmos-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: xndzor
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-xndzor}
+      POSTGRES_DB: xndzor
+    volumes:
+      - farmos_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U xndzor -d xndzor"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   app:
     build: .
     container_name: farmos
@@ -13,13 +29,14 @@ services:
       - .env
     environment:
       NODE_ENV: production
-      DATABASE_URL: file:/data/prod.db
-      # Override host .env SQLite path for the container volume
+      DATABASE_URL: postgresql://xndzor:${POSTGRES_PASSWORD:-xndzor}@db:5432/xndzor
       HOSTNAME: 0.0.0.0
       PORT: "3000"
     volumes:
-      - farmos_db:/data
       - farmos_uploads:/app/public/uploads
+    depends_on:
+      db:
+        condition: service_healthy
     restart: unless-stopped
     healthcheck:
       test:
@@ -35,5 +52,5 @@ services:
       start_period: 40s
 
 volumes:
-  farmos_db:
+  farmos_pg:
   farmos_uploads:

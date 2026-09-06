@@ -10,7 +10,8 @@ Killer loop: **Plot → demand snapshot → grow board signal → pre-sale (Futu
 ```powershell
 cd c:\Users\HP\Desktop\Gyuxatntes
 copy .env.example .env
-# Edit .env: strong NEXTAUTH_SECRET / AUTH_SECRET and public NEXTAUTH_URL (https://… in prod)
+# Edit .env: Postgres DATABASE_URL, strong NEXTAUTH_SECRET, NEXTAUTH_URL
+# Local Postgres: docker compose up -d db
 npm install
 npx prisma db push
 # Optional sample data only — skip for empty public launch:
@@ -25,27 +26,27 @@ Open **http://localhost:3000/hy**.
 
 ## Հրապարակում / Deploy
 
-**Պաշտոնական ուղի՝ VPS + Docker + SQLite** (սեփական դոմեյն, պարզ պահուստ)։
+**Պաշտոնական ուղի՝ Vercel + Neon Postgres** (կամ VPS + Docker + Postgres)։  
+SQLite-ը Vercel serverless-ում **չի աշխատում**։
 
 Մանրամասն քայլեր՝ **[DEPLOY.md](./DEPLOY.md)**։
 
-### Արագ մեկնարկ սերվերում
+### Vercel + Neon (արագ)
+
+1. [neon.tech](https://neon.tech) → ստեղծեք DB → պատճենեք `DATABASE_URL`
+2. Vercel env՝ `DATABASE_URL`, `NEXTAUTH_URL=https://www.xndzor.com`, `AUTH_URL` (նույնը), secrets
+3. Redeploy — build-ը կանի `prisma db push`
+4. (ըստ ցանկության) `npm run db:seed:minimal` ձեր մեքենայից
+
+### Docker VPS
 
 ```bash
 cp .env.example .env
-# լրացրեք NEXTAUTH_URL=https://your.domain և գաղտնիքները
+# լրացրեք NEXTAUTH_URL=https://www.xndzor.com և գաղտնիքները
 docker compose up -d --build
 ```
 
-Այնուհետև՝
-
-1. **Դոմեյն** — գնեք `.am` (կամ այլ)  
-2. **DNS** — A գրառում դեպի VPS IP  
-3. **HTTPS** — Caddy / nginx / Cloudflare  
-4. **Stripe** (ըստ ցանկության) — webhook `https://DOMAIN/api/checkout/webhook`  
-5. **Ադմին** — գրանցվեք, դրեք `ADMIN_EMAIL` կամ `role=ADMIN`
-
-`NEXTAUTH_URL` / `AUTH_URL` պետք է լինեն `https://your-domain` (առանց վերջի `/`)։  
+`NEXTAUTH_URL` / `AUTH_URL` պետք է լինեն `https://www.xndzor.com` (առանց վերջի `/`) եթե apex→www redirect կա։  
 Արտադրությունում cookie-ները Secure են (`__Secure-next-auth.session-token`)։
 
 ### Seed / դեմո հաշիվներ
