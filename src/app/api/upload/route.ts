@@ -30,9 +30,8 @@ async function persistImage(
 
   if (token) {
     const { put } = await import("@vercel/blob");
-    // Pass body as Uint8Array for consistent Node/serverless behavior.
-    const body = new Uint8Array(buffer);
-    const blob = await put(`uploads/${subdir}/${filename}`, body, {
+    // Buffer is a valid PutBody; standalone Uint8Array is not assignable under current TS.
+    const blob = await put(`uploads/${subdir}/${filename}`, Buffer.from(buffer), {
       access: "public",
       contentType,
       token,
