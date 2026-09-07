@@ -597,69 +597,138 @@
     "joining": "…",
     "joined": "You joined",
     "about": {
-      "badge": "Group buy",
-      "eyebrow": "Buy together",
-      "title": "Group buy — cheaper together",
-      "lede": "Join a group buy, pool quantity, get a supplier quote. Pay offline.",
-      "whatTitle": "What is it?",
+      "badge": "Only on Xndzor in Armenia",
+      "brand": "Xndzor",
+      "eyebrow": "Group buy",
+      "title": "Buy together — pay less",
+      "lede": "Neighbors join the same purchase and get a bulk price.",
+      "scenes": {
+        "gather": {
+          "label": "Together",
+          "caption": "Neighbor farms, one buy"
+        },
+        "supplies": {
+          "label": "Inputs",
+          "caption": "Seed, feed, diesel…"
+        },
+        "delivery": {
+          "label": "Delivery",
+          "caption": "One spot, shared load"
+        },
+        "deal": {
+          "label": "Quote",
+          "caption": "Supplier price for the group"
+        }
+      },
+      "problemsTitle": "What it solves",
+      "problemLabel": "Problem",
+      "solutionLabel": "Solution",
+      "problems": [
+        {
+          "problem": "Buying small amounts alone — expensive",
+          "solution": "Join a group — get a bulk price"
+        },
+        {
+          "problem": "Hard to find neighbors with the same need",
+          "solution": "Open group buys in one place"
+        },
+        {
+          "problem": "Everyone arranges delivery separately",
+          "solution": "Shared delivery to one point"
+        },
+        {
+          "problem": "Unsure if the target quantity will fill",
+          "solution": "See progress toward the target"
+        }
+      ],
+      "whatTitle": "What it is",
       "whatBody": [
-        "Neighbors join the same purchase — diesel, seed, feed or inputs.",
-        "When the target quantity is reached, a supplier quote is collected.",
-        "Payment stays between you and the supplier — offline."
+        "This is group buying: neighbors join the same product (diesel, seed, feed…), pool quantity, and get a better supplier quote. Payment stays off-platform."
+      ],
+      "whyTitle": "Why it matters",
+      "whyBody": [
+        "Buying small amounts alone is expensive. Together you reach bulk volume and save."
       ],
       "howTitle": "How it works",
       "steps": [
         {
-          "title": "Open a group buy",
-          "body": "Pick product, target qty and unit price hint."
+          "title": "Open or join",
+          "body": "Pick the product and your quantity."
         },
         {
           "title": "Neighbors join",
-          "body": "Each farm adds their quantity."
+          "body": "Each farm adds its share."
         },
         {
-          "title": "Quote & pay",
-          "body": "Supplier quote arrives — settle offline."
+          "title": "Target is reached",
+          "body": "A supplier quote comes in."
+        },
+        {
+          "title": "Pay off-platform",
+          "body": "You and the supplier — no platform checkout."
         }
       ],
-      "advantagesTitle": "Why join",
+      "advantagesTitle": "Advantages",
       "advantages": [
         {
           "title": "Lower price",
-          "body": "Bulk volume usually beats solo retail."
+          "body": "Bulk volume is usually cheaper."
         },
         {
-          "title": "Village logistics",
-          "body": "Shared delivery to one point."
+          "title": "Shared delivery",
+          "body": "One point — less running around."
         },
         {
-          "title": "Transparent",
-          "body": "See progress toward the target."
+          "title": "Clear progress",
+          "body": "See how close you are to the target."
+        },
+        {
+          "title": "Only on Xndzor",
+          "body": "This format for farmers — here."
+        },
+        {
+          "title": "No forced deal",
+          "body": "If the target isn’t met — no obligation."
         }
       ],
-      "exampleTitle": "Example",
-      "exampleLede": "Diesel — solo vs group (illustrative).",
+      "exampleTitle": "A concrete example",
+      "exampleLede": "Diesel — alone vs in a group.",
       "soloLabel": "Alone",
       "groupLabel": "In a group",
+      "beforeLabel": "Alone",
+      "afterLabel": "In a group",
       "perFarm": "per farm",
+      "exampleUnit": "per farm",
       "saveNote": "About {pct}% savings in this example.",
-      "whoTitle": "Who is it for?",
-      "whoBody": "Farms in the same village or marz that buy the same inputs.",
-      "faqTitle": "FAQ",
+      "whoTitle": "Who it is for",
+      "whoBody": [
+        "Farms in the same village or marz buying the same inputs.",
+        "Suppliers who want a bulk order at one pickup point."
+      ],
+      "faqTitle": "Frequently asked questions",
       "faq": [
         {
           "q": "Do I pay on the platform?",
-          "a": "No — payment is offline with the supplier."
+          "a": "No — payment is off-platform with the supplier."
         },
         {
-          "q": "What if the target is not met?",
-          "a": "The group buy stays open or closes without obligation."
+          "q": "What if the target isn’t reached?",
+          "a": "The buy stays open or closes with no obligation."
+        },
+        {
+          "q": "What can I buy?",
+          "a": "Diesel, seed, feed, and other shared inputs."
+        },
+        {
+          "q": "Must we be from the same village?",
+          "a": "Not required — compatible delivery and timing matter."
         }
       ],
       "ctaTitle": "Ready to join?",
-      "ctaLede": "See open group buys or start with neighbors.",
+      "ctaLede": "See open group buys or start one with neighbors.",
       "ctaOffers": "Open group buys",
-      "ctaJoin": "Join a group buy"
+      "ctaJoin": "Join a group",
+      "ctaPrimary": "Open group buys"
     }
   },
   "detail": {
@@ -2532,10 +2601,22 @@
         "title": "Write your problem — get an offer in one place",
         "lede": "Harvest, haul, or sell — without days of phone searching.",
         "scenes": {
-          "harvest": { "label": "Harvest", "caption": "Workers + machines" },
-          "transport": { "label": "Transport", "caption": "Truck on your timeline" },
-          "market": { "label": "Sell", "caption": "Buyer with clear volume" },
-          "farmwork": { "label": "Farm work", "caption": "All in one plan" }
+          "harvest": {
+            "label": "Harvest",
+            "caption": "Workers + machines"
+          },
+          "transport": {
+            "label": "Transport",
+            "caption": "Truck on your timeline"
+          },
+          "market": {
+            "label": "Sell",
+            "caption": "Buyer with clear volume"
+          },
+          "farmwork": {
+            "label": "Farm work",
+            "caption": "All in one plan"
+          }
         },
         "problemsTitle": "What it solves",
         "problemLabel": "Problem",
@@ -2640,255 +2721,378 @@
         "ctaPrimary": "Write my problem"
       },
       "route": {
-        "eyebrow": "Xndzor · Xndzor Route",
-        "title": "One truck — multiple farms, shared route",
-        "lede": "Hauling alone is expensive. Xndzor Route pools neighboring farms’ crops on one optimal route — cost is split among participants.",
+        "brand": "Xndzor",
+        "eyebrow": "Route",
+        "title": "One truck — several farms",
+        "lede": "Share the haul with neighbors and pay less.",
+        "scenes": {
+          "truck": {
+            "label": "Truck",
+            "caption": "One vehicle, shared road"
+          },
+          "stops": {
+            "label": "Stops",
+            "caption": "Neighbor farms in order"
+          },
+          "load": {
+            "label": "Loading",
+            "caption": "Your crates on one trip"
+          },
+          "city": {
+            "label": "Destination",
+            "caption": "City or processing"
+          }
+        },
+        "problemsTitle": "What it solves",
+        "problemLabel": "Problem",
+        "solutionLabel": "Solution",
+        "problems": [
+          {
+            "problem": "Hiring a truck alone with a half load",
+            "solution": "Join neighbors — fill the truck together"
+          },
+          {
+            "problem": "Finding a new driver every time",
+            "solution": "One route with clear stops"
+          },
+          {
+            "problem": "Small load, almost full-trip price",
+            "solution": "Cost split among participants"
+          },
+          {
+            "problem": "Schedules never line up",
+            "solution": "One agreed day and direction"
+          }
+        ],
         "whatBody": [
-          "Xndzor Route is shared delivery: one truck picks up from several farms (e.g. Armavir → Artashat → Yerevan) and goes to a common destination.",
-          "In Armenia, this kind of shared farm route in this format exists only on Xndzor. You don’t pay for the whole truck alone."
+          "This is shared delivery: one truck picks up from several farms going the same way — you don’t pay for the whole truck alone."
         ],
         "whyBody": [
-          "If every farm hires a truck alone, each pays nearly the full trip — even with a half-empty load.",
-          "On a shared route the truck fills from several farms, kilometers and fuel are split, and you save money and time with one agreed schedule."
+          "Hauling alone is expensive even with a small load. On a shared route you split fuel and kilometers."
         ],
         "steps": [
           {
-            "title": "Note the crop and place",
-            "body": "Say what you move, how many tons/crates, and which village."
+            "title": "Note crop and place",
+            "body": "What, how much, which village."
           },
           {
             "title": "Join the route",
-            "body": "Neighbor farms join the same direction. The system shows the stops."
+            "body": "Neighbors, same direction."
           },
           {
             "title": "Cost is split",
-            "body": "Total transport cost is divided among participants by volume or agreement."
+            "body": "By volume or agreement."
           },
           {
             "title": "One truck, several stops",
-            "body": "The truck collects in order and delivers to the destination."
+            "body": "Collects and delivers."
           }
         ],
         "advantages": [
           {
-            "title": "Up to −60% on delivery",
-            "body": "Vs hiring alone, a shared route is often half or better."
+            "title": "Up to −60% delivery",
+            "body": "Often half or better vs alone."
           },
           {
             "title": "A full truck",
-            "body": "The vehicle doesn’t run half-empty — better fuel and time."
+            "body": "No half-empty runs."
           },
           {
             "title": "Clear stops",
-            "body": "You see the route — Armavir, Artashat, Yerevan, and more."
+            "body": "See the route beforehand."
           },
           {
             "title": "Only on Xndzor",
-            "body": "This shared Route for farmers in Armenia — only here."
+            "body": "This format in Armenia — only here."
           },
           {
             "title": "Less stress",
-            "body": "One organized delivery instead of finding a new driver every time."
+            "body": "One organized delivery."
           }
         ],
-        "exampleLede": "Several farms send crop toward Yerevan. Alone, each would pay nearly the full trip.",
+        "exampleLede": "Several farms, same direction — toward Yerevan.",
         "beforeLabel": "Alone",
         "afterLabel": "With Route",
         "exampleUnit": "per farm",
         "saveNote": "Save up to −{pct}% on delivery per farm",
-        "whoBody": "Farmers moving crop to the city or processing who want to share transport cost with neighbors.",
+        "whoBody": [
+          "Farmers hauling crop to the city or processing who want to share transport.",
+          "Carriers who want a full load and clear stops."
+        ],
         "faq": [
           {
             "q": "Must we be from the same village?",
-            "a": "Not required. Same direction and compatible timing matter. Stops can be different villages."
+            "a": "No. Same direction and compatible timing matter."
           },
           {
             "q": "How is my share calculated?",
-            "a": "Usually by volume or stop agreement. Each route page shows the split logic."
+            "a": "Usually by volume. Each route page shows the split."
           },
           {
             "q": "What if my load is small?",
-            "a": "Small loads are why Route exists — join, fill the truck, pay less."
+            "a": "That’s why Route exists — join and pay less."
           },
           {
             "q": "Can I be the driver?",
-            "a": "If you have a truck, you can join as a carrier. Details are on the route offer."
+            "a": "Yes, if you have a truck."
           },
           {
             "q": "When is full automation ready?",
-            "a": "Route logic is already shown. Auto-optimization is growing — you can already see the format and the savings."
+            "a": "The format already works. Auto-optimization is growing."
           }
         ],
-        "ctaTitle": "Ready to share delivery cost?",
-        "ctaLede": "See the route example and start using Xndzor to make transport cheaper.",
+        "ctaTitle": "Ready to share the haul?",
+        "ctaLede": "See the route and pay less.",
         "ctaPrimary": "See the route"
       },
       "grow": {
-        "eyebrow": "Xndzor · Grow Exchange",
-        "title": "What to plant — know the market first",
-        "lede": "Grow Exchange shows demand and supply on one screen — overproduction warnings and clear signals on what to plant so the harvest sells.",
+        "brand": "Xndzor",
+        "eyebrow": "Grow",
+        "title": "What to plant — check the market first",
+        "lede": "See demand and overproduction risk before you buy seed.",
+        "scenes": {
+          "seedlings": {
+            "label": "Planting",
+            "caption": "Decide before you spend"
+          },
+          "market": {
+            "label": "Market",
+            "caption": "What buyers actually want"
+          },
+          "decide": {
+            "label": "Choice",
+            "caption": "The right crop"
+          },
+          "oversupply": {
+            "label": "Oversupply",
+            "caption": "Avoid the loss"
+          }
+        },
+        "problemsTitle": "What it solves",
+        "problemLabel": "Problem",
+        "solutionLabel": "Solution",
+        "problems": [
+          {
+            "problem": "Planting “like last year” with no new data",
+            "solution": "One screen: demand and supply by crop"
+          },
+          {
+            "problem": "Everyone plants the same — price collapses",
+            "solution": "Overproduction warning before you spend"
+          },
+          {
+            "problem": "Seed, water, labor on the wrong crop",
+            "solution": "Check the market before buying"
+          },
+          {
+            "problem": "Harvest left in the field",
+            "solution": "Plant what has real demand"
+          }
+        ],
         "whatBody": [
-          "Grow Exchange is a national signal board for farmers: see which crops are in demand, where the market is full, and where overproduction risk is high.",
-          "In Armenia, this Grow Exchange format — seeing the market before planting — exists only on Xndzor. You don’t plant “like last year” with no new data."
+          "This is a market signal board: see which crops are in demand and where the market is already full — before you plant."
         ],
         "whyBody": [
-          "The wrong crop is a season lost — seed, labor, water, and time. When everyone plants the same thing, price collapses and crop stays in the field.",
-          "Grow helps you decide before you spend: if tomatoes in Ararat are already saturated, pick another crop or market — and avoid hundreds of thousands of AMD in losses."
+          "The wrong crop is a season lost. One check can save hundreds of thousands of AMD."
         ],
         "steps": [
           {
-            "title": "Open Grow Exchange",
-            "body": "On one screen see demand, supply, and warnings by crop and marz."
+            "title": "Open Grow",
+            "body": "Demand, supply, warnings."
           },
           {
             "title": "Check your plan",
-            "body": "Before buying seed, see if buyers are waiting — or the market is already full."
+            "body": "Buyers waiting — or market full?"
           },
           {
             "title": "Choose smarter",
-            "body": "If there’s an overproduction signal, change the plan or timing before you spend."
+            "body": "Change the plan before spending."
           },
           {
-            "title": "Act with confidence",
-            "body": "Plant what has demand, then use Xndzor’s other tools to sell."
+            "title": "Plant with confidence",
+            "body": "What actually sells."
           }
         ],
         "advantages": [
           {
             "title": "Decide before spending",
-            "body": "Invest seed and labor only in what the market actually wants."
+            "body": "Seed and labor only on demand."
           },
           {
             "title": "Overproduction alerts",
-            "body": "See when the market is full — before repeating the same mistake."
+            "body": "See when the market is full."
           },
           {
             "title": "National picture",
-            "body": "Not only your village — a wider demand/supply view."
+            "body": "Not only your village."
           },
           {
             "title": "Only on Xndzor",
-            "body": "This Grow Exchange format in Armenia — only on Xndzor."
+            "body": "This format in Armenia — only here."
           },
           {
             "title": "Tied to selling",
-            "body": "When the crop is ready, find buyers and group tools on the same platform."
+            "body": "Find buyers on the same platform."
           }
         ],
-        "exampleLede": "Last year a farmer planted tomatoes without checking in a marz where the market was already full.",
+        "exampleLede": "Tomatoes in a marz where the market was already full.",
         "beforeLabel": "Without Grow",
         "afterLabel": "With Grow",
         "exampleAfterValue": "right crop · sold",
         "saveNote": "Up to 800,000 AMD seasonal loss risk — avoidable with one check",
-        "whoBody": "Farmers and growers planning to plant or switch crops who want a sellable harvest — not overproduction.",
+        "whoBody": [
+          "Farmers who want to know the harvest will sell before planting.",
+          "Growers switching crops who want to avoid overproduction."
+        ],
         "faq": [
           {
             "q": "Is this a price guarantee?",
-            "a": "No. Grow is a market signal for decisions, not a price guarantee — but it helps avoid obvious overproduction."
+            "a": "No. It’s a signal for decisions — it helps avoid obvious overproduction."
           },
           {
             "q": "How often is it updated?",
-            "a": "Data refreshes from platform activity and listings. Always check the latest signals before a big spend."
+            "a": "From platform activity. Check latest signals before a big spend."
           },
           {
             "q": "Can I see only my marz?",
-            "a": "Yes — focus on your marz and crop while still seeing the national context."
+            "a": "Yes — your marz plus national context."
           },
           {
             "q": "What if I already planted?",
-            "a": "Grow is still useful — see demand and decide early sales or storage on Xndzor."
+            "a": "Still useful for early sales or storage."
           },
           {
             "q": "Is it free?",
-            "a": "Core viewing is available through Xndzor. Details are on the pricing page."
+            "a": "Core viewing is through Xndzor. Details on the pricing page."
           }
         ],
         "ctaTitle": "Check the market before you plant",
-        "ctaLede": "Open Grow Exchange, read the signals, and plant what actually sells.",
+        "ctaLede": "Open Grow and plant what sells.",
         "ctaPrimary": "Open Grow Exchange"
       },
       "passport": {
-        "eyebrow": "Xndzor · Farm Passport",
-        "title": "Farm Score + QR product passport",
-        "lede": "Your trusted farm identity on Xndzor — a 0–100 Farm Score and a QR code buyers scan to see origin and trust you faster.",
+        "brand": "Xndzor",
+        "eyebrow": "Passport",
+        "title": "Your farm’s trust — Score + QR",
+        "lede": "Buyers see origin and trust you faster.",
+        "scenes": {
+          "farm": {
+            "label": "Farm",
+            "caption": "Your digital identity"
+          },
+          "qr": {
+            "label": "QR",
+            "caption": "One scan — origin"
+          },
+          "trust": {
+            "label": "Trust",
+            "caption": "Faster agreement"
+          },
+          "origin": {
+            "label": "Origin",
+            "caption": "Where the crop came from"
+          }
+        },
+        "problemsTitle": "What it solves",
+        "problemLabel": "Problem",
+        "solutionLabel": "Solution",
+        "problems": [
+          {
+            "problem": "Buyers don’t know you — you compete only on price",
+            "solution": "Farm Score + origin visible in one place"
+          },
+          {
+            "problem": "Long negotiation and doubt",
+            "solution": "QR scan — buyers see who you are"
+          },
+          {
+            "problem": "Same row as anonymous sellers",
+            "solution": "Stand out as a trusted farm"
+          },
+          {
+            "problem": "Good quality, low price",
+            "solution": "Trust helps you hold a fairer price"
+          }
+        ],
         "whatBody": [
-          "Farm Passport combines Farm Score (a trust rating) and a QR product passport. Buyers scan and see which farm the crop came from and how trusted it is.",
-          "In Armenia, this farm passport + QR origin format for ag trade exists only on Xndzor. You stand out from anonymous sellers."
+          "This is your farm passport on Xndzor — a 0–100 Farm Score and a QR so buyers see origin and trust you faster."
         ],
         "whyBody": [
-          "Buyers pay more willingly when they see origin and trust. Without identity you compete only on price — often by cutting it.",
-          "A strong Score and QR passport shorten negotiation: buyers doubt less, decide faster, and you can keep a fairer price."
+          "Without identity you compete only on price. Clear origin cuts doubt and speeds up the sale."
         ],
         "steps": [
           {
             "title": "Open your farm page",
-            "body": "Create or open your farm profile on Xndzor."
+            "body": "Create or open your profile."
           },
           {
             "title": "Build Farm Score",
-            "body": "Activity, transparency, and reliable deals raise the 0–100 score."
+            "body": "Activity and reliable deals."
           },
           {
-            "title": "Attach a QR product passport",
-            "body": "Batches get a QR so buyers see origin."
+            "title": "Attach a QR",
+            "body": "Buyers scan for origin."
           },
           {
             "title": "Sell with more trust",
-            "body": "Buyers see Score and origin — and agree more easily."
+            "body": "Score + origin — easier yes."
           }
         ],
         "advantages": [
           {
             "title": "Higher trust",
-            "body": "Buyers see not only price, but farm reputation."
+            "body": "Buyers see reputation, not only price."
           },
           {
             "title": "Better price",
-            "body": "Trusted farms can often hold a higher price than anonymous sellers."
+            "body": "Trusted farms often hold a higher price."
           },
           {
             "title": "QR origin",
-            "body": "One scan — and the buyer knows where the crop came from."
+            "body": "One scan — clear where the crop came from."
           },
           {
             "title": "Only on Xndzor",
-            "body": "Farm Score + QR passport in this format — only on Xndzor in Armenia."
+            "body": "This format in Armenia — only here."
           },
           {
             "title": "Long-term reputation",
-            "body": "Score grows over time into your digital credit."
+            "body": "Score grows over time."
           }
         ],
-        "exampleLede": "Same quality apples: one without a passport, another with Farm Score 87 and QR origin.",
+        "exampleLede": "Same apples — without passport vs Farm Score 87 + QR.",
         "beforeLabel": "Without passport",
         "afterLabel": "Trusted farm",
         "exampleUnit": "per kg",
         "saveNote": "Higher price for a trusted farm ({before} → {after} AMD/kg)",
-        "whoBody": "Farmers selling crop who want to stand out with trust, origin, and a more stable price.",
+        "whoBody": [
+          "Farmers selling crop who want trust and a steadier price.",
+          "Buyers who want to know origin before they buy."
+        ],
         "faq": [
           {
             "q": "How is Farm Score calculated?",
-            "a": "Score depends on farm activity, transparency, and reliable behavior on the platform. Details are on your passport page."
+            "a": "Activity, transparency, and reliable behavior. Details on your passport page."
           },
           {
             "q": "Must I print the QR?",
-            "a": "Show it on screen or print it on packaging. Buyers scan to see origin."
+            "a": "Show it on screen or print it on packaging."
           },
           {
             "q": "Can I start with a low Score?",
-            "a": "Yes. Every farm starts somewhere — steady, honest work raises the score."
+            "a": "Yes. Steady honest work raises it."
           },
           {
             "q": "Does this replace official certificates?",
-            "a": "No. It’s Xndzor’s trust and origin layer that complements your real quality and documents."
+            "a": "No. It complements your real quality and documents."
           },
           {
             "q": "Where do buyers see it?",
-            "a": "On your farm page and via QR scan on the product passport."
+            "a": "On your farm page and via QR scan."
           }
         ],
         "ctaTitle": "Make your farm trusted",
-        "ctaLede": "Open the farm passport, raise your Score, and sell with origin — not only on price.",
+        "ctaLede": "Open the passport and sell with origin — not only on price.",
         "ctaPrimary": "Open my passport"
       }
     }

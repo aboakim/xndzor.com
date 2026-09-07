@@ -117,23 +117,18 @@ export default async function FeatureAboutPage({ params }: PageProps) {
     if (cta.href !== primaryHref) ctas.push(cta);
   }
 
-  const media = slug in FEATURE_ABOUT_VISUALS
-    ? FEATURE_ABOUT_VISUALS[slug as keyof typeof FEATURE_ABOUT_VISUALS]
-    : undefined;
-
-  const visual = media
-    ? {
-        heroSrc: media.heroSrc,
-        heroAlt: t("title"),
-        scenes: media.scenes.map((scene) => ({
-          src: scene.src,
-          label: t(`scenes.${scene.key}.label`),
-          caption: t(`scenes.${scene.key}.caption`),
-        })),
-        problemImages: [...media.problemImages],
-        stepImages: [...media.stepImages],
-      }
-    : undefined;
+  const media = FEATURE_ABOUT_VISUALS[slug];
+  const visual = {
+    heroSrc: media.heroSrc,
+    heroAlt: t("title"),
+    scenes: media.scenes.map((scene) => ({
+      src: scene.src,
+      label: t(`scenes.${scene.key}.label`),
+      caption: t(`scenes.${scene.key}.caption`),
+    })),
+    problemImages: [...media.problemImages],
+    stepImages: [...media.stepImages],
+  };
 
   return (
     <FeatureAboutLayout
