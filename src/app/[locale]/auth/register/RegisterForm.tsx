@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { MARZES, localizedPlaceName, type LocationVillage } from "@/lib/places";
 import { resolveAuthRedirectUrl } from "@/lib/auth-redirect";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type RegisterErrorCode =
   | "INVALID_EMAIL"
@@ -62,6 +62,14 @@ export default function RegisterForm({ callbackUrl }: Props) {
   const [villages, setVillages] = useState<LocationVillage[]>([]);
   const [loadingVillages, setLoadingVillages] = useState(false);
 
+  /** Yerevan is the city itself — district/village is optional. */
+  const villageOptional = marzId === "Yerevan";
+  const canSubmit = useMemo(() => {
+    if (!marzId || busy) return false;
+    if (villageOptional) return true;
+    return Boolean(villageId);
+  }, [busy, marzId, villageId, villageOptional]);
+
   useEffect(() => {
     if (!marzId) {
       setVillages([]);
@@ -92,6 +100,7 @@ export default function RegisterForm({ callbackUrl }: Props) {
     e.preventDefault();
     setBusy(true);
     setError(null);
+    setSuccess(null);
     const fd = new FormData(e.currentTarget);
     const body = {
       email: String(fd.get("email") || "").trim(),
@@ -99,8 +108,19 @@ export default function RegisterForm({ callbackUrl }: Props) {
       name: String(fd.get("name") || "").trim(),
       phone: String(fd.get("phone") || "").trim(),
       marz: marzId,
-      villageId,
+      villageId: villageId || "",
     };
+
+    if (!body.marz) {
+      setError(t("errors.MARZ_REQUIRED"));
+      setBusy(false);
+      return;
+    }
+    if (!villageOptional && !body.villageId) {
+      setError(t("errors.VILLAGE_REQUIRED"));
+      setBusy(false);
+      return;
+    }
 
     try {
       const res = await fetch("/api/auth/register", {
@@ -235,16 +255,25 @@ export default function RegisterForm({ callbackUrl }: Props) {
           </select>
         </label>
         <label>
-          <span>{t("village")}</span>
+          <span>
+            {t("village")}
+            {villageOptional ? (
+              <span className="field-optional"> ({t("optional")})</span>
+            ) : null}
+          </span>
           <select
             name="villageId"
-            required
+            required={!villageOptional}
             value={villageId}
             onChange={(e) => setVillageId(e.target.value)}
             disabled={!marzId || loadingVillages}
           >
             <option value="">
-              {loadingVillages ? "…" : t("placeholders.village")}
+              {loadingVillages
+                ? "…"
+                : villageOptional
+                  ? t("placeholders.villageOptional")
+                  : t("placeholders.village")}
             </option>
             {villages.map((v) => (
               <option key={v.id} value={v.id}>
@@ -252,14 +281,13 @@ export default function RegisterForm({ callbackUrl }: Props) {
               </option>
             ))}
           </select>
+          {villageOptional ? (
+            <small className="field-hint">{t("hints.villageYerevan")}</small>
+          ) : null}
         </label>
         {error && <p className="form-error">{error}</p>}
         {success && <p className="form-success early-bird-register-success">{success}</p>}
-        <button
-          type="submit"
-          className="btn primary"
-          disabled={busy || !marzId || !villageId}
-        >
+        <button type="submit" className="btn primary" disabled={!canSubmit}>
           {t("registerSubmit")}
         </button>
       </form>

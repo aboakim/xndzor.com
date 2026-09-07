@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getVillagesForMarz, MARZES } from "@/lib/locations";
+import { ensureVillagesForMarz } from "@/lib/ensure-locations";
 
 export async function GET(req: Request) {
   const marzId = new URL(req.url).searchParams.get("marzId");
@@ -7,21 +8,16 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "marzId required" }, { status: 400 });
   }
 
-  const villages = await prisma.village.findMany({
-    where: { marzId },
-    orderBy: { nameHy: "asc" },
-    select: {
-      id: true,
-      slug: true,
-      marzId: true,
-      nameHy: true,
-      nameEn: true,
-      nameRu: true,
-      kind: true,
-      lat: true,
-      lng: true,
-    },
-  });
+  // Static catalog is the source of truth (works even when DB was never seeded).
+  const villages = getVillagesForMarz(marzId);
+
+  // Best-effort: heal empty production DB so FK writes succeed later.
+  if (
+    villages.length > 0 &&
+    (MARZES as readonly string[]).includes(marzId)
+  ) {
+    void ensureVillagesForMarz(marzId).catch(() => {});
+  }
 
   return NextResponse.json(villages);
 }

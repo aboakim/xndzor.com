@@ -747,6 +747,7 @@
     "phone": "Phone",
     "marz": "Marz",
     "village": "City/Village",
+    "optional": "optional",
     "loginSubmit": "Log in",
     "registerSubmit": "Register",
     "noAccount": "No account?",
@@ -759,11 +760,13 @@
       "password": "at least 10 characters",
       "phone": "+37492222222",
       "marz": "Select marz",
-      "village": "Select city/village"
+      "village": "Select city/village",
+      "villageOptional": "District (optional)"
     },
     "hints": {
       "password": "Password must be at least 10 characters.",
-      "phone": "Example: +37492222222"
+      "phone": "Example: +37492222222",
+      "villageYerevan": "For Yerevan, city/village is not required. You can pick a district or leave it blank."
     },
     "errors": {
       "INVALID_EMAIL": "Invalid email address.",

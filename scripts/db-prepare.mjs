@@ -31,4 +31,14 @@ if (result.status !== 0) {
   );
 }
 
+console.log("[db-prepare] Syncing location reference data…");
+const sync = spawnSync("node", ["scripts/sync-locations.mjs"], {
+  stdio: "inherit",
+  shell: true,
+  env: process.env,
+});
+if (sync.status !== 0) {
+  console.warn("[db-prepare] location sync failed — continuing build.");
+}
+
 process.exit(0);

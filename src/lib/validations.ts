@@ -64,22 +64,37 @@ const phoneField = z
     { message: "INVALID_PHONE" }
   );
 
-export const registerSchema = z.object({
-  email: z.string().trim().email({ message: "INVALID_EMAIL" }),
-  password: z
-    .string()
-    .min(10, { message: "PASSWORD_TOO_SHORT" })
-    .max(128, { message: "PASSWORD_TOO_LONG" }),
-  name: z
-    .string()
-    .trim()
-    .min(2, { message: "INVALID_NAME" })
-    .max(80, { message: "INVALID_NAME" }),
-  phone: phoneField.optional().or(z.literal("")),
-  marz: z.enum(MARZES, { message: "INVALID_MARZ" }),
-  villageId: z.string().trim().min(1, { message: "VILLAGE_REQUIRED" }),
-  role: z.enum(["FARMER", "BUYER", "PROVIDER", "BOTH"]).optional().default("BOTH"),
-});
+export const registerSchema = z
+  .object({
+    email: z.string().trim().email({ message: "INVALID_EMAIL" }),
+    password: z
+      .string()
+      .min(10, { message: "PASSWORD_TOO_SHORT" })
+      .max(128, { message: "PASSWORD_TOO_LONG" }),
+    name: z
+      .string()
+      .trim()
+      .min(2, { message: "INVALID_NAME" })
+      .max(80, { message: "INVALID_NAME" }),
+    phone: phoneField.optional().or(z.literal("")),
+    marz: z.enum(MARZES, { message: "INVALID_MARZ" }),
+    /** Optional for Yerevan (city = marz). Required for other marzes. */
+    villageId: z.string().trim().optional().or(z.literal("")),
+    role: z
+      .enum(["FARMER", "BUYER", "PROVIDER", "BOTH"])
+      .optional()
+      .default("BOTH"),
+  })
+  .superRefine((data, ctx) => {
+    const villageId = (data.villageId || "").trim();
+    if (data.marz !== "Yerevan" && !villageId) {
+      ctx.addIssue({
+        code: "custom",
+        message: "VILLAGE_REQUIRED",
+        path: ["villageId"],
+      });
+    }
+  });
 
 export type RegisterErrorCode =
   | "INVALID_EMAIL"
