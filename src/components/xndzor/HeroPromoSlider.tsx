@@ -21,20 +21,21 @@ type PromoSlide = {
   accents: string[];
 };
 
+/** Order mirrors homepage Top 5: Solve, Group buy, then farm helpers. */
 const SLIDES: PromoSlide[] = [
-  {
-    id: "groupBuy",
-    href: "/group-buy/about",
-    tone: "gold",
-    icon: "🤝",
-    accents: ["💰", "📦", "🌾"],
-  },
   {
     id: "solve",
     href: "/features/solve",
     tone: "pine",
     icon: "✨",
     accents: ["🚜", "👷", "📋"],
+  },
+  {
+    id: "groupBuy",
+    href: "/group-buy/about",
+    tone: "gold",
+    icon: "🤝",
+    accents: ["💰", "📦", "🌾"],
   },
   {
     id: "grow",
@@ -44,18 +45,18 @@ const SLIDES: PromoSlide[] = [
     accents: ["📊", "🍎", "🌿"],
   },
   {
-    id: "route",
-    href: "/features/route",
-    tone: "sky",
-    icon: "🚛",
-    accents: ["🛣️", "📍", "⏱️"],
-  },
-  {
     id: "passport",
     href: "/features/passport",
     tone: "wheat",
     icon: "🪪",
     accents: ["✅", "📱", "🏆"],
+  },
+  {
+    id: "route",
+    href: "/features/route",
+    tone: "sky",
+    icon: "🚛",
+    accents: ["🛣️", "📍", "⏱️"],
   },
   {
     id: "match",
