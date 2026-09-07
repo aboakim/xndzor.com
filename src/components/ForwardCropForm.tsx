@@ -43,15 +43,24 @@ export function ForwardCropForm({
         body: JSON.stringify({ ...Object.fromEntries(fd.entries()), productId, imageUrls }),
       });
       if (!res.ok) {
-        setError(t("images.uploadError"));
+        const data = await res.json().catch(() => ({}));
+        setError(
+          typeof data.error === "string" && data.error
+            ? data.error
+            : t("images.uploadError"),
+        );
         setSaving(false);
         return;
       }
       const crop = await res.json();
       router.push(`/forward/${crop.id}`);
       router.refresh();
-    } catch {
-      setError(t("images.uploadError"));
+    } catch (err) {
+      setError(
+        err instanceof Error && err.message
+          ? err.message
+          : t("images.uploadError"),
+      );
       setSaving(false);
     }
   }

@@ -521,8 +521,21 @@
     "uploadError": "Նկարի վերբեռնումը ձախողվեց",
     "add": "Ավելացնել նկարներ",
     "remove": "Հեռացնել",
+    "removePhoto": "Հեռացնել նկար {n}",
     "label": "Նկարներ",
-    "hint": "Մինչև 8 նկար · JPEG/PNG/WebP"
+    "hint": "Մինչև {max} նկար · JPEG/PNG/WebP · մինչև {maxMb} ՄԲ յուրաքանչյուրը",
+    "counter": "{count} / {max}",
+    "dropzone": "Գցեք նկարները այստեղ կամ սեղմեք՝ ընտրելու համար",
+    "dropzoneLabel": "Նկարների վերբեռնման տարածք",
+    "maxPhotos": "Առավելագույնը {max} նկար",
+    "camera": "Խցիկ",
+    "uploading": "Վերբեռնվում է…",
+    "uploadingProgress": "Վերբեռնվում է… {pct}%",
+    "previewLabel": "Ընտրված նկարներ",
+    "previewAlt": "Նկար {n}",
+    "invalidType": "Թույլատրվում են միայն JPEG, PNG կամ WebP նկարներ",
+    "tooLarge": "Յուրաքանչյուր նկարը պետք է լինի մինչև {maxMb} ՄԲ",
+    "maxReached": "Կարող եք ավելացնել առավելագույնը {max} նկար"
   },
   "demandBoard": {
     "title": "Գնել / գնորդներ",

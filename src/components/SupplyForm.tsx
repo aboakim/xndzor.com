@@ -91,8 +91,12 @@ export function SupplyForm({
       const created = await res.json();
       router.push(`/supply/${created.id}`);
       router.refresh();
-    } catch {
-      setError(t("images.uploadError"));
+    } catch (err) {
+      setError(
+        err instanceof Error && err.message
+          ? err.message
+          : t("images.uploadError"),
+      );
       setSaving(false);
     }
   }

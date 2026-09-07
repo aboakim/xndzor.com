@@ -466,8 +466,21 @@
     "uploadError": "Image upload failed",
     "add": "Add images",
     "remove": "Remove",
+    "removePhoto": "Remove photo {n}",
     "label": "Images",
-    "hint": "Up to 8 images · JPEG/PNG/WebP"
+    "hint": "Up to {max} images · JPEG/PNG/WebP · max {maxMb} MB each",
+    "counter": "{count} / {max}",
+    "dropzone": "Drop photos here or click to browse",
+    "dropzoneLabel": "Image upload dropzone",
+    "maxPhotos": "Maximum {max} photos",
+    "camera": "Camera",
+    "uploading": "Uploading…",
+    "uploadingProgress": "Uploading… {pct}%",
+    "previewLabel": "Selected photos",
+    "previewAlt": "Photo {n}",
+    "invalidType": "Only JPEG, PNG, or WebP images are allowed",
+    "tooLarge": "Each image must be under {maxMb} MB",
+    "maxReached": "You can add at most {max} images"
   },
   "demandBoard": {
     "title": "Buy / buyers",

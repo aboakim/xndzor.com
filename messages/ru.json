@@ -466,8 +466,21 @@
     "uploadError": "Не удалось загрузить фото",
     "add": "Добавить фото",
     "remove": "Удалить",
+    "removePhoto": "Удалить фото {n}",
     "label": "Фото",
-    "hint": "До 8 фото · JPEG/PNG/WebP"
+    "hint": "До {max} фото · JPEG/PNG/WebP · до {maxMb} МБ каждое",
+    "counter": "{count} / {max}",
+    "dropzone": "Перетащите фото сюда или нажмите, чтобы выбрать",
+    "dropzoneLabel": "Область загрузки изображений",
+    "maxPhotos": "Максимум {max} фото",
+    "camera": "Камера",
+    "uploading": "Загрузка…",
+    "uploadingProgress": "Загрузка… {pct}%",
+    "previewLabel": "Выбранные фото",
+    "previewAlt": "Фото {n}",
+    "invalidType": "Допускаются только JPEG, PNG или WebP",
+    "tooLarge": "Каждое изображение должно быть не больше {maxMb} МБ",
+    "maxReached": "Можно добавить не более {max} изображений"
   },
   "demandBoard": {
     "title": "Купить / покупатели",

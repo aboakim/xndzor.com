@@ -11,22 +11,41 @@ import {
 import { detectImageKind, KIND_TO_EXT } from "@/lib/image-magic";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 
+function blobToken(): string | undefined {
+  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
+  return token || undefined;
+}
+
+function isVercelRuntime(): boolean {
+  return Boolean(process.env.VERCEL || process.env.VERCEL_ENV);
+}
+
 async function persistImage(
   buffer: Buffer,
   filename: string,
   contentType: string,
   subdir: string,
 ): Promise<string> {
-  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
+  const token = blobToken();
+
   if (token) {
     const { put } = await import("@vercel/blob");
-    const blob = await put(`uploads/${subdir}/${filename}`, buffer, {
+    // Pass body as Uint8Array for consistent Node/serverless behavior.
+    const body = new Uint8Array(buffer);
+    const blob = await put(`uploads/${subdir}/${filename}`, body, {
       access: "public",
       contentType,
       token,
       addRandomSuffix: false,
     });
     return blob.url;
+  }
+
+  // Local/dev fallback: write under public/uploads (not writable on Vercel).
+  if (isVercelRuntime()) {
+    throw new Error(
+      "Image storage is not configured (set BLOB_READ_WRITE_TOKEN and redeploy).",
+    );
   }
 
   const uploadDir = path.join(process.cwd(), "public", "uploads", subdir);
@@ -40,10 +59,39 @@ async function persistImage(
   return `/uploads/${subdir}/${filename}`;
 }
 
+function persistErrorMessage(e: unknown): string {
+  if (e instanceof Error && e.message) {
+    const msg = e.message.trim();
+    // Surface actionable Blob / config errors; keep others generic.
+    if (
+      /BLOB_READ_WRITE_TOKEN|not configured|Access denied|access|token|store|content.?type|too large|quota|rate.?limit|Unauthorized|Forbidden/i.test(
+        msg,
+      )
+    ) {
+      return msg.length > 240 ? `${msg.slice(0, 237)}...` : msg;
+    }
+  }
+  if (isVercelRuntime() && !blobToken()) {
+    return "Image storage is not configured (set BLOB_READ_WRITE_TOKEN and redeploy).";
+  }
+  return "Upload failed. Try again.";
+}
+
 export async function POST(req: Request) {
   const session = await getSession();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Fail fast on Vercel before reading the body when Blob is missing.
+  if (isVercelRuntime() && !blobToken()) {
+    return NextResponse.json(
+      {
+        error:
+          "Image storage is not configured (set BLOB_READ_WRITE_TOKEN and redeploy).",
+      },
+      { status: 503 },
+    );
   }
 
   const ip = clientIp(req);
@@ -62,7 +110,13 @@ export async function POST(req: Request) {
   try {
     form = await req.formData();
   } catch {
-    return NextResponse.json({ error: "Invalid form data" }, { status: 400 });
+    return NextResponse.json(
+      {
+        error:
+          "Invalid form data (file may be too large; max 5 MB per image).",
+      },
+      { status: 400 },
+    );
   }
 
   const kind = form.get("kind");
@@ -132,16 +186,7 @@ export async function POST(req: Request) {
       "[Xndzor] upload persist failed",
       e instanceof Error ? e.message : e,
     );
-    const onVercel = Boolean(process.env.VERCEL);
-    const hasBlob = Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim());
-    return NextResponse.json(
-      {
-        error: onVercel && !hasBlob
-          ? "Image storage is not configured (set BLOB_READ_WRITE_TOKEN)."
-          : "Upload failed. Try again.",
-      },
-      { status: 503 },
-    );
+    return NextResponse.json({ error: persistErrorMessage(e) }, { status: 503 });
   }
 
   return NextResponse.json({ urls });

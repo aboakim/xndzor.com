@@ -287,17 +287,39 @@ export async function uploadImages(
       try {
         data = JSON.parse(xhr.responseText);
       } catch {
-        reject(new Error("Upload failed"));
+        reject(
+          new Error(
+            xhr.status === 413
+              ? "Image too large for the server"
+              : "Upload failed",
+          ),
+        );
         return;
       }
       if (xhr.status < 200 || xhr.status >= 300) {
-        reject(new Error(data.error || "Upload failed"));
+        reject(
+          new Error(
+            data.error ||
+              (xhr.status === 401
+                ? "Unauthorized — please sign in again"
+                : xhr.status === 413
+                  ? "Image too large for the server"
+                  : "Upload failed"),
+          ),
+        );
         return;
       }
-      resolve(data.urls || []);
+      if (!Array.isArray(data.urls) || data.urls.length === 0) {
+        reject(new Error("Upload failed — no image URL returned"));
+        return;
+      }
+      resolve(data.urls);
     });
-    xhr.addEventListener("error", () => reject(new Error("Upload failed")));
+    xhr.addEventListener("error", () =>
+      reject(new Error("Upload failed — network error")),
+    );
     xhr.open("POST", "/api/upload");
+    xhr.withCredentials = true;
     xhr.send(fd);
   });
 }
