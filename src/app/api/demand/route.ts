@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { demandSchema } from "@/lib/validations";
 import { resolveLocationRefs, resolveProductId } from "@/lib/resolve-refs";
+import { filterListingImageUrls } from "@/lib/upload-urls";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -63,11 +64,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const imageUrls = JSON.stringify(
-    (data.imageUrls || []).filter(
-      (u) => u.startsWith("/uploads/") && !u.includes("..") && !u.includes("//"),
-    ),
-  );
+  const imageUrls = JSON.stringify(filterListingImageUrls(data.imageUrls));
 
   const demand = await prisma.demand.create({
     data: {

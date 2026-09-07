@@ -3194,8 +3194,10 @@
   "my": {
     "markActive": "Նշել ակտիվ",
     "markSold": "Նշել վաճառված",
+    "markFilled": "Նշել լրացված",
     "hide": "Թաքցնել",
-    "delete": "Ջնջել"
+    "delete": "Ջնջել",
+    "confirmDelete": "Թաքցնե՞լ այս հայտարարությունը շուկայից։"
   },
   "reportListing": {
     "button": "Հաղորդել հայտարարության մասին"
@@ -3254,6 +3256,8 @@
     "pendingBankTransfers": "Սպասող բանկային փոխանցումներ",
     "pendingBankTransfersLede": "Ստուգեք ձեր հաշվին մուտք եկած գումարը, ապա սեղմեք «Հաստատել» — փաթեթը կակտիվանա։",
     "confirmBankPayment": "Հաստատել վճարումը",
+    "confirming": "Հաստատում…",
+    "confirmBankFailed": "Չհաջողվեց հաստատել վճարումը։ Թարմացրեք և փորձեք նորից։",
     "userMarkedPaid": "Օգտատերը նշել է՝ վճարել է",
     "totalRevenue": "Եկամուտ",
     "paymentCount": "Վճարումներ",

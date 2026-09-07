@@ -8,16 +8,14 @@ const CLIENT_TYPES = new Set([
   "image/jpeg",
   "image/png",
   "image/webp",
-  "image/heic",
-  "image/heif",
   "image/pjpeg",
 ]);
 
 function isAllowedClientFile(file: File): boolean {
-  if (file.type && (CLIENT_TYPES.has(file.type) || file.type.startsWith("image/"))) {
+  if (file.type && CLIENT_TYPES.has(file.type)) {
     return true;
   }
-  return /\.(jpe?g|png|webp|heic|heif)$/i.test(file.name);
+  return /\.(jpe?g|png|webp)$/i.test(file.name);
 }
 
 type AvatarUploadFieldProps = {

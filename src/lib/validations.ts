@@ -45,8 +45,8 @@ export const ALLOWED_IMAGE_TYPES = [
   "image/png",
   "image/webp",
 ] as const;
-export const ALLOWED_IMAGE_ACCEPT =
-  "image/jpeg,image/png,image/webp,image/*";
+/** JPEG/PNG/WebP only — matches server magic-byte check (no HEIC). */
+export const ALLOWED_IMAGE_ACCEPT = "image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp";
 
 const imageUrlsField = z
   .array(z.string().min(1))
@@ -327,6 +327,22 @@ export const animalListingSchema = z.object({
 
 export const animalStatusSchema = z.object({
   status: z.enum(["ACTIVE", "SOLD", "HIDDEN"]),
+});
+
+export const supplyStatusSchema = z.object({
+  status: z.enum(["ACTIVE", "SOLD", "HIDDEN"]),
+});
+
+export const demandStatusSchema = z.object({
+  status: z.enum(["ACTIVE", "SOLD", "HIDDEN"]),
+});
+
+export const jobStatusSchema = z.object({
+  status: z.enum(["ACTIVE", "FILLED", "HIDDEN"]),
+});
+
+export const forwardStatusSchema = z.object({
+  status: z.enum(["ACTIVE", "RESERVED", "SOLD", "HIDDEN"]),
 });
 
 export const catalogListingSchema = z.object({

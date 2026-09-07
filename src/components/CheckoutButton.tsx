@@ -43,6 +43,31 @@ export function CheckoutButton({
   const [showPicker, setShowPicker] = useState(false);
   const isFree = freeMode ?? arePackagesFree();
 
+  async function openPaidCheckout() {
+    setError("");
+    if (status === "unauthenticated" || !session) {
+      window.location.href = `/${locale}/auth/login?callbackUrl=/${locale}/pricing`;
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch("/api/payments/methods");
+      const avail = (await res.json().catch(() => null)) as {
+        any?: boolean;
+        demo?: boolean;
+      } | null;
+      if (!avail?.any && !avail?.demo) {
+        setError(t("errors.payment_required_in_production"));
+        return;
+      }
+      setShowPicker(true);
+    } catch {
+      setError(t("errors.generic"));
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function startDirectCheckout(opts?: { useProQuota?: boolean }) {
     setError("");
     if (status === "unauthenticated" || !session) {
@@ -131,10 +156,10 @@ export function CheckoutButton({
         <button
           type="button"
           className={className}
-          disabled={disabled}
-          onClick={() => setShowPicker(true)}
+          disabled={disabled || loading}
+          onClick={() => void openPaidCheckout()}
         >
-          {label || t("buy")}
+          {loading ? t("processing") : label || t("buy")}
         </button>
       ) : (
         <PaymentMethodPicker

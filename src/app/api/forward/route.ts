@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { futureHarvestSchema, forwardInterestSchema } from "@/lib/validations";
 import { resolveLocationRefs, resolveProductId } from "@/lib/resolve-refs";
+import { filterListingImageUrls } from "@/lib/upload-urls";
 
 export async function GET() {
   const crops = await prisma.futureHarvest.findMany({
@@ -82,11 +83,7 @@ export async function POST(req: Request) {
       phone: d.phone,
       whatsapp: d.whatsapp || null,
       userId: session.user.id,
-      imageUrls: JSON.stringify(
-        (d.imageUrls || []).filter(
-          (u) => u.startsWith("/uploads/") && !u.includes("..") && !u.includes("//"),
-        ),
-      ),
+      imageUrls: JSON.stringify(filterListingImageUrls(d.imageUrls)),
     },
   });
   return NextResponse.json(crop, { status: 201 });

@@ -4,44 +4,82 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
 
-export function MyListingActions({ id, status }: { id: string; status: string }) {
+type Props = {
+  id: string;
+  status: string;
+  /** e.g. /api/supply */
+  apiBase: string;
+  /** Extra terminal statuses besides ACTIVE / HIDDEN (default SOLD) */
+  soldStatus?: string | null;
+};
+
+/**
+ * Owner controls for marketplace listings (status + soft-delete).
+ */
+export function MyListingActions({
+  id,
+  status,
+  apiBase,
+  soldStatus = "SOLD",
+}: Props) {
   const t = useTranslations("my");
   const router = useRouter();
   const [busy, setBusy] = useState(false);
 
   async function setStatus(next: string) {
     setBusy(true);
-    await fetch(`/api/listings/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: next }),
-    });
-    setBusy(false);
-    router.refresh();
+    try {
+      await fetch(`${apiBase}/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: next }),
+      });
+      router.refresh();
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function remove() {
-    if (!confirm("OK?")) return;
+    if (!confirm(t("confirmDelete"))) return;
     setBusy(true);
-    await fetch(`/api/listings/${id}`, { method: "DELETE" });
-    setBusy(false);
-    router.refresh();
+    try {
+      await fetch(`${apiBase}/${id}`, { method: "DELETE" });
+      router.refresh();
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
     <div className="my-actions">
       {status !== "ACTIVE" && (
-        <button type="button" className="btn ghost" disabled={busy} onClick={() => setStatus("ACTIVE")}>
+        <button
+          type="button"
+          className="btn ghost"
+          disabled={busy}
+          onClick={() => setStatus("ACTIVE")}
+        >
           {t("markActive")}
         </button>
       )}
-      {status !== "SOLD" && (
-        <button type="button" className="btn ghost" disabled={busy} onClick={() => setStatus("SOLD")}>
-          {t("markSold")}
+      {soldStatus && status !== soldStatus && (
+        <button
+          type="button"
+          className="btn ghost"
+          disabled={busy}
+          onClick={() => setStatus(soldStatus)}
+        >
+          {soldStatus === "FILLED" ? t("markFilled") : t("markSold")}
         </button>
       )}
       {status !== "HIDDEN" && (
-        <button type="button" className="btn ghost" disabled={busy} onClick={() => setStatus("HIDDEN")}>
+        <button
+          type="button"
+          className="btn ghost"
+          disabled={busy}
+          onClick={() => setStatus("HIDDEN")}
+        >
           {t("hide")}
         </button>
       )}

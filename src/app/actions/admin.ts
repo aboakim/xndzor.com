@@ -84,9 +84,11 @@ export async function deleteListing(kind: ListingKind, id: string) {
   await assertAdmin();
   switch (kind) {
     case "supply":
+      await prisma.offer.deleteMany({ where: { supplyId: id } });
       await prisma.supply.delete({ where: { id } });
       break;
     case "demand":
+      await prisma.offer.deleteMany({ where: { demandId: id } });
       await prisma.demand.delete({ where: { id } });
       break;
     case "animal":
@@ -99,9 +101,15 @@ export async function deleteListing(kind: ListingKind, id: string) {
       await prisma.catalogListing.delete({ where: { id } });
       break;
     case "job":
+      await prisma.jobApplication.deleteMany({ where: { jobRequestId: id } });
       await prisma.jobRequest.delete({ where: { id } });
       break;
     case "futureHarvest":
+      await prisma.preOffer.deleteMany({ where: { futureHarvestId: id } });
+      await prisma.productBatch.updateMany({
+        where: { futureHarvestId: id },
+        data: { futureHarvestId: null },
+      });
       await prisma.futureHarvest.delete({ where: { id } });
       break;
     default:

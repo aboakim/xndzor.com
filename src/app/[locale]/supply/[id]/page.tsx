@@ -12,6 +12,7 @@ import { formatAmd, formatPriceRange, formatQty, parseImageUrls } from "@/lib/ut
 import { localizedPlaceName } from "@/lib/places";
 import { getSession } from "@/lib/session";
 import { BoostButton } from "@/components/BoostButton";
+import { MyListingActions } from "@/components/MyListingActions";
 import { ReportListingButton } from "@/components/ReportListingButton";
 import { getActiveBoostMap, getUserEntitlements } from "@/lib/monetization";
 import { resolveOwnerFreeCheckout } from "@/lib/early-bird";
@@ -174,6 +175,7 @@ export default async function SupplyDetailPage({
 
       {isOwner ? (
         <section className="owner-panel">
+          <MyListingActions id={supply.id} status={supply.status} apiBase="/api/supply" />
           <h2>{t("pricing.boost.cta")}</h2>
           <BoostButton
             targetType="SUPPLY"

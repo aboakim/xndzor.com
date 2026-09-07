@@ -1,6 +1,7 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { confirmBankPayment } from "@/app/actions/admin";
 import { formatAmd } from "@/lib/utils";
@@ -29,16 +30,30 @@ export function AdminPaymentsClient({
   locale: string;
 }) {
   const t = useTranslations("admin");
+  const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const [error, setError] = useState("");
+  const [confirmingId, setConfirmingId] = useState<string | null>(null);
 
   function confirm(id: string) {
+    setError("");
+    setConfirmingId(id);
     startTransition(() => {
-      void confirmBankPayment(id).catch(() => {});
+      void confirmBankPayment(id)
+        .then(() => {
+          setConfirmingId(null);
+          router.refresh();
+        })
+        .catch(() => {
+          setConfirmingId(null);
+          setError(t("confirmBankFailed"));
+        });
     });
   }
 
   return (
     <>
+      {error ? <p className="form-error">{error}</p> : null}
       {pendingBank.length > 0 ? (
         <>
           <h3>{t("pendingBankTransfers")}</h3>
@@ -63,7 +78,7 @@ export function AdminPaymentsClient({
                   disabled={pending}
                   onClick={() => confirm(p.id)}
                 >
-                  {t("confirmBankPayment")}
+                  {confirmingId === p.id ? t("confirming") : t("confirmBankPayment")}
                 </button>
               </li>
             ))}

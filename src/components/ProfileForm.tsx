@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MARZES, localizedPlaceName, type LocationVillage } from "@/lib/places";
 import { AvatarUploadField } from "@/components/AvatarUploadField";
 
@@ -50,6 +50,7 @@ export function ProfileForm({ welcome, earlyBird, earlyBirdRemaining, earlyBirdL
   const [showMarzPublic, setShowMarzPublic] = useState(true);
   const [showVillagePublic, setShowVillagePublic] = useState(false);
   const [earlyBirdFree, setEarlyBirdFree] = useState(false);
+  const prevMarzRef = useRef<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -66,6 +67,7 @@ export function ProfileForm({ welcome, earlyBird, earlyBirdRemaining, earlyBirdL
         setAvatarUrl(data.avatarUrl);
         setMarzId(data.marzId || "");
         setVillageId(data.villageId || "");
+        prevMarzRef.current = data.marzId || "";
         setProfileVisibility(data.profileVisibility || "PUBLIC");
         setShowPhonePublic(data.showPhonePublic);
         setShowAvatarPublic(data.showAvatarPublic);
@@ -88,8 +90,12 @@ export function ProfileForm({ welcome, earlyBird, earlyBirdRemaining, earlyBirdL
   useEffect(() => {
     if (!marzId) {
       setVillages([]);
+      setVillageId("");
       return;
     }
+    const marzChanged =
+      prevMarzRef.current !== null && prevMarzRef.current !== marzId;
+    prevMarzRef.current = marzId;
     let cancelled = false;
     setLoadingVillages(true);
     fetch(`/api/villages?marzId=${encodeURIComponent(marzId)}`)
@@ -97,6 +103,7 @@ export function ProfileForm({ welcome, earlyBird, earlyBirdRemaining, earlyBirdL
       .then((data) => {
         if (cancelled) return;
         setVillages(Array.isArray(data) ? data : []);
+        if (marzChanged) setVillageId("");
       })
       .catch(() => {
         if (!cancelled) setVillages([]);
@@ -227,14 +234,22 @@ export function ProfileForm({ welcome, earlyBird, earlyBirdRemaining, earlyBirdL
           </select>
         </label>
         <label>
-          <span>{t("fields.village")}</span>
+          <span>
+            {t("fields.village")}
+            {marzId === "Yerevan" ? ` (${tAll("auth.placeholders.villageOptional")})` : ""}
+          </span>
           <select
             value={villageId}
             onChange={(e) => setVillageId(e.target.value)}
             disabled={!marzId || loadingVillages}
+            required={Boolean(marzId) && marzId !== "Yerevan"}
           >
             <option value="">
-              {loadingVillages ? "…" : t("placeholders.village")}
+              {loadingVillages
+                ? "…"
+                : marzId === "Yerevan"
+                  ? tAll("auth.placeholders.villageOptional")
+                  : t("placeholders.village")}
             </option>
             {villages.map((v) => (
               <option key={v.id} value={v.id}>

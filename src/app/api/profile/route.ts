@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
+import { isAllowedUploadUrl } from "@/lib/upload-urls";
 import { cleanText } from "@/lib/sanitize";
 import { profileUpdateSchema } from "@/lib/validations";
 
@@ -82,7 +83,7 @@ export async function PATCH(req: Request) {
 
   if (data.avatarUrl !== undefined) {
     const url = data.avatarUrl.trim();
-    if (url && !url.startsWith("/uploads/avatars/")) {
+    if (url && !isAllowedUploadUrl(url, "avatar")) {
       return NextResponse.json({ error: "INVALID_AVATAR", code: "INVALID_AVATAR" }, { status: 400 });
     }
     update.avatarUrl = url || null;

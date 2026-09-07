@@ -101,13 +101,14 @@ export const authOptions: any = {
         try {
           const dbUser = await prisma.user.findUnique({
             where: { id: token.id as string },
-            select: { role: true, email: true },
+            select: { role: true, email: true, suspended: true },
           });
-          if (dbUser) {
-            token.role = dbUser.role;
-            token.isAdmin =
-              dbUser.role === "ADMIN" || isAdminEmail(dbUser.email);
+          if (!dbUser || dbUser.suspended) {
+            return {};
           }
+          token.role = dbUser.role;
+          token.isAdmin =
+            dbUser.role === "ADMIN" || isAdminEmail(dbUser.email);
         } catch (error) {
           console.error(
             "[Xndzor] jwt callback DB error — using token claims",
@@ -119,21 +120,23 @@ export const authOptions: any = {
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async session({ session, token }: any) {
+      if (!token?.id) {
+        return session;
+      }
       if (session.user && token.id) {
         session.user.id = token.id as string;
         try {
           const dbUser = await prisma.user.findUnique({
             where: { id: token.id as string },
-            select: { role: true, email: true },
+            select: { role: true, email: true, suspended: true },
           });
-          if (dbUser) {
-            session.user.role = dbUser.role;
-            session.user.isAdmin =
-              dbUser.role === "ADMIN" || isAdminEmail(dbUser.email);
-          } else {
-            session.user.role = token.role as string | undefined;
-            session.user.isAdmin = Boolean(token.isAdmin);
+          if (!dbUser || dbUser.suspended) {
+            // Force client to treat as signed-out
+            return { ...session, user: undefined };
           }
+          session.user.role = dbUser.role;
+          session.user.isAdmin =
+            dbUser.role === "ADMIN" || isAdminEmail(dbUser.email);
         } catch (error) {
           console.error(
             "[Xndzor] session callback DB error — using token claims",

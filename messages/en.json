@@ -3193,8 +3193,10 @@
   "my": {
     "markActive": "Mark active",
     "markSold": "Mark sold",
+    "markFilled": "Mark filled",
     "hide": "Hide",
-    "delete": "Delete"
+    "delete": "Delete",
+    "confirmDelete": "Hide this listing from the marketplace?"
   },
   "reportListing": {
     "button": "Report listing"
@@ -3253,6 +3255,8 @@
     "pendingBankTransfers": "Pending bank transfers",
     "pendingBankTransfersLede": "Check that the money arrived in your account, then click Confirm — the package will activate.",
     "confirmBankPayment": "Confirm payment",
+    "confirming": "Confirming…",
+    "confirmBankFailed": "Could not confirm this payment. Refresh and try again.",
     "userMarkedPaid": "User marked as paid",
     "totalRevenue": "Revenue",
     "paymentCount": "Payments",

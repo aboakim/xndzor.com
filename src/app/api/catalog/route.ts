@@ -6,6 +6,7 @@ import { cleanText } from "@/lib/sanitize";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { CATALOG_SUBTYPES, isCatalogCategory, stringifySpecs } from "@/lib/catalog";
 import { resolveLocationRefs } from "@/lib/resolve-refs";
+import { filterListingImageUrls } from "@/lib/upload-urls";
 
 function optNum(v: number | "" | undefined | null): number | null {
   if (v === "" || v == null) return null;
@@ -105,11 +106,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const imageUrls = JSON.stringify(
-    (data.imageUrls || []).filter(
-      (u) => u.startsWith("/uploads/") && !u.includes("..") && !u.includes("//")
-    )
-  );
+  const imageUrls = JSON.stringify(filterListingImageUrls(data.imageUrls));
 
   const listing = await prisma.catalogListing.create({
     data: {

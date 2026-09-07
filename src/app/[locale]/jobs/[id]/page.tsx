@@ -12,6 +12,7 @@ import { JobTypeIcon } from "@/components/AgIcons";
 import { VillageLink } from "@/components/VillageLink";
 import { SellerCard } from "@/components/SellerCard";
 import { USER_PROFILE_SELECT } from "@/lib/profile-privacy";
+import { MyListingActions } from "@/components/MyListingActions";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,7 @@ export default async function JobDetailPage({
     include: { marz: true, village: true, user: { select: USER_PROFILE_SELECT } },
   });
   if (!job || job.status === "HIDDEN") notFound();
+  const isOwner = session?.user?.id === job.userId;
 
   const providers = await prisma.serviceProvider.findMany({
     where: { status: "ACTIVE" },
@@ -98,6 +100,17 @@ export default async function JobDetailPage({
       />
 
       <ContactActions phone={job.phone} whatsapp={job.whatsapp} />
+
+      {isOwner ? (
+        <section className="owner-panel">
+          <MyListingActions
+            id={job.id}
+            status={job.status}
+            apiBase="/api/jobs"
+            soldStatus="FILLED"
+          />
+        </section>
+      ) : null}
 
       <section className="match-section killer-flow">
         <h2>{t("jobsBoard.matchingProviders")}</h2>

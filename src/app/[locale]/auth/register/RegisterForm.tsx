@@ -173,7 +173,8 @@ export default function RegisterForm({ callbackUrl }: Props) {
 
       const qs = new URLSearchParams({ welcome: "1" });
       if (eb && !eb.slotsFull && eb.remaining != null) {
-        if (eb.remaining != null) qs.set("remaining", String(eb.remaining));
+        qs.set("earlyBird", "1");
+        qs.set("remaining", String(eb.remaining));
         if (eb.freeLimit != null) qs.set("limit", String(eb.freeLimit));
       }
       const dest = callbackUrl

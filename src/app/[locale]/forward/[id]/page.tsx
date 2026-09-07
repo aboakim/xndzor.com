@@ -14,6 +14,7 @@ import { formatFarmId } from "@/lib/farm-id";
 import { getFarmScore } from "@/lib/farm-score";
 import { ListingGallery } from "@/components/ListingGallery";
 import { BoostButton } from "@/components/BoostButton";
+import { MyListingActions } from "@/components/MyListingActions";
 import { getActiveBoostMap, getUserEntitlements } from "@/lib/monetization";
 import { resolveOwnerFreeCheckout } from "@/lib/early-bird";
 import { TrackRecentView } from "@/components/TrackRecentView";
@@ -149,7 +150,8 @@ export default async function ForwardDetailPage({
       ) : null}
 
       {isOwner ? (
-        <div className="passport-create-batch">
+        <div className="passport-create-batch owner-panel">
+          <MyListingActions id={crop.id} status={crop.status} apiBase="/api/forward" />
           <BoostButton
             targetType="FUTURE_HARVEST"
             targetId={crop.id}

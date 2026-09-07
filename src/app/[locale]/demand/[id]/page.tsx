@@ -15,6 +15,7 @@ import { ProductIcon } from "@/components/AgIcons";
 import { VillageLink } from "@/components/VillageLink";
 import { SellerCard } from "@/components/SellerCard";
 import { USER_PROFILE_SELECT } from "@/lib/profile-privacy";
+import { MyListingActions } from "@/components/MyListingActions";
 
 export const dynamic = "force-dynamic";
 
@@ -38,6 +39,7 @@ export default async function DemandDetailPage({
     },
   });
   if (!demand || demand.status === "HIDDEN") notFound();
+  const isOwner = session?.user?.id === demand.userId;
 
   const supplies = await prisma.supply.findMany({
     where: { status: "ACTIVE", productId: demand.productId },
@@ -136,6 +138,12 @@ export default async function DemandDetailPage({
             : `Hi, I can supply for: ${demand.title}`
         }
       />
+
+      {isOwner ? (
+        <section className="owner-panel">
+          <MyListingActions id={demand.id} status={demand.status} apiBase="/api/demand" />
+        </section>
+      ) : null}
 
       <section className="match-section">
         <h2>{t("detail.matchingSupply")}</h2>
