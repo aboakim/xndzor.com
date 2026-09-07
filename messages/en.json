@@ -669,7 +669,9 @@
     "postedBy": "Posted by",
     "noMatches": "No matches",
     "score": "Score {score}",
-    "timing": "Timing"
+    "timing": "Timing",
+    "ready": "Ready",
+    "matchingSupply": "Matching supply"
   },
   "postDemand": {
     "title": "I need…",

@@ -724,7 +724,9 @@
     "postedBy": "Տեղադրել է՝",
     "noMatches": "Համընկնում չկա",
     "score": "Միավոր {score}",
-    "timing": "Ժամկետ"
+    "timing": "Ժամկետ",
+    "ready": "Պատրաստ",
+    "matchingSupply": "Համընկնող առաջարկ"
   },
   "postDemand": {
     "title": "Ինձ պետք է…",

@@ -669,7 +669,9 @@
     "postedBy": "Разместил:",
     "noMatches": "Нет совпадений",
     "score": "Балл {score}",
-    "timing": "Срок"
+    "timing": "Срок",
+    "ready": "Готовность",
+    "matchingSupply": "Подходящее предложение"
   },
   "postDemand": {
     "title": "Мне нужно…",
