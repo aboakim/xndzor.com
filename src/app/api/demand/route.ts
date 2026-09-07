@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { demandSchema } from "@/lib/validations";
+import { resolveLocationRefs, resolveProductId } from "@/lib/resolve-refs";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -48,28 +49,31 @@ export async function POST(req: Request) {
   }
   const data = parsed.data;
 
-  const [product, village] = await Promise.all([
-    prisma.product.findUnique({ where: { id: data.productId } }),
-    prisma.village.findUnique({ where: { id: data.villageId } }),
+  const [productRef, locRef] = await Promise.all([
+    resolveProductId(data.productId),
+    resolveLocationRefs(data.marzId, data.villageId),
   ]);
-  if (!product) {
-    return NextResponse.json({ error: "Invalid product" }, { status: 400 });
+  if (!productRef.ok) {
+    return NextResponse.json({ error: productRef.error }, { status: 400 });
   }
-  if (!village || village.marzId !== data.marzId) {
-    return NextResponse.json({ error: "Village must belong to marz" }, { status: 400 });
+  if (!locRef.ok || !locRef.villageId) {
+    return NextResponse.json(
+      { error: locRef.ok ? "Village required" : locRef.error },
+      { status: 400 },
+    );
   }
 
   const imageUrls = JSON.stringify(
     (data.imageUrls || []).filter(
-      (u) => u.startsWith("/uploads/") && !u.includes("..") && !u.includes("//")
-    )
+      (u) => u.startsWith("/uploads/") && !u.includes("..") && !u.includes("//"),
+    ),
   );
 
   const demand = await prisma.demand.create({
     data: {
       title: data.title,
       description: data.description,
-      productId: data.productId,
+      productId: productRef.productId,
       qtyMin: data.qtyMin,
       qtyMax: data.qtyMax === "" || data.qtyMax == null ? null : Number(data.qtyMax),
       unit: data.unit,
@@ -79,8 +83,8 @@ export async function POST(req: Request) {
         data.priceMaxAmd === "" || data.priceMaxAmd == null ? null : Number(data.priceMaxAmd),
       timingNote: data.timingNote || null,
       buyerKind: data.buyerKind || "WHOLESALE",
-      marzId: data.marzId,
-      villageId: data.villageId,
+      marzId: locRef.marzId,
+      villageId: locRef.villageId,
       phone: data.phone,
       whatsapp: data.whatsapp || null,
       imageUrls,

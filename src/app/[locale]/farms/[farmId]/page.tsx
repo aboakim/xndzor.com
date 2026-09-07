@@ -18,6 +18,7 @@ import { DemandAlertForm } from "@/components/DemandAlertForm";
 import { getUserEntitlements } from "@/lib/monetization";
 import { getXndzorScore } from "@/lib/farm-os/xndzor-score";
 import { XndzorScoreCard } from "@/components/farm-os/XndzorScoreCard";
+import { getProducts } from "@/lib/products";
 
 export const dynamic = "force-dynamic";
 
@@ -79,7 +80,7 @@ export default async function FarmPassportPage({
   const displayName = user.farmName || user.name;
   const isOwner = session?.user?.id === user.id;
   const ent = await getUserEntitlements(user.id);
-  const products = await prisma.product.findMany({ orderBy: { sortOrder: "asc" } });
+  const products = await getProducts();
   const ownerAlerts =
     isOwner && session?.user?.id
       ? await prisma.demandAlert.findMany({

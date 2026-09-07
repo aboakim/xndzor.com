@@ -7,6 +7,7 @@ import { formatAmd } from "@/lib/utils";
 import { localizedPlaceName } from "@/lib/places";
 import { getSession } from "@/lib/session";
 import { SpaceListingForm } from "@/components/farm-os/SpaceListingForm";
+import { getMarzOptions } from "@/lib/marz-options";
 
 export const dynamic = "force-dynamic";
 
@@ -20,19 +21,17 @@ export default async function SpacesPage({
   const t = await getTranslations();
   const session = await getSession();
 
-  const [listings, marzes] = await Promise.all([
-    safeQuery(
-      () =>
-        prisma.spaceListing.findMany({
-          where: { status: "ACTIVE" },
-          include: { marz: true, village: true },
-          orderBy: { createdAt: "desc" },
-          take: 40,
-        }),
-      [],
-    ),
-    safeQuery(() => prisma.marz.findMany({ orderBy: { sortOrder: "asc" } }), []),
-  ]);
+  const listings = await safeQuery(
+    () =>
+      prisma.spaceListing.findMany({
+        where: { status: "ACTIVE" },
+        include: { marz: true, village: true },
+        orderBy: { createdAt: "desc" },
+        take: 40,
+      }),
+    [],
+  );
+  const marzes = getMarzOptions((slug) => t(`marzes.${slug}` as "marzes.Yerevan"));
 
   return (
     <div className="section page-board">

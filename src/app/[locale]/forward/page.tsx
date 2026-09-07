@@ -15,6 +15,7 @@ import {
   getProUserIds,
   sortByMonetization,
 } from "@/lib/monetization";
+import { getProducts } from "@/lib/products";
 
 export const dynamic = "force-dynamic";
 export default async function ForwardBoardPage({
@@ -69,7 +70,7 @@ export default async function ForwardBoardPage({
     where: { status: "ACTIVE" },
     _count: true,
   });
-  const products = await prisma.product.findMany();
+  const products = await getProducts();
   const productMap = Object.fromEntries(products.map((p) => [p.id, p]));
 
   return (

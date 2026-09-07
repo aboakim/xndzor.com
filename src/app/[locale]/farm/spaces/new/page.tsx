@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { FarmPageShell } from "@/components/farm/FarmPageShell";
 import { SpaceForm } from "@/components/farm/SpaceForm";
+import { getMarzOptions } from "@/lib/marz-options";
 
 export const dynamic = "force-dynamic";
 
@@ -22,10 +23,8 @@ export default async function NewSpacePage({
     redirect(`/${locale}/auth/login?callbackUrl=/${locale}/farm/spaces/new`);
   }
 
-  const [user, marzes] = await Promise.all([
-    prisma.user.findUnique({ where: { id: session.user.id } }),
-    prisma.marz.findMany({ orderBy: { sortOrder: "asc" } }),
-  ]);
+  const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+  const marzes = getMarzOptions((slug) => root(`marzes.${slug}` as "marzes.Yerevan"));
 
   return (
     <FarmPageShell
@@ -43,7 +42,7 @@ export default async function NewSpacePage({
         marzes={marzes.map((m) => ({
           id: m.id,
           slug: m.slug,
-          name: root(`marzes.${m.slug}` as "marzes.Yerevan"),
+          name: m.name,
         }))}
       />
     </FarmPageShell>

@@ -5,6 +5,7 @@ import { catalogListingSchema } from "@/lib/validations";
 import { cleanText } from "@/lib/sanitize";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { CATALOG_SUBTYPES, isCatalogCategory, stringifySpecs } from "@/lib/catalog";
+import { resolveLocationRefs } from "@/lib/resolve-refs";
 
 function optNum(v: number | "" | undefined | null): number | null {
   if (v === "" || v == null) return null;
@@ -96,14 +97,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid subtype for category" }, { status: 400 });
   }
 
-  const village = data.villageId
-    ? await prisma.village.findUnique({ where: { id: data.villageId } })
-    : null;
-  if (data.villageId && (!village || village.marzId !== data.marzId)) {
-    return NextResponse.json({ error: "Village must belong to marz" }, { status: 400 });
-  }
-  if (!data.villageId) {
-    return NextResponse.json({ error: "Village required" }, { status: 400 });
+  const locRef = await resolveLocationRefs(data.marzId, data.villageId);
+  if (!locRef.ok || !locRef.villageId) {
+    return NextResponse.json(
+      { error: locRef.ok ? "Village required" : locRef.error },
+      { status: 400 },
+    );
   }
 
   const imageUrls = JSON.stringify(
@@ -127,8 +126,8 @@ export async function POST(req: Request) {
       priceNegotiable: Boolean(data.priceNegotiable),
       priceUnit: data.priceUnit || "LOT",
       expiryDate: data.expiryDate ? new Date(data.expiryDate) : null,
-      marzId: data.marzId,
-      villageId: data.villageId,
+      marzId: locRef.marzId,
+      villageId: locRef.villageId,
       phone: cleanText(data.phone, 20),
       whatsapp: optStr(data.whatsapp, 20),
       imageUrls,

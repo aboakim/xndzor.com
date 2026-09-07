@@ -4,6 +4,7 @@ import { getSession } from "@/lib/session";
 import { plotSchema } from "@/lib/validations";
 import { estimateYieldTons } from "@/lib/yield";
 import { buildTodaySuggestions } from "@/lib/farm-today";
+import { resolveLocationRefs, resolveProductId } from "@/lib/resolve-refs";
 
 export async function GET() {
   const session = await getSession();
@@ -36,7 +37,18 @@ export async function POST(req: Request) {
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   const d = parsed.data;
 
-  const product = await prisma.product.findUnique({ where: { id: d.cropProductId } });
+  const [productRef, locRef] = await Promise.all([
+    resolveProductId(d.cropProductId),
+    resolveLocationRefs(d.marzId, d.villageId || null),
+  ]);
+  if (!productRef.ok) {
+    return NextResponse.json({ error: productRef.error }, { status: 400 });
+  }
+  if (!locRef.ok) {
+    return NextResponse.json({ error: locRef.error }, { status: 400 });
+  }
+
+  const product = await prisma.product.findUnique({ where: { id: productRef.productId } });
   if (!product) return NextResponse.json({ error: "Product not found" }, { status: 400 });
 
   const est = estimateYieldTons(product.slug, d.hectares, "hy");
@@ -49,15 +61,15 @@ export async function POST(req: Request) {
     data: {
       name: d.name,
       hectares: d.hectares,
-      cropProductId: d.cropProductId,
+      cropProductId: productRef.productId,
       plantDate: new Date(d.plantDate),
       irrigationNotes: d.irrigationNotes || null,
       lastFertilizer: d.lastFertilizer || null,
       lastIrrigationAt: d.lastIrrigationAt ? new Date(d.lastIrrigationAt) : null,
       harvestFrom: d.harvestFrom ? new Date(d.harvestFrom) : null,
       harvestTo: d.harvestTo ? new Date(d.harvestTo) : null,
-      marzId: d.marzId,
-      villageId: d.villageId || null,
+      marzId: locRef.marzId,
+      villageId: locRef.villageId,
       userId: session.user.id,
       yieldEstimate: {
         create: {

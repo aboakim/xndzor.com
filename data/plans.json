@@ -1,0 +1,52 @@
+{
+  "plans": [
+    {
+      "code": "FARM_PRO_MONTHLY",
+      "kind": "FARM_PRO",
+      "nameKey": "pricing.farmPro.name",
+      "amountAmd": 4900,
+      "interval": "MONTHLY",
+      "sortOrder": 1
+    },
+    {
+      "code": "FARM_PRO_YEARLY",
+      "kind": "FARM_PRO",
+      "nameKey": "pricing.farmPro.name",
+      "amountAmd": 49000,
+      "interval": "YEARLY",
+      "sortOrder": 2
+    },
+    {
+      "code": "BUYER_PRO_MONTHLY",
+      "kind": "BUYER_PRO",
+      "nameKey": "pricing.buyerPro.name",
+      "amountAmd": 9900,
+      "interval": "MONTHLY",
+      "sortOrder": 3
+    },
+    {
+      "code": "VERIFIED_FARM_YEARLY",
+      "kind": "VERIFIED_FARM",
+      "nameKey": "pricing.verifiedFarm.name",
+      "amountAmd": 9900,
+      "interval": "YEARLY",
+      "sortOrder": 4
+    },
+    {
+      "code": "BOOST_7",
+      "kind": "BOOST",
+      "nameKey": "pricing.boost.name7",
+      "amountAmd": 1500,
+      "interval": "DAYS_7",
+      "sortOrder": 5
+    },
+    {
+      "code": "BOOST_30",
+      "kind": "BOOST",
+      "nameKey": "pricing.boost.name30",
+      "amountAmd": 3900,
+      "interval": "DAYS_30",
+      "sortOrder": 6
+    }
+  ]
+}

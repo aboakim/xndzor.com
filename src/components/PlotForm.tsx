@@ -112,14 +112,26 @@ export function PlotForm({
             required
             value={productId}
             onChange={(e) => setProductId(e.target.value)}
+            disabled={products.length === 0}
           >
-            {products.map((p) => (
-              <option key={p.id} value={p.id}>
-                {t(p.nameKey as "products.tomato")}
+            {products.length === 0 ? (
+              <option value="" disabled>
+                {t("forms.selectEmpty")}
               </option>
-            ))}
+            ) : (
+              products.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {t(p.nameKey as "products.tomato")}
+                </option>
+              ))
+            )}
           </select>
         </span>
+        {products.length === 0 ? (
+          <p className="form-error" role="status">
+            {t("forms.selectEmptyHint")}
+          </p>
+        ) : null}
       </label>
       <label>
         <span>{t("plots.fields.hectares")}</span>
@@ -206,7 +218,7 @@ export function PlotForm({
         </select>
       </label>
       {error ? <p className="form-error">{error}</p> : null}
-      <button type="submit" className="btn primary" disabled={saving}>
+      <button type="submit" className="btn primary" disabled={saving || !productId}>
         {saving ? t("plots.saving") : t("plots.submit")}
       </button>
     </form>

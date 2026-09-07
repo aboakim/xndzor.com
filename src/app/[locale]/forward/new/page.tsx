@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
+import { getProducts } from "@/lib/products";
 import { ForwardCropForm } from "@/components/ForwardCropForm";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +20,7 @@ export default async function NewForwardPage({
     redirect(`/${locale}/auth/login?callbackUrl=/${locale}/forward/new`);
   }
   const [products, user] = await Promise.all([
-    prisma.product.findMany({ orderBy: { sortOrder: "asc" } }),
+    getProducts(),
     prisma.user.findUnique({ where: { id: session.user.id } }),
   ]);
   return (

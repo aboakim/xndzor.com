@@ -444,6 +444,10 @@
     "send": "Send",
     "loading": "Loading…"
   },
+  "forms": {
+    "selectEmpty": "No options available",
+    "selectEmptyHint": "Catalog is loading or unavailable. Refresh the page and try again."
+  },
   "board": {
     "search": "Search",
     "searchHome": "Search crop, buyer, job…",

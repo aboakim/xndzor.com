@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
+import { resolveLocationRefs } from "@/lib/resolve-refs";
 
 const TYPES = new Set(["WAREHOUSE", "COLD", "SILO", "GREENHOUSE", "DRYER", "LAND"]);
 
@@ -51,6 +52,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "title and marzId required" }, { status: 400 });
   }
 
+  const locRef = await resolveLocationRefs(body.marzId, body.villageId || null);
+  if (!locRef.ok) {
+    return NextResponse.json({ error: locRef.error }, { status: 400 });
+  }
+
   const row = await prisma.spaceListing.create({
     data: {
       title: body.title.trim().slice(0, 120),
@@ -62,8 +68,8 @@ export async function POST(req: Request) {
       availableFrom: body.availableFrom ? new Date(body.availableFrom) : null,
       priceAmd: body.priceAmd != null ? Math.round(Number(body.priceAmd)) : null,
       priceUnit: body.priceUnit || "PER_MONTH",
-      marzId: body.marzId,
-      villageId: body.villageId || null,
+      marzId: locRef.marzId,
+      villageId: locRef.villageId,
       phone: (body.phone || "").slice(0, 40),
       userId: session.user.id,
     },

@@ -3,6 +3,9 @@
  * Soft-fails so a missing Neon URL still lets the site deploy (empty-state homepage).
  */
 import { spawnSync } from "node:child_process";
+import { loadEnvFile } from "./load-env.mjs";
+
+loadEnvFile();
 
 const url = process.env.DATABASE_URL?.trim() || "";
 const isPostgres = /^postgres(ql)?:\/\//i.test(url);
@@ -32,13 +35,23 @@ if (result.status !== 0) {
 }
 
 console.log("[db-prepare] Syncing location reference data…");
-const sync = spawnSync("node", ["scripts/sync-locations.mjs"], {
+const syncLoc = spawnSync("node", ["scripts/sync-locations.mjs"], {
   stdio: "inherit",
   shell: true,
   env: process.env,
 });
-if (sync.status !== 0) {
+if (syncLoc.status !== 0) {
   console.warn("[db-prepare] location sync failed — continuing build.");
+}
+
+console.log("[db-prepare] Syncing products + plans…");
+const syncRef = spawnSync("node", ["scripts/sync-reference-data.mjs"], {
+  stdio: "inherit",
+  shell: true,
+  env: process.env,
+});
+if (syncRef.status !== 0) {
+  console.warn("[db-prepare] reference-data sync failed — continuing build.");
 }
 
 process.exit(0);

@@ -124,12 +124,19 @@ export function SupplyForm({
               required
               value={productId}
               onChange={(e) => setProductId(e.target.value)}
+              disabled={products.length === 0}
             >
-              {products.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {t(p.nameKey as "products.tomato")}
+              {products.length === 0 ? (
+                <option value="" disabled>
+                  {t("forms.selectEmpty")}
                 </option>
-              ))}
+              ) : (
+                products.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {t(p.nameKey as "products.tomato")}
+                  </option>
+                ))
+              )}
             </select>
           </span>
           <span className="product-icon-row" aria-hidden>
@@ -145,6 +152,11 @@ export function SupplyForm({
               </button>
             ))}
           </span>
+          {products.length === 0 ? (
+            <p className="form-error" role="status">
+              {t("forms.selectEmptyHint")}
+            </p>
+          ) : null}
         </label>
         <label>
           <span>{t("postSupply.fields.unit")}</span>
@@ -194,7 +206,11 @@ export function SupplyForm({
             disabled={!marzId || loadingVillages}
           >
             <option value="" disabled>
-              {loadingVillages ? "…" : "—"}
+              {loadingVillages
+                ? t("common.loading")
+                : villages.length === 0 && marzId
+                  ? t("forms.selectEmpty")
+                  : "—"}
             </option>
             {villages.map((v) => (
               <option key={v.id} value={v.id}>
@@ -222,7 +238,7 @@ export function SupplyForm({
         disabled={saving}
       />
       {error ? <p className="form-error">{error}</p> : null}
-      <button type="submit" className="btn primary" disabled={saving || !marzId || !villageId}>
+      <button type="submit" className="btn primary" disabled={saving || !marzId || !villageId || !productId}>
         {saving ? t("postSupply.saving") : t("postSupply.submit")}
       </button>
     </form>

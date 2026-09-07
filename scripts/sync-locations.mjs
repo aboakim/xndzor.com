@@ -7,6 +7,9 @@
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { loadEnvFile } from "./load-env.mjs";
+
+loadEnvFile();
 
 const url = process.env.DATABASE_URL?.trim() || "";
 const isPostgres = /^postgres(ql)?:\/\//i.test(url);

@@ -1,9 +1,9 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { FarmPageShell } from "@/components/farm/FarmPageShell";
 import { ReturnForm } from "@/components/farm/ReturnForm";
+import { getMarzOptions } from "@/lib/marz-options";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +22,7 @@ export default async function NewReturnPage({
     redirect(`/${locale}/auth/login?callbackUrl=/${locale}/farm/returns/new`);
   }
 
-  const marzes = await prisma.marz.findMany({ orderBy: { sortOrder: "asc" } });
+  const marzes = getMarzOptions((slug) => root(`marzes.${slug}` as "marzes.Yerevan"));
 
   return (
     <FarmPageShell
@@ -39,7 +39,7 @@ export default async function NewReturnPage({
         marzes={marzes.map((m) => ({
           id: m.id,
           slug: m.slug,
-          name: root(`marzes.${m.slug}` as "marzes.Yerevan"),
+          name: m.name,
         }))}
       />
     </FarmPageShell>

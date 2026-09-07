@@ -13,6 +13,7 @@ import {
   getProUserIds,
   sortByMonetization,
 } from "@/lib/monetization";
+import { getProducts } from "@/lib/products";
 
 export const dynamic = "force-dynamic";
 export default async function SupplyBoardPage({
@@ -35,7 +36,7 @@ export default async function SupplyBoardPage({
   const trustedOnly = sp.trusted === "1" || sp.trusted === "true";
 
   const [products, supplies] = await Promise.all([
-    prisma.product.findMany({ orderBy: { sortOrder: "asc" } }),
+    getProducts(),
     prisma.supply.findMany({
       where: {
         status: "ACTIVE",

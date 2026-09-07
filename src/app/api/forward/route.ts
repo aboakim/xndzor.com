@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { futureHarvestSchema, forwardInterestSchema } from "@/lib/validations";
+import { resolveLocationRefs, resolveProductId } from "@/lib/resolve-refs";
 
 export async function GET() {
   const crops = await prisma.futureHarvest.findMany({
@@ -55,9 +56,20 @@ export async function POST(req: Request) {
     if (!plot) return NextResponse.json({ error: "Plot not found" }, { status: 404 });
   }
 
+  const [productRef, locRef] = await Promise.all([
+    resolveProductId(d.productId),
+    resolveLocationRefs(d.marzId, d.villageId || null),
+  ]);
+  if (!productRef.ok) {
+    return NextResponse.json({ error: productRef.error }, { status: 400 });
+  }
+  if (!locRef.ok) {
+    return NextResponse.json({ error: locRef.error }, { status: 400 });
+  }
+
   const crop = await prisma.futureHarvest.create({
     data: {
-      productId: d.productId,
+      productId: productRef.productId,
       plotId: d.plotId || null,
       title: d.title,
       description: d.description,
@@ -65,15 +77,15 @@ export async function POST(req: Request) {
       unit: d.unit,
       harvestDate: new Date(d.harvestDate),
       priceAmd: d.priceAmd === "" || d.priceAmd == null ? null : Number(d.priceAmd),
-      marzId: d.marzId,
-      villageId: d.villageId || null,
+      marzId: locRef.marzId,
+      villageId: locRef.villageId,
       phone: d.phone,
       whatsapp: d.whatsapp || null,
       userId: session.user.id,
       imageUrls: JSON.stringify(
         (d.imageUrls || []).filter(
-          (u) => u.startsWith("/uploads/") && !u.includes("..") && !u.includes("//")
-        )
+          (u) => u.startsWith("/uploads/") && !u.includes("..") && !u.includes("//"),
+        ),
       ),
     },
   });

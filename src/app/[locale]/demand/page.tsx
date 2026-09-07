@@ -7,6 +7,7 @@ import { TradeCard } from "@/components/TradeCard";
 import { ProductIcon } from "@/components/AgIcons";
 import { EmptyState } from "@/components/EmptyState";
 import { formatPriceRange, formatQty } from "@/lib/utils";
+import { getProducts } from "@/lib/products";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,7 @@ export default async function DemandBoardPage({
   const t = await getTranslations();
 
   const [products, demands] = await Promise.all([
-    prisma.product.findMany({ orderBy: { sortOrder: "asc" } }),
+    getProducts(),
     prisma.demand.findMany({
       where: {
         status: "ACTIVE",

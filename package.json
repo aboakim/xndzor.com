@@ -10,6 +10,7 @@
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed:minimal": "tsx prisma/seed-minimal.ts",
+    "db:sync-reference": "node scripts/sync-locations.mjs && node scripts/sync-reference-data.mjs",
     "db:reset": "prisma db push --force-reset && tsx prisma/seed.ts",
     "admin:promote": "tsx prisma/promote-admin.ts",
     "admin:set-password": "node scripts/set-admin-password.mjs",

@@ -1,0 +1,17 @@
+{
+  "products": [
+    { "id": "tomato", "slug": "tomato", "nameKey": "products.tomato", "sortOrder": 1 },
+    { "id": "potato", "slug": "potato", "nameKey": "products.potato", "sortOrder": 2 },
+    { "id": "grape", "slug": "grape", "nameKey": "products.grape", "sortOrder": 3 },
+    { "id": "apple", "slug": "apple", "nameKey": "products.apple", "sortOrder": 4 },
+    { "id": "peach", "slug": "peach", "nameKey": "products.peach", "sortOrder": 5 },
+    { "id": "apricot", "slug": "apricot", "nameKey": "products.apricot", "sortOrder": 6 },
+    { "id": "wheat", "slug": "wheat", "nameKey": "products.wheat", "sortOrder": 7 },
+    { "id": "cucumber", "slug": "cucumber", "nameKey": "products.cucumber", "sortOrder": 8 },
+    { "id": "onion", "slug": "onion", "nameKey": "products.onion", "sortOrder": 9 },
+    { "id": "hay", "slug": "hay", "nameKey": "products.hay", "sortOrder": 10 },
+    { "id": "milk", "slug": "milk", "nameKey": "products.milk", "sortOrder": 11 },
+    { "id": "honey", "slug": "honey", "nameKey": "products.honey", "sortOrder": 12 },
+    { "id": "other", "slug": "other", "nameKey": "products.other", "sortOrder": 13 }
+  ]
+}

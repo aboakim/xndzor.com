@@ -4,6 +4,7 @@ import { getSession } from "@/lib/session";
 import { machineryListingSchema } from "@/lib/validations";
 import { cleanText } from "@/lib/sanitize";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { resolveLocationRefs } from "@/lib/resolve-refs";
 
 function optInt(v: number | "" | undefined | null): number | null {
   if (v === "" || v == null) return null;
@@ -97,14 +98,12 @@ export async function POST(req: Request) {
   }
   const data = parsed.data;
 
-  const village = data.villageId
-    ? await prisma.village.findUnique({ where: { id: data.villageId } })
-    : null;
-  if (data.villageId && (!village || village.marzId !== data.marzId)) {
-    return NextResponse.json({ error: "Village must belong to marz" }, { status: 400 });
-  }
-  if (!data.villageId) {
-    return NextResponse.json({ error: "Village required" }, { status: 400 });
+  const locRef = await resolveLocationRefs(data.marzId, data.villageId);
+  if (!locRef.ok || !locRef.villageId) {
+    return NextResponse.json(
+      { error: locRef.ok ? "Village required" : locRef.error },
+      { status: 400 },
+    );
   }
 
   const imageUrls = JSON.stringify(
@@ -134,8 +133,8 @@ export async function POST(req: Request) {
       capacity: optStr(data.capacity),
       attachments: optStr(data.attachments, 500),
       documentsNote: optStr(data.documentsNote, 500),
-      marzId: data.marzId,
-      villageId: data.villageId,
+      marzId: locRef.marzId,
+      villageId: locRef.villageId,
       phone: cleanText(data.phone, 20),
       whatsapp: optStr(data.whatsapp, 20),
       imageUrls,

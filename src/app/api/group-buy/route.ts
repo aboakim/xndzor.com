@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { groupBuyJoinSchema, groupBuySchema } from "@/lib/validations";
+import { resolveLocationRefs, resolveProductId } from "@/lib/resolve-refs";
 
 export async function GET() {
   const campaigns = await prisma.groupBuyCampaign.findMany({
@@ -51,9 +52,24 @@ export async function POST(req: Request) {
   const parsed = groupBuySchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   const d = parsed.data;
+
+  const productRef = await resolveProductId(d.productId);
+  if (!productRef.ok) {
+    return NextResponse.json({ error: productRef.error }, { status: 400 });
+  }
+
+  let marzId: string | null = d.marzId || null;
+  if (marzId) {
+    const locRef = await resolveLocationRefs(marzId, null);
+    if (!locRef.ok) {
+      return NextResponse.json({ error: locRef.error }, { status: 400 });
+    }
+    marzId = locRef.marzId;
+  }
+
   const campaign = await prisma.groupBuyCampaign.create({
     data: {
-      productId: d.productId,
+      productId: productRef.productId,
       title: d.title,
       description: d.description,
       targetQty: d.targetQty,
@@ -61,7 +77,7 @@ export async function POST(req: Request) {
       pricePerUnitAmd:
         d.pricePerUnitAmd === "" || d.pricePerUnitAmd == null ? null : Number(d.pricePerUnitAmd),
       deadline: d.deadline ? new Date(d.deadline) : null,
-      marzId: d.marzId || null,
+      marzId,
       organizerId: session.user.id,
     },
   });

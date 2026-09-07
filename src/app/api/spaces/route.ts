@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
+import { resolveLocationRefs } from "@/lib/resolve-refs";
 
 const spaceSchema = z.object({
   title: z.string().min(3).max(120),
@@ -52,6 +53,11 @@ export async function POST(req: Request) {
   }
   const d = parsed.data;
 
+  const locRef = await resolveLocationRefs(d.marzId, d.villageId || null);
+  if (!locRef.ok) {
+    return NextResponse.json({ error: locRef.error }, { status: 400 });
+  }
+
   const listing = await prisma.spaceListing.create({
     data: {
       title: d.title,
@@ -62,8 +68,8 @@ export async function POST(req: Request) {
       availableTo: d.availableTo ? new Date(d.availableTo) : null,
       priceAmd: d.priceAmd ?? null,
       priceUnit: d.priceUnit || "PER_MONTH",
-      marzId: d.marzId,
-      villageId: d.villageId || null,
+      marzId: locRef.marzId,
+      villageId: locRef.villageId,
       phone: d.phone,
       userId: session.user.id,
     },

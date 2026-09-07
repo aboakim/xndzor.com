@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
+import { getProducts } from "@/lib/products";
 import { PlotForm } from "@/components/PlotForm";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +21,7 @@ export default async function NewPlotPage({
   }
 
   const [products, user] = await Promise.all([
-    prisma.product.findMany({ orderBy: { sortOrder: "asc" } }),
+    getProducts(),
     prisma.user.findUnique({ where: { id: session.user.id } }),
   ]);
 

@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
+import { getProducts } from "@/lib/products";
 import { DemandForm } from "@/components/DemandForm";
 import { Link } from "@/i18n/navigation";
 
@@ -21,7 +22,7 @@ export default async function NewDemandPage({
   }
 
   const [products, user] = await Promise.all([
-    prisma.product.findMany({ orderBy: { sortOrder: "asc" } }),
+    getProducts(),
     prisma.user.findUnique({ where: { id: session.user.id } }),
   ]);
 

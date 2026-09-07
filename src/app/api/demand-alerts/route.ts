@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { getUserEntitlements } from "@/lib/monetization";
+import { resolveProductId } from "@/lib/resolve-refs";
 
 const schema = z.object({
   productId: z.string().min(1),
@@ -32,10 +33,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "invalid_body" }, { status: 400 });
   }
 
-  const product = await prisma.product.findUnique({
-    where: { id: parsed.data.productId },
-  });
-  if (!product) {
+  const productRef = await resolveProductId(parsed.data.productId);
+  if (!productRef.ok) {
     return NextResponse.json({ error: "product_not_found" }, { status: 404 });
   }
 
@@ -44,12 +43,12 @@ export async function POST(req: Request) {
     where: {
       userId_productId: {
         userId: session.user.id,
-        productId: product.id,
+        productId: productRef.productId,
       },
     },
     create: {
       userId: session.user.id,
-      productId: product.id,
+      productId: productRef.productId,
       active,
     },
     update: { active },

@@ -67,12 +67,19 @@ export function ForwardCropForm({
             required
             value={productId}
             onChange={(e) => setProductId(e.target.value)}
+            disabled={products.length === 0}
           >
-            {products.map((p) => (
-              <option key={p.id} value={p.id}>
-                {t(p.nameKey as "products.tomato")}
+            {products.length === 0 ? (
+              <option value="" disabled>
+                {t("forms.selectEmpty")}
               </option>
-            ))}
+            ) : (
+              products.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {t(p.nameKey as "products.tomato")}
+                </option>
+              ))
+            )}
           </select>
         </span>
         <span className="product-icon-row" aria-hidden>
@@ -88,6 +95,11 @@ export function ForwardCropForm({
             </button>
           ))}
         </span>
+        {products.length === 0 ? (
+          <p className="form-error" role="status">
+            {t("forms.selectEmptyHint")}
+          </p>
+        ) : null}
       </label>
       {productId ? <LiveCropSignal productId={productId} /> : null}
       <label>
@@ -155,7 +167,7 @@ export function ForwardCropForm({
         disabled={saving}
       />
       {error ? <p className="form-error">{error}</p> : null}
-      <button type="submit" className="btn primary" disabled={saving}>
+      <button type="submit" className="btn primary" disabled={saving || !productId}>
         {saving ? t("forwardForm.saving") : t("forwardForm.submit")}
       </button>
     </form>

@@ -16,10 +16,14 @@ const products = [
   { slug: "grape", nameKey: "products.grape", sortOrder: 3 },
   { slug: "apple", nameKey: "products.apple", sortOrder: 4 },
   { slug: "peach", nameKey: "products.peach", sortOrder: 5 },
-  { slug: "wheat", nameKey: "products.wheat", sortOrder: 6 },
-  { slug: "milk", nameKey: "products.milk", sortOrder: 7 },
-  { slug: "honey", nameKey: "products.honey", sortOrder: 8 },
-  { slug: "other", nameKey: "products.other", sortOrder: 9 },
+  { slug: "apricot", nameKey: "products.apricot", sortOrder: 6 },
+  { slug: "wheat", nameKey: "products.wheat", sortOrder: 7 },
+  { slug: "cucumber", nameKey: "products.cucumber", sortOrder: 8 },
+  { slug: "onion", nameKey: "products.onion", sortOrder: 9 },
+  { slug: "hay", nameKey: "products.hay", sortOrder: 10 },
+  { slug: "milk", nameKey: "products.milk", sortOrder: 11 },
+  { slug: "honey", nameKey: "products.honey", sortOrder: 12 },
+  { slug: "other", nameKey: "products.other", sortOrder: 13 },
 ];
 
 const plans = [
@@ -86,7 +90,7 @@ async function upsertReferenceData() {
   for (const p of products) {
     await prisma.product.upsert({
       where: { slug: p.slug },
-      create: p,
+      create: { id: p.slug, ...p },
       update: { nameKey: p.nameKey, sortOrder: p.sortOrder },
     });
   }
