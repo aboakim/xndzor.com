@@ -48,7 +48,10 @@ const RecentlyViewedStrip = nextDynamic(
     })),
 );
 
-/** Homepage category order: Top 5 first, shop/secondary after. */
+/**
+ * Homepage categories: Top 5 first, then a few farm helpers.
+ * Shop & niche sections stay in Բաժիններ mega menu — not a wall of icons.
+ */
 const CATEGORIES = [
   { href: "/supply", action: "sell", labelKey: "menu.sellNow" as const },
   { href: "/demand", action: "buy", labelKey: "menu.buy" as const },
@@ -57,19 +60,7 @@ const CATEGORIES = [
   { href: "/grow", action: "grow", labelKey: "menu.grow" as const },
   { href: "/jobs", action: "orderJob", labelKey: "menu.jobs" as const },
   { href: "/machinery", action: "machinery", labelKey: "menu.machinery" as const },
-  { href: "/plots", action: "plot", labelKey: "menu.plots" as const },
   { href: "/animals", action: "animals", labelKey: "menu.animals" as const },
-  { href: "/shop/fertilizers", action: "fertilizers", labelKey: "menu.fertilizers" as const },
-  { href: "/shop/seeds", action: "seeds", labelKey: "menu.seeds" as const },
-  { href: "/shop/feed", action: "feed", labelKey: "menu.feed" as const },
-  { href: "/shop/chemicals", action: "chemicals", labelKey: "menu.chemicals" as const },
-  {
-    href: "/shop/natural-products",
-    action: "naturalProducts",
-    labelKey: "menu.naturalProducts" as const,
-  },
-  { href: "/shop/tools", action: "tools", labelKey: "menu.tools" as const },
-  { href: "/shop/land", action: "land", labelKey: "menu.land" as const },
 ] as const;
 
 const FEED_TAKE = 6;
@@ -347,7 +338,7 @@ export default async function HomePage({
         : undefined;
 
   return (
-    <div className="home-vendo home-vendo-clean home-vendo-banners home-vendo-cockpit">
+    <div className="home-vendo home-vendo-clean home-vendo-banners home-vendo-cockpit home-village">
       <section className="section home-categories-scroll home-categories-primary" aria-label={t("home.chooseAction")}>
         <CategoryScroll items={categoryItems} />
       </section>
@@ -356,71 +347,9 @@ export default async function HomePage({
         <HeroPromoSlider />
       </div>
 
-      <XndzorHero greeting={heroGreeting} />
-
-      <RecentlyViewedStrip />
-
       <Reveal as="section" className="section home-trust-banner" delayMs={40}>
         <WelcomeTrustBanner />
       </Reveal>
-
-      {session ? (
-        <Reveal as="section" className="section home-farm-strip" id="today">
-          <div className="home-feed-head">
-            <h2>
-              <span className="home-feed-icon action-today" aria-hidden>
-                <ActionIcon action="today" size={20} />
-              </span>
-              {t("today.title")}
-            </h2>
-            <PrefetchLink href="/plots" className="text-link home-feed-more" pressable>
-              {t("plots.title")} →
-            </PrefetchLink>
-          </div>
-
-          {openTasks.length === 0 ? (
-            <div className="empty-state-cta">
-              <p>{plots.length === 0 ? t("plots.empty") : t("today.noTasks")}</p>
-              <Link href={plots.length === 0 ? "/plots/new" : "/plots"} className="btn primary">
-                {plots.length === 0 ? t("plots.add") : t("plots.title")}
-              </Link>
-            </div>
-          ) : (
-            <div className="classified-list">
-              {openTasks.slice(0, 4).map((row) => (
-                <ClassifiedRow
-                  key={row.taskId}
-                  href={`/plots/${row.plotId}`}
-                  title={resolveTaskCopy((k, v) => t(k as "today.irrigationDue", v), row.title)}
-                  meta={row.plotName}
-                />
-              ))}
-            </div>
-          )}
-
-          {plots.length > 0 ? (
-            <div className="plot-strip">
-              {plots.map((p) => {
-                const tons = p.yieldEstimate ? effectiveTons(p.yieldEstimate) : null;
-                return (
-                  <PrefetchLink key={p.id} href={`/plots/${p.id}`} className="plot-chip" pressable>
-                    <span className="plot-chip-icon" aria-hidden>
-                      <ProductIcon slugOrKey={p.cropProduct.slug} size={18} />
-                    </span>
-                    <span className="plot-chip-body">
-                      <strong>{p.name}</strong>
-                      <span>
-                        {p.hectares} {t("farmos.ha")}
-                        {tons != null ? ` · ~${tons} ${t("units.ton")}` : ""}
-                      </span>
-                    </span>
-                  </PrefetchLink>
-                );
-              })}
-            </div>
-          ) : null}
-        </Reveal>
-      ) : null}
 
       <HomeSection
         action="sell"
@@ -510,6 +439,51 @@ export default async function HomePage({
         )}
       </HomeSection>
 
+      <XndzorHero greeting={heroGreeting} />
+
+      <HomeSection
+        action="groupBuy"
+        title={t("home.groupBuyTitle")}
+        href="/group-buy"
+        seeAllLabel={t("home.seeAll")}
+        count={campaignCount}
+      >
+        {campaigns.length === 0 ? (
+          <EmptyFeed message={t("groupBuy.empty")} href="/group-buy" label={t("common.open")} />
+        ) : (
+          <div className="listing-card-grid">
+            {campaigns.map((c) => {
+              const joinedQty = c.joins.reduce((s, j) => s + j.qty, 0);
+              const pct = Math.min(100, Math.round((joinedQty / c.targetQty) * 100));
+              return (
+                <PostCard
+                  key={c.id}
+                  href="/group-buy"
+                  title={c.title}
+                  icon={<ProductIcon slugOrKey={c.product.slug} size={28} />}
+                  categoryPill={t("nav.groupBuy")}
+                  facts={[t("home.participants", { n: c.joins.length }), c.deadline ? day(c.deadline) : null]}
+                  progress={{
+                    pct,
+                    label: t("groupBuy.progress", {
+                      joined: formatAmd(joinedQty),
+                      target: formatAmd(c.targetQty),
+                      unit: t(`units.${c.unit}` as "units.kg"),
+                    }),
+                  }}
+                  value={
+                    c.pricePerUnitAmd != null ? `~${formatAmd(c.pricePerUnitAmd)} ֏` : undefined
+                  }
+                  place={
+                    c.marz ? <span className="post-card-marz">{marzLabel(c.marz.slug)}</span> : null
+                  }
+                />
+              );
+            })}
+          </div>
+        )}
+      </HomeSection>
+
       <HomeSection
         action="forward"
         title={t("home.forwardTitle")}
@@ -566,48 +540,65 @@ export default async function HomePage({
         )}
       </HomeSection>
 
-      <HomeSection
-        action="groupBuy"
-        title={t("home.groupBuyTitle")}
-        href="/group-buy"
-        seeAllLabel={t("home.seeAll")}
-        count={campaignCount}
-      >
-        {campaigns.length === 0 ? (
-          <EmptyFeed message={t("groupBuy.empty")} href="/group-buy" label={t("common.open")} />
-        ) : (
-          <div className="listing-card-grid">
-            {campaigns.map((c) => {
-              const joinedQty = c.joins.reduce((s, j) => s + j.qty, 0);
-              const pct = Math.min(100, Math.round((joinedQty / c.targetQty) * 100));
-              return (
-                <PostCard
-                  key={c.id}
-                  href="/group-buy"
-                  title={c.title}
-                  icon={<ProductIcon slugOrKey={c.product.slug} size={28} />}
-                  categoryPill={t("nav.groupBuy")}
-                  facts={[t("home.participants", { n: c.joins.length }), c.deadline ? day(c.deadline) : null]}
-                  progress={{
-                    pct,
-                    label: t("groupBuy.progress", {
-                      joined: formatAmd(joinedQty),
-                      target: formatAmd(c.targetQty),
-                      unit: t(`units.${c.unit}` as "units.kg"),
-                    }),
-                  }}
-                  value={
-                    c.pricePerUnitAmd != null ? `~${formatAmd(c.pricePerUnitAmd)} ֏` : undefined
-                  }
-                  place={
-                    c.marz ? <span className="post-card-marz">{marzLabel(c.marz.slug)}</span> : null
-                  }
-                />
-              );
-            })}
+      <RecentlyViewedStrip />
+
+      {session ? (
+        <Reveal as="section" className="section home-farm-strip" id="today">
+          <div className="home-feed-head">
+            <h2>
+              <span className="home-feed-icon action-today" aria-hidden>
+                <ActionIcon action="today" size={20} />
+              </span>
+              {t("today.title")}
+            </h2>
+            <PrefetchLink href="/plots" className="text-link home-feed-more" pressable>
+              {t("plots.title")} →
+            </PrefetchLink>
           </div>
-        )}
-      </HomeSection>
+
+          {openTasks.length === 0 ? (
+            <div className="empty-state-cta">
+              <p>{plots.length === 0 ? t("plots.empty") : t("today.noTasks")}</p>
+              <Link href={plots.length === 0 ? "/plots/new" : "/plots"} className="btn primary">
+                {plots.length === 0 ? t("plots.add") : t("plots.title")}
+              </Link>
+            </div>
+          ) : (
+            <div className="classified-list">
+              {openTasks.slice(0, 4).map((row) => (
+                <ClassifiedRow
+                  key={row.taskId}
+                  href={`/plots/${row.plotId}`}
+                  title={resolveTaskCopy((k, v) => t(k as "today.irrigationDue", v), row.title)}
+                  meta={row.plotName}
+                />
+              ))}
+            </div>
+          )}
+
+          {plots.length > 0 ? (
+            <div className="plot-strip">
+              {plots.map((p) => {
+                const tons = p.yieldEstimate ? effectiveTons(p.yieldEstimate) : null;
+                return (
+                  <PrefetchLink key={p.id} href={`/plots/${p.id}`} className="plot-chip" pressable>
+                    <span className="plot-chip-icon" aria-hidden>
+                      <ProductIcon slugOrKey={p.cropProduct.slug} size={18} />
+                    </span>
+                    <span className="plot-chip-body">
+                      <strong>{p.name}</strong>
+                      <span>
+                        {p.hectares} {t("farmos.ha")}
+                        {tons != null ? ` · ~${tons} ${t("units.ton")}` : ""}
+                      </span>
+                    </span>
+                  </PrefetchLink>
+                );
+              })}
+            </div>
+          ) : null}
+        </Reveal>
+      ) : null}
 
       <HomeSection
         action="orderJob"

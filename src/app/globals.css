@@ -6582,6 +6582,206 @@ a.listing-card-title::after {
   }
 }
 
+/* —— Village-simple header (classifieds clarity, pine brand) —— */
+.village-header .header-brand-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem 0.65rem;
+}
+
+.village-header .header-search-slot {
+  flex: 1 1 12rem;
+  min-width: 0;
+  order: 5;
+  width: 100%;
+}
+
+.village-header .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.village-header .header-login-btn {
+  min-height: 2.75rem;
+  padding: 0.55rem 0.95rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--pine-deep);
+  background: rgba(15, 74, 60, 0.06);
+  border: 1px solid rgba(15, 74, 60, 0.16);
+  border-radius: var(--radius);
+  white-space: nowrap;
+}
+
+.village-header .header-login-btn:hover {
+  background: rgba(15, 74, 60, 0.1);
+  border-color: rgba(15, 74, 60, 0.28);
+}
+
+.village-header .header-post-cta.btn-add {
+  margin-left: 0;
+  min-height: 2.85rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 1.02rem;
+  border-radius: 999px;
+  box-shadow: 0 2px 10px rgba(46, 125, 50, 0.28);
+}
+
+.village-header .utility-auth-desktop {
+  display: none;
+}
+
+.village-header .utility-link-desktop {
+  display: none;
+}
+
+.home-village .home-categories-primary .category-scroll-item {
+  min-width: 5.5rem;
+  max-width: 6.5rem;
+  padding: 0.75rem 0.5rem 0.65rem;
+  font-size: 0.8rem;
+}
+
+.home-village .home-categories-primary .category-scroll-item .cat-icon {
+  width: 3rem;
+  height: 3rem;
+}
+
+.home-village .home-categories-primary .category-scroll-item .cat-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+@media (min-width: 901px) {
+  .village-header .header-search-slot {
+    order: 0;
+    width: auto;
+    flex: 1 1 auto;
+    max-width: none;
+  }
+
+  .village-header .header-actions {
+    order: 0;
+  }
+
+  .village-header .utility-link-desktop {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 900px) {
+  .village-header .header-utility-inner {
+    min-height: 2.15rem;
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+  }
+
+  .village-header .utility-nav {
+    order: 0;
+    width: auto;
+    flex-wrap: nowrap;
+    padding-top: 0;
+    border-top: none;
+    gap: 0.05rem;
+  }
+
+  .village-header .utility-right {
+    width: auto;
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .village-header .header-brand-row .header-post-cta {
+    order: 0;
+    padding: 0.55rem 1rem;
+    font-size: 0.95rem;
+    min-height: 2.75rem;
+  }
+
+  .village-header .header-login-btn {
+    min-height: 2.75rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .village-header .header-search-slot {
+    order: 10;
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .village-header .header-search-slot .search-bar.header-search input {
+    min-height: 3rem;
+    font-size: 16px;
+  }
+
+  .village-header .header-search-slot .btn-search {
+    min-height: 3rem;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+
+  /* Compact WelcomeTrust on small screens — keep headline + CTAs, hide dense perks */
+  .home-village .wtb-audience {
+    display: none;
+  }
+
+  .home-village .wtb-trust-badges {
+    display: none;
+  }
+
+  .home-village .wtb-subheadline {
+    font-size: 0.92rem;
+    max-width: 28rem;
+    margin-inline: auto;
+  }
+
+  .home-village .wtb-cta-row {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.55rem;
+  }
+
+  .home-village .wtb-cta-primary,
+  .home-village .wtb-cta-secondary {
+    min-height: 3rem;
+    padding: 0.75rem 1.25rem;
+    font-size: 1.02rem;
+  }
+
+  .home-village .wtb-cta-ghost {
+    width: 100%;
+    text-align: center;
+  }
+
+  .home-village .wtb {
+    padding-block: 1rem;
+  }
+
+  .home-village .wtb-headline {
+    font-size: clamp(1.25rem, 5vw, 1.55rem);
+  }
+}
+
+@media (max-width: 520px) {
+  .village-header .utility-brand {
+    display: none;
+  }
+
+  .village-header .header-login-btn {
+    padding: 0.5rem 0.65rem;
+  }
+
+  .home-village .home-categories-primary .category-scroll-item {
+    min-width: 5.75rem;
+    font-size: 0.82rem;
+  }
+}
+
 
 /* —— Monetization —— */
 .demo-mode-banner {

@@ -110,7 +110,7 @@ export function WelcomeTrustBanner() {
           className="wtb-cta-row wtb-reveal"
           style={{ "--wtb-delay": "520ms" } as CSSProperties}
         >
-          <Link href="#xndzor-hero" className="btn primary wtb-cta-primary">
+          <Link href="/supply/new" className="btn primary wtb-cta-primary">
             {t("ctaPrimary")}
           </Link>
           <Link href="/supply" className="btn wtb-cta-secondary">

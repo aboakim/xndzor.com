@@ -282,7 +282,7 @@
     "recentDemand": "Latest demand",
     "forwardTitle": "Future harvest",
     "supplyTitle": "For sale",
-    "demandTitle": "Buyers looking for",
+    "demandTitle": "Looking to buy",
     "jobsTitle": "Jobs",
     "machineryTitle": "Agricultural machinery",
     "groupBuyTitle": "Group buy",
@@ -2182,22 +2182,22 @@
       }
     },
     "welcomeTrust": {
-      "badge": "Trusted marketplace",
-      "headline": "Built for Armenian farmers and buyers",
-      "subheadline": "Plots, future harvest, demand signals, and safe deals in AMD.",
-      "farmerTitle": "For farmers",
-      "farmerDesc": "Register plots, publish harvest, find buyers.",
+      "badge": "Simple market for villages",
+      "headline": "Sell and buy harvest easily",
+      "subheadline": "Big photos, AMD prices, village location. Post an ad with one button.",
+      "farmerTitle": "If you sell",
+      "farmerDesc": "List your crop, find a buyer, order help.",
       "farmerPerks": {
-        "buyer": "See who is buying your crop",
-        "workers": "Order jobs and machinery",
-        "equipment": "List machinery and animals"
+        "buyer": "See who wants your harvest",
+        "workers": "Order work or machinery",
+        "equipment": "Sell machines and animals"
       },
-      "buyerTitle": "For buyers",
-      "buyerDesc": "Post demand, group buy, and trusted farm passports.",
+      "buyerTitle": "If you buy",
+      "buyerDesc": "Find crop from villages; group-buy cheaper.",
       "buyerPerks": {
-        "fresh": "Source directly from farms",
-        "farmer": "Farm Score and verified badge",
-        "supplier": "Forward contracts and pre-offers"
+        "fresh": "Straight from the farm",
+        "farmer": "Verified farms",
+        "supplier": "You can agree ahead of harvest"
       },
       "badgesLabel": "Why Xndzor",
       "badges": {
@@ -2206,7 +2206,7 @@
         "exclusive": "Only on Xndzor"
       },
       "ctaPrimary": "Post a listing",
-      "ctaListings": "Browse market",
+      "ctaListings": "Browse sales",
       "ctaRegister": "Create account"
     },
     "trustStrip": {

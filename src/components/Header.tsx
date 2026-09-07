@@ -24,10 +24,11 @@ export function Header() {
     setMenuOpen(false);
   }, [pathname]);
 
-  const postHref = session ? "/plots/new" : "/auth/login";
+  /** Post ad = sell listing (classifieds clarity), not farm-OS plot create. */
+  const postHref = session ? "/supply/new" : "/auth/login";
 
   return (
-    <header className={`site-header vendo-header${menuOpen ? " mega-menu-active" : ""}`}>
+    <header className={`site-header vendo-header village-header${menuOpen ? " mega-menu-active" : ""}`}>
       <div className="header-utility">
         <div className="header-utility-inner">
           <span className="utility-brand">{brand("brandLatin")}</span>
@@ -40,38 +41,23 @@ export function Header() {
               <Link href="/help" className="utility-link">
                 {t("help")}
               </Link>
-              <Link href="/security" className="utility-link">
-                {t("security")}
-              </Link>
               <Link href="/pricing" className="utility-link utility-pro">
                 {t("pricing")}
               </Link>
-              <span className="utility-sep" aria-hidden />
-              <Link href="/farm" className="utility-link">
-                {t("myFarm")}
-              </Link>
               {session ? (
                 <>
-                  <Link href="/today" className="utility-link">
-                    {t("today")}
-                  </Link>
-                  <Link href="/farms/me" className="utility-link">
-                    {t("myPassport")}
-                  </Link>
+                  <span className="utility-sep" aria-hidden />
                   <Link href="/account/listings" className="utility-link">
                     {t("myListings")}
                   </Link>
-                  <Link href="/account/profile" className="utility-link">
+                  <Link href="/account/profile" className="utility-link utility-link-desktop">
                     {t("profile")}
-                  </Link>
-                  <Link href="/account/billing" className="utility-link">
-                    {t("billing")}
                   </Link>
                 </>
               ) : null}
             </nav>
 
-            <div className="utility-auth-group">
+            <div className="utility-auth-group utility-auth-desktop">
               {session ? (
                 <button
                   type="button"
@@ -81,14 +67,9 @@ export function Header() {
                   {t("logout")}
                 </button>
               ) : (
-                <>
-                  <Link href="/auth/login" className="utility-btn utility-btn-ghost">
-                    {t("login")}
-                  </Link>
-                  <Link href="/auth/register" className="utility-btn utility-btn-primary">
-                    {t("register")}
-                  </Link>
-                </>
+                <Link href="/auth/login" className="utility-btn utility-btn-ghost">
+                  {t("login")}
+                </Link>
               )}
             </div>
           </div>
@@ -120,9 +101,29 @@ export function Header() {
             <span>{t("sections")}</span>
           </button>
 
-          <Link href={postHref} className="btn btn-add header-post-cta">
-            + {t("post")}
-          </Link>
+          <div className="header-search-slot">
+            <SearchBar header />
+          </div>
+
+          <div className="header-actions">
+            {session ? (
+              <button
+                type="button"
+                className="btn header-login-btn header-auth-main"
+                onClick={() => signOut({ callbackUrl: `/${locale}` })}
+              >
+                {t("logout")}
+              </button>
+            ) : (
+              <Link href="/auth/login" className="btn header-login-btn header-auth-main">
+                {t("login")}
+              </Link>
+            )}
+
+            <Link href={postHref} className="btn btn-add header-post-cta">
+              + {t("post")}
+            </Link>
+          </div>
 
           <button
             type="button"
@@ -134,10 +135,6 @@ export function Header() {
             <span className="nav-toggle-bars" aria-hidden />
             <span className="sr-only">{menuOpen ? "Close" : "Menu"}</span>
           </button>
-        </div>
-
-        <div className="header-search-row">
-          <SearchBar header />
         </div>
 
         <CategoriesMegaMenu
