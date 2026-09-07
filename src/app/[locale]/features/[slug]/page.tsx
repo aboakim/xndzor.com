@@ -5,6 +5,7 @@ import {
   type FeatureAboutAdvantage,
   type FeatureAboutCta,
   type FeatureAboutFaq,
+  type FeatureAboutProblem,
   type FeatureAboutStep,
 } from "@/components/xndzor/FeatureAboutLayout";
 import { formatAmd } from "@/lib/utils";
@@ -87,7 +88,15 @@ export default async function FeatureAboutPage({ params }: PageProps) {
   const faq = (Array.isArray(t.raw("faq")) ? t.raw("faq") : []) as FeatureAboutFaq[];
   const whatBody = (Array.isArray(t.raw("whatBody")) ? t.raw("whatBody") : []) as string[];
   const whyBody = (Array.isArray(t.raw("whyBody")) ? t.raw("whyBody") : []) as string[];
+  const problems = (
+    Array.isArray(t.raw("problems")) ? t.raw("problems") : []
+  ) as FeatureAboutProblem[];
+  const whoRaw = t.raw("whoBody");
+  const whoBody = (
+    Array.isArray(whoRaw) ? whoRaw : [typeof whoRaw === "string" ? whoRaw : t("whoBody")]
+  ) as string[];
   const example = exampleValues(slug, locale, t);
+  const hasProblems = problems.length > 0 && t.has("problemsTitle");
 
   const primaryHref =
     slug === "solve"
@@ -117,6 +126,10 @@ export default async function FeatureAboutPage({ params }: PageProps) {
       eyebrow={t("eyebrow")}
       title={t("title")}
       lede={t("lede")}
+      problemsTitle={hasProblems ? t("problemsTitle") : undefined}
+      problemLabel={hasProblems && t.has("problemLabel") ? t("problemLabel") : undefined}
+      solutionLabel={hasProblems && t.has("solutionLabel") ? t("solutionLabel") : undefined}
+      problems={hasProblems ? problems : undefined}
       whatTitle={shared("whatTitle")}
       whatBody={whatBody}
       whyTitle={shared("whyTitle")}
@@ -136,7 +149,7 @@ export default async function FeatureAboutPage({ params }: PageProps) {
         saveNote: example.saveNote,
       }}
       whoTitle={shared("whoTitle")}
-      whoBody={t("whoBody")}
+      whoBody={whoBody}
       faqTitle={shared("faqTitle")}
       faq={faq}
       ctaTitle={t("ctaTitle")}

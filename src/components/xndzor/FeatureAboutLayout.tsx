@@ -5,6 +5,7 @@ import { Breadcrumbs, type Crumb } from "@/components/Breadcrumbs";
 export type FeatureAboutStep = { title: string; body: string };
 export type FeatureAboutAdvantage = { title: string; body: string };
 export type FeatureAboutFaq = { q: string; a: string };
+export type FeatureAboutProblem = { problem: string; solution: string };
 
 export type FeatureAboutCta = {
   href: string;
@@ -28,6 +29,10 @@ type FeatureAboutLayoutProps = {
   eyebrow: string;
   title: string;
   lede: string;
+  problemsTitle?: string;
+  problemLabel?: string;
+  solutionLabel?: string;
+  problems?: FeatureAboutProblem[];
   whatTitle: string;
   whatBody: string[];
   whyTitle: string;
@@ -39,7 +44,7 @@ type FeatureAboutLayoutProps = {
   exampleTitle: string;
   example: FeatureAboutCompare;
   whoTitle: string;
-  whoBody: string;
+  whoBody: string | string[];
   faqTitle: string;
   faq: FeatureAboutFaq[];
   ctaTitle: string;
@@ -53,6 +58,10 @@ export function FeatureAboutLayout({
   eyebrow,
   title,
   lede,
+  problemsTitle,
+  problemLabel,
+  solutionLabel,
+  problems,
   whatTitle,
   whatBody,
   whyTitle,
@@ -71,6 +80,9 @@ export function FeatureAboutLayout({
   ctaLede,
   ctas,
 }: FeatureAboutLayoutProps) {
+  const whoParagraphs = Array.isArray(whoBody) ? whoBody : [whoBody];
+  const showProblems = Boolean(problemsTitle && problems && problems.length > 0);
+
   return (
     <div className="section gba-page">
       <Breadcrumbs items={breadcrumbs} />
@@ -84,6 +96,30 @@ export function FeatureAboutLayout({
         <h1 className="gba-title">{title}</h1>
         <p className="gba-lede">{lede}</p>
       </header>
+
+      {showProblems ? (
+        <section className="gba-block" aria-labelledby="fa-problems">
+          <h2 id="fa-problems">{problemsTitle}</h2>
+          <ul className="gba-problems">
+            {problems!.map((item) => (
+              <li key={item.problem} className="gba-problem">
+                <div className="gba-problem-col">
+                  {problemLabel ? (
+                    <span className="gba-problem-label">{problemLabel}</span>
+                  ) : null}
+                  <p>{item.problem}</p>
+                </div>
+                <div className="gba-problem-col gba-problem-col-sol">
+                  {solutionLabel ? (
+                    <span className="gba-problem-label">{solutionLabel}</span>
+                  ) : null}
+                  <p>{item.solution}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section className="gba-block" aria-labelledby="fa-what">
         <h2 id="fa-what">{whatTitle}</h2>
@@ -154,7 +190,9 @@ export function FeatureAboutLayout({
 
       <section className="gba-block" aria-labelledby="fa-who">
         <h2 id="fa-who">{whoTitle}</h2>
-        <p>{whoBody}</p>
+        {whoParagraphs.map((p) => (
+          <p key={p}>{p}</p>
+        ))}
       </section>
 
       <section className="gba-block" aria-labelledby="fa-faq">
