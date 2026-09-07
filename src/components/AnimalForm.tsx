@@ -65,8 +65,9 @@ export function AnimalForm({
     setError("");
     setUploadProgress(undefined);
     try {
-      const imageUrls = await uploadImages(files, { onProgress: setUploadProgress });
+      // Read before any await — React nullifies event.currentTarget after the handler yields.
       const fd = new FormData(e.currentTarget);
+      const imageUrls = await uploadImages(files, { onProgress: setUploadProgress });
       const body = {
         title: String(fd.get("title") || ""),
         description: String(fd.get("description") || ""),

@@ -35,8 +35,9 @@ export function ForwardCropForm({
     setError("");
     setUploadProgress(undefined);
     try {
-      const imageUrls = await uploadImages(files, { onProgress: setUploadProgress });
+      // Read before any await — React nullifies event.currentTarget after the handler yields.
       const fd = new FormData(e.currentTarget);
+      const imageUrls = await uploadImages(files, { onProgress: setUploadProgress });
       const res = await fetch("/api/forward", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

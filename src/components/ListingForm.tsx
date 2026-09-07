@@ -71,9 +71,9 @@ export function ListingForm({
     setUploadProgress(undefined);
 
     try {
-      const imageUrls = await uploadImages(files, { onProgress: setUploadProgress });
-
+      // Read before any await — React nullifies event.currentTarget after the handler yields.
       const form = new FormData(e.currentTarget);
+      const imageUrls = await uploadImages(files, { onProgress: setUploadProgress });
       const body = {
         title: form.get("title"),
         description: form.get("description"),
