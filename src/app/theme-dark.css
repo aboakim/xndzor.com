@@ -1011,6 +1011,172 @@ html[data-theme="dark"] .wtb-card-title {
   color: #0a3329 !important;
 }
 
+/*
+  Farm OS /farm light canvases — same bug as pricing: hardcoded mint/cream
+  cards keep light backgrounds while main safety net paints #f4f6f2 text
+  (and --pine-deep remaps to near-white). Force dark ink on light cards.
+*/
+html.dark .farm-weather,
+html.dark .farm-weather.is-demo,
+html.dark .farm-hub-start,
+html.dark .farm-hub-score,
+html[data-theme="dark"] .farm-weather,
+html[data-theme="dark"] .farm-weather.is-demo,
+html[data-theme="dark"] .farm-hub-start,
+html[data-theme="dark"] .farm-hub-score {
+  color: #0a3329 !important;
+}
+
+html.dark .farm-weather,
+html[data-theme="dark"] .farm-weather {
+  background: linear-gradient(145deg, #e8f3ee, #f7fbf9) !important;
+  border-color: rgba(10, 51, 41, 0.14) !important;
+}
+
+html.dark .farm-weather.is-demo,
+html[data-theme="dark"] .farm-weather.is-demo {
+  background: linear-gradient(145deg, #f3eee8, #fbf9f7) !important;
+}
+
+html.dark .farm-hub-start,
+html[data-theme="dark"] .farm-hub-start {
+  background:
+    radial-gradient(ellipse 70% 80% at 0% 0%, rgba(26, 107, 85, 0.1), transparent 55%),
+    linear-gradient(160deg, #f4faf7, #fbf9f3) !important;
+  border-color: rgba(10, 51, 41, 0.14) !important;
+}
+
+html.dark .farm-hub-score,
+html[data-theme="dark"] .farm-hub-score {
+  background: linear-gradient(160deg, #e8f3ee 0%, #f4faf7 100%) !important;
+  border: 1px solid rgba(10, 51, 41, 0.14);
+}
+
+html.dark .farm-hub-start-chip,
+html[data-theme="dark"] .farm-hub-start-chip {
+  background: rgba(255, 255, 255, 0.94) !important;
+  color: #0a3329 !important;
+  border-color: rgba(10, 51, 41, 0.14) !important;
+}
+
+html.dark .farm-weather :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label, a:not(.btn)),
+html.dark .farm-hub-start :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label, a:not(.btn)),
+html.dark .farm-hub-score :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label),
+html.dark .farm-weather-head h2,
+html.dark .farm-weather-place,
+html.dark .farm-weather-summary,
+html.dark .farm-weather-metrics strong,
+html.dark .farm-weather-metrics span,
+html.dark .farm-weather .farm-pill,
+html.dark .farm-hub-start .farm-hub-section-label,
+html.dark .farm-hub-start .farm-hub-section-cue,
+html.dark .farm-hub-score-cue,
+html.dark .farm-hub-start-chip strong,
+html.dark .farm-hub-start-chip span,
+html.dark .farm-hub-score .farm-score-ring-core strong,
+html.dark .farm-hub-score .farm-score-ring-core span,
+html[data-theme="dark"] .farm-weather :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label, a:not(.btn)),
+html[data-theme="dark"] .farm-hub-start :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label, a:not(.btn)),
+html[data-theme="dark"] .farm-hub-score :is(h1, h2, h3, h4, h5, h6, p, span, strong, em, small, li, label),
+html[data-theme="dark"] .farm-weather-head h2,
+html[data-theme="dark"] .farm-weather-place,
+html[data-theme="dark"] .farm-weather-summary,
+html[data-theme="dark"] .farm-weather-metrics strong,
+html[data-theme="dark"] .farm-weather-metrics span,
+html[data-theme="dark"] .farm-weather .farm-pill,
+html[data-theme="dark"] .farm-hub-start .farm-hub-section-label,
+html[data-theme="dark"] .farm-hub-start .farm-hub-section-cue,
+html[data-theme="dark"] .farm-hub-score-cue,
+html[data-theme="dark"] .farm-hub-start-chip strong,
+html[data-theme="dark"] .farm-hub-start-chip span,
+html[data-theme="dark"] .farm-hub-score .farm-score-ring-core strong,
+html[data-theme="dark"] .farm-hub-score .farm-score-ring-core span {
+  color: #0a3329 !important;
+}
+
+html.dark .farm-weather .muted,
+html.dark .farm-weather .small,
+html.dark .farm-weather-metrics span,
+html.dark .farm-hub-start .farm-hub-section-cue,
+html.dark .farm-hub-score-cue,
+html.dark .farm-hub-start-chip span,
+html.dark .farm-hub-score .farm-score-ring-core span,
+html[data-theme="dark"] .farm-weather .muted,
+html[data-theme="dark"] .farm-weather .small,
+html[data-theme="dark"] .farm-weather-metrics span,
+html[data-theme="dark"] .farm-hub-start .farm-hub-section-cue,
+html[data-theme="dark"] .farm-hub-score-cue,
+html[data-theme="dark"] .farm-hub-start-chip span,
+html[data-theme="dark"] .farm-hub-score .farm-score-ring-core span {
+  color: #3d4a45 !important;
+}
+
+html.dark .farm-weather .farm-pill,
+html[data-theme="dark"] .farm-weather .farm-pill {
+  color: #0f4a3c !important;
+  background: rgba(15, 74, 60, 0.12) !important;
+}
+
+html.dark .farm-hub-score .farm-score-ring circle:first-of-type,
+html[data-theme="dark"] .farm-hub-score .farm-score-ring circle:first-of-type {
+  stroke: rgba(15, 74, 60, 0.18);
+}
+
+/* “All tools” headers sit on the dark page — keep light ink */
+html.dark .farm-hub-tools-head .farm-hub-section-label,
+html[data-theme="dark"] .farm-hub-tools-head .farm-hub-section-label {
+  color: #eef8f3 !important;
+}
+
+html.dark .farm-hub-tools-head .farm-hub-section-cue,
+html[data-theme="dark"] .farm-hub-tools-head .farm-hub-section-cue {
+  color: #b9d0c4 !important;
+}
+
+/* Tool cards stay dark surfaces — beat hardcoded gray body copy */
+html.dark .farm-tool-card,
+html[data-theme="dark"] .farm-tool-card {
+  background: var(--surface-solid) !important;
+  border-color: var(--line) !important;
+  color: #f4f6f2 !important;
+}
+
+html.dark .farm-tool-card h2,
+html.dark .farm-tool-card p,
+html.dark .farm-tool-card-go,
+html[data-theme="dark"] .farm-tool-card h2,
+html[data-theme="dark"] .farm-tool-card p,
+html[data-theme="dark"] .farm-tool-card-go {
+  color: #f4f6f2 !important;
+}
+
+html.dark .farm-tool-card p,
+html[data-theme="dark"] .farm-tool-card p {
+  color: #b9d0c4 !important;
+}
+
+html.dark .farm-tool-card-go,
+html[data-theme="dark"] .farm-tool-card-go {
+  color: #9fe0c4 !important;
+}
+
+html.dark .farm-login-hint,
+html[data-theme="dark"] .farm-login-hint {
+  background: rgba(110, 201, 168, 0.1) !important;
+  color: #f4f6f2 !important;
+}
+
+html.dark .farm-risk p,
+html.dark .farm-stat span,
+html.dark .farm-stat em,
+html.dark .farm-scenario ul,
+html[data-theme="dark"] .farm-risk p,
+html[data-theme="dark"] .farm-stat span,
+html[data-theme="dark"] .farm-stat em,
+html[data-theme="dark"] .farm-scenario ul {
+  color: #b9d0c4 !important;
+}
+
 html.dark .market-pulse-card.accent-gold .market-pulse-count,
 html[data-theme="dark"] .market-pulse-card.accent-gold .market-pulse-count {
   color: #9a7a1e !important;
@@ -1276,19 +1442,18 @@ html[data-theme="dark"] .home-quick-chip-farm {
   border-color: transparent !important;
 }
 
-/* Other light chips / pills / badges across the app */
+/* Other light chips / pills / badges across the app
+   (farm-hub-start-chip excluded — handled above as light nested cards) */
 html.dark .xndzor-chip,
 html.dark .home-quick-chip,
 html.dark .listing-meta-chip,
 html.dark .listing-meta-chip--md,
-html.dark .farm-hub-start-chip,
 html.dark .gbb-save-chip,
 html.dark .xndzor-hero-rail-badge,
 html[data-theme="dark"] .xndzor-chip,
 html[data-theme="dark"] .home-quick-chip,
 html[data-theme="dark"] .listing-meta-chip,
 html[data-theme="dark"] .listing-meta-chip--md,
-html[data-theme="dark"] .farm-hub-start-chip,
 html[data-theme="dark"] .gbb-save-chip,
 html[data-theme="dark"] .xndzor-hero-rail-badge {
   background: #1f322a !important;
@@ -1304,12 +1469,8 @@ html[data-theme="dark"] .wtb-trust-badge {
   border-color: rgba(10, 51, 41, 0.14) !important;
 }
 
-html.dark .farm-hub-start-chip strong,
-html.dark .farm-hub-start-chip span,
 html.dark .home-quick-chip,
 html.dark .xndzor-chip,
-html[data-theme="dark"] .farm-hub-start-chip strong,
-html[data-theme="dark"] .farm-hub-start-chip span,
 html[data-theme="dark"] .home-quick-chip,
 html[data-theme="dark"] .xndzor-chip {
   color: #f4f6f2 !important;
@@ -1382,6 +1543,10 @@ html.dark .early-bird-user-banner .muted,
 html.dark .pricing-card .muted,
 html.dark .pricing-card .text-muted,
 html.dark .pricing-card .tiny.muted,
+html.dark .farm-weather .muted,
+html.dark .farm-weather .text-muted,
+html.dark .farm-hub-start .muted,
+html.dark .farm-hub-score .muted,
 html[data-theme="dark"] .market-pulse .muted,
 html[data-theme="dark"] .market-pulse .text-muted,
 html[data-theme="dark"] .home-weather-card .muted,
@@ -1390,7 +1555,11 @@ html[data-theme="dark"] .tvs-item .muted,
 html[data-theme="dark"] .early-bird-user-banner .muted,
 html[data-theme="dark"] .pricing-card .muted,
 html[data-theme="dark"] .pricing-card .text-muted,
-html[data-theme="dark"] .pricing-card .tiny.muted {
+html[data-theme="dark"] .pricing-card .tiny.muted,
+html[data-theme="dark"] .farm-weather .muted,
+html[data-theme="dark"] .farm-weather .text-muted,
+html[data-theme="dark"] .farm-hub-start .muted,
+html[data-theme="dark"] .farm-hub-score .muted {
   color: #3d4a45 !important;
 }
 
