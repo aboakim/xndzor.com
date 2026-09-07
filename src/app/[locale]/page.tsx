@@ -25,8 +25,6 @@ import {
 import { MonetizationPills } from "@/components/MonetizationBadges";
 import { XndzorHero } from "@/components/xndzor/XndzorHero";
 import { EarlyBirdBanner } from "@/components/xndzor/EarlyBirdBanner";
-import { MarketPulse } from "@/components/xndzor/MarketPulse";
-import { HomeWeatherCard } from "@/components/xndzor/HomeWeatherCard";
 import { HomeStripSkeleton } from "@/components/HomeBannerSkeleton";
 import { PrefetchLink } from "@/components/PrefetchLink";
 
@@ -418,45 +416,6 @@ export default async function HomePage({
         ? t("dashboard.greeting", { name: session.user?.name || "" })
         : undefined;
 
-  const pulseStats = [
-    {
-      href: "/forward",
-      label: t("home.forwardTitle"),
-      count: harvestCount,
-      accent: "gold" as const,
-    },
-    {
-      href: "/supply",
-      label: t("home.supplyTitle"),
-      count: supplyCount,
-      accent: "pine" as const,
-    },
-    {
-      href: "/demand",
-      label: t("home.demandTitle"),
-      count: demandCount,
-      accent: "sky" as const,
-    },
-    {
-      href: "/machinery",
-      label: t("home.machineryTitle"),
-      count: machineryCount,
-      accent: "wheat" as const,
-    },
-    {
-      href: "/animals",
-      label: t("home.animalsTitle"),
-      count: animalCount,
-      accent: "pine" as const,
-    },
-    {
-      href: "/jobs",
-      label: t("home.jobsTitle"),
-      count: jobCount,
-      accent: "gold" as const,
-    },
-  ];
-
   return (
     <div className="home-vendo home-vendo-clean home-vendo-banners home-vendo-cockpit">
       <section className="section home-categories-scroll home-categories-primary" aria-label={t("home.chooseAction")}>
@@ -474,29 +433,7 @@ export default async function HomePage({
       <XndzorHero greeting={heroGreeting} />
 
       <div className="home-cockpit-block">
-      <Reveal as="section" className="section home-market-pulse-wrap" delayMs={30}>
-        <MarketPulse
-          title={t("home.marketPulseTitle")}
-          subtitle={t("home.marketPulseSubtitle")}
-          liveLabel={t("home.marketPulseLive")}
-          stats={pulseStats}
-        />
-      </Reveal>
-
       <Reveal as="section" className="section home-weather-row" delayMs={45}>
-        <HomeWeatherCard
-          weather={{
-            ...weatherBrief,
-            placeLabel: plots[0]?.marz?.slug
-              ? marzLabel(plots[0].marz.slug)
-              : marzLabel("Ararat"),
-          }}
-          title={t("home.weatherTitle")}
-          cta={t("home.weatherCta")}
-          ctaHref="/farm/risks"
-          demoLabel={t("home.weatherDemo")}
-          liveLabel={t("home.weatherLive")}
-        />
         <div className="home-quick-actions">
           <p className="home-quick-eyebrow">{t("home.quickActions")}</p>
           <p className="home-quick-cue">{t("home.quickCue")}</p>
