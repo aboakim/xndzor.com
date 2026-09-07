@@ -1,6 +1,6 @@
 {
-  "brand": "Xndzor",
-  "brandLatin": "Xndzor",
+  "brand": "Xndzor.com",
+  "brandLatin": "Xndzor.com",
   "promise": "Plot → future harvest → demand signal → pre-sale.",
   "tagline": "What to grow by demand: plot → signal → pre-sale",
   "nav": {
@@ -47,6 +47,7 @@
     "myFarm": "My farm",
     "utilityNav": "Quick links",
     "profile": "Profile",
+    "myListings": "My listings",
     "admin": "Admin",
     "locale": {
       "label": "Language",
@@ -3212,6 +3213,28 @@
     "hide": "Hide",
     "delete": "Delete",
     "confirmDelete": "Hide this listing from the marketplace?"
+  },
+  "myListings": {
+    "title": "My listings",
+    "lede": "All announcements you posted — open any to edit, hide, or delete.",
+    "empty": "You have no listings yet.",
+    "kinds": {
+      "supply": "Sell",
+      "demand": "Buy",
+      "forward": "Future harvest",
+      "jobs": "Jobs",
+      "animals": "Animals",
+      "machinery": "Machinery",
+      "shop": "Market"
+    },
+    "status": {
+      "ACTIVE": "Active",
+      "SOLD": "Sold",
+      "HIDDEN": "Hidden",
+      "FILLED": "Filled",
+      "RESERVED": "Reserved",
+      "BUSY": "Busy"
+    }
   },
   "reportListing": {
     "button": "Report listing"

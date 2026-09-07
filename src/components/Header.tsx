@@ -58,6 +58,9 @@ export function Header() {
                   <Link href="/farms/me" className="utility-link">
                     {t("myPassport")}
                   </Link>
+                  <Link href="/account/listings" className="utility-link">
+                    {t("myListings")}
+                  </Link>
                   <Link href="/account/profile" className="utility-link">
                     {t("profile")}
                   </Link>
