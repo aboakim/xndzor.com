@@ -41,20 +41,39 @@ export function Header() {
               <Link href="/help" className="utility-link">
                 {t("help")}
               </Link>
-              <Link href="/pricing" className="utility-link utility-pro">
-                {t("pricing")}
-              </Link>
               {session ? (
                 <>
+                  <Link href="/security" className="utility-link">
+                    {t("security")}
+                  </Link>
+                  <Link href="/pricing" className="utility-link utility-pro">
+                    {t("pricing")}
+                  </Link>
                   <span className="utility-sep" aria-hidden />
+                  <Link href="/farm" className="utility-link">
+                    {t("myFarm")}
+                  </Link>
+                  <Link href="/today" className="utility-link">
+                    {t("today")}
+                  </Link>
+                  <Link href="/farms/me" className="utility-link">
+                    {t("myPassport")}
+                  </Link>
                   <Link href="/account/listings" className="utility-link">
                     {t("myListings")}
                   </Link>
-                  <Link href="/account/profile" className="utility-link utility-link-desktop">
+                  <Link href="/account/profile" className="utility-link">
                     {t("profile")}
                   </Link>
+                  <Link href="/account/billing" className="utility-link">
+                    {t("billing")}
+                  </Link>
                 </>
-              ) : null}
+              ) : (
+                <Link href="/pricing" className="utility-link utility-pro">
+                  {t("pricing")}
+                </Link>
+              )}
             </nav>
 
             <div className="utility-auth-group utility-auth-desktop">

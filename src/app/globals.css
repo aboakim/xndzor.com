@@ -6635,10 +6635,6 @@ a.listing-card-title::after {
   display: none;
 }
 
-.village-header .utility-link-desktop {
-  display: none;
-}
-
 .home-village .home-categories-primary .category-scroll-item {
   min-width: 5.5rem;
   max-width: 6.5rem;
@@ -6668,8 +6664,8 @@ a.listing-card-title::after {
     order: 0;
   }
 
-  .village-header .utility-link-desktop {
-    display: inline-flex;
+  .village-header .utility-auth-desktop {
+    display: flex;
   }
 }
 
@@ -6681,11 +6677,11 @@ a.listing-card-title::after {
   }
 
   .village-header .utility-nav {
-    order: 0;
-    width: auto;
-    flex-wrap: nowrap;
-    padding-top: 0;
-    border-top: none;
+    order: 3;
+    width: 100%;
+    flex-wrap: wrap;
+    padding-top: 0.15rem;
+    border-top: 1px solid var(--line);
     gap: 0.05rem;
   }
 
