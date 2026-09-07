@@ -27,7 +27,7 @@ import { XndzorHero } from "@/components/xndzor/XndzorHero";
 import { EarlyBirdBanner } from "@/components/xndzor/EarlyBirdBanner";
 import { MarketPulse } from "@/components/xndzor/MarketPulse";
 import { HomeWeatherCard } from "@/components/xndzor/HomeWeatherCard";
-import { HomeBannerSkeleton, HomeStripSkeleton } from "@/components/HomeBannerSkeleton";
+import { HomeStripSkeleton } from "@/components/HomeBannerSkeleton";
 import { PrefetchLink } from "@/components/PrefetchLink";
 
 const HeroPromoSlider = nextDynamic(
@@ -52,14 +52,6 @@ const TrustValueStrip = nextDynamic(
       default: m.TrustValueStrip,
     })),
   { loading: () => <HomeStripSkeleton /> },
-);
-
-const BannerGallery = nextDynamic(
-  () =>
-    import("@/components/xndzor/BannerGallery").then((m) => ({
-      default: m.BannerGallery,
-    })),
-  { loading: () => <HomeBannerSkeleton /> },
 );
 
 const RecentlyViewedStrip = nextDynamic(
@@ -535,10 +527,6 @@ export default async function HomePage({
 
       <Reveal as="section" className="section home-trust-strip home-trust-strip-compact" delayMs={70}>
         <TrustValueStrip />
-      </Reveal>
-
-      <Reveal as="section" className="section home-banner-gallery" delayMs={90}>
-        <BannerGallery />
       </Reveal>
 
       {recommended.length > 0 ? (
