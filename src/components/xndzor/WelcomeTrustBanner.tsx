@@ -35,8 +35,8 @@ export function WelcomeTrustBanner() {
 
         <div className="wtb-audience">
           <article
-            className="wtb-card wtb-card-farmer wtb-reveal"
-            style={{ "--wtb-delay": "80ms" } as CSSProperties}
+            className="wtb-card wtb-card-farmer wtb-reveal wtb-reveal-from-left"
+            style={{ "--wtb-delay": "90ms" } as CSSProperties}
           >
             <span className="wtb-card-icon wtb-float-farmer" aria-hidden>
               👨‍🌾
@@ -45,22 +45,32 @@ export function WelcomeTrustBanner() {
               <h3 className="wtb-card-title">{t("farmerTitle")}</h3>
               <p className="wtb-card-desc">{t("farmerDesc")}</p>
               <ul className="wtb-perks">
-                {FARMER_PERKS.map((key) => (
-                  <li key={key}>{t(`farmerPerks.${key}`)}</li>
+                {FARMER_PERKS.map((key, i) => (
+                  <li
+                    key={key}
+                    className="wtb-perk"
+                    style={{ "--wtb-perk-delay": `${220 + i * 70}ms` } as CSSProperties}
+                  >
+                    {t(`farmerPerks.${key}`)}
+                  </li>
                 ))}
               </ul>
             </div>
           </article>
 
-          <span className="wtb-bridge" aria-hidden>
+          <span
+            className="wtb-bridge wtb-reveal wtb-reveal-scale"
+            style={{ "--wtb-delay": "160ms" } as CSSProperties}
+            aria-hidden
+          >
             <span className="wtb-bridge-line" />
             <span className="wtb-bridge-core">🍎</span>
             <span className="wtb-bridge-line" />
           </span>
 
           <article
-            className="wtb-card wtb-card-buyer wtb-reveal"
-            style={{ "--wtb-delay": "160ms" } as CSSProperties}
+            className="wtb-card wtb-card-buyer wtb-reveal wtb-reveal-from-right"
+            style={{ "--wtb-delay": "140ms" } as CSSProperties}
           >
             <span className="wtb-card-icon wtb-float-buyer" aria-hidden>
               🛒
@@ -69,21 +79,27 @@ export function WelcomeTrustBanner() {
               <h3 className="wtb-card-title">{t("buyerTitle")}</h3>
               <p className="wtb-card-desc">{t("buyerDesc")}</p>
               <ul className="wtb-perks">
-                {BUYER_PERKS.map((key) => (
-                  <li key={key}>{t(`buyerPerks.${key}`)}</li>
+                {BUYER_PERKS.map((key, i) => (
+                  <li
+                    key={key}
+                    className="wtb-perk"
+                    style={{ "--wtb-perk-delay": `${260 + i * 70}ms` } as CSSProperties}
+                  >
+                    {t(`buyerPerks.${key}`)}
+                  </li>
                 ))}
               </ul>
             </div>
           </article>
         </div>
 
-        <ul
-          className="wtb-trust-badges wtb-reveal"
-          style={{ "--wtb-delay": "240ms" } as CSSProperties}
-          aria-label={t("badgesLabel")}
-        >
-          {TRUST_BADGES.map((key) => (
-            <li key={key} className="wtb-trust-badge">
+        <ul className="wtb-trust-badges" aria-label={t("badgesLabel")}>
+          {TRUST_BADGES.map((key, i) => (
+            <li
+              key={key}
+              className="wtb-trust-badge wtb-reveal"
+              style={{ "--wtb-delay": `${320 + i * 80}ms` } as CSSProperties}
+            >
               <span className="wtb-trust-badge-pulse" aria-hidden />
               {t(`badges.${key}`)}
             </li>
@@ -92,7 +108,7 @@ export function WelcomeTrustBanner() {
 
         <div
           className="wtb-cta-row wtb-reveal"
-          style={{ "--wtb-delay": "320ms" } as CSSProperties}
+          style={{ "--wtb-delay": "520ms" } as CSSProperties}
         >
           <Link href="#xndzor-hero" className="btn primary wtb-cta-primary">
             {t("ctaPrimary")}

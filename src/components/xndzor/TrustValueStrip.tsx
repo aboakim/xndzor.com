@@ -18,8 +18,8 @@ export function TrustValueStrip() {
         {STRIP_ITEMS.map((item, i) => (
           <div
             key={item.key}
-            className={`tvs-item tvs-item-${item.tone} tvs-reveal`}
-            style={{ "--tvs-delay": `${i * 90}ms` } as CSSProperties}
+            className={`tvs-item tvs-item-${item.tone}`}
+            style={{ "--tvs-delay": `${80 + i * 110}ms` } as CSSProperties}
           >
             <span className={`tvs-icon tvs-icon-float tvs-icon-float-${i}`} aria-hidden>
               {item.icon}

@@ -876,7 +876,11 @@
 }
 
 .tvs-icon-float {
-  animation: tvs-icon-float 3.6s ease-in-out infinite;
+  animation: none;
+}
+
+.home-trust-strip.is-in .tvs-icon-float {
+  animation: tvs-icon-float 3.8s ease-in-out infinite;
 }
 
 .tvs-icon-float-1 {
@@ -921,35 +925,45 @@
 .wtb-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(32px);
-  opacity: 0.5;
+  filter: blur(36px);
+  opacity: 0.42;
+  will-change: transform, opacity;
 }
 
 .wtb-orb-farmer {
-  width: 12rem;
-  height: 12rem;
+  width: 13rem;
+  height: 13rem;
   top: -3.5rem;
   left: -2.5rem;
-  background: rgba(26, 107, 85, 0.35);
-  animation: wtb-drift 14s ease-in-out infinite alternate;
+  background: rgba(26, 107, 85, 0.38);
 }
 
 .wtb-orb-buyer {
-  width: 10rem;
-  height: 10rem;
+  width: 11rem;
+  height: 11rem;
   top: -2rem;
   right: -1.5rem;
-  background: rgba(61, 143, 168, 0.32);
-  animation: wtb-drift 16s ease-in-out infinite alternate-reverse;
+  background: rgba(61, 143, 168, 0.34);
 }
 
 .wtb-orb-gold {
-  width: 8rem;
-  height: 8rem;
-  bottom: -2rem;
+  width: 9rem;
+  height: 9rem;
+  bottom: -2.25rem;
   left: 42%;
-  background: rgba(212, 168, 67, 0.28);
-  animation: wtb-drift 12s ease-in-out infinite alternate;
+  background: rgba(212, 168, 67, 0.3);
+}
+
+.home-trust-banner.is-in .wtb-orb-farmer {
+  animation: wtb-drift-a 18s ease-in-out infinite;
+}
+
+.home-trust-banner.is-in .wtb-orb-buyer {
+  animation: wtb-drift-b 22s ease-in-out infinite;
+}
+
+.home-trust-banner.is-in .wtb-orb-gold {
+  animation: wtb-drift-c 16s ease-in-out infinite;
 }
 
 .wtb-grain {
@@ -996,6 +1010,9 @@
   border-radius: 50%;
   background: var(--add-green);
   box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5);
+}
+
+.home-trust-banner.is-in .wtb-badge-dot {
   animation: wtb-pulse 2.4s ease-out infinite;
 }
 
@@ -1041,12 +1058,25 @@
   backdrop-filter: blur(6px);
   transition:
     transform var(--motion-med) var(--ease-out-soft),
-    box-shadow var(--motion-med) ease;
+    box-shadow var(--motion-med) ease,
+    border-color var(--motion-med) ease;
 }
 
-.wtb-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lift);
+@media (hover: hover) and (pointer: fine) {
+  .wtb-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      var(--shadow-lift),
+      0 12px 28px rgba(10, 51, 41, 0.08);
+  }
+
+  .wtb-card-farmer:hover {
+    border-color: color-mix(in srgb, var(--pine-bright) 42%, transparent);
+  }
+
+  .wtb-card-buyer:hover {
+    border-color: color-mix(in srgb, var(--color-buyer-sky) 44%, transparent);
+  }
 }
 
 .wtb-card-farmer {
@@ -1080,12 +1110,12 @@
   background: var(--color-buyer-sky-soft);
 }
 
-.wtb-float-farmer {
-  animation: wtb-float 4.2s ease-in-out infinite;
+.home-trust-banner.is-in .wtb-float-farmer {
+  animation: wtb-float 4.4s ease-in-out infinite;
 }
 
-.wtb-float-buyer {
-  animation: wtb-float 4.2s ease-in-out infinite 2.1s;
+.home-trust-banner.is-in .wtb-float-buyer {
+  animation: wtb-float 4.4s ease-in-out infinite 2.2s;
 }
 
 .wtb-card-body {
@@ -1119,12 +1149,23 @@
   gap: 0.35rem;
 }
 
-.wtb-perks li {
+.wtb-perks li,
+.wtb-perk {
   font-size: 0.72rem;
   font-weight: 600;
   padding: 0.22rem 0.5rem;
   border-radius: 999px;
   line-height: 1.25;
+}
+
+.wtb-perk {
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+.home-trust-banner.is-in .wtb-perk {
+  animation: wtb-perk-in 0.55s var(--ease-out-soft) both;
+  animation-delay: var(--wtb-perk-delay, 220ms);
 }
 
 .wtb-card-farmer .wtb-perks li {
@@ -1156,6 +1197,12 @@
   height: 1.25rem;
   background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--color-harvest-gold) 55%, transparent));
   border-radius: 2px;
+  transform-origin: center;
+}
+
+.home-trust-banner.is-in .wtb-bridge-line {
+  animation: wtb-line-grow 0.7s var(--ease-out-soft) both;
+  animation-delay: 220ms;
 }
 
 .wtb-bridge-core {
@@ -1168,7 +1215,12 @@
   border: 2px solid color-mix(in srgb, var(--color-harvest-gold) 45%, transparent);
   font-size: 1.1rem;
   box-shadow: 0 4px 14px rgba(10, 40, 35, 0.1);
-  animation: wtb-pulse-soft 3s ease-in-out infinite;
+}
+
+.home-trust-banner.is-in .wtb-bridge-core {
+  animation:
+    wtb-apple-in 0.7s var(--ease-out-soft) both,
+    wtb-pulse-soft 3.2s ease-in-out 0.9s infinite;
 }
 
 .wtb-trust-badges {
@@ -1193,6 +1245,16 @@
   background: rgba(255, 255, 255, 0.78);
   border: 1px solid color-mix(in srgb, var(--pine) 12%, transparent);
   border-radius: 999px;
+  transition:
+    transform var(--motion-fast) var(--ease-out-soft),
+    box-shadow var(--motion-fast) ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wtb-trust-badge:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(10, 51, 41, 0.06);
+  }
 }
 
 .wtb-trust-badge:nth-child(2) {
@@ -1210,6 +1272,9 @@
   height: 0.38rem;
   border-radius: 50%;
   background: var(--add-green);
+}
+
+.home-trust-banner.is-in .wtb-trust-badge-pulse {
   animation: wtb-pulse 2.6s ease-out infinite;
 }
 
@@ -1236,11 +1301,21 @@
   background: linear-gradient(145deg, var(--pine-bright), var(--pine-deep)) !important;
   border-color: transparent !important;
   box-shadow: 0 4px 14px rgba(10, 51, 41, 0.22);
+  transition:
+    transform var(--motion-med) var(--ease-out-soft),
+    box-shadow var(--motion-med) ease,
+    background var(--motion-med) ease !important;
 }
 
 .wtb-cta-primary:hover {
   background: linear-gradient(145deg, var(--pine), var(--pine-deep)) !important;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(10, 51, 41, 0.28);
+}
+
+.wtb-cta-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 10px rgba(10, 51, 41, 0.2);
 }
 
 .wtb-cta-secondary {
@@ -1248,11 +1323,22 @@
   background: rgba(255, 255, 255, 0.9) !important;
   color: var(--pine-deep) !important;
   border-color: color-mix(in srgb, var(--pine) 22%, transparent) !important;
+  transition:
+    transform var(--motion-med) var(--ease-out-soft),
+    box-shadow var(--motion-med) ease,
+    border-color var(--motion-med) ease,
+    background var(--motion-med) ease !important;
 }
 
 .wtb-cta-secondary:hover {
   background: var(--surface-solid) !important;
   border-color: var(--pine) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(10, 51, 41, 0.1);
+}
+
+.wtb-cta-secondary:active {
+  transform: translateY(0);
 }
 
 .wtb-cta-ghost {
@@ -1263,49 +1349,201 @@
   text-underline-offset: 0.2em;
   text-decoration-color: color-mix(in srgb, var(--pine) 30%, transparent);
   padding: 0.35rem 0.5rem;
+  transition:
+    color var(--motion-fast) ease,
+    text-decoration-color var(--motion-fast) ease,
+    transform var(--motion-fast) var(--ease-out-soft);
 }
 
 .wtb-cta-ghost:hover {
   color: var(--pine-deep);
   text-decoration-color: var(--pine);
+  transform: translateY(-1px);
 }
 
+/* Entrance: idle until parent Reveal adds .is-in */
 .wtb-reveal {
   opacity: 0;
-  transform: translateY(10px);
-  animation: wtb-reveal 0.75s var(--ease-out-soft) both;
+  transform: translateY(14px);
+}
+
+.wtb-reveal-from-left {
+  transform: translate3d(-18px, 10px, 0);
+}
+
+.wtb-reveal-from-right {
+  transform: translate3d(18px, 10px, 0);
+}
+
+.wtb-reveal-scale {
+  transform: scale(0.86);
+}
+
+.home-trust-banner.is-in .wtb-reveal {
+  animation: wtb-reveal-up 0.8s var(--ease-out-soft) both;
   animation-delay: var(--wtb-delay, 0ms);
 }
 
-@keyframes wtb-drift {
-  from { transform: translate(0, 0); }
-  to { transform: translate(10px, 8px); }
+.home-trust-banner.is-in .wtb-reveal-from-left {
+  animation-name: wtb-reveal-left;
+}
+
+.home-trust-banner.is-in .wtb-reveal-from-right {
+  animation-name: wtb-reveal-right;
+}
+
+.home-trust-banner.is-in .wtb-reveal-scale {
+  animation-name: wtb-reveal-scale;
+}
+
+@keyframes wtb-drift-a {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translate(14px, 10px) scale(1.08);
+    opacity: 0.58;
+  }
+}
+
+@keyframes wtb-drift-b {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.38;
+  }
+  50% {
+    transform: translate(-12px, 14px) scale(1.1);
+    opacity: 0.55;
+  }
+}
+
+@keyframes wtb-drift-c {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.36;
+  }
+  50% {
+    transform: translate(8px, -10px) scale(1.12);
+    opacity: 0.52;
+  }
 }
 
 @keyframes wtb-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
 }
 
 @keyframes wtb-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.45); }
-  70% { box-shadow: 0 0 0 7px rgba(22, 163, 74, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(22, 163, 74, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+  }
 }
 
 @keyframes wtb-pulse-soft {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow:
+      0 4px 14px rgba(10, 40, 35, 0.1),
+      0 0 0 0 rgba(212, 168, 67, 0);
+  }
+  50% {
+    transform: scale(1.06);
+    box-shadow:
+      0 6px 18px rgba(10, 40, 35, 0.12),
+      0 0 0 8px rgba(212, 168, 67, 0.12);
+  }
 }
 
-@keyframes wtb-reveal {
+@keyframes wtb-apple-in {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes wtb-line-grow {
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes wtb-perk-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes wtb-reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes wtb-reveal-left {
+  from {
+    opacity: 0;
+    transform: translate3d(-18px, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes wtb-reveal-right {
+  from {
+    opacity: 0;
+    transform: translate3d(18px, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes wtb-reveal-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.86);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -1317,13 +1555,38 @@
   .wtb-float-farmer,
   .wtb-float-buyer,
   .wtb-bridge-core,
+  .wtb-bridge-line,
   .wtb-trust-badge-pulse,
-  .wtb-reveal {
-    animation: none;
+  .wtb-reveal,
+  .wtb-perk,
+  .home-trust-banner.is-in .wtb-orb-farmer,
+  .home-trust-banner.is-in .wtb-orb-buyer,
+  .home-trust-banner.is-in .wtb-orb-gold,
+  .home-trust-banner.is-in .wtb-badge-dot,
+  .home-trust-banner.is-in .wtb-float-farmer,
+  .home-trust-banner.is-in .wtb-float-buyer,
+  .home-trust-banner.is-in .wtb-bridge-core,
+  .home-trust-banner.is-in .wtb-bridge-line,
+  .home-trust-banner.is-in .wtb-trust-badge-pulse,
+  .home-trust-banner.is-in .wtb-reveal,
+  .home-trust-banner.is-in .wtb-perk {
+    animation: none !important;
   }
 
-  .wtb-reveal {
-    opacity: 1;
+  .wtb-reveal,
+  .wtb-reveal-from-left,
+  .wtb-reveal-from-right,
+  .wtb-reveal-scale,
+  .wtb-perk {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .wtb-card:hover,
+  .wtb-cta-primary:hover,
+  .wtb-cta-secondary:hover,
+  .wtb-cta-ghost:hover,
+  .wtb-trust-badge:hover {
     transform: none;
   }
 }
@@ -1358,9 +1621,23 @@
   border: 1px solid color-mix(in srgb, var(--pine) 10%, transparent);
   box-shadow: var(--shadow-card);
   opacity: 0;
-  transform: translateY(6px);
-  animation: tvs-reveal 0.65s var(--ease-out-soft) both;
+  transform: translateY(10px);
+  transition:
+    transform var(--motion-med) var(--ease-out-soft),
+    box-shadow var(--motion-med) ease,
+    border-color var(--motion-med) ease;
+}
+
+.home-trust-strip.is-in .tvs-item {
+  animation: tvs-reveal 0.7s var(--ease-out-soft) both;
   animation-delay: var(--tvs-delay, 0ms);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tvs-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lift);
+  }
 }
 
 .tvs-item-green {
@@ -1414,7 +1691,7 @@
 @keyframes tvs-reveal {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -1423,14 +1700,19 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tvs-item {
-    animation: none;
-    opacity: 1;
-    transform: none;
+  .tvs-item,
+  .home-trust-strip.is-in .tvs-item,
+  .home-trust-strip.is-in .tvs-icon-float {
+    animation: none !important;
   }
 
-  .tvs-icon-float {
-    animation: none;
+  .tvs-item {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .tvs-item:hover {
+    transform: none;
   }
 }
 
