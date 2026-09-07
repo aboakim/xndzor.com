@@ -1394,6 +1394,94 @@ html[data-theme="dark"] .pricing-card .tiny.muted {
   color: #3d4a45 !important;
 }
 
+/* Feature about (Solve visual page) — keep card text readable on dark surfaces */
+html.dark .gba-scene,
+html.dark .gba-problem,
+html.dark .gba-steps-visual .gba-step,
+html.dark .gba-advantages-visual li,
+html.dark .gba-who-cards li,
+html.dark .gba-faq-item,
+html.dark .gba-compare-solo,
+html.dark .gba-compare-group,
+html.dark .gba-example,
+html[data-theme="dark"] .gba-scene,
+html[data-theme="dark"] .gba-problem,
+html[data-theme="dark"] .gba-steps-visual .gba-step,
+html[data-theme="dark"] .gba-advantages-visual li,
+html[data-theme="dark"] .gba-who-cards li,
+html[data-theme="dark"] .gba-faq-item,
+html[data-theme="dark"] .gba-compare-solo,
+html[data-theme="dark"] .gba-compare-group,
+html[data-theme="dark"] .gba-example {
+  background: var(--surface-solid);
+  border-color: var(--line);
+}
+
+html.dark .gba-compare-group,
+html[data-theme="dark"] .gba-compare-group {
+  background: color-mix(in srgb, var(--pine) 14%, var(--surface-solid));
+  border-color: color-mix(in srgb, var(--pine-bright) 40%, transparent);
+}
+
+html.dark .gba-scene-copy strong,
+html.dark .gba-block h2,
+html.dark .gba-split-copy h2,
+html.dark .gba-step h3,
+html.dark .gba-advantages strong,
+html.dark .gba-example h2,
+html.dark .gba-problem-col-sol p,
+html.dark .gba-problem-col-sol .gba-problem-label,
+html.dark .gba-faq-item summary,
+html.dark .gba-compare-price,
+html.dark .gba-save-note,
+html[data-theme="dark"] .gba-scene-copy strong,
+html[data-theme="dark"] .gba-block h2,
+html[data-theme="dark"] .gba-split-copy h2,
+html[data-theme="dark"] .gba-step h3,
+html[data-theme="dark"] .gba-advantages strong,
+html[data-theme="dark"] .gba-example h2,
+html[data-theme="dark"] .gba-problem-col-sol p,
+html[data-theme="dark"] .gba-problem-col-sol .gba-problem-label,
+html[data-theme="dark"] .gba-faq-item summary,
+html[data-theme="dark"] .gba-compare-price,
+html[data-theme="dark"] .gba-save-note {
+  color: var(--pine-deep);
+}
+
+html.dark .gba-scene-copy span,
+html.dark .gba-block > p,
+html.dark .gba-split-copy p,
+html.dark .gba-problem-col p,
+html.dark .gba-step p,
+html.dark .gba-advantages p,
+html.dark .gba-who-cards li,
+html.dark .gba-example-lede,
+html.dark .gba-faq-item p,
+html.dark .gba-compare-unit,
+html[data-theme="dark"] .gba-scene-copy span,
+html[data-theme="dark"] .gba-block > p,
+html[data-theme="dark"] .gba-split-copy p,
+html[data-theme="dark"] .gba-problem-col p,
+html[data-theme="dark"] .gba-step p,
+html[data-theme="dark"] .gba-advantages p,
+html[data-theme="dark"] .gba-who-cards li,
+html[data-theme="dark"] .gba-example-lede,
+html[data-theme="dark"] .gba-faq-item p,
+html[data-theme="dark"] .gba-compare-unit {
+  color: var(--ink-soft);
+}
+
+html.dark .gba-hero-visual .gba-badge,
+html[data-theme="dark"] .gba-hero-visual .gba-badge {
+  color: #0a3329;
+  background: rgba(244, 251, 248, 0.94);
+}
+
+html.dark .gba-save-note,
+html[data-theme="dark"] .gba-save-note {
+  background: color-mix(in srgb, #16a34a 22%, transparent);
+}
+
 @media (max-width: 520px) {
   .theme-toggle {
     min-width: 40px;

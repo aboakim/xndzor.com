@@ -25,3 +25,28 @@ export const FEATURE_PRIMARY_HREF: Record<FeatureAboutSlug, string> = {
   grow: "/grow",
   passport: "/farms/me",
 };
+
+/** Visual assets for feature about pages (paths under /public). */
+export const FEATURE_ABOUT_VISUALS = {
+  solve: {
+    heroSrc: "/features/solve/harvest.webp",
+    scenes: [
+      { src: "/features/solve/harvest.webp", key: "harvest" as const },
+      { src: "/features/solve/transport.webp", key: "transport" as const },
+      { src: "/features/solve/market.webp", key: "market" as const },
+      { src: "/features/solve/farmwork.webp", key: "farmwork" as const },
+    ],
+    problemImages: [
+      "/features/solve/harvest.webp",
+      "/features/solve/market.webp",
+      "/features/solve/transport.webp",
+      "/features/solve/farmwork.webp",
+    ],
+    stepImages: [
+      "/features/solve/farmwork.webp",
+      "/features/solve/harvest.webp",
+      "/features/solve/transport.webp",
+      "/features/solve/market.webp",
+    ],
+  },
+} as const;

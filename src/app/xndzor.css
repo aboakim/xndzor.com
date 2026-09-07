@@ -1866,6 +1866,10 @@
   max-width: 42rem;
 }
 
+.gba-page-visual {
+  max-width: 56rem;
+}
+
 .gba-hero {
   margin: 0 0 2rem;
   padding: 1.35rem 1.25rem 1.45rem;
@@ -1874,6 +1878,57 @@
     radial-gradient(ellipse 70% 80% at 100% 0%, rgba(184, 146, 42, 0.14), transparent 55%),
     linear-gradient(145deg, #0a3329 0%, #0f4a3c 50%, #1a6b55 100%);
   color: #f4fbf8;
+}
+
+.gba-hero-visual {
+  position: relative;
+  overflow: hidden;
+  min-height: clamp(18rem, 52vw, 24rem);
+  display: flex;
+  align-items: flex-end;
+  padding: 0;
+  background: #0a3329;
+}
+
+.gba-hero-media {
+  position: absolute;
+  inset: 0;
+}
+
+.gba-hero-img {
+  object-fit: cover;
+  object-position: center 40%;
+}
+
+.gba-hero-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(6, 28, 22, 0.35) 0%, rgba(6, 28, 22, 0.55) 42%, rgba(6, 28, 22, 0.92) 100%),
+    linear-gradient(90deg, rgba(6, 28, 22, 0.55) 0%, transparent 55%);
+}
+
+.gba-hero-copy {
+  position: relative;
+  z-index: 1;
+  padding: 1.35rem 1.25rem 1.45rem;
+  max-width: 36rem;
+}
+
+.gba-brand {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display-hy), var(--font-display), serif;
+  font-size: clamp(1.85rem, 5vw, 2.55rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: #fff;
+}
+
+.gba-hero-visual .gba-badge {
+  color: #0a3329;
+  background: rgba(244, 251, 248, 0.92);
+  border-color: transparent;
 }
 
 .gba-badge {
@@ -1926,6 +1981,83 @@
   color: rgba(244, 251, 248, 0.9);
 }
 
+.gba-scenes {
+  margin: 0 0 2rem;
+}
+
+.gba-scene-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+.gba-scene {
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface-solid, #fff);
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .gba-hero-visual .gba-hero-img {
+    animation: gba-hero- ken 18s ease-in-out alternate infinite;
+  }
+
+  .gba-scene:nth-child(1) { animation: gba-fade-up 0.55s ease both; animation-delay: 0.05s; }
+  .gba-scene:nth-child(2) { animation: gba-fade-up 0.55s ease both; animation-delay: 0.12s; }
+  .gba-scene:nth-child(3) { animation: gba-fade-up 0.55s ease both; animation-delay: 0.19s; }
+  .gba-scene:nth-child(4) { animation: gba-fade-up 0.55s ease both; animation-delay: 0.26s; }
+
+  .gba-scene:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--pine-bright) 45%, var(--line));
+  }
+}
+
+@keyframes gba-hero-ken {
+  from { transform: scale(1.02); }
+  to { transform: scale(1.08); }
+}
+
+@keyframes gba-fade-up {
+  from { opacity: 0; transform: translateY(0.55rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.gba-scene-media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: color-mix(in srgb, var(--pine) 12%, #0a3329);
+}
+
+.gba-scene-img {
+  object-fit: cover;
+}
+
+.gba-scene-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.65rem 0.7rem 0.75rem;
+}
+
+.gba-scene-copy strong {
+  font-size: 0.92rem;
+  color: var(--pine-deep);
+  line-height: 1.25;
+}
+
+.gba-scene-copy span {
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: var(--ink-soft, #3a4a44);
+}
+
 .gba-block {
   margin: 0 0 2rem;
 }
@@ -1944,12 +2076,56 @@
   color: var(--ink-soft, #3a4a44);
 }
 
+.gba-split {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr);
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.gba-split-flip {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.95fr);
+}
+
+.gba-split-flip .gba-split-media {
+  order: 2;
+}
+
+.gba-split-media {
+  position: relative;
+  min-height: 11rem;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.gba-split-img {
+  object-fit: cover;
+}
+
+.gba-split-copy h2 {
+  margin-top: 0;
+}
+
+.gba-split-copy p {
+  margin: 0 0 0.55rem;
+  line-height: 1.5;
+  color: var(--ink-soft, #3a4a44);
+  font-size: 0.98rem;
+}
+
 .gba-problems {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
+  gap: 0.75rem;
+}
+
+.gba-problems-visual {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
 }
 
@@ -1963,16 +2139,48 @@
   border: 1px solid var(--line);
 }
 
+.gba-problems-visual .gba-problem {
+  grid-template-columns: 4.75rem 1fr;
+  gap: 0.75rem;
+  align-items: stretch;
+  padding: 0.55rem;
+}
+
+.gba-problem-thumb {
+  position: relative;
+  border-radius: calc(var(--radius) - 2px);
+  overflow: hidden;
+  min-height: 100%;
+  background: color-mix(in srgb, var(--pine) 10%, #0a3329);
+}
+
+.gba-problem-thumb-img {
+  object-fit: cover;
+}
+
+.gba-problem-body {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.3rem 0.35rem 0.35rem 0;
+}
+
 .gba-problem-col p {
   margin: 0;
-  line-height: 1.5;
-  font-size: 0.95rem;
+  line-height: 1.45;
+  font-size: 0.92rem;
   color: var(--ink-soft, #3a4a44);
 }
 
 .gba-problem-col-sol {
   padding-left: 0.75rem;
   border-left: 3px solid var(--pine-bright);
+}
+
+.gba-problems-visual .gba-problem-col-sol {
+  padding-left: 0;
+  border-left: none;
+  padding-top: 0.35rem;
+  border-top: 2px solid color-mix(in srgb, var(--pine-bright) 70%, transparent);
 }
 
 .gba-problem-label {
@@ -2005,11 +2213,38 @@
   gap: 1rem;
 }
 
+.gba-steps-visual {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem;
+}
+
 .gba-step {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 0.85rem;
   align-items: start;
+}
+
+.gba-steps-visual .gba-step {
+  grid-template-columns: 1fr;
+  gap: 0.65rem;
+  padding: 0.55rem;
+  border-radius: var(--radius);
+  background: var(--surface-solid, #fff);
+  border: 1px solid var(--line);
+}
+
+.gba-step-media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: calc(var(--radius) - 2px);
+  overflow: hidden;
+  background: color-mix(in srgb, var(--pine) 10%, #0a3329);
+}
+
+.gba-step-img {
+  object-fit: cover;
 }
 
 .gba-step-num {
@@ -2025,17 +2260,33 @@
   flex-shrink: 0;
 }
 
+.gba-step-num-on-media {
+  position: absolute;
+  left: 0.55rem;
+  top: 0.55rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
 .gba-step h3 {
   margin: 0.15rem 0 0.3rem;
   font-size: 1.02rem;
   color: var(--pine-deep);
 }
 
+.gba-steps-visual .gba-step h3 {
+  margin: 0 0 0.2rem;
+  padding: 0 0.2rem;
+}
+
 .gba-step p {
   margin: 0;
-  line-height: 1.55;
+  line-height: 1.45;
   color: var(--ink-soft, #3a4a44);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
+}
+
+.gba-steps-visual .gba-step p {
+  padding: 0 0.2rem 0.25rem;
 }
 
 .gba-advantages {
@@ -2047,9 +2298,24 @@
   gap: 1rem;
 }
 
+.gba-advantages-visual {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
 .gba-advantages li {
   padding-left: 0.85rem;
   border-left: 3px solid var(--pine-bright);
+}
+
+.gba-advantages-visual li {
+  padding: 0.85rem 0.9rem;
+  border-left: none;
+  border-radius: var(--radius);
+  background: var(--surface-solid, #fff);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--pine-bright);
 }
 
 .gba-advantages strong {
@@ -2061,9 +2327,29 @@
 
 .gba-advantages p {
   margin: 0;
-  line-height: 1.55;
+  line-height: 1.45;
   color: var(--ink-soft, #3a4a44);
+  font-size: 0.92rem;
+}
+
+.gba-who-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.gba-who-cards li {
+  margin: 0;
+  padding: 0.9rem 0.95rem;
+  border-radius: var(--radius);
+  background: var(--surface-solid, #fff);
+  border: 1px solid var(--line);
+  line-height: 1.45;
   font-size: 0.95rem;
+  color: var(--ink-soft, #3a4a44);
 }
 
 .gba-example {
@@ -2250,6 +2536,28 @@
   border-color: rgba(244, 251, 248, 0.85);
 }
 
+@media (max-width: 720px) {
+  .gba-scene-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .gba-split,
+  .gba-split-flip {
+    grid-template-columns: 1fr;
+  }
+
+  .gba-split-flip .gba-split-media {
+    order: 0;
+  }
+
+  .gba-problems-visual,
+  .gba-steps-visual,
+  .gba-advantages-visual,
+  .gba-who-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 480px) {
   .gba-compare {
     grid-template-columns: 1fr;
@@ -2259,11 +2567,24 @@
     grid-template-columns: 1fr;
   }
 
+  .gba-problems-visual .gba-problem {
+    grid-template-columns: 1fr;
+  }
+
+  .gba-problem-thumb {
+    aspect-ratio: 16 / 9;
+    min-height: 0;
+  }
+
   .gba-problem-col-sol {
     padding-left: 0;
     padding-top: 0.55rem;
     border-left: none;
     border-top: 3px solid var(--pine-bright);
+  }
+
+  .gba-scene-grid {
+    grid-template-columns: 1fr;
   }
 }
 

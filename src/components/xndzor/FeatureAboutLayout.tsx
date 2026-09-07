@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { Breadcrumbs, type Crumb } from "@/components/Breadcrumbs";
 
@@ -23,12 +24,27 @@ export type FeatureAboutCompare = {
   saveNote?: string;
 };
 
+export type FeatureAboutScene = {
+  src: string;
+  label: string;
+  caption: string;
+};
+
+export type FeatureAboutVisual = {
+  heroSrc: string;
+  heroAlt: string;
+  scenes?: FeatureAboutScene[];
+  problemImages?: string[];
+  stepImages?: string[];
+};
+
 type FeatureAboutLayoutProps = {
   breadcrumbs: Crumb[];
   badge: string;
   eyebrow: string;
   title: string;
   lede: string;
+  brand?: string;
   problemsTitle?: string;
   problemLabel?: string;
   solutionLabel?: string;
@@ -50,6 +66,7 @@ type FeatureAboutLayoutProps = {
   ctaTitle: string;
   ctaLede: string;
   ctas: FeatureAboutCta[];
+  visual?: FeatureAboutVisual;
 };
 
 export function FeatureAboutLayout({
@@ -58,6 +75,7 @@ export function FeatureAboutLayout({
   eyebrow,
   title,
   lede,
+  brand,
   problemsTitle,
   problemLabel,
   solutionLabel,
@@ -79,41 +97,61 @@ export function FeatureAboutLayout({
   ctaTitle,
   ctaLede,
   ctas,
+  visual,
 }: FeatureAboutLayoutProps) {
   const whoParagraphs = Array.isArray(whoBody) ? whoBody : [whoBody];
   const showProblems = Boolean(problemsTitle && problems && problems.length > 0);
+  const isVisual = Boolean(visual?.heroSrc);
 
   return (
-    <div className="section gba-page">
+    <div className={`section gba-page${isVisual ? " gba-page-visual" : ""}`}>
       <Breadcrumbs items={breadcrumbs} />
 
-      <header className="gba-hero">
-        <p className="gba-badge">
-          <span className="gba-badge-dot" aria-hidden />
-          {badge}
-        </p>
-        <p className="gba-eyebrow">{eyebrow}</p>
-        <h1 className="gba-title">{title}</h1>
-        <p className="gba-lede">{lede}</p>
+      <header className={`gba-hero${isVisual ? " gba-hero-visual" : ""}`}>
+        {visual?.heroSrc ? (
+          <div className="gba-hero-media" aria-hidden>
+            <Image
+              src={visual.heroSrc}
+              alt=""
+              fill
+              priority
+              sizes="(max-width: 900px) 100vw, 56rem"
+              className="gba-hero-img"
+            />
+            <div className="gba-hero-shade" />
+          </div>
+        ) : null}
+        <div className="gba-hero-copy">
+          {brand ? <p className="gba-brand">{brand}</p> : null}
+          {!brand ? (
+            <p className="gba-badge">
+              <span className="gba-badge-dot" aria-hidden />
+              {badge}
+            </p>
+          ) : null}
+          <p className="gba-eyebrow">{eyebrow}</p>
+          <h1 className="gba-title">{title}</h1>
+          <p className="gba-lede">{lede}</p>
+        </div>
       </header>
 
-      {showProblems ? (
-        <section className="gba-block" aria-labelledby="fa-problems">
-          <h2 id="fa-problems">{problemsTitle}</h2>
-          <ul className="gba-problems">
-            {problems!.map((item) => (
-              <li key={item.problem} className="gba-problem">
-                <div className="gba-problem-col">
-                  {problemLabel ? (
-                    <span className="gba-problem-label">{problemLabel}</span>
-                  ) : null}
-                  <p>{item.problem}</p>
+      {visual?.scenes && visual.scenes.length > 0 ? (
+        <section className="gba-scenes" aria-label={title}>
+          <ul className="gba-scene-grid">
+            {visual.scenes.map((scene) => (
+              <li key={scene.src + scene.label} className="gba-scene">
+                <div className="gba-scene-media">
+                  <Image
+                    src={scene.src}
+                    alt=""
+                    fill
+                    sizes="(max-width: 640px) 50vw, 14rem"
+                    className="gba-scene-img"
+                  />
                 </div>
-                <div className="gba-problem-col gba-problem-col-sol">
-                  {solutionLabel ? (
-                    <span className="gba-problem-label">{solutionLabel}</span>
-                  ) : null}
-                  <p>{item.solution}</p>
+                <div className="gba-scene-copy">
+                  <strong>{scene.label}</strong>
+                  <span>{scene.caption}</span>
                 </div>
               </li>
             ))}
@@ -121,40 +159,130 @@ export function FeatureAboutLayout({
         </section>
       ) : null}
 
-      <section className="gba-block" aria-labelledby="fa-what">
-        <h2 id="fa-what">{whatTitle}</h2>
-        {whatBody.map((p) => (
-          <p key={p}>{p}</p>
-        ))}
+      {showProblems ? (
+        <section className="gba-block" aria-labelledby="fa-problems">
+          <h2 id="fa-problems">{problemsTitle}</h2>
+          <ul className={`gba-problems${isVisual ? " gba-problems-visual" : ""}`}>
+            {problems!.map((item, i) => {
+              const img = visual?.problemImages?.[i];
+              return (
+                <li key={item.problem} className="gba-problem">
+                  {img ? (
+                    <div className="gba-problem-thumb">
+                      <Image
+                        src={img}
+                        alt=""
+                        fill
+                        sizes="5.5rem"
+                        className="gba-problem-thumb-img"
+                      />
+                    </div>
+                  ) : null}
+                  <div className="gba-problem-body">
+                    <div className="gba-problem-col">
+                      {problemLabel ? (
+                        <span className="gba-problem-label">{problemLabel}</span>
+                      ) : null}
+                      <p>{item.problem}</p>
+                    </div>
+                    <div className="gba-problem-col gba-problem-col-sol">
+                      {solutionLabel ? (
+                        <span className="gba-problem-label">{solutionLabel}</span>
+                      ) : null}
+                      <p>{item.solution}</p>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ) : null}
+
+      <section
+        className={`gba-block${isVisual ? " gba-split" : ""}`}
+        aria-labelledby="fa-what"
+      >
+        {isVisual && visual?.scenes?.[0] ? (
+          <div className="gba-split-media">
+            <Image
+              src={visual.scenes[0].src}
+              alt=""
+              fill
+              sizes="(max-width: 720px) 100vw, 18rem"
+              className="gba-split-img"
+            />
+          </div>
+        ) : null}
+        <div className="gba-split-copy">
+          <h2 id="fa-what">{whatTitle}</h2>
+          {whatBody.map((p) => (
+            <p key={p}>{p}</p>
+          ))}
+        </div>
       </section>
 
-      <section className="gba-block" aria-labelledby="fa-why">
-        <h2 id="fa-why">{whyTitle}</h2>
-        {whyBody.map((p) => (
-          <p key={p}>{p}</p>
-        ))}
+      <section
+        className={`gba-block${isVisual ? " gba-split gba-split-flip" : ""}`}
+        aria-labelledby="fa-why"
+      >
+        {isVisual && visual?.scenes?.[1] ? (
+          <div className="gba-split-media">
+            <Image
+              src={visual.scenes[1].src}
+              alt=""
+              fill
+              sizes="(max-width: 720px) 100vw, 18rem"
+              className="gba-split-img"
+            />
+          </div>
+        ) : null}
+        <div className="gba-split-copy">
+          <h2 id="fa-why">{whyTitle}</h2>
+          {whyBody.map((p) => (
+            <p key={p}>{p}</p>
+          ))}
+        </div>
       </section>
 
       <section className="gba-block" aria-labelledby="fa-how">
         <h2 id="fa-how">{howTitle}</h2>
-        <ol className="gba-steps">
-          {steps.map((step, i) => (
-            <li key={step.title} className="gba-step">
-              <span className="gba-step-num" aria-hidden>
-                {i + 1}
-              </span>
-              <div>
-                <h3>{step.title}</h3>
-                <p>{step.body}</p>
-              </div>
-            </li>
-          ))}
+        <ol className={`gba-steps${isVisual ? " gba-steps-visual" : ""}`}>
+          {steps.map((step, i) => {
+            const img = visual?.stepImages?.[i];
+            return (
+              <li key={step.title} className="gba-step">
+                {img ? (
+                  <div className="gba-step-media">
+                    <Image
+                      src={img}
+                      alt=""
+                      fill
+                      sizes="(max-width: 640px) 100vw, 12rem"
+                      className="gba-step-img"
+                    />
+                    <span className="gba-step-num gba-step-num-on-media" aria-hidden>
+                      {i + 1}
+                    </span>
+                  </div>
+                ) : (
+                  <span className="gba-step-num" aria-hidden>
+                    {i + 1}
+                  </span>
+                )}
+                <div>
+                  <h3>{step.title}</h3>
+                  <p>{step.body}</p>
+                </div>
+              </li>
+            );
+          })}
         </ol>
       </section>
 
       <section className="gba-block" aria-labelledby="fa-adv">
         <h2 id="fa-adv">{advantagesTitle}</h2>
-        <ul className="gba-advantages">
+        <ul className={`gba-advantages${isVisual ? " gba-advantages-visual" : ""}`}>
           {advantages.map((item) => (
             <li key={item.title}>
               <strong>{item.title}</strong>
@@ -190,9 +318,15 @@ export function FeatureAboutLayout({
 
       <section className="gba-block" aria-labelledby="fa-who">
         <h2 id="fa-who">{whoTitle}</h2>
-        {whoParagraphs.map((p) => (
-          <p key={p}>{p}</p>
-        ))}
+        {isVisual ? (
+          <ul className="gba-who-cards">
+            {whoParagraphs.map((p) => (
+              <li key={p}>{p}</li>
+            ))}
+          </ul>
+        ) : (
+          whoParagraphs.map((p) => <p key={p}>{p}</p>)
+        )}
       </section>
 
       <section className="gba-block" aria-labelledby="fa-faq">

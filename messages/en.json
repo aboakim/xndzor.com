@@ -2527,111 +2527,116 @@
       "ctaPassport": "Open farm passport",
       "ctaGroupBuy": "Group buy",
       "solve": {
-        "eyebrow": "Xndzor · Solve",
-        "title": "Harvest, haul, sell — without days of phone chasing",
-        "lede": "When a farmer needs workers, machines, a truck, and a buyer, the usual path is a long chain of calls and WhatsApp. With Xndzor Solve you write one need — and get one combined offer.",
-        "problemsTitle": "What problems it solves",
+        "brand": "Xndzor",
+        "eyebrow": "Solve",
+        "title": "Harvest, haul, sell — one package",
+        "lede": "Write one need — get workers, machines, a truck, and/or a buyer together.",
+        "scenes": {
+          "harvest": { "label": "Harvest", "caption": "Workers + machines" },
+          "transport": { "label": "Transport", "caption": "Truck on your timeline" },
+          "market": { "label": "Sell", "caption": "Buyer with clear volume" },
+          "farmwork": { "label": "Farm work", "caption": "All in one plan" }
+        },
+        "problemsTitle": "What it solves",
         "problemLabel": "Problem",
-        "solutionLabel": "How Xndzor helps",
+        "solutionLabel": "Solution",
         "problems": [
           {
-            "problem": "Harvest needs workers, a tractor, and a truck — and you have to find each one separately.",
-            "solution": "One post: Xndzor gathers the pieces into one package for your marz and timeframe."
+            "problem": "Workers, tractor, truck — found separately",
+            "solution": "One post → one package for your marz"
           },
           {
-            "problem": "The crop is ready but there is no buyer — or a buyer is waiting while you still scramble logistics.",
-            "solution": "The same package can include a buyer match and transport in one plan."
+            "problem": "Crop ready, no buyer or haul lined up",
+            "solution": "Buyer + transport in one plan"
           },
           {
-            "problem": "Buyers struggle to get reliable volume because farms get stuck on logistics.",
-            "solution": "Farmers arrive with a real plan. Buyers see clear volume and timing — not a promise without transport."
+            "problem": "Buyers can’t trust the volume",
+            "solution": "Clear volume and timing with logistics ready"
           },
           {
-            "problem": "Rush rentals and last-minute calls are expensive and stressful.",
-            "solution": "An early, organized package is often cheaper: one offer, one schedule."
+            "problem": "Rush rentals — costly and stressful",
+            "solution": "Early package: one offer, one schedule"
           }
         ],
         "whatBody": [
-          "Solve is an Xndzor tool where a farmer briefly writes what is needed — e.g. “4 ha apples, harvest in 10 days.” The platform builds one combined offer: workers, machines, a truck, and/or a buyer.",
-          "This is not a normal listing. The goal is a full solution from one need — without four separate searches. In Armenia this format exists only on Xndzor."
+          "One need → a combined solution. Not four separate listings. Only on Xndzor."
         ],
         "whyBody": [
-          "One harvest often needs 3–4 different people and machines. Coordinating alone takes days and often ends in rush overpay.",
-          "On Xndzor one post replaces that scramble: you see one offer, one timeline, one clear path."
+          "Coordinating alone takes days. One post gives one offer and one timeline."
         ],
         "steps": [
           {
             "title": "Write what you need",
-            "body": "Example: “4 ha apples, harvest in 10 days” or “need a tractor and a truck.” Short and concrete is enough."
+            "body": "E.g. “4 ha apples, harvest in 10 days.”"
           },
           {
             "title": "Xndzor gathers the pieces",
-            "body": "The system looks for workers, equipment, transport, and/or a buyer in your marz and timeframe."
+            "body": "Workers, machines, transport, buyer — in your marz."
           },
           {
             "title": "You get one package",
-            "body": "In a single offer you see what the solution includes — without ten separate negotiations."
+            "body": "The full solution in a single offer."
           },
           {
             "title": "Confirm and continue",
-            "body": "Pick what fits, connect with participants, and get to work with a clear plan."
+            "body": "Pick, connect, get to work."
           }
         ],
         "advantages": [
           {
             "title": "One step, full solution",
-            "body": "You don’t post four listings — one need becomes a combined offer."
+            "body": "One need → combined offer."
           },
           {
             "title": "Save days",
-            "body": "What alone can take 2–3 days of calls is often organized much faster."
+            "body": "Fewer calls, faster setup."
           },
           {
             "title": "Fewer overpays",
-            "body": "Rush rentals are expensive; an early, organized package is often cheaper."
+            "body": "Early packages often beat rush rentals."
           },
           {
             "title": "Only on Xndzor",
-            "body": "This problem-to-solution format is available in Armenia only here."
+            "body": "This format in Armenia — only here."
           },
           {
             "title": "Works for every farm",
-            "body": "Same simple logic for a small orchard or a large field."
+            "body": "Small orchard or large field — same logic."
           }
         ],
-        "exampleLede": "4 ha apple harvest — workers + equipment + truck. Coordinating alone is costly and slow.",
-        "beforeLabel": "Coordinating alone",
+        "exampleLede": "4 ha apples — workers + machines + truck.",
+        "beforeLabel": "Alone",
         "afterLabel": "Xndzor package",
         "exampleUnit": "approx. cost",
-        "saveNote": "Save up to −{pct}% plus days less running around",
+        "saveNote": "Up to −{pct}% and days less running around",
         "whoBody": [
-          "For farmers who need to organize harvest, find machines or workers, haul the crop, or find a buyer — without hunting each piece for days.",
-          "For buyers who want reliable volume and timing from farms that already have a plan and logistics — not a promise without transport."
+          "Farmers: harvest, machines, haul, or a buyer — without days of chasing.",
+          "Buyers: reliable volume from farms that already have a plan."
         ],
         "faq": [
           {
-            "q": "Must I include everything in one need?",
-            "a": "Not required. Start with one need (e.g. only a tractor); the system can suggest extra pieces if useful."
+            "q": "Must I include everything?",
+            "a": "No. Start with one need; the system can suggest extras."
           },
           {
             "q": "Is this paid?",
-            "a": "Core use is available through Xndzor. Any plan limits are listed on the pricing page."
+            "a": "Core use is through Xndzor. Limits are on the pricing page."
           },
           {
             "q": "What language should I write in?",
-            "a": "Write as you speak — simple Armenian (or your locale). Crop, area, and timing matter most."
+            "a": "As you speak. Crop, area, and timing matter most."
           },
           {
             "q": "Can I find only a buyer?",
-            "a": "Yes. The need can be sales-only or transport-only — not necessarily a full package."
+            "a": "Yes — sales-only or transport-only."
           },
           {
-            "q": "How is this different from a normal listing?",
-            "a": "A normal listing is one need. Here the goal is a full solution from one problem, with several participants."
+            "q": "How is this different from a listing?",
+            "a": "A listing is one need. Here: one problem → a full solution."
           }
         ],
         "ctaTitle": "Ready to solve it in one step?",
-        "ctaLede": "Write what you need now — workers, machines, a truck, or a buyer — and see Xndzor’s combined offer.",
+        "ctaLede": "Write what you need — and see the combined offer.",
         "ctaPrimary": "Write my need"
       },
       "route": {

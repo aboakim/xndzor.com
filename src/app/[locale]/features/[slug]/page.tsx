@@ -12,6 +12,7 @@ import { formatAmd } from "@/lib/utils";
 import {
   FEATURE_ABOUT_EXAMPLE,
   FEATURE_ABOUT_SLUGS,
+  FEATURE_ABOUT_VISUALS,
   FEATURE_PRIMARY_HREF,
   isFeatureAboutSlug,
   type FeatureAboutSlug,
@@ -116,6 +117,24 @@ export default async function FeatureAboutPage({ params }: PageProps) {
     if (cta.href !== primaryHref) ctas.push(cta);
   }
 
+  const media = slug in FEATURE_ABOUT_VISUALS
+    ? FEATURE_ABOUT_VISUALS[slug as keyof typeof FEATURE_ABOUT_VISUALS]
+    : undefined;
+
+  const visual = media
+    ? {
+        heroSrc: media.heroSrc,
+        heroAlt: t("title"),
+        scenes: media.scenes.map((scene) => ({
+          src: scene.src,
+          label: t(`scenes.${scene.key}.label`),
+          caption: t(`scenes.${scene.key}.caption`),
+        })),
+        problemImages: [...media.problemImages],
+        stepImages: [...media.stepImages],
+      }
+    : undefined;
+
   return (
     <FeatureAboutLayout
       breadcrumbs={[
@@ -123,6 +142,7 @@ export default async function FeatureAboutPage({ params }: PageProps) {
         { label: t("title") },
       ]}
       badge={shared("badge")}
+      brand={t.has("brand") ? t("brand") : undefined}
       eyebrow={t("eyebrow")}
       title={t("title")}
       lede={t("lede")}
@@ -155,6 +175,7 @@ export default async function FeatureAboutPage({ params }: PageProps) {
       ctaTitle={t("ctaTitle")}
       ctaLede={t("ctaLede")}
       ctas={ctas}
+      visual={visual}
     />
   );
 }
