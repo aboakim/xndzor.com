@@ -2529,8 +2529,8 @@
       "solve": {
         "brand": "Xndzor",
         "eyebrow": "Solve",
-        "title": "Harvest, haul, sell — one package",
-        "lede": "Write one need — get workers, machines, a truck, and/or a buyer together.",
+        "title": "Write your problem — get an offer in one place",
+        "lede": "Harvest, haul, or sell — without days of phone searching.",
         "scenes": {
           "harvest": { "label": "Harvest", "caption": "Workers + machines" },
           "transport": { "label": "Transport", "caption": "Truck on your timeline" },
@@ -2543,7 +2543,7 @@
         "problems": [
           {
             "problem": "Workers, tractor, truck — found separately",
-            "solution": "One post → one package for your marz"
+            "solution": "One post → one offer for your marz"
           },
           {
             "problem": "Crop ready, no buyer or haul lined up",
@@ -2555,31 +2555,31 @@
           },
           {
             "problem": "Rush rentals — costly and stressful",
-            "solution": "Early package: one offer, one schedule"
+            "solution": "Early offer: one plan, one schedule"
           }
         ],
         "whatBody": [
-          "One need → a combined solution. Not four separate listings. Only on Xndzor."
+          "This is a place where you write your problem (e.g. harvest, transport, sell) and get offers in one spot — instead of searching by phone for days."
         ],
         "whyBody": [
-          "Coordinating alone takes days. One post gives one offer and one timeline."
+          "Finding workers, machines, and a buyer by phone alone takes days. Here one post gives one combined offer."
         ],
         "steps": [
           {
-            "title": "Write what you need",
+            "title": "Write your problem",
             "body": "E.g. “4 ha apples, harvest in 10 days.”"
           },
           {
             "title": "Xndzor gathers the pieces",
-            "body": "Workers, machines, transport, buyer — in your marz."
+            "body": "Workers, machines, truck, buyer."
           },
           {
-            "title": "You get one package",
-            "body": "The full solution in a single offer."
+            "title": "You get one offer",
+            "body": "Everything together — in one place."
           },
           {
-            "title": "Confirm and continue",
-            "body": "Pick, connect, get to work."
+            "title": "Confirm",
+            "body": "Pick and get to work."
           }
         ],
         "advantages": [
@@ -2636,8 +2636,8 @@
           }
         ],
         "ctaTitle": "Ready to solve it in one step?",
-        "ctaLede": "Write what you need — and see the combined offer.",
-        "ctaPrimary": "Write my need"
+        "ctaLede": "Write your problem — and see the offer in one place.",
+        "ctaPrimary": "Write my problem"
       },
       "route": {
         "eyebrow": "Xndzor · Xndzor Route",
