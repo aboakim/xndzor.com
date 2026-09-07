@@ -9619,3 +9619,346 @@ body.mega-menu-open {
     display: none;
   }
 }
+
+/* ——— Mobile density (phones only; desktop unchanged) ——— */
+@media (max-width: 767px) {
+  :root {
+    --content-pad: max(0.75rem, env(safe-area-inset-left));
+  }
+
+  /* Header chrome */
+  .header-inner,
+  .list-style-header .header-inner {
+    padding-top: 0.45rem;
+    padding-bottom: 0.45rem;
+    padding-left: max(0.75rem, env(safe-area-inset-left));
+    padding-right: max(0.75rem, env(safe-area-inset-right));
+    gap: 0.5rem;
+  }
+
+  .header-main {
+    padding-bottom: 0.45rem;
+    padding-left: max(0.75rem, env(safe-area-inset-left));
+    padding-right: max(0.75rem, env(safe-area-inset-right));
+  }
+
+  .header-brand-row {
+    padding: 0.45rem 0 0.35rem;
+    gap: 0.4rem 0.5rem;
+  }
+
+  .header-utility-inner {
+    min-height: 1.85rem;
+    padding-top: 0.22rem;
+    padding-bottom: 0.22rem;
+    padding-left: max(0.75rem, env(safe-area-inset-left));
+    padding-right: max(0.75rem, env(safe-area-inset-right));
+  }
+
+  .logo {
+    gap: 0.5rem;
+  }
+
+  .logo-mark {
+    width: 2.55rem;
+    height: 2.55rem;
+  }
+
+  .logo-text strong {
+    font-size: 1.4rem;
+  }
+
+  .list-style-header .logo-text strong {
+    font-size: 1.5rem;
+  }
+
+  .logo-text em {
+    font-size: 0.85rem;
+  }
+
+  .nav-toggle {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .header-search-row,
+  .vendo-header .header-search-row {
+    padding-bottom: 0.45rem;
+  }
+
+  .search-bar.header-search input {
+    min-height: 2.75rem;
+    padding: 0.55rem 0.7rem;
+  }
+
+  .search-filter-btn {
+    width: 2.5rem;
+  }
+
+  .village-header .header-search-slot .search-bar.header-search input {
+    min-height: 2.75rem;
+  }
+
+  .village-header .header-search-slot .btn-search {
+    min-height: 2.75rem;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.95rem;
+  }
+
+  .village-header .header-login-btn,
+  .village-header .header-post-cta.btn-add,
+  .village-header .header-brand-row .header-post-cta {
+    min-height: 2.75rem;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.92rem;
+  }
+
+  .header-post-cta {
+    min-height: 2.75rem;
+    padding: 0.45rem 0.9rem;
+    font-size: 0.92rem;
+  }
+
+  /* Buttons: slightly denser, still tappable */
+  .btn {
+    padding: 0.55rem 0.95rem;
+    min-height: 2.75rem;
+    font-size: 0.95rem;
+  }
+
+  /* Sections / feature heroes */
+  .section {
+    padding: 1.45rem 0.85rem;
+  }
+
+  .section-head {
+    margin-bottom: 0.85rem;
+  }
+
+  .section h1,
+  .section h2 {
+    margin-bottom: 0.65rem;
+  }
+
+  .hero {
+    min-height: min(58vh, 420px);
+  }
+
+  .hero-content {
+    padding: 2.5rem 0.9rem 2.15rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.35rem, 11vw, 3.4rem);
+  }
+
+  .hero-promise {
+    margin-top: 0.7rem;
+    font-size: clamp(1rem, 3.4vw, 1.2rem);
+  }
+
+  .hero-ctas {
+    margin-top: 1rem;
+    gap: 0.5rem;
+  }
+
+  /* Category chips */
+  .home-categories {
+    padding-top: 0.75rem;
+    padding-bottom: 0.35rem;
+  }
+
+  .home-categories-primary.home-categories-scroll {
+    padding-top: 0.45rem;
+    padding-bottom: 0.3rem;
+  }
+
+  .category-scroll {
+    gap: 0.35rem;
+    padding: 0.2rem 0.1rem 0.4rem;
+  }
+
+  .category-scroll-item {
+    min-width: 4.35rem;
+    max-width: 5.15rem;
+    padding: 0.4rem 0.3rem 0.4rem;
+    gap: 0.28rem;
+    border-radius: 0.85rem;
+    font-size: 0.7rem;
+  }
+
+  .category-scroll-item .cat-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.7rem;
+  }
+
+  .home-village .home-categories-primary .category-scroll-item {
+    min-width: 4.65rem;
+    max-width: 5.5rem;
+    padding: 0.45rem 0.35rem 0.4rem;
+    font-size: 0.74rem;
+  }
+
+  .home-village .home-categories-primary .category-scroll-item .cat-icon {
+    width: 2.45rem;
+    height: 2.45rem;
+  }
+
+  .home-village .home-categories-primary .category-scroll-item .cat-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .category-icon-tile {
+    min-height: 4.75rem;
+    padding: 0.55rem 0.25rem;
+    gap: 0.3rem;
+    font-size: 0.76rem;
+  }
+
+  .cat-icon {
+    width: 2.55rem;
+    height: 2.55rem;
+  }
+
+  /* Homepage feed */
+  .home-feed-section {
+    padding-top: 1.1rem;
+    padding-bottom: 0.9rem;
+  }
+
+  .home-feed-head {
+    margin-bottom: 0.65rem;
+    gap: 0.55rem;
+  }
+
+  .home-feed-head h2 {
+    font-size: 1.08rem;
+    gap: 0.4rem;
+  }
+
+  .home-feed-icon {
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 8px;
+  }
+
+  .home-pricing-cta {
+    padding-top: 0.85rem;
+    padding-bottom: 1.35rem;
+  }
+
+  .app-main {
+    padding-bottom: 4.1rem;
+  }
+
+  /* Listing cards */
+  .listing-card-grid {
+    gap: 0.65rem;
+  }
+
+  .listing-card-body {
+    padding: 0.55rem 0.65rem 0.65rem;
+    gap: 0.2rem;
+    min-height: 4.5rem;
+  }
+
+  a.listing-card-title {
+    font-size: 0.92rem;
+    line-height: 1.28;
+  }
+
+  .listing-card-price {
+    font-size: 0.95rem;
+  }
+
+  .listing-card-facts,
+  .listing-card-location {
+    font-size: 0.78rem;
+  }
+
+  .listing-carousel > .listing-card {
+    flex-basis: min(74vw, 13.75rem);
+  }
+
+  .listing-card-fav {
+    top: 0.4rem;
+    right: 0.4rem;
+    width: 1.85rem;
+    height: 1.85rem;
+  }
+
+  .listing-card-badges {
+    top: 0.4rem;
+    left: 0.4rem;
+  }
+
+  /* Farm OS cards */
+  .farm-hub-top {
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .farm-tool-grid {
+    gap: 0.65rem;
+  }
+
+  .farm-tool-card {
+    padding: 0.75rem 0.85rem;
+  }
+
+  .farm-tool-card h2 {
+    font-size: 0.98rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .farm-tool-card p {
+    font-size: 0.86rem;
+  }
+
+  .farm-hub-score {
+    padding: 0.75rem;
+    gap: 0.35rem;
+  }
+
+  .farm-weather {
+    padding: 0.75rem 0.85rem;
+  }
+
+  .farm-stat {
+    padding: 0.7rem 0.8rem;
+  }
+
+  .farm-risk {
+    padding: 0.7rem 0.8rem;
+  }
+
+  .farm-list li {
+    padding: 0.7rem 0.8rem;
+  }
+
+  .farm-subhead {
+    margin: 1.1rem 0 0.55rem;
+    font-size: 1.05rem;
+  }
+
+  .today-task {
+    padding: 0.75rem 0.85rem;
+    gap: 0.65rem;
+  }
+
+  .os-loop li {
+    padding: 0.85rem 0.8rem 0.9rem;
+  }
+
+  .module-chip {
+    padding: 0.45rem 0.7rem;
+    font-size: 0.86rem;
+  }
+
+  .empty-state-cta {
+    padding: 1.1rem 0.95rem;
+    gap: 0.65rem;
+  }
+}

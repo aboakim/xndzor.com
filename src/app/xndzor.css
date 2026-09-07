@@ -5972,3 +5972,260 @@
     display: none;
   }
 }
+
+/* ——— Mobile density (phones only; desktop unchanged) ——— */
+@media (max-width: 767px) {
+  /* Homepage solution hero */
+  .xndzor-hero {
+    padding: 0.85rem max(0.7rem, env(safe-area-inset-right)) 1rem
+      max(0.7rem, env(safe-area-inset-left));
+  }
+
+  .home-vendo > .xndzor-hero {
+    padding-top: 0.55rem;
+  }
+
+  .xndzor-hero-brand {
+    margin-bottom: 0.85rem;
+  }
+
+  .xndzor-apple {
+    font-size: 1.65rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .xndzor-hero-title {
+    font-size: clamp(1.55rem, 6.5vw, 1.95rem);
+  }
+
+  .xndzor-hero-tagline {
+    font-size: 0.94rem;
+  }
+
+  .xndzor-mode-toggle {
+    margin-bottom: 0.7rem;
+    gap: 0.25rem;
+    padding: 0.2rem;
+  }
+
+  .xndzor-mode-btn {
+    min-height: 2.65rem;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.88rem;
+  }
+
+  .xndzor-input-block {
+    gap: 0.55rem;
+  }
+
+  .xndzor-textarea {
+    min-height: 4.5rem;
+    padding: 0.7rem 0.85rem;
+  }
+
+  .xndzor-chips {
+    gap: 0.3rem;
+  }
+
+  .xndzor-chip {
+    min-height: 2.35rem;
+    padding: 0.32rem 0.62rem;
+    font-size: 0.74rem;
+  }
+
+  .xndzor-find-btn {
+    min-height: 2.75rem;
+    font-size: 0.95rem;
+  }
+
+  .xndzor-result {
+    margin-top: 0.95rem;
+  }
+
+  .xndzor-killer-features {
+    gap: 0.75rem;
+    margin-top: 0.95rem;
+  }
+
+  .xndzor-bundle-card {
+    padding: 0.9rem 0.95rem;
+  }
+
+  /* Trust / welcome banner */
+  .home-trust-banner {
+    padding-top: 0.3rem;
+    padding-bottom: 0.2rem;
+  }
+
+  .wtb {
+    padding: 0.95rem 0.85rem;
+    border-radius: calc(var(--radius-lg) + 2px);
+  }
+
+  .wtb-inner {
+    gap: 0.95rem;
+  }
+
+  .wtb-badge {
+    margin-bottom: 0.45rem;
+    padding: 0.22rem 0.55rem;
+  }
+
+  .wtb-headline {
+    margin-bottom: 0.35rem;
+    font-size: clamp(1.25rem, 5vw, 1.5rem);
+  }
+
+  .wtb-subheadline {
+    font-size: 0.92rem;
+  }
+
+  .wtb-card {
+    gap: 0.65rem;
+    padding: 0.75rem 0.8rem;
+  }
+
+  .home-trust-strip {
+    padding-bottom: 0.35rem;
+  }
+
+  .home-trust-strip-compact .tvs-item {
+    padding: 0.4rem 0.6rem;
+    gap: 0.4rem;
+  }
+
+  .home-village .wtb {
+    padding-block: 0.8rem;
+  }
+
+  .home-village .wtb-cta-primary,
+  .home-village .wtb-cta-secondary {
+    min-height: 2.75rem;
+    padding: 0.55rem 1.05rem;
+    font-size: 0.95rem;
+  }
+
+  /* Promo / banner gallery */
+  .home-promo-slider,
+  .home-vendo-banners > .home-promo-slider {
+    padding-top: 0.3rem;
+    padding-bottom: 0.4rem;
+  }
+
+  .home-banner-gallery {
+    padding-top: 0.35rem;
+    padding-bottom: 0.55rem;
+  }
+
+  .banner-gallery {
+    gap: 0.85rem;
+  }
+
+  .xz-promo-slider,
+  .xz-promo-slider-viewport {
+    border-radius: 14px;
+  }
+
+  .xz-promo-slide {
+    min-height: 12.25rem;
+    padding: 0.95rem 0.85rem 2.55rem;
+  }
+
+  .xz-promo-slide-icon {
+    width: 2.65rem;
+    height: 2.65rem;
+    font-size: 1.25rem;
+    border-radius: 12px;
+  }
+
+  .xz-promo-slide-title {
+    font-size: 1.05rem;
+  }
+
+  .xz-promo-slide-hook {
+    font-size: 0.86rem;
+  }
+
+  /* Listing richness */
+  .listing-card--rich .listing-card-body {
+    padding-top: 0.5rem;
+  }
+
+  .listing-card-foot-meta {
+    margin-top: 0.05rem;
+    font-size: 0.7rem;
+  }
+
+  .home-section-cue {
+    margin: -0.2rem 0 0.55rem;
+    font-size: 0.76rem;
+  }
+
+  .home-vendo-cockpit .home-cockpit-block {
+    margin: 0.05rem 0 0.2rem;
+    padding-bottom: 0.3rem;
+  }
+
+  .home-vendo-cockpit .home-cockpit-block::before {
+    margin: 0.1rem auto 0.55rem;
+  }
+
+  .home-vendo-cockpit .home-cockpit-block::after {
+    width: 1.75rem;
+    height: 1.75rem;
+    margin: -0.2rem auto 0.35rem;
+  }
+
+  /* Feature page heroes (group-buy etc.) */
+  .gba-hero {
+    margin-bottom: 1.25rem;
+    padding: 1rem 0.95rem 1.1rem;
+  }
+
+  .gba-hero-visual {
+    min-height: clamp(13.5rem, 48vw, 18rem);
+  }
+
+  .gba-hero-copy {
+    padding: 1rem 0.95rem 1.1rem;
+  }
+
+  .gba-brand {
+    font-size: clamp(1.55rem, 7vw, 2.1rem);
+  }
+
+  .gba-badge {
+    margin-bottom: 0.45rem;
+    padding: 0.28rem 0.6rem;
+    font-size: 0.74rem;
+  }
+
+  .gba-cta {
+    padding: 1.1rem 0.95rem;
+  }
+
+  .gba-cta h2 {
+    font-size: clamp(1.1rem, 4.5vw, 1.25rem);
+  }
+
+  .gba-cta > p {
+    margin-bottom: 0.75rem;
+  }
+
+  .gba-cta-actions {
+    gap: 0.5rem;
+  }
+
+  /* Farm OS hub extras */
+  .farm-tool-card {
+    padding-right: 1.45rem;
+  }
+
+  .farm-tool-card-go {
+    right: 0.65rem;
+  }
+
+  .farm-hub-tools-head {
+    margin-bottom: 0.55rem;
+  }
+}
