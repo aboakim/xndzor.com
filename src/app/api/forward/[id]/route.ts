@@ -55,6 +55,7 @@ export async function PATCH(
   return NextResponse.json(listing);
 }
 
+/** Hard-delete listing (related rows cleared first). Use PATCH status=HIDDEN to hide. */
 export async function DELETE(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },
@@ -68,6 +69,11 @@ export async function DELETE(
   if (!existing || existing.userId !== session.user.id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
-  await prisma.futureHarvest.update({ where: { id }, data: { status: "HIDDEN" } });
+  await prisma.preOffer.deleteMany({ where: { futureHarvestId: id } });
+  await prisma.productBatch.updateMany({
+    where: { futureHarvestId: id },
+    data: { futureHarvestId: null },
+  });
+  await prisma.futureHarvest.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

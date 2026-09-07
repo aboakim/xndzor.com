@@ -55,7 +55,7 @@ export async function PATCH(
   return NextResponse.json(listing);
 }
 
-/** Soft-delete: hide listing (preserves offers / history). */
+/** Hard-delete listing (offers cleared first). Use PATCH status=HIDDEN to hide. */
 export async function DELETE(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },
@@ -69,6 +69,7 @@ export async function DELETE(
   if (!existing || existing.userId !== session.user.id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
-  await prisma.supply.update({ where: { id }, data: { status: "HIDDEN" } });
+  await prisma.offer.deleteMany({ where: { supplyId: id } });
+  await prisma.supply.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

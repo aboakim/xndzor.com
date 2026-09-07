@@ -3212,7 +3212,8 @@
     "markFilled": "Mark filled",
     "hide": "Hide",
     "delete": "Delete",
-    "confirmDelete": "Hide this listing from the marketplace?"
+    "confirmDelete": "Permanently delete this listing? This cannot be undone.",
+    "actionError": "Could not update the listing. Please try again."
   },
   "myListings": {
     "title": "My listings",

@@ -14,7 +14,8 @@ type Props = {
 };
 
 /**
- * Owner controls for marketplace listings (status + soft-delete).
+ * Owner controls for marketplace listings (status + hard delete).
+ * Hide = PATCH status HIDDEN; Delete = DELETE (removes row).
  */
 export function MyListingActions({
   id,
@@ -25,16 +26,25 @@ export function MyListingActions({
   const t = useTranslations("my");
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function setStatus(next: string) {
     setBusy(true);
+    setError(null);
     try {
-      await fetch(`${apiBase}/${id}`, {
+      const res = await fetch(`${apiBase}/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: next }),
       });
+      if (!res.ok) {
+        const data = (await res.json().catch(() => null)) as { error?: string } | null;
+        setError(typeof data?.error === "string" ? data.error : t("actionError"));
+        return;
+      }
       router.refresh();
+    } catch {
+      setError(t("actionError"));
     } finally {
       setBusy(false);
     }
@@ -43,9 +53,18 @@ export function MyListingActions({
   async function remove() {
     if (!confirm(t("confirmDelete"))) return;
     setBusy(true);
+    setError(null);
     try {
-      await fetch(`${apiBase}/${id}`, { method: "DELETE" });
+      const res = await fetch(`${apiBase}/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = (await res.json().catch(() => null)) as { error?: string } | null;
+        setError(typeof data?.error === "string" ? data.error : t("actionError"));
+        return;
+      }
+      router.push("/account/listings");
       router.refresh();
+    } catch {
+      setError(t("actionError"));
     } finally {
       setBusy(false);
     }
@@ -86,6 +105,11 @@ export function MyListingActions({
       <button type="button" className="btn danger" disabled={busy} onClick={remove}>
         {t("delete")}
       </button>
+      {error ? (
+        <p className="form-error" role="alert">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

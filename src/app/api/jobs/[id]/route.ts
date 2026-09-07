@@ -54,6 +54,7 @@ export async function PATCH(
   return NextResponse.json(listing);
 }
 
+/** Hard-delete listing (applications cleared first). Use PATCH status=HIDDEN to hide. */
 export async function DELETE(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },
@@ -67,6 +68,7 @@ export async function DELETE(
   if (!existing || existing.userId !== session.user.id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
-  await prisma.jobRequest.update({ where: { id }, data: { status: "HIDDEN" } });
+  await prisma.jobApplication.deleteMany({ where: { jobRequestId: id } });
+  await prisma.jobRequest.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }
