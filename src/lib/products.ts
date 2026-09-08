@@ -5,10 +5,20 @@ import { safeQuery } from "@/lib/safe-query";
 export type ProductCategoryId =
   | "vegetables"
   | "fruits"
+  | "berries"
+  | "nuts"
   | "grains"
   | "forage"
+  | "herbs"
   | "dairy"
+  | "eggs"
+  | "meat"
   | "honey"
+  | "dried"
+  | "mushrooms"
+  | "wine"
+  | "seedlings"
+  | "flowers"
   | "other";
 
 export type ProductCategory = {

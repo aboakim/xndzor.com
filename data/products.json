@@ -1,55 +1,1883 @@
 {
   "categories": [
-    { "id": "vegetables", "nameKey": "productCategories.vegetables", "sortOrder": 1 },
-    { "id": "fruits", "nameKey": "productCategories.fruits", "sortOrder": 2 },
-    { "id": "grains", "nameKey": "productCategories.grains", "sortOrder": 3 },
-    { "id": "forage", "nameKey": "productCategories.forage", "sortOrder": 4 },
-    { "id": "dairy", "nameKey": "productCategories.dairy", "sortOrder": 5 },
-    { "id": "honey", "nameKey": "productCategories.honey", "sortOrder": 6 },
-    { "id": "other", "nameKey": "productCategories.other", "sortOrder": 7 }
+    {
+      "id": "vegetables",
+      "nameKey": "productCategories.vegetables",
+      "sortOrder": 1
+    },
+    {
+      "id": "fruits",
+      "nameKey": "productCategories.fruits",
+      "sortOrder": 2
+    },
+    {
+      "id": "berries",
+      "nameKey": "productCategories.berries",
+      "sortOrder": 3
+    },
+    {
+      "id": "nuts",
+      "nameKey": "productCategories.nuts",
+      "sortOrder": 4
+    },
+    {
+      "id": "grains",
+      "nameKey": "productCategories.grains",
+      "sortOrder": 5
+    },
+    {
+      "id": "forage",
+      "nameKey": "productCategories.forage",
+      "sortOrder": 6
+    },
+    {
+      "id": "herbs",
+      "nameKey": "productCategories.herbs",
+      "sortOrder": 7
+    },
+    {
+      "id": "dairy",
+      "nameKey": "productCategories.dairy",
+      "sortOrder": 8
+    },
+    {
+      "id": "eggs",
+      "nameKey": "productCategories.eggs",
+      "sortOrder": 9
+    },
+    {
+      "id": "meat",
+      "nameKey": "productCategories.meat",
+      "sortOrder": 10
+    },
+    {
+      "id": "honey",
+      "nameKey": "productCategories.honey",
+      "sortOrder": 11
+    },
+    {
+      "id": "dried",
+      "nameKey": "productCategories.dried",
+      "sortOrder": 12
+    },
+    {
+      "id": "mushrooms",
+      "nameKey": "productCategories.mushrooms",
+      "sortOrder": 13
+    },
+    {
+      "id": "wine",
+      "nameKey": "productCategories.wine",
+      "sortOrder": 14
+    },
+    {
+      "id": "seedlings",
+      "nameKey": "productCategories.seedlings",
+      "sortOrder": 15
+    },
+    {
+      "id": "flowers",
+      "nameKey": "productCategories.flowers",
+      "sortOrder": 16
+    },
+    {
+      "id": "other",
+      "nameKey": "productCategories.other",
+      "sortOrder": 17
+    }
   ],
   "products": [
-    { "id": "tomato", "slug": "tomato", "nameKey": "products.tomato", "category": "vegetables", "featured": true, "sortOrder": 1 },
-    { "id": "potato", "slug": "potato", "nameKey": "products.potato", "category": "vegetables", "featured": true, "sortOrder": 2 },
-    { "id": "cucumber", "slug": "cucumber", "nameKey": "products.cucumber", "category": "vegetables", "featured": true, "sortOrder": 3 },
-    { "id": "onion", "slug": "onion", "nameKey": "products.onion", "category": "vegetables", "featured": true, "sortOrder": 4 },
-    { "id": "pepper", "slug": "pepper", "nameKey": "products.pepper", "category": "vegetables", "featured": false, "sortOrder": 5 },
-    { "id": "eggplant", "slug": "eggplant", "nameKey": "products.eggplant", "category": "vegetables", "featured": false, "sortOrder": 6 },
-    { "id": "cabbage", "slug": "cabbage", "nameKey": "products.cabbage", "category": "vegetables", "featured": false, "sortOrder": 7 },
-    { "id": "carrot", "slug": "carrot", "nameKey": "products.carrot", "category": "vegetables", "featured": false, "sortOrder": 8 },
-    { "id": "garlic", "slug": "garlic", "nameKey": "products.garlic", "category": "vegetables", "featured": false, "sortOrder": 9 },
-    { "id": "beet", "slug": "beet", "nameKey": "products.beet", "category": "vegetables", "featured": false, "sortOrder": 10 },
-    { "id": "greens", "slug": "greens", "nameKey": "products.greens", "category": "vegetables", "featured": false, "sortOrder": 11 },
-    { "id": "beans", "slug": "beans", "nameKey": "products.beans", "category": "vegetables", "featured": false, "sortOrder": 12 },
-
-    { "id": "grape", "slug": "grape", "nameKey": "products.grape", "category": "fruits", "featured": true, "sortOrder": 20 },
-    { "id": "apple", "slug": "apple", "nameKey": "products.apple", "category": "fruits", "featured": true, "sortOrder": 21 },
-    { "id": "peach", "slug": "peach", "nameKey": "products.peach", "category": "fruits", "featured": true, "sortOrder": 22 },
-    { "id": "apricot", "slug": "apricot", "nameKey": "products.apricot", "category": "fruits", "featured": true, "sortOrder": 23 },
-    { "id": "plum", "slug": "plum", "nameKey": "products.plum", "category": "fruits", "featured": false, "sortOrder": 24 },
-    { "id": "cherry", "slug": "cherry", "nameKey": "products.cherry", "category": "fruits", "featured": false, "sortOrder": 25 },
-    { "id": "pear", "slug": "pear", "nameKey": "products.pear", "category": "fruits", "featured": false, "sortOrder": 26 },
-    { "id": "pomegranate", "slug": "pomegranate", "nameKey": "products.pomegranate", "category": "fruits", "featured": false, "sortOrder": 27 },
-    { "id": "watermelon", "slug": "watermelon", "nameKey": "products.watermelon", "category": "fruits", "featured": false, "sortOrder": 28 },
-    { "id": "melon", "slug": "melon", "nameKey": "products.melon", "category": "fruits", "featured": false, "sortOrder": 29 },
-    { "id": "berry", "slug": "berry", "nameKey": "products.berry", "category": "fruits", "featured": false, "sortOrder": 30 },
-
-    { "id": "wheat", "slug": "wheat", "nameKey": "products.wheat", "category": "grains", "featured": true, "sortOrder": 40 },
-    { "id": "barley", "slug": "barley", "nameKey": "products.barley", "category": "grains", "featured": false, "sortOrder": 41 },
-    { "id": "corn", "slug": "corn", "nameKey": "products.corn", "category": "grains", "featured": false, "sortOrder": 42 },
-    { "id": "oats", "slug": "oats", "nameKey": "products.oats", "category": "grains", "featured": false, "sortOrder": 43 },
-
-    { "id": "hay", "slug": "hay", "nameKey": "products.hay", "category": "forage", "featured": true, "sortOrder": 50 },
-    { "id": "alfalfa", "slug": "alfalfa", "nameKey": "products.alfalfa", "category": "forage", "featured": false, "sortOrder": 51 },
-
-    { "id": "milk", "slug": "milk", "nameKey": "products.milk", "category": "dairy", "featured": true, "sortOrder": 60 },
-    { "id": "cheese", "slug": "cheese", "nameKey": "products.cheese", "category": "dairy", "featured": false, "sortOrder": 61 },
-    { "id": "yogurt", "slug": "yogurt", "nameKey": "products.yogurt", "category": "dairy", "featured": false, "sortOrder": 62 },
-    { "id": "butter", "slug": "butter", "nameKey": "products.butter", "category": "dairy", "featured": false, "sortOrder": 63 },
-
-    { "id": "honey", "slug": "honey", "nameKey": "products.honey", "category": "honey", "featured": true, "sortOrder": 70 },
-    { "id": "jam", "slug": "jam", "nameKey": "products.jam", "category": "honey", "featured": false, "sortOrder": 71 },
-
-    { "id": "other", "slug": "other", "nameKey": "products.other", "category": "other", "featured": true, "sortOrder": 90 }
+    {
+      "id": "tomato",
+      "slug": "tomato",
+      "nameKey": "products.tomato",
+      "category": "vegetables",
+      "featured": true,
+      "sortOrder": 101
+    },
+    {
+      "id": "potato",
+      "slug": "potato",
+      "nameKey": "products.potato",
+      "category": "vegetables",
+      "featured": true,
+      "sortOrder": 102
+    },
+    {
+      "id": "cucumber",
+      "slug": "cucumber",
+      "nameKey": "products.cucumber",
+      "category": "vegetables",
+      "featured": true,
+      "sortOrder": 103
+    },
+    {
+      "id": "onion",
+      "slug": "onion",
+      "nameKey": "products.onion",
+      "category": "vegetables",
+      "featured": true,
+      "sortOrder": 104
+    },
+    {
+      "id": "pepper",
+      "slug": "pepper",
+      "nameKey": "products.pepper",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 105
+    },
+    {
+      "id": "bell-pepper",
+      "slug": "bell-pepper",
+      "nameKey": "products.bell-pepper",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 106
+    },
+    {
+      "id": "hot-pepper",
+      "slug": "hot-pepper",
+      "nameKey": "products.hot-pepper",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 107
+    },
+    {
+      "id": "eggplant",
+      "slug": "eggplant",
+      "nameKey": "products.eggplant",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 108
+    },
+    {
+      "id": "cabbage",
+      "slug": "cabbage",
+      "nameKey": "products.cabbage",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 109
+    },
+    {
+      "id": "red-cabbage",
+      "slug": "red-cabbage",
+      "nameKey": "products.red-cabbage",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 110
+    },
+    {
+      "id": "cauliflower",
+      "slug": "cauliflower",
+      "nameKey": "products.cauliflower",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 111
+    },
+    {
+      "id": "broccoli",
+      "slug": "broccoli",
+      "nameKey": "products.broccoli",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 112
+    },
+    {
+      "id": "kohlrabi",
+      "slug": "kohlrabi",
+      "nameKey": "products.kohlrabi",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 113
+    },
+    {
+      "id": "brussels-sprouts",
+      "slug": "brussels-sprouts",
+      "nameKey": "products.brussels-sprouts",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 114
+    },
+    {
+      "id": "chinese-cabbage",
+      "slug": "chinese-cabbage",
+      "nameKey": "products.chinese-cabbage",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 115
+    },
+    {
+      "id": "carrot",
+      "slug": "carrot",
+      "nameKey": "products.carrot",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 116
+    },
+    {
+      "id": "garlic",
+      "slug": "garlic",
+      "nameKey": "products.garlic",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 117
+    },
+    {
+      "id": "beet",
+      "slug": "beet",
+      "nameKey": "products.beet",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 118
+    },
+    {
+      "id": "radish",
+      "slug": "radish",
+      "nameKey": "products.radish",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 119
+    },
+    {
+      "id": "daikon",
+      "slug": "daikon",
+      "nameKey": "products.daikon",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 120
+    },
+    {
+      "id": "turnip",
+      "slug": "turnip",
+      "nameKey": "products.turnip",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 121
+    },
+    {
+      "id": "horseradish",
+      "slug": "horseradish",
+      "nameKey": "products.horseradish",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 122
+    },
+    {
+      "id": "celery",
+      "slug": "celery",
+      "nameKey": "products.celery",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 123
+    },
+    {
+      "id": "leek",
+      "slug": "leek",
+      "nameKey": "products.leek",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 124
+    },
+    {
+      "id": "shallot",
+      "slug": "shallot",
+      "nameKey": "products.shallot",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 125
+    },
+    {
+      "id": "spinach",
+      "slug": "spinach",
+      "nameKey": "products.spinach",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 126
+    },
+    {
+      "id": "lettuce",
+      "slug": "lettuce",
+      "nameKey": "products.lettuce",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 127
+    },
+    {
+      "id": "swiss-chard",
+      "slug": "swiss-chard",
+      "nameKey": "products.swiss-chard",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 128
+    },
+    {
+      "id": "arugula",
+      "slug": "arugula",
+      "nameKey": "products.arugula",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 129
+    },
+    {
+      "id": "greens",
+      "slug": "greens",
+      "nameKey": "products.greens",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 130
+    },
+    {
+      "id": "zucchini",
+      "slug": "zucchini",
+      "nameKey": "products.zucchini",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 131
+    },
+    {
+      "id": "squash",
+      "slug": "squash",
+      "nameKey": "products.squash",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 132
+    },
+    {
+      "id": "pumpkin",
+      "slug": "pumpkin",
+      "nameKey": "products.pumpkin",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 133
+    },
+    {
+      "id": "pattypan",
+      "slug": "pattypan",
+      "nameKey": "products.pattypan",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 134
+    },
+    {
+      "id": "beans",
+      "slug": "beans",
+      "nameKey": "products.beans",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 135
+    },
+    {
+      "id": "green-beans",
+      "slug": "green-beans",
+      "nameKey": "products.green-beans",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 136
+    },
+    {
+      "id": "peas",
+      "slug": "peas",
+      "nameKey": "products.peas",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 137
+    },
+    {
+      "id": "chickpeas",
+      "slug": "chickpeas",
+      "nameKey": "products.chickpeas",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 138
+    },
+    {
+      "id": "lentils",
+      "slug": "lentils",
+      "nameKey": "products.lentils",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 139
+    },
+    {
+      "id": "okra",
+      "slug": "okra",
+      "nameKey": "products.okra",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 140
+    },
+    {
+      "id": "asparagus",
+      "slug": "asparagus",
+      "nameKey": "products.asparagus",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 141
+    },
+    {
+      "id": "artichoke",
+      "slug": "artichoke",
+      "nameKey": "products.artichoke",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 142
+    },
+    {
+      "id": "jerusalem-artichoke",
+      "slug": "jerusalem-artichoke",
+      "nameKey": "products.jerusalem-artichoke",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 143
+    },
+    {
+      "id": "sweet-potato",
+      "slug": "sweet-potato",
+      "nameKey": "products.sweet-potato",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 144
+    },
+    {
+      "id": "rhubarb",
+      "slug": "rhubarb",
+      "nameKey": "products.rhubarb",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 145
+    },
+    {
+      "id": "fennel-bulb",
+      "slug": "fennel-bulb",
+      "nameKey": "products.fennel-bulb",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 146
+    },
+    {
+      "id": "cherry-tomato",
+      "slug": "cherry-tomato",
+      "nameKey": "products.cherry-tomato",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 147
+    },
+    {
+      "id": "cucumber-gherkin",
+      "slug": "cucumber-gherkin",
+      "nameKey": "products.cucumber-gherkin",
+      "category": "vegetables",
+      "featured": false,
+      "sortOrder": 148
+    },
+    {
+      "id": "grape",
+      "slug": "grape",
+      "nameKey": "products.grape",
+      "category": "fruits",
+      "featured": true,
+      "sortOrder": 201
+    },
+    {
+      "id": "apple",
+      "slug": "apple",
+      "nameKey": "products.apple",
+      "category": "fruits",
+      "featured": true,
+      "sortOrder": 202
+    },
+    {
+      "id": "peach",
+      "slug": "peach",
+      "nameKey": "products.peach",
+      "category": "fruits",
+      "featured": true,
+      "sortOrder": 203
+    },
+    {
+      "id": "apricot",
+      "slug": "apricot",
+      "nameKey": "products.apricot",
+      "category": "fruits",
+      "featured": true,
+      "sortOrder": 204
+    },
+    {
+      "id": "plum",
+      "slug": "plum",
+      "nameKey": "products.plum",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 205
+    },
+    {
+      "id": "cherry",
+      "slug": "cherry",
+      "nameKey": "products.cherry",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 206
+    },
+    {
+      "id": "sweet-cherry",
+      "slug": "sweet-cherry",
+      "nameKey": "products.sweet-cherry",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 207
+    },
+    {
+      "id": "pear",
+      "slug": "pear",
+      "nameKey": "products.pear",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 208
+    },
+    {
+      "id": "pomegranate",
+      "slug": "pomegranate",
+      "nameKey": "products.pomegranate",
+      "category": "fruits",
+      "featured": true,
+      "sortOrder": 209
+    },
+    {
+      "id": "quince",
+      "slug": "quince",
+      "nameKey": "products.quince",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 210
+    },
+    {
+      "id": "fig",
+      "slug": "fig",
+      "nameKey": "products.fig",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 211
+    },
+    {
+      "id": "persimmon",
+      "slug": "persimmon",
+      "nameKey": "products.persimmon",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 212
+    },
+    {
+      "id": "mulberry",
+      "slug": "mulberry",
+      "nameKey": "products.mulberry",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 213
+    },
+    {
+      "id": "nectarine",
+      "slug": "nectarine",
+      "nameKey": "products.nectarine",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 214
+    },
+    {
+      "id": "watermelon",
+      "slug": "watermelon",
+      "nameKey": "products.watermelon",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 215
+    },
+    {
+      "id": "melon",
+      "slug": "melon",
+      "nameKey": "products.melon",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 216
+    },
+    {
+      "id": "dogwood",
+      "slug": "dogwood",
+      "nameKey": "products.dogwood",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 217
+    },
+    {
+      "id": "medlar",
+      "slug": "medlar",
+      "nameKey": "products.medlar",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 218
+    },
+    {
+      "id": "loquat",
+      "slug": "loquat",
+      "nameKey": "products.loquat",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 219
+    },
+    {
+      "id": "jujube",
+      "slug": "jujube",
+      "nameKey": "products.jujube",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 220
+    },
+    {
+      "id": "olive",
+      "slug": "olive",
+      "nameKey": "products.olive",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 221
+    },
+    {
+      "id": "lemon",
+      "slug": "lemon",
+      "nameKey": "products.lemon",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 222
+    },
+    {
+      "id": "orange",
+      "slug": "orange",
+      "nameKey": "products.orange",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 223
+    },
+    {
+      "id": "tangerine",
+      "slug": "tangerine",
+      "nameKey": "products.tangerine",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 224
+    },
+    {
+      "id": "grapefruit",
+      "slug": "grapefruit",
+      "nameKey": "products.grapefruit",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 225
+    },
+    {
+      "id": "kiwi",
+      "slug": "kiwi",
+      "nameKey": "products.kiwi",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 226
+    },
+    {
+      "id": "feijoa",
+      "slug": "feijoa",
+      "nameKey": "products.feijoa",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 227
+    },
+    {
+      "id": "avocado",
+      "slug": "avocado",
+      "nameKey": "products.avocado",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 228
+    },
+    {
+      "id": "berry",
+      "slug": "berry",
+      "nameKey": "products.berry",
+      "category": "fruits",
+      "featured": false,
+      "sortOrder": 229
+    },
+    {
+      "id": "strawberry",
+      "slug": "strawberry",
+      "nameKey": "products.strawberry",
+      "category": "berries",
+      "featured": true,
+      "sortOrder": 301
+    },
+    {
+      "id": "raspberry",
+      "slug": "raspberry",
+      "nameKey": "products.raspberry",
+      "category": "berries",
+      "featured": false,
+      "sortOrder": 302
+    },
+    {
+      "id": "blackberry",
+      "slug": "blackberry",
+      "nameKey": "products.blackberry",
+      "category": "berries",
+      "featured": false,
+      "sortOrder": 303
+    },
+    {
+      "id": "blueberry",
+      "slug": "blueberry",
+      "nameKey": "products.blueberry",
+      "category": "berries",
+      "featured": false,
+      "sortOrder": 304
+    },
+    {
+      "id": "blackcurrant",
+      "slug": "blackcurrant",
+      "nameKey": "products.blackcurrant",
+      "category": "berries",
+      "featured": false,
+      "sortOrder": 305
+    },
+    {
+      "id": "redcurrant",
+      "slug": "redcurrant",
+      "nameKey": "products.redcurrant",
+      "category": "berries",
+      "featured": false,
+      "sortOrder": 306
+    },
+    {
+      "id": "gooseberry",
+      "slug": "gooseberry",
+      "nameKey": "products.gooseberry",
+      "category": "berries",
+      "featured": false,
+      "sortOrder": 307
+    },
+    {
+      "id": "sea-buckthorn",
+      "slug": "sea-buckthorn",
+      "nameKey": "products.sea-buckthorn",
+      "category": "berries",
+      "featured": false,
+      "sortOrder": 308
+    },
+    {
+      "id": "rosehip",
+      "slug": "rosehip",
+      "nameKey": "products.rosehip",
+      "category": "berries",
+      "featured": false,
+      "sortOrder": 309
+    },
+    {
+      "id": "barberry",
+      "slug": "barberry",
+      "nameKey": "products.barberry",
+      "category": "berries",
+      "featured": false,
+      "sortOrder": 310
+    },
+    {
+      "id": "elderberry",
+      "slug": "elderberry",
+      "nameKey": "products.elderberry",
+      "category": "berries",
+      "featured": false,
+      "sortOrder": 311
+    },
+    {
+      "id": "cranberry",
+      "slug": "cranberry",
+      "nameKey": "products.cranberry",
+      "category": "berries",
+      "featured": false,
+      "sortOrder": 312
+    },
+    {
+      "id": "walnut",
+      "slug": "walnut",
+      "nameKey": "products.walnut",
+      "category": "nuts",
+      "featured": true,
+      "sortOrder": 401
+    },
+    {
+      "id": "almond",
+      "slug": "almond",
+      "nameKey": "products.almond",
+      "category": "nuts",
+      "featured": false,
+      "sortOrder": 402
+    },
+    {
+      "id": "hazelnut",
+      "slug": "hazelnut",
+      "nameKey": "products.hazelnut",
+      "category": "nuts",
+      "featured": false,
+      "sortOrder": 403
+    },
+    {
+      "id": "pistachio",
+      "slug": "pistachio",
+      "nameKey": "products.pistachio",
+      "category": "nuts",
+      "featured": false,
+      "sortOrder": 404
+    },
+    {
+      "id": "chestnut",
+      "slug": "chestnut",
+      "nameKey": "products.chestnut",
+      "category": "nuts",
+      "featured": false,
+      "sortOrder": 405
+    },
+    {
+      "id": "peanut",
+      "slug": "peanut",
+      "nameKey": "products.peanut",
+      "category": "nuts",
+      "featured": false,
+      "sortOrder": 406
+    },
+    {
+      "id": "pine-nut",
+      "slug": "pine-nut",
+      "nameKey": "products.pine-nut",
+      "category": "nuts",
+      "featured": false,
+      "sortOrder": 407
+    },
+    {
+      "id": "wheat",
+      "slug": "wheat",
+      "nameKey": "products.wheat",
+      "category": "grains",
+      "featured": true,
+      "sortOrder": 501
+    },
+    {
+      "id": "barley",
+      "slug": "barley",
+      "nameKey": "products.barley",
+      "category": "grains",
+      "featured": false,
+      "sortOrder": 502
+    },
+    {
+      "id": "corn",
+      "slug": "corn",
+      "nameKey": "products.corn",
+      "category": "grains",
+      "featured": false,
+      "sortOrder": 503
+    },
+    {
+      "id": "oats",
+      "slug": "oats",
+      "nameKey": "products.oats",
+      "category": "grains",
+      "featured": false,
+      "sortOrder": 504
+    },
+    {
+      "id": "rye",
+      "slug": "rye",
+      "nameKey": "products.rye",
+      "category": "grains",
+      "featured": false,
+      "sortOrder": 505
+    },
+    {
+      "id": "millet",
+      "slug": "millet",
+      "nameKey": "products.millet",
+      "category": "grains",
+      "featured": false,
+      "sortOrder": 506
+    },
+    {
+      "id": "buckwheat",
+      "slug": "buckwheat",
+      "nameKey": "products.buckwheat",
+      "category": "grains",
+      "featured": false,
+      "sortOrder": 507
+    },
+    {
+      "id": "rice",
+      "slug": "rice",
+      "nameKey": "products.rice",
+      "category": "grains",
+      "featured": false,
+      "sortOrder": 508
+    },
+    {
+      "id": "spelt",
+      "slug": "spelt",
+      "nameKey": "products.spelt",
+      "category": "grains",
+      "featured": false,
+      "sortOrder": 509
+    },
+    {
+      "id": "triticale",
+      "slug": "triticale",
+      "nameKey": "products.triticale",
+      "category": "grains",
+      "featured": false,
+      "sortOrder": 510
+    },
+    {
+      "id": "sorghum",
+      "slug": "sorghum",
+      "nameKey": "products.sorghum",
+      "category": "grains",
+      "featured": false,
+      "sortOrder": 511
+    },
+    {
+      "id": "sunflower",
+      "slug": "sunflower",
+      "nameKey": "products.sunflower",
+      "category": "grains",
+      "featured": false,
+      "sortOrder": 512
+    },
+    {
+      "id": "flax",
+      "slug": "flax",
+      "nameKey": "products.flax",
+      "category": "grains",
+      "featured": false,
+      "sortOrder": 513
+    },
+    {
+      "id": "sesame",
+      "slug": "sesame",
+      "nameKey": "products.sesame",
+      "category": "grains",
+      "featured": false,
+      "sortOrder": 514
+    },
+    {
+      "id": "rapeseed",
+      "slug": "rapeseed",
+      "nameKey": "products.rapeseed",
+      "category": "grains",
+      "featured": false,
+      "sortOrder": 515
+    },
+    {
+      "id": "soybean",
+      "slug": "soybean",
+      "nameKey": "products.soybean",
+      "category": "grains",
+      "featured": false,
+      "sortOrder": 516
+    },
+    {
+      "id": "hay",
+      "slug": "hay",
+      "nameKey": "products.hay",
+      "category": "forage",
+      "featured": true,
+      "sortOrder": 601
+    },
+    {
+      "id": "alfalfa",
+      "slug": "alfalfa",
+      "nameKey": "products.alfalfa",
+      "category": "forage",
+      "featured": false,
+      "sortOrder": 602
+    },
+    {
+      "id": "clover",
+      "slug": "clover",
+      "nameKey": "products.clover",
+      "category": "forage",
+      "featured": false,
+      "sortOrder": 603
+    },
+    {
+      "id": "silage",
+      "slug": "silage",
+      "nameKey": "products.silage",
+      "category": "forage",
+      "featured": false,
+      "sortOrder": 604
+    },
+    {
+      "id": "straw",
+      "slug": "straw",
+      "nameKey": "products.straw",
+      "category": "forage",
+      "featured": false,
+      "sortOrder": 605
+    },
+    {
+      "id": "vetch",
+      "slug": "vetch",
+      "nameKey": "products.vetch",
+      "category": "forage",
+      "featured": false,
+      "sortOrder": 606
+    },
+    {
+      "id": "sudan-grass",
+      "slug": "sudan-grass",
+      "nameKey": "products.sudan-grass",
+      "category": "forage",
+      "featured": false,
+      "sortOrder": 607
+    },
+    {
+      "id": "maize-silage",
+      "slug": "maize-silage",
+      "nameKey": "products.maize-silage",
+      "category": "forage",
+      "featured": false,
+      "sortOrder": 608
+    },
+    {
+      "id": "pasture-grass",
+      "slug": "pasture-grass",
+      "nameKey": "products.pasture-grass",
+      "category": "forage",
+      "featured": false,
+      "sortOrder": 609
+    },
+    {
+      "id": "fodder-beet",
+      "slug": "fodder-beet",
+      "nameKey": "products.fodder-beet",
+      "category": "forage",
+      "featured": false,
+      "sortOrder": 610
+    },
+    {
+      "id": "compound-feed",
+      "slug": "compound-feed",
+      "nameKey": "products.compound-feed",
+      "category": "forage",
+      "featured": false,
+      "sortOrder": 611
+    },
+    {
+      "id": "dill",
+      "slug": "dill",
+      "nameKey": "products.dill",
+      "category": "herbs",
+      "featured": false,
+      "sortOrder": 701
+    },
+    {
+      "id": "parsley",
+      "slug": "parsley",
+      "nameKey": "products.parsley",
+      "category": "herbs",
+      "featured": false,
+      "sortOrder": 702
+    },
+    {
+      "id": "cilantro",
+      "slug": "cilantro",
+      "nameKey": "products.cilantro",
+      "category": "herbs",
+      "featured": false,
+      "sortOrder": 703
+    },
+    {
+      "id": "basil",
+      "slug": "basil",
+      "nameKey": "products.basil",
+      "category": "herbs",
+      "featured": false,
+      "sortOrder": 704
+    },
+    {
+      "id": "mint",
+      "slug": "mint",
+      "nameKey": "products.mint",
+      "category": "herbs",
+      "featured": false,
+      "sortOrder": 705
+    },
+    {
+      "id": "thyme",
+      "slug": "thyme",
+      "nameKey": "products.thyme",
+      "category": "herbs",
+      "featured": false,
+      "sortOrder": 706
+    },
+    {
+      "id": "oregano",
+      "slug": "oregano",
+      "nameKey": "products.oregano",
+      "category": "herbs",
+      "featured": false,
+      "sortOrder": 707
+    },
+    {
+      "id": "rosemary",
+      "slug": "rosemary",
+      "nameKey": "products.rosemary",
+      "category": "herbs",
+      "featured": false,
+      "sortOrder": 708
+    },
+    {
+      "id": "tarragon",
+      "slug": "tarragon",
+      "nameKey": "products.tarragon",
+      "category": "herbs",
+      "featured": false,
+      "sortOrder": 709
+    },
+    {
+      "id": "savory",
+      "slug": "savory",
+      "nameKey": "products.savory",
+      "category": "herbs",
+      "featured": false,
+      "sortOrder": 710
+    },
+    {
+      "id": "fenugreek",
+      "slug": "fenugreek",
+      "nameKey": "products.fenugreek",
+      "category": "herbs",
+      "featured": false,
+      "sortOrder": 711
+    },
+    {
+      "id": "saffron",
+      "slug": "saffron",
+      "nameKey": "products.saffron",
+      "category": "herbs",
+      "featured": false,
+      "sortOrder": 712
+    },
+    {
+      "id": "bay-leaf",
+      "slug": "bay-leaf",
+      "nameKey": "products.bay-leaf",
+      "category": "herbs",
+      "featured": false,
+      "sortOrder": 713
+    },
+    {
+      "id": "suneli",
+      "slug": "suneli",
+      "nameKey": "products.suneli",
+      "category": "herbs",
+      "featured": false,
+      "sortOrder": 714
+    },
+    {
+      "id": "paprika",
+      "slug": "paprika",
+      "nameKey": "products.paprika",
+      "category": "herbs",
+      "featured": false,
+      "sortOrder": 715
+    },
+    {
+      "id": "wild-thyme",
+      "slug": "wild-thyme",
+      "nameKey": "products.wild-thyme",
+      "category": "herbs",
+      "featured": false,
+      "sortOrder": 716
+    },
+    {
+      "id": "lavender",
+      "slug": "lavender",
+      "nameKey": "products.lavender",
+      "category": "herbs",
+      "featured": false,
+      "sortOrder": 717
+    },
+    {
+      "id": "milk",
+      "slug": "milk",
+      "nameKey": "products.milk",
+      "category": "dairy",
+      "featured": true,
+      "sortOrder": 801
+    },
+    {
+      "id": "cheese",
+      "slug": "cheese",
+      "nameKey": "products.cheese",
+      "category": "dairy",
+      "featured": true,
+      "sortOrder": 802
+    },
+    {
+      "id": "yogurt",
+      "slug": "yogurt",
+      "nameKey": "products.yogurt",
+      "category": "dairy",
+      "featured": false,
+      "sortOrder": 803
+    },
+    {
+      "id": "butter",
+      "slug": "butter",
+      "nameKey": "products.butter",
+      "category": "dairy",
+      "featured": false,
+      "sortOrder": 804
+    },
+    {
+      "id": "tan",
+      "slug": "tan",
+      "nameKey": "products.tan",
+      "category": "dairy",
+      "featured": false,
+      "sortOrder": 805
+    },
+    {
+      "id": "sour-cream",
+      "slug": "sour-cream",
+      "nameKey": "products.sour-cream",
+      "category": "dairy",
+      "featured": false,
+      "sortOrder": 806
+    },
+    {
+      "id": "cottage-cheese",
+      "slug": "cottage-cheese",
+      "nameKey": "products.cottage-cheese",
+      "category": "dairy",
+      "featured": false,
+      "sortOrder": 807
+    },
+    {
+      "id": "cream",
+      "slug": "cream",
+      "nameKey": "products.cream",
+      "category": "dairy",
+      "featured": false,
+      "sortOrder": 808
+    },
+    {
+      "id": "lori-cheese",
+      "slug": "lori-cheese",
+      "nameKey": "products.lori-cheese",
+      "category": "dairy",
+      "featured": false,
+      "sortOrder": 809
+    },
+    {
+      "id": "chanakh",
+      "slug": "chanakh",
+      "nameKey": "products.chanakh",
+      "category": "dairy",
+      "featured": false,
+      "sortOrder": 810
+    },
+    {
+      "id": "chechil",
+      "slug": "chechil",
+      "nameKey": "products.chechil",
+      "category": "dairy",
+      "featured": false,
+      "sortOrder": 811
+    },
+    {
+      "id": "goat-milk",
+      "slug": "goat-milk",
+      "nameKey": "products.goat-milk",
+      "category": "dairy",
+      "featured": false,
+      "sortOrder": 812
+    },
+    {
+      "id": "sheep-milk",
+      "slug": "sheep-milk",
+      "nameKey": "products.sheep-milk",
+      "category": "dairy",
+      "featured": false,
+      "sortOrder": 813
+    },
+    {
+      "id": "whey",
+      "slug": "whey",
+      "nameKey": "products.whey",
+      "category": "dairy",
+      "featured": false,
+      "sortOrder": 814
+    },
+    {
+      "id": "ghee",
+      "slug": "ghee",
+      "nameKey": "products.ghee",
+      "category": "dairy",
+      "featured": false,
+      "sortOrder": 815
+    },
+    {
+      "id": "chicken-eggs",
+      "slug": "chicken-eggs",
+      "nameKey": "products.chicken-eggs",
+      "category": "eggs",
+      "featured": true,
+      "sortOrder": 901
+    },
+    {
+      "id": "quail-eggs",
+      "slug": "quail-eggs",
+      "nameKey": "products.quail-eggs",
+      "category": "eggs",
+      "featured": false,
+      "sortOrder": 902
+    },
+    {
+      "id": "duck-eggs",
+      "slug": "duck-eggs",
+      "nameKey": "products.duck-eggs",
+      "category": "eggs",
+      "featured": false,
+      "sortOrder": 903
+    },
+    {
+      "id": "chicken",
+      "slug": "chicken",
+      "nameKey": "products.chicken",
+      "category": "meat",
+      "featured": false,
+      "sortOrder": 1001
+    },
+    {
+      "id": "turkey",
+      "slug": "turkey",
+      "nameKey": "products.turkey",
+      "category": "meat",
+      "featured": false,
+      "sortOrder": 1002
+    },
+    {
+      "id": "beef",
+      "slug": "beef",
+      "nameKey": "products.beef",
+      "category": "meat",
+      "featured": false,
+      "sortOrder": 1003
+    },
+    {
+      "id": "lamb",
+      "slug": "lamb",
+      "nameKey": "products.lamb",
+      "category": "meat",
+      "featured": false,
+      "sortOrder": 1004
+    },
+    {
+      "id": "mutton",
+      "slug": "mutton",
+      "nameKey": "products.mutton",
+      "category": "meat",
+      "featured": false,
+      "sortOrder": 1005
+    },
+    {
+      "id": "pork",
+      "slug": "pork",
+      "nameKey": "products.pork",
+      "category": "meat",
+      "featured": false,
+      "sortOrder": 1006
+    },
+    {
+      "id": "rabbit",
+      "slug": "rabbit",
+      "nameKey": "products.rabbit",
+      "category": "meat",
+      "featured": false,
+      "sortOrder": 1007
+    },
+    {
+      "id": "duck",
+      "slug": "duck",
+      "nameKey": "products.duck",
+      "category": "meat",
+      "featured": false,
+      "sortOrder": 1008
+    },
+    {
+      "id": "goose",
+      "slug": "goose",
+      "nameKey": "products.goose",
+      "category": "meat",
+      "featured": false,
+      "sortOrder": 1009
+    },
+    {
+      "id": "goat-meat",
+      "slug": "goat-meat",
+      "nameKey": "products.goat-meat",
+      "category": "meat",
+      "featured": false,
+      "sortOrder": 1010
+    },
+    {
+      "id": "honey",
+      "slug": "honey",
+      "nameKey": "products.honey",
+      "category": "honey",
+      "featured": true,
+      "sortOrder": 1101
+    },
+    {
+      "id": "jam",
+      "slug": "jam",
+      "nameKey": "products.jam",
+      "category": "honey",
+      "featured": false,
+      "sortOrder": 1102
+    },
+    {
+      "id": "compote",
+      "slug": "compote",
+      "nameKey": "products.compote",
+      "category": "honey",
+      "featured": false,
+      "sortOrder": 1103
+    },
+    {
+      "id": "fruit-leather",
+      "slug": "fruit-leather",
+      "nameKey": "products.fruit-leather",
+      "category": "honey",
+      "featured": false,
+      "sortOrder": 1104
+    },
+    {
+      "id": "syrup",
+      "slug": "syrup",
+      "nameKey": "products.syrup",
+      "category": "honey",
+      "featured": false,
+      "sortOrder": 1105
+    },
+    {
+      "id": "pickles",
+      "slug": "pickles",
+      "nameKey": "products.pickles",
+      "category": "honey",
+      "featured": false,
+      "sortOrder": 1106
+    },
+    {
+      "id": "tomato-paste",
+      "slug": "tomato-paste",
+      "nameKey": "products.tomato-paste",
+      "category": "honey",
+      "featured": false,
+      "sortOrder": 1107
+    },
+    {
+      "id": "beeswax",
+      "slug": "beeswax",
+      "nameKey": "products.beeswax",
+      "category": "honey",
+      "featured": false,
+      "sortOrder": 1108
+    },
+    {
+      "id": "propolis",
+      "slug": "propolis",
+      "nameKey": "products.propolis",
+      "category": "honey",
+      "featured": false,
+      "sortOrder": 1109
+    },
+    {
+      "id": "royal-jelly",
+      "slug": "royal-jelly",
+      "nameKey": "products.royal-jelly",
+      "category": "honey",
+      "featured": false,
+      "sortOrder": 1110
+    },
+    {
+      "id": "bee-pollen",
+      "slug": "bee-pollen",
+      "nameKey": "products.bee-pollen",
+      "category": "honey",
+      "featured": false,
+      "sortOrder": 1111
+    },
+    {
+      "id": "flower-honey",
+      "slug": "flower-honey",
+      "nameKey": "products.flower-honey",
+      "category": "honey",
+      "featured": false,
+      "sortOrder": 1112
+    },
+    {
+      "id": "mountain-honey",
+      "slug": "mountain-honey",
+      "nameKey": "products.mountain-honey",
+      "category": "honey",
+      "featured": false,
+      "sortOrder": 1113
+    },
+    {
+      "id": "dried-apricot",
+      "slug": "dried-apricot",
+      "nameKey": "products.dried-apricot",
+      "category": "dried",
+      "featured": false,
+      "sortOrder": 1201
+    },
+    {
+      "id": "dried-peach",
+      "slug": "dried-peach",
+      "nameKey": "products.dried-peach",
+      "category": "dried",
+      "featured": false,
+      "sortOrder": 1202
+    },
+    {
+      "id": "dried-plum",
+      "slug": "dried-plum",
+      "nameKey": "products.dried-plum",
+      "category": "dried",
+      "featured": false,
+      "sortOrder": 1203
+    },
+    {
+      "id": "raisins",
+      "slug": "raisins",
+      "nameKey": "products.raisins",
+      "category": "dried",
+      "featured": false,
+      "sortOrder": 1204
+    },
+    {
+      "id": "dried-fig",
+      "slug": "dried-fig",
+      "nameKey": "products.dried-fig",
+      "category": "dried",
+      "featured": false,
+      "sortOrder": 1205
+    },
+    {
+      "id": "dried-apple",
+      "slug": "dried-apple",
+      "nameKey": "products.dried-apple",
+      "category": "dried",
+      "featured": false,
+      "sortOrder": 1206
+    },
+    {
+      "id": "dried-mulberry",
+      "slug": "dried-mulberry",
+      "nameKey": "products.dried-mulberry",
+      "category": "dried",
+      "featured": false,
+      "sortOrder": 1207
+    },
+    {
+      "id": "dried-persimmon",
+      "slug": "dried-persimmon",
+      "nameKey": "products.dried-persimmon",
+      "category": "dried",
+      "featured": false,
+      "sortOrder": 1208
+    },
+    {
+      "id": "dried-herbs",
+      "slug": "dried-herbs",
+      "nameKey": "products.dried-herbs",
+      "category": "dried",
+      "featured": false,
+      "sortOrder": 1209
+    },
+    {
+      "id": "sun-dried-tomato",
+      "slug": "sun-dried-tomato",
+      "nameKey": "products.sun-dried-tomato",
+      "category": "dried",
+      "featured": false,
+      "sortOrder": 1210
+    },
+    {
+      "id": "champignon",
+      "slug": "champignon",
+      "nameKey": "products.champignon",
+      "category": "mushrooms",
+      "featured": false,
+      "sortOrder": 1301
+    },
+    {
+      "id": "oyster-mushroom",
+      "slug": "oyster-mushroom",
+      "nameKey": "products.oyster-mushroom",
+      "category": "mushrooms",
+      "featured": false,
+      "sortOrder": 1302
+    },
+    {
+      "id": "wild-mushroom",
+      "slug": "wild-mushroom",
+      "nameKey": "products.wild-mushroom",
+      "category": "mushrooms",
+      "featured": false,
+      "sortOrder": 1303
+    },
+    {
+      "id": "porcini",
+      "slug": "porcini",
+      "nameKey": "products.porcini",
+      "category": "mushrooms",
+      "featured": false,
+      "sortOrder": 1304
+    },
+    {
+      "id": "morel",
+      "slug": "morel",
+      "nameKey": "products.morel",
+      "category": "mushrooms",
+      "featured": false,
+      "sortOrder": 1305
+    },
+    {
+      "id": "wine",
+      "slug": "wine",
+      "nameKey": "products.wine",
+      "category": "wine",
+      "featured": false,
+      "sortOrder": 1401
+    },
+    {
+      "id": "grape-must",
+      "slug": "grape-must",
+      "nameKey": "products.grape-must",
+      "category": "wine",
+      "featured": false,
+      "sortOrder": 1402
+    },
+    {
+      "id": "grape-juice",
+      "slug": "grape-juice",
+      "nameKey": "products.grape-juice",
+      "category": "wine",
+      "featured": false,
+      "sortOrder": 1403
+    },
+    {
+      "id": "vinegar",
+      "slug": "vinegar",
+      "nameKey": "products.vinegar",
+      "category": "wine",
+      "featured": false,
+      "sortOrder": 1404
+    },
+    {
+      "id": "grape-leaves",
+      "slug": "grape-leaves",
+      "nameKey": "products.grape-leaves",
+      "category": "wine",
+      "featured": false,
+      "sortOrder": 1405
+    },
+    {
+      "id": "grape-seed-oil",
+      "slug": "grape-seed-oil",
+      "nameKey": "products.grape-seed-oil",
+      "category": "wine",
+      "featured": false,
+      "sortOrder": 1406
+    },
+    {
+      "id": "oghee",
+      "slug": "oghee",
+      "nameKey": "products.oghee",
+      "category": "wine",
+      "featured": false,
+      "sortOrder": 1407
+    },
+    {
+      "id": "areni",
+      "slug": "areni",
+      "nameKey": "products.areni",
+      "category": "wine",
+      "featured": false,
+      "sortOrder": 1408
+    },
+    {
+      "id": "fruit-saplings",
+      "slug": "fruit-saplings",
+      "nameKey": "products.fruit-saplings",
+      "category": "seedlings",
+      "featured": false,
+      "sortOrder": 1501
+    },
+    {
+      "id": "grape-cuttings",
+      "slug": "grape-cuttings",
+      "nameKey": "products.grape-cuttings",
+      "category": "seedlings",
+      "featured": false,
+      "sortOrder": 1502
+    },
+    {
+      "id": "vegetable-seedlings",
+      "slug": "vegetable-seedlings",
+      "nameKey": "products.vegetable-seedlings",
+      "category": "seedlings",
+      "featured": false,
+      "sortOrder": 1503
+    },
+    {
+      "id": "flower-seedlings",
+      "slug": "flower-seedlings",
+      "nameKey": "products.flower-seedlings",
+      "category": "seedlings",
+      "featured": false,
+      "sortOrder": 1504
+    },
+    {
+      "id": "tree-saplings",
+      "slug": "tree-saplings",
+      "nameKey": "products.tree-saplings",
+      "category": "seedlings",
+      "featured": false,
+      "sortOrder": 1505
+    },
+    {
+      "id": "berry-plants",
+      "slug": "berry-plants",
+      "nameKey": "products.berry-plants",
+      "category": "seedlings",
+      "featured": false,
+      "sortOrder": 1506
+    },
+    {
+      "id": "seeds-pack",
+      "slug": "seeds-pack",
+      "nameKey": "products.seeds-pack",
+      "category": "seedlings",
+      "featured": false,
+      "sortOrder": 1507
+    },
+    {
+      "id": "rose",
+      "slug": "rose",
+      "nameKey": "products.rose",
+      "category": "flowers",
+      "featured": false,
+      "sortOrder": 1601
+    },
+    {
+      "id": "tulip",
+      "slug": "tulip",
+      "nameKey": "products.tulip",
+      "category": "flowers",
+      "featured": false,
+      "sortOrder": 1602
+    },
+    {
+      "id": "gladiolus",
+      "slug": "gladiolus",
+      "nameKey": "products.gladiolus",
+      "category": "flowers",
+      "featured": false,
+      "sortOrder": 1603
+    },
+    {
+      "id": "cut-flowers",
+      "slug": "cut-flowers",
+      "nameKey": "products.cut-flowers",
+      "category": "flowers",
+      "featured": false,
+      "sortOrder": 1604
+    },
+    {
+      "id": "ornamental-plants",
+      "slug": "ornamental-plants",
+      "nameKey": "products.ornamental-plants",
+      "category": "flowers",
+      "featured": false,
+      "sortOrder": 1605
+    },
+    {
+      "id": "chrysanthemum",
+      "slug": "chrysanthemum",
+      "nameKey": "products.chrysanthemum",
+      "category": "flowers",
+      "featured": false,
+      "sortOrder": 1606
+    },
+    {
+      "id": "wool",
+      "slug": "wool",
+      "nameKey": "products.wool",
+      "category": "other",
+      "featured": false,
+      "sortOrder": 1701
+    },
+    {
+      "id": "manure",
+      "slug": "manure",
+      "nameKey": "products.manure",
+      "category": "other",
+      "featured": false,
+      "sortOrder": 1702
+    },
+    {
+      "id": "firewood",
+      "slug": "firewood",
+      "nameKey": "products.firewood",
+      "category": "other",
+      "featured": false,
+      "sortOrder": 1703
+    },
+    {
+      "id": "charcoal",
+      "slug": "charcoal",
+      "nameKey": "products.charcoal",
+      "category": "other",
+      "featured": false,
+      "sortOrder": 1704
+    },
+    {
+      "id": "sunflower-oil",
+      "slug": "sunflower-oil",
+      "nameKey": "products.sunflower-oil",
+      "category": "other",
+      "featured": false,
+      "sortOrder": 1705
+    },
+    {
+      "id": "walnut-oil",
+      "slug": "walnut-oil",
+      "nameKey": "products.walnut-oil",
+      "category": "other",
+      "featured": false,
+      "sortOrder": 1706
+    },
+    {
+      "id": "other",
+      "slug": "other",
+      "nameKey": "products.other",
+      "category": "other",
+      "featured": true,
+      "sortOrder": 1707
+    }
   ]
 }

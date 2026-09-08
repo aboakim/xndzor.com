@@ -563,6 +563,22 @@ const PRODUCT_ICONS: Record<string, (p: IconProps) => ReactElement> = {
   yogurt: IconMilk,
   butter: IconMilk,
   jam: IconHoney,
+  // Expanded catalog — closest icon reuse for featured chips / selects
+  strawberry: IconApple,
+  walnut: IconGrape,
+  pomegranate: IconGrape,
+  "chicken-eggs": IconMilk,
+  quince: IconApple,
+  fig: IconApricot,
+  mulberry: IconApple,
+  raspberry: IconApple,
+  almond: IconGrape,
+  dill: IconHay,
+  chicken: IconOther,
+  wine: IconGrape,
+  "dried-apricot": IconApricot,
+  champignon: IconOther,
+  rose: IconOther,
 };
 
 const JOB_ICONS: Record<string, (p: IconProps) => ReactElement> = {
