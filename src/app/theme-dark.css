@@ -631,7 +631,7 @@ html[data-theme="dark"] .xz-promo-slide-wheat,
 html[data-theme="dark"] .xz-promo-slide-apple {
   color: #f4f6f2 !important;
   background:
-    linear-gradient(145deg, #1a2c24 0%, #122018 55%, #0e1a15 100%) !important;
+    linear-gradient(145deg, #16382e 0%, #102820 55%, #0c1e18 100%) !important;
 }
 
 html.dark .xz-promo-slide-gold,
@@ -640,10 +640,22 @@ html[data-theme="dark"] .xz-promo-slide-gold {
     linear-gradient(145deg, #2a2418 0%, #1c2218 55%, #152018 100%) !important;
 }
 
+html.dark .xz-promo-slide-sage,
+html[data-theme="dark"] .xz-promo-slide-sage {
+  background:
+    linear-gradient(145deg, #1a382c 0%, #143028 55%, #0f241e 100%) !important;
+}
+
 html.dark .xz-promo-slide-sky,
 html[data-theme="dark"] .xz-promo-slide-sky {
   background:
     linear-gradient(145deg, #182830 0%, #15241e 55%, #121f1a 100%) !important;
+}
+
+html.dark .xz-promo-slide-wheat,
+html[data-theme="dark"] .xz-promo-slide-wheat {
+  background:
+    linear-gradient(145deg, #2a261c 0%, #1e2218 55%, #161a14 100%) !important;
 }
 
 html.dark .xz-promo-slide-apple,
@@ -718,8 +730,20 @@ html[data-theme="dark"] .xz-promo-chip::before {
 
 html.dark .xz-promo-slide-cta,
 html[data-theme="dark"] .xz-promo-slide-cta {
-  color: #f5f7f4 !important;
-  background: linear-gradient(145deg, #2f9e78, #155c47) !important;
+  color: #0a3329 !important;
+  background: linear-gradient(145deg, #f0d78a, #d4a843) !important;
+}
+
+html.dark .xz-promo-slide-gold .xz-promo-slide-cta,
+html[data-theme="dark"] .xz-promo-slide-gold .xz-promo-slide-cta {
+  color: #fff8eb !important;
+  background: linear-gradient(145deg, #e0b020, #a67c00) !important;
+}
+
+html.dark .xz-promo-slide-apple .xz-promo-slide-cta,
+html[data-theme="dark"] .xz-promo-slide-apple .xz-promo-slide-cta {
+  color: #fff6f5 !important;
+  background: linear-gradient(145deg, #c44545, #8f2a2a) !important;
 }
 
 html.dark .xz-promo-nav,
