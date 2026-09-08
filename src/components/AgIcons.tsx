@@ -566,7 +566,6 @@ const PRODUCT_ICONS: Record<string, (p: IconProps) => ReactElement> = {
   // Expanded catalog — closest icon reuse for featured chips / selects
   strawberry: IconApple,
   walnut: IconGrape,
-  pomegranate: IconGrape,
   "chicken-eggs": IconMilk,
   quince: IconApple,
   fig: IconApricot,
