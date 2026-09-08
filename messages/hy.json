@@ -1953,6 +1953,7 @@
   "earlyBird": {
     "eyebrow": "Early bird",
     "headline": "Առաջին 100 ակտիվացում — փաթեթները անվճար",
+    "stripOffer": "Առաջին {limit} ակտիվացումը — փաթեթը անվճար",
     "subheadline": "Վերցրեք փաթեթը հիմա — գրանցումը միայն չի նվազեցնում տեղերը։ Անվճար է մինչև 100 ակտիվացում։",
     "remaining": "Մնացել է {remaining} անվճար տեղ",
     "registeredCount": "{registered} / {limit} ակտիվացված",

@@ -22,6 +22,7 @@ import {
 } from "@/lib/monetization";
 import { MonetizationPills } from "@/components/MonetizationBadges";
 import { XndzorHero } from "@/components/xndzor/XndzorHero";
+import { EarlyBirdBanner } from "@/components/xndzor/EarlyBirdBanner";
 import { HomeStripSkeleton } from "@/components/HomeBannerSkeleton";
 import { PrefetchLink } from "@/components/PrefetchLink";
 import { HomeMoreFeeds } from "@/components/HomeMoreFeeds";
@@ -345,6 +346,10 @@ export default async function HomePage({
       <section className="section home-categories-scroll home-categories-primary" aria-label={t("home.chooseAction")}>
         <CategoryScroll items={categoryItems} />
       </section>
+
+      <Reveal as="section" className="section home-early-bird" delayMs={20}>
+        <EarlyBirdBanner variant="strip" />
+      </Reveal>
 
       <Reveal as="section" className="section home-trust-banner" delayMs={40}>
         <WelcomeTrustBanner />

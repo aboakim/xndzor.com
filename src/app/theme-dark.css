@@ -1308,6 +1308,12 @@ html[data-theme="dark"] .early-bird-banner-counter-big {
   color: #e0c05a !important;
 }
 
+html.dark .early-bird-strip-spots,
+html[data-theme="dark"] .early-bird-strip-spots {
+  color: #0a3329 !important;
+  background: color-mix(in srgb, #e0c05a 92%, white) !important;
+}
+
 html.dark .early-bird-banner-cta-secondary,
 html[data-theme="dark"] .early-bird-banner-cta-secondary {
   color: #fff !important;
