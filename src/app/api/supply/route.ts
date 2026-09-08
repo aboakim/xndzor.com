@@ -5,6 +5,18 @@ import { supplySchema } from "@/lib/validations";
 import { resolveLocationRefs, resolveProductId } from "@/lib/resolve-refs";
 import { filterListingImageUrls } from "@/lib/upload-urls";
 
+function validationError(parsed: { success: false; error: { issues: Array<{ path: PropertyKey[]; message: string }> } }) {
+  const issue = parsed.error.issues[0];
+  if (issue?.message === "VILLAGE_REQUIRED") {
+    return NextResponse.json({ error: "Village required" }, { status: 400 });
+  }
+  const field = issue?.path?.[0];
+  return NextResponse.json(
+    { error: "INVALID_INPUT", field: field != null ? String(field) : undefined },
+    { status: 400 },
+  );
+}
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const product = searchParams.get("product");
@@ -46,26 +58,22 @@ export async function POST(req: Request) {
   const body = await req.json();
   const parsed = supplySchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return validationError(parsed);
   }
   const data = parsed.data;
 
-  if (!data.villageId) {
-    return NextResponse.json({ error: "Village required" }, { status: 400 });
-  }
-
   const [productRef, locRef] = await Promise.all([
     resolveProductId(data.productId),
-    resolveLocationRefs(data.marzId, data.villageId),
+    resolveLocationRefs(data.marzId, data.villageId || null),
   ]);
   if (!productRef.ok) {
     return NextResponse.json({ error: productRef.error }, { status: 400 });
   }
-  if (!locRef.ok || !locRef.villageId) {
-    return NextResponse.json(
-      { error: locRef.ok ? "Village required" : locRef.error },
-      { status: 400 },
-    );
+  if (!locRef.ok) {
+    return NextResponse.json({ error: locRef.error }, { status: 400 });
+  }
+  if (data.marzId !== "Yerevan" && !locRef.villageId) {
+    return NextResponse.json({ error: "Village required" }, { status: 400 });
   }
 
   const imageUrls = JSON.stringify(filterListingImageUrls(data.imageUrls));

@@ -33,6 +33,7 @@ export default async function NewSupplyPage({
       <SupplyForm
         products={products}
         defaultMarzId={user?.marzId}
+        defaultVillageId={user?.villageId}
         defaultPhone={user?.phone}
       />
       <p className="muted">

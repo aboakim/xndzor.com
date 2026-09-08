@@ -32,6 +32,8 @@ type ImageUploadFieldProps = {
   maxImages?: number;
   uploading?: boolean;
   uploadProgress?: number;
+  /** Shown while client compresses newly picked photos. */
+  preparing?: boolean;
   disabled?: boolean;
 };
 
@@ -43,6 +45,7 @@ export function ImageUploadField({
   maxImages = MAX_LISTING_IMAGES,
   uploading = false,
   uploadProgress,
+  preparing = false,
   disabled = false,
 }: ImageUploadFieldProps) {
   const t = useTranslations("images");
@@ -52,10 +55,12 @@ export function ImageUploadField({
   const [previews, setPreviews] = useState<string[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [localPreparing, setLocalPreparing] = useState(false);
 
   const totalCount = existingUrls.length + files.length;
   const atLimit = totalCount >= maxImages;
-  const busy = uploading || disabled;
+  const isPreparing = preparing || localPreparing;
+  const busy = uploading || disabled || isPreparing;
 
   useEffect(() => {
     const urls = files.map((f) => URL.createObjectURL(f));
@@ -66,7 +71,7 @@ export function ImageUploadField({
   }, [files]);
 
   const addFiles = useCallback(
-    (incoming: File[]) => {
+    async (incoming: File[]) => {
       setError(null);
       const valid: File[] = [];
       for (const file of incoming) {
@@ -89,16 +94,28 @@ export function ImageUploadField({
       }
 
       const accepted = valid.slice(0, slotsLeft);
-      onChange([...files, ...accepted]);
       if (valid.length > slotsLeft) {
         setError(t("maxReached", { max: maxImages }));
       }
+
+      setLocalPreparing(true);
+      try {
+        const compressed = await Promise.all(
+          accepted.map((file) => compressImageForUpload(file, MAX_IMAGE_BYTES)),
+        );
+        onChange([...files, ...compressed]);
+      } catch {
+        // Fall back to originals if encode fails mid-batch.
+        onChange([...files, ...accepted]);
+      } finally {
+        setLocalPreparing(false);
+      }
     },
-    [existingUrls.length, files, maxImages, onChange, t]
+    [existingUrls.length, files, maxImages, onChange, t],
   );
 
   function onPick(e: React.ChangeEvent<HTMLInputElement>) {
-    addFiles(Array.from(e.target.files || []));
+    void addFiles(Array.from(e.target.files || []));
     e.target.value = "";
   }
 
@@ -127,7 +144,7 @@ export function ImageUploadField({
     e.preventDefault();
     setDragOver(false);
     if (busy || atLimit) return;
-    addFiles(Array.from(e.dataTransfer.files || []));
+    void addFiles(Array.from(e.dataTransfer.files || []));
   }
 
   function openPicker() {
@@ -210,14 +227,18 @@ export function ImageUploadField({
         </label>
       </div>
 
-      {uploading && (
+      {(uploading || isPreparing) && (
         <div className="image-upload-progress" role="status" aria-live="polite">
           <div
             className="image-upload-progress-bar"
-            style={{ width: `${uploadProgress ?? 0}%` }}
+            style={{ width: `${uploading ? (uploadProgress ?? 8) : 35}%` }}
           />
           <span className="muted small">
-            {uploadProgress != null ? t("uploadingProgress", { pct: uploadProgress }) : t("uploading")}
+            {isPreparing && !uploading
+              ? t("preparing")
+              : uploadProgress != null
+                ? t("uploadingProgress", { pct: uploadProgress })
+                : t("uploading")}
           </span>
         </div>
       )}
@@ -289,9 +310,7 @@ function uploadOneImage(
       } catch {
         reject(
           new Error(
-            xhr.status === 413
-              ? "Image too large for the server"
-              : "Upload failed",
+            xhr.status === 413 ? "IMAGE_TOO_LARGE" : "UPLOAD_FAILED",
           ),
         );
         return;
@@ -299,56 +318,89 @@ function uploadOneImage(
       if (xhr.status < 200 || xhr.status >= 300) {
         reject(
           new Error(
-            data.error ||
-              (xhr.status === 401
-                ? "Unauthorized — please sign in again"
-                : xhr.status === 413
-                  ? "Image too large for the server"
-                  : "Upload failed"),
+            xhr.status === 401
+              ? "Unauthorized"
+              : xhr.status === 413
+                ? "IMAGE_TOO_LARGE"
+                : data.error || "UPLOAD_FAILED",
           ),
         );
         return;
       }
       if (!Array.isArray(data.urls) || data.urls.length === 0) {
-        reject(new Error("Upload failed — no image URL returned"));
+        reject(new Error("UPLOAD_FAILED"));
         return;
       }
       resolve(data.urls[0]);
     });
-    xhr.addEventListener("error", () =>
-      reject(new Error("Upload failed — network error")),
-    );
+    xhr.addEventListener("error", () => reject(new Error("NETWORK_ERROR")));
     xhr.open("POST", "/api/upload");
     xhr.withCredentials = true;
     xhr.send(fd);
   });
 }
 
+export type UploadImagesResult = {
+  urls: string[];
+  failedFiles: File[];
+  errors: string[];
+};
+
 /**
  * Compress then upload one file per request so payloads stay under Vercel's
- * ~4.5 MB serverless body limit (batching multiple phone photos caused 413).
+ * ~4.5 MB serverless body limit. Continues after individual failures so the
+ * caller can keep successes and retry only the failed files.
+ */
+export async function uploadImagesDetailed(
+  files: File[],
+  opts?: { onProgress?: (pct: number) => void },
+): Promise<UploadImagesResult> {
+  if (files.length === 0) {
+    return { urls: [], failedFiles: [], errors: [] };
+  }
+
+  const urls: string[] = [];
+  const failedFiles: File[] = [];
+  const errors: string[] = [];
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    try {
+      const compressed = await compressImageForUpload(file, MAX_IMAGE_BYTES);
+      if (compressed.size > MAX_IMAGE_BYTES) {
+        failedFiles.push(file);
+        errors.push("IMAGE_TOO_LARGE");
+        opts?.onProgress?.(Math.round(((i + 1) / files.length) * 100));
+        continue;
+      }
+      const base = Math.round((i / files.length) * 100);
+      const span = Math.round(100 / files.length);
+      const url = await uploadOneImage(compressed, {
+        onProgress: (pct) =>
+          opts?.onProgress?.(Math.min(99, base + Math.round((pct * span) / 100))),
+      });
+      urls.push(url);
+    } catch (err) {
+      failedFiles.push(file);
+      errors.push(err instanceof Error ? err.message : "UPLOAD_FAILED");
+    }
+    opts?.onProgress?.(Math.round(((i + 1) / files.length) * 100));
+  }
+
+  return { urls, failedFiles, errors };
+}
+
+/**
+ * Compress then upload one file per request. Throws if any file fails
+ * (legacy callers). Prefer `uploadImagesDetailed` for soft-fail + retry.
  */
 export async function uploadImages(
   files: File[],
   opts?: { onProgress?: (pct: number) => void },
 ): Promise<string[]> {
-  if (files.length === 0) return [];
-
-  const urls: string[] = [];
-  for (let i = 0; i < files.length; i++) {
-    const compressed = await compressImageForUpload(files[i], MAX_IMAGE_BYTES);
-    if (compressed.size > MAX_IMAGE_BYTES) {
-      throw new Error(
-        `Each image must be under ${MAX_IMAGE_BYTES / (1024 * 1024)} MB after compression`,
-      );
-    }
-    const base = Math.round((i / files.length) * 100);
-    const span = Math.round(100 / files.length);
-    const url = await uploadOneImage(compressed, {
-      onProgress: (pct) => opts?.onProgress?.(Math.min(99, base + Math.round((pct * span) / 100))),
-    });
-    urls.push(url);
-    opts?.onProgress?.(Math.round(((i + 1) / files.length) * 100));
+  const result = await uploadImagesDetailed(files, opts);
+  if (result.failedFiles.length > 0) {
+    throw new Error(result.errors[0] || "UPLOAD_FAILED");
   }
-  return urls;
+  return result.urls;
 }

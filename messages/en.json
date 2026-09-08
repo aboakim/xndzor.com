@@ -681,6 +681,17 @@
     "selectEmpty": "No options available",
     "selectEmptyHint": "Catalog is loading or unavailable. Refresh the page and try again."
   },
+  "listingErrors": {
+    "unauthorized": "Please sign in again",
+    "invalidInput": "Check the required fields and try again",
+    "villageRequired": "Select a city/village",
+    "invalidProduct": "Select a product",
+    "invalidMarz": "Select a marz",
+    "invalidVillage": "City/village must belong to the selected marz",
+    "publishFailed": "Could not publish. Check your details and try again",
+    "imageTooLarge": "Image is too large for the server. Try another photo",
+    "network": "Network error. Check your connection and try again"
+  },
   "board": {
     "search": "Search",
     "searchHome": "Search crop, buyer, job…",
@@ -709,6 +720,8 @@
     "camera": "Camera",
     "uploading": "Uploading…",
     "uploadingProgress": "Uploading… {pct}%",
+    "preparing": "Preparing photos…",
+    "partialFail": "{failed} photo(s) failed ({ok} ok). Retry those, or publish without them",
     "previewLabel": "Selected photos",
     "previewAlt": "Photo {n}",
     "galleryLabel": "Listing photos",
@@ -815,7 +828,7 @@
     "harvestDate": "Harvest date",
     "price": "Price (AMD)",
     "submit": "Publish",
-    "saving": "…"
+    "saving": "Publishing…"
   },
   "forwardInterest": {
     "title": "Reserve quantity",
@@ -987,8 +1000,8 @@
     "title": "I need…",
     "lede": "Demand",
     "submit": "Publish",
-    "saving": "…",
-    "error": "Error",
+    "saving": "Publishing…",
+    "error": "Could not publish",
     "fields": {
       "title": "Title",
       "description": "Details",
@@ -1012,8 +1025,8 @@
     "title": "I have…",
     "lede": "Supply",
     "submit": "Publish",
-    "saving": "…",
-    "error": "Error",
+    "saving": "Publishing…",
+    "error": "Could not publish",
     "fields": {
       "title": "Title",
       "description": "Details",

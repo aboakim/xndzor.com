@@ -117,39 +117,57 @@ export type RegisterErrorCode =
   | "INVALID_INPUT"
   | "SERVER_ERROR";
 
-export const demandSchema = z.object({
-  title: z.string().min(5).max(120),
-  description: z.string().min(10).max(8000),
-  productId: z.string().min(1),
-  qtyMin: z.coerce.number().int().positive().max(10_000_000),
-  qtyMax: z.coerce.number().int().positive().max(10_000_000).optional().or(z.literal("")),
-  unit: z.enum(UNITS),
-  priceMinAmd: z.coerce.number().int().nonnegative().max(10_000_000_000).optional().or(z.literal("")),
-  priceMaxAmd: z.coerce.number().int().nonnegative().max(10_000_000_000).optional().or(z.literal("")),
-  buyerKind: z.enum(BUYER_KINDS).optional().default("WHOLESALE"),
-  timingNote: z.string().max(200).optional().or(z.literal("")),
-  marzId: z.enum(MARZES),
-  villageId: z.string().optional().or(z.literal("")),
-  phone: z.string().min(8).max(20),
-  whatsapp: z.string().min(8).max(20).optional().or(z.literal("")),
-  imageUrls: imageUrlsField,
-});
+function refineVillageForMarz(
+  data: { marzId: string; villageId?: string },
+  ctx: z.RefinementCtx,
+) {
+  const villageId = (data.villageId || "").trim();
+  /** Yerevan is the city itself — district/village is optional. */
+  if (data.marzId !== "Yerevan" && !villageId) {
+    ctx.addIssue({
+      code: "custom",
+      message: "VILLAGE_REQUIRED",
+      path: ["villageId"],
+    });
+  }
+}
 
-export const supplySchema = z.object({
-  title: z.string().min(5).max(120),
-  description: z.string().min(10).max(8000),
-  productId: z.string().min(1),
-  qtyAvailable: z.coerce.number().int().positive().max(10_000_000),
-  unit: z.enum(UNITS),
-  priceAmd: z.coerce.number().int().nonnegative().max(10_000_000_000).optional().or(z.literal("")),
-  readyInDays: z.coerce.number().int().nonnegative().max(365).default(0),
-  marzId: z.enum(MARZES),
-  villageId: z.string().optional().or(z.literal("")),
-  phone: z.string().min(8).max(20),
-  whatsapp: z.string().min(8).max(20).optional().or(z.literal("")),
-  imageUrls: imageUrlsField,
-});
+export const demandSchema = z
+  .object({
+    title: z.string().min(5).max(120),
+    description: z.string().min(10).max(8000),
+    productId: z.string().min(1),
+    qtyMin: z.coerce.number().int().positive().max(10_000_000),
+    qtyMax: z.coerce.number().int().positive().max(10_000_000).optional().or(z.literal("")),
+    unit: z.enum(UNITS),
+    priceMinAmd: z.coerce.number().int().nonnegative().max(10_000_000_000).optional().or(z.literal("")),
+    priceMaxAmd: z.coerce.number().int().nonnegative().max(10_000_000_000).optional().or(z.literal("")),
+    buyerKind: z.enum(BUYER_KINDS).optional().default("WHOLESALE"),
+    timingNote: z.string().max(200).optional().or(z.literal("")),
+    marzId: z.enum(MARZES),
+    villageId: z.string().optional().or(z.literal("")),
+    phone: z.string().min(8).max(20),
+    whatsapp: z.string().min(8).max(20).optional().or(z.literal("")),
+    imageUrls: imageUrlsField,
+  })
+  .superRefine(refineVillageForMarz);
 
+export const supplySchema = z
+  .object({
+    title: z.string().min(5).max(120),
+    description: z.string().min(10).max(8000),
+    productId: z.string().min(1),
+    qtyAvailable: z.coerce.number().int().positive().max(10_000_000),
+    unit: z.enum(UNITS),
+    priceAmd: z.coerce.number().int().nonnegative().max(10_000_000_000).optional().or(z.literal("")),
+    readyInDays: z.coerce.number().int().nonnegative().max(365).default(0),
+    marzId: z.enum(MARZES),
+    villageId: z.string().optional().or(z.literal("")),
+    phone: z.string().min(8).max(20),
+    whatsapp: z.string().min(8).max(20).optional().or(z.literal("")),
+    imageUrls: imageUrlsField,
+  })
+  .superRefine(refineVillageForMarz);
 export const offerSchema = z.object({
   supplyId: z.string().min(1),
   demandId: z.string().min(1),
