@@ -19,7 +19,7 @@ const securityHeaders = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https://images.unsplash.com https://*.public.blob.vercel-storage.com",
+      "img-src 'self' data: blob: https://images.unsplash.com https://*.public.blob.vercel-storage.com https://*.tile.openstreetmap.org",
       "font-src 'self' data:",
       "connect-src 'self' https://*.blob.vercel-storage.com https://*.public.blob.vercel-storage.com",
       "worker-src 'self'",

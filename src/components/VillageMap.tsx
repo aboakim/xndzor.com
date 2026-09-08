@@ -1,4 +1,9 @@
-import { villageEmbedUrl, villageMapUrl } from "@/lib/places";
+"use client";
+
+import { useEffect, useRef } from "react";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { villageMapUrl } from "@/lib/places";
 
 type MapVillage = {
   nameHy: string;
@@ -9,8 +14,9 @@ type MapVillage = {
 };
 
 /**
- * OpenStreetMap frame centred on a settlement. Villages without coordinates fall back
- * to a name search link instead of an embedded map.
+ * Leaflet map centred on a settlement (OpenStreetMap tiles + marker).
+ * Avoids openstreetmap.org/export/embed iframes, which our CSP blocks
+ * (default-src 'self' with no frame-src) and which show a browser "content blocked" page.
  */
 export function VillageMap({
   village,
@@ -25,18 +31,53 @@ export function VillageMap({
   openLabel: string;
   noCoordsLabel: string;
 }) {
-  const embed = villageEmbedUrl(village);
+  const mapEl = useRef<HTMLDivElement>(null);
   const external = villageMapUrl(village, marzNameEn);
+  const hasCoords = village.lat != null && village.lng != null;
+
+  useEffect(() => {
+    if (!mapEl.current || village.lat == null || village.lng == null) return;
+
+    const map = L.map(mapEl.current, {
+      scrollWheelZoom: false,
+      attributionControl: true,
+    }).setView([village.lat, village.lng], 14);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>',
+      maxZoom: 19,
+    }).addTo(map);
+
+    L.circleMarker([village.lat, village.lng], {
+      radius: 9,
+      color: "#0f4a3c",
+      fillColor: "#1a6b55",
+      fillOpacity: 0.95,
+      weight: 2,
+    })
+      .addTo(map)
+      .bindPopup(title);
+
+    const onResize = () => map.invalidateSize();
+    const resizeTimer = window.setTimeout(onResize, 50);
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      window.clearTimeout(resizeTimer);
+      window.removeEventListener("resize", onResize);
+      map.remove();
+    };
+  }, [village.lat, village.lng, title]);
 
   return (
     <div className="village-map">
-      {embed ? (
-        <iframe
+      {hasCoords ? (
+        <div
+          ref={mapEl}
           className="village-map-frame"
-          src={embed}
-          title={title}
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
+          role="img"
+          aria-label={title}
         />
       ) : (
         <p className="village-map-fallback">{noCoordsLabel}</p>
@@ -45,9 +86,9 @@ export function VillageMap({
         <a href={external} target="_blank" rel="noreferrer noopener" className="text-link">
           {openLabel} →
         </a>
-        {village.lat != null && village.lng != null ? (
+        {hasCoords ? (
           <span className="muted small">
-            {village.lat.toFixed(4)}, {village.lng.toFixed(4)}
+            {village.lat!.toFixed(4)}, {village.lng!.toFixed(4)}
           </span>
         ) : null}
       </div>

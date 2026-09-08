@@ -4,7 +4,6 @@ import type { LocationMarz, LocationVillage } from "./places";
 export {
   MARZES,
   localizedPlaceName,
-  villageEmbedUrl,
   villageMapUrl,
   type LocationMarz,
   type LocationVillage,

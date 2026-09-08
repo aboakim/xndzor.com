@@ -63,15 +63,3 @@ export function villageMapUrl(village: MapVillage, marzNameEn?: string): string 
   return `https://www.openstreetmap.org/search?query=${encodeURIComponent(q)}`;
 }
 
-/** Embeddable OpenStreetMap frame centred on the village, with a marker. */
-export function villageEmbedUrl(
-  village: MapVillage,
-  { zoomSpan = 0.045 }: { zoomSpan?: number } = {}
-): string | null {
-  if (village.lat == null || village.lng == null) return null;
-  const west = village.lng - zoomSpan;
-  const east = village.lng + zoomSpan;
-  const south = village.lat - zoomSpan / 2;
-  const north = village.lat + zoomSpan / 2;
-  return `https://www.openstreetmap.org/export/embed.html?bbox=${west}%2C${south}%2C${east}%2C${north}&layer=mapnik&marker=${village.lat}%2C${village.lng}`;
-}
