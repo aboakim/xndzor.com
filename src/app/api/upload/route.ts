@@ -112,7 +112,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         error:
-          "Invalid form data (file may be too large; max 5 MB per image).",
+          "Invalid form data (file may be too large; max 4 MB per image).",
       },
       { status: 400 },
     );

@@ -38,7 +38,13 @@ export const RESOURCE_TYPES = [
 export const RESOURCE_PRICE_UNITS = ["hour", "day", "ha", "job"] as const;
 
 export const MAX_LISTING_IMAGES = 15;
-export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+/**
+ * Server / post-compress limit. Must stay under Vercel serverless body (~4.5 MB)
+ * with multipart overhead — one file per request.
+ */
+export const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
+/** Client picker allows large phone photos; they are compressed before upload. */
+export const MAX_IMAGE_PICK_BYTES = 25 * 1024 * 1024;
 export const MAX_UPLOAD_TOTAL_BYTES = MAX_LISTING_IMAGES * MAX_IMAGE_BYTES;
 export const ALLOWED_IMAGE_TYPES = [
   "image/jpeg",

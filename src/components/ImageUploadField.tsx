@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { compressImageForUpload } from "@/lib/compress-image";
 import {
   ALLOWED_IMAGE_ACCEPT,
   MAX_IMAGE_BYTES,
+  MAX_IMAGE_PICK_BYTES,
   MAX_LISTING_IMAGES,
 } from "@/lib/validations";
 
@@ -72,8 +74,8 @@ export function ImageUploadField({
           setError(t("invalidType"));
           continue;
         }
-        if (file.size <= 0 || file.size > MAX_IMAGE_BYTES) {
-          setError(t("tooLarge", { maxMb: MAX_IMAGE_BYTES / (1024 * 1024) }));
+        if (file.size <= 0 || file.size > MAX_IMAGE_PICK_BYTES) {
+          setError(t("tooLarge", { maxMb: MAX_IMAGE_PICK_BYTES / (1024 * 1024) }));
           continue;
         }
         valid.push(file);
@@ -136,7 +138,7 @@ export function ImageUploadField({
     <fieldset className="image-upload" aria-describedby={`${inputId}-hint ${error ? `${inputId}-err` : ""}`}>
       <legend>{t("label")}</legend>
       <p id={`${inputId}-hint`} className="muted small">
-        {t("hint", { max: maxImages, maxMb: MAX_IMAGE_BYTES / (1024 * 1024) })}
+        {t("hint", { max: maxImages, maxMb: Math.round(MAX_IMAGE_PICK_BYTES / (1024 * 1024)) })}
       </p>
       <p className="image-upload-counter" aria-live="polite">
         {t("counter", { count: totalCount, max: maxImages })}
@@ -266,15 +268,13 @@ export function ImageUploadField({
   );
 }
 
-export async function uploadImages(
-  files: File[],
-  opts?: { onProgress?: (pct: number) => void }
-): Promise<string[]> {
-  if (files.length === 0) return [];
-
+function uploadOneImage(
+  file: File,
+  opts?: { onProgress?: (pct: number) => void },
+): Promise<string> {
   return new Promise((resolve, reject) => {
     const fd = new FormData();
-    for (const file of files) fd.append("files", file);
+    fd.append("files", file);
 
     const xhr = new XMLHttpRequest();
     xhr.upload.addEventListener("progress", (e) => {
@@ -313,7 +313,7 @@ export async function uploadImages(
         reject(new Error("Upload failed — no image URL returned"));
         return;
       }
-      resolve(data.urls);
+      resolve(data.urls[0]);
     });
     xhr.addEventListener("error", () =>
       reject(new Error("Upload failed — network error")),
@@ -322,4 +322,33 @@ export async function uploadImages(
     xhr.withCredentials = true;
     xhr.send(fd);
   });
+}
+
+/**
+ * Compress then upload one file per request so payloads stay under Vercel's
+ * ~4.5 MB serverless body limit (batching multiple phone photos caused 413).
+ */
+export async function uploadImages(
+  files: File[],
+  opts?: { onProgress?: (pct: number) => void },
+): Promise<string[]> {
+  if (files.length === 0) return [];
+
+  const urls: string[] = [];
+  for (let i = 0; i < files.length; i++) {
+    const compressed = await compressImageForUpload(files[i], MAX_IMAGE_BYTES);
+    if (compressed.size > MAX_IMAGE_BYTES) {
+      throw new Error(
+        `Each image must be under ${MAX_IMAGE_BYTES / (1024 * 1024)} MB after compression`,
+      );
+    }
+    const base = Math.round((i / files.length) * 100);
+    const span = Math.round(100 / files.length);
+    const url = await uploadOneImage(compressed, {
+      onProgress: (pct) => opts?.onProgress?.(Math.min(99, base + Math.round((pct * span) / 100))),
+    });
+    urls.push(url);
+    opts?.onProgress?.(Math.round(((i + 1) / files.length) * 100));
+  }
+  return urls;
 }

@@ -2,7 +2,12 @@
 
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ALLOWED_IMAGE_ACCEPT, MAX_IMAGE_BYTES } from "@/lib/validations";
+import { compressImageForUpload } from "@/lib/compress-image";
+import {
+  ALLOWED_IMAGE_ACCEPT,
+  MAX_IMAGE_BYTES,
+  MAX_IMAGE_PICK_BYTES,
+} from "@/lib/validations";
 
 const CLIENT_TYPES = new Set([
   "image/jpeg",
@@ -45,8 +50,8 @@ export function AvatarUploadField({ value, onChange, disabled = false }: AvatarU
         setError(tImg("invalidType"));
         return;
       }
-      if (file.size <= 0 || file.size > MAX_IMAGE_BYTES) {
-        setError(tImg("tooLarge", { maxMb: MAX_IMAGE_BYTES / (1024 * 1024) }));
+      if (file.size <= 0 || file.size > MAX_IMAGE_PICK_BYTES) {
+        setError(tImg("tooLarge", { maxMb: MAX_IMAGE_PICK_BYTES / (1024 * 1024) }));
         return;
       }
 
@@ -134,9 +139,16 @@ export async function uploadAvatar(
   file: File,
   opts?: { onProgress?: (pct: number) => void }
 ): Promise<string> {
+  const compressed = await compressImageForUpload(file, MAX_IMAGE_BYTES);
+  if (compressed.size > MAX_IMAGE_BYTES) {
+    throw new Error(
+      `Each image must be under ${MAX_IMAGE_BYTES / (1024 * 1024)} MB after compression`,
+    );
+  }
+
   return new Promise((resolve, reject) => {
     const fd = new FormData();
-    fd.append("files", file);
+    fd.append("files", compressed);
     fd.append("kind", "avatar");
 
     const xhr = new XMLHttpRequest();
@@ -166,6 +178,7 @@ export async function uploadAvatar(
     });
     xhr.addEventListener("error", () => reject(new Error("Upload failed")));
     xhr.open("POST", "/api/upload");
+    xhr.withCredentials = true;
     xhr.send(fd);
   });
 }
