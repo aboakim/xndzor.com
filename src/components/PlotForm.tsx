@@ -6,9 +6,11 @@ import { useRouter } from "@/i18n/navigation";
 import { MARZES, localizedPlaceName, type LocationVillage } from "@/lib/places";
 import { estimateYieldTons } from "@/lib/yield";
 import { ProductIcon } from "@/components/AgIcons";
+import { ProductOptgroupOptions } from "@/components/ProductOptgroupOptions";
 import { LiveDemandSnapshot } from "@/components/LiveDemandSnapshot";
+import type { CatalogProduct } from "@/lib/products";
 
-type Product = { id: string; slug: string; nameKey: string };
+type Product = CatalogProduct;
 
 export function PlotForm({
   products,
@@ -24,7 +26,9 @@ export function PlotForm({
   const [villageId, setVillageId] = useState("");
   const [villages, setVillages] = useState<LocationVillage[]>([]);
   const [loadingVillages, setLoadingVillages] = useState(false);
-  const [productId, setProductId] = useState(products[0]?.id || "");
+  const [productId, setProductId] = useState(
+    () => products.find((p) => p.slug !== "other")?.id || products[0]?.id || "",
+  );
   const [hectares, setHectares] = useState("2");
   const [override, setOverride] = useState("");
   const [saving, setSaving] = useState(false);
@@ -119,11 +123,7 @@ export function PlotForm({
                 {t("forms.selectEmpty")}
               </option>
             ) : (
-              products.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {t(p.nameKey as "products.tomato")}
-                </option>
-              ))
+              <ProductOptgroupOptions products={products} valueKey="id" />
             )}
           </select>
         </span>

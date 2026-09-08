@@ -13,7 +13,7 @@ import {
   getProUserIds,
   sortByMonetization,
 } from "@/lib/monetization";
-import { getProducts } from "@/lib/products";
+import { getFeaturedProducts, getProducts } from "@/lib/products";
 
 export const dynamic = "force-dynamic";
 export default async function SupplyBoardPage({
@@ -88,6 +88,8 @@ export default async function SupplyBoardPage({
   if (sp.village) allQs.set("village", sp.village);
   if (sp.q) allQs.set("q", sp.q);
 
+  const chipProducts = getFeaturedProducts(products);
+
   return (
     <div className="section page-board">
       <Breadcrumbs
@@ -125,7 +127,7 @@ export default async function SupplyBoardPage({
         <Link href="/supply" className={!sp.product ? "active" : undefined}>
           {t("board.allProducts")}
         </Link>
-        {products.map((p) => (
+        {chipProducts.map((p) => (
           <Link
             key={p.id}
             href={`/supply?product=${p.slug}`}

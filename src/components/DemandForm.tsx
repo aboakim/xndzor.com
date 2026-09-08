@@ -7,8 +7,10 @@ import { MARZES, localizedPlaceName, type LocationVillage } from "@/lib/places";
 import { UNITS } from "@/lib/validations";
 import { ImageUploadField, uploadImages } from "@/components/ImageUploadField";
 import { ProductIcon } from "@/components/AgIcons";
+import { ProductOptgroupOptions } from "@/components/ProductOptgroupOptions";
+import { getFeaturedProducts, type CatalogProduct } from "@/lib/products";
 
-type Product = { id: string; slug: string; nameKey: string };
+type Product = CatalogProduct;
 
 export function DemandForm({
   products,
@@ -30,7 +32,10 @@ export function DemandForm({
   const [uploadProgress, setUploadProgress] = useState<number | undefined>();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [productId, setProductId] = useState(products[0]?.id || "");
+  const featured = getFeaturedProducts(products);
+  const [productId, setProductId] = useState(
+    () => featured.find((p) => p.slug !== "other")?.id || products[0]?.id || "",
+  );
   const selectedProduct = products.find((p) => p.id === productId);
 
   useEffect(() => {
@@ -139,16 +144,12 @@ export function DemandForm({
                   {t("forms.selectEmpty")}
                 </option>
               ) : (
-                products.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {t(p.nameKey as "products.tomato")}
-                  </option>
-                ))
+                <ProductOptgroupOptions products={products} valueKey="id" />
               )}
             </select>
           </span>
           <span className="product-icon-row" aria-hidden>
-            {products.map((p) => (
+            {featured.map((p) => (
               <button
                 key={p.id}
                 type="button"

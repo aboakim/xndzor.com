@@ -269,7 +269,7 @@ export default async function FarmPassportPage({
         <section className="match-section">
           <h2>{t("pricing.farmPro.f4")}</h2>
           <DemandAlertForm
-            products={products.map((p) => ({ id: p.id, nameKey: p.nameKey }))}
+            products={products}
             isPro={Boolean(ent?.isPro)}
             existingProductIds={ownerAlerts.map((a) => a.productId)}
           />

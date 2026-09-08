@@ -5,8 +5,10 @@ import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { MARZES, localizedPlaceName, type LocationVillage } from "@/lib/places";
 import { ProductIcon } from "@/components/AgIcons";
+import { ProductOptgroupOptions } from "@/components/ProductOptgroupOptions";
+import type { CatalogProduct } from "@/lib/products";
 
-type Product = { id: string; slug: string; nameKey: string };
+type Product = Pick<CatalogProduct, "id" | "slug" | "nameKey" | "sortOrder" | "category">;
 
 export function BoardFilters({
   basePath,
@@ -108,11 +110,7 @@ export function BoardFilters({
           {productSlug ? <ProductIcon slugOrKey={productSlug} size={16} /> : null}
           <select value={productSlug} onChange={(e) => onProductChange(e.target.value)}>
             <option value="">{t("board.allProducts")}</option>
-            {products.map((p) => (
-              <option key={p.id} value={p.slug}>
-                {t(p.nameKey as "products.tomato")}
-              </option>
-            ))}
+            <ProductOptgroupOptions products={products} valueKey="slug" />
           </select>
         </span>
       </label>

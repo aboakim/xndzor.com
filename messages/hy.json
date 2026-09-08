@@ -389,6 +389,15 @@
     "aiPlant": "Վճարովի AI ախտորոշում / լրիվ ագրոնոմիա / IoT սենսորներ",
     "payments": "Առցանց վճարումներ"
   },
+  "productCategories": {
+    "vegetables": "Բանջարեղեն",
+    "fruits": "Մրգեր",
+    "grains": "Հացահատիկ",
+    "forage": "Կեր և խոտ",
+    "dairy": "Կաթնամթերք",
+    "honey": "Մեղր և պահածո",
+    "other": "Այլ"
+  },
   "products": {
     "tomato": "Լոլիկ",
     "potato": "Կարտոֆիլ",
@@ -402,7 +411,30 @@
     "onion": "Սոխ",
     "hay": "Խոտ",
     "peach": "Դեղձ",
-    "other": "Այլ"
+    "pepper": "Պղպեղ",
+    "eggplant": "Սմբուկ",
+    "cabbage": "Կաղամբ",
+    "carrot": "Գազար",
+    "garlic": "Սխտոր",
+    "beet": "Ճակնդեղ",
+    "greens": "Կանաչի",
+    "beans": "Լոբի",
+    "plum": "Սալոր",
+    "cherry": "Բալ",
+    "pear": "Տանձ",
+    "pomegranate": "Նուռ",
+    "watermelon": "Ձմերուկ",
+    "melon": "Սեխ",
+    "berry": "Հատապտուղ",
+    "barley": "Գարի",
+    "corn": "Եգիպտացորեն",
+    "oats": "Վարսակ",
+    "alfalfa": "Առվույտ",
+    "cheese": "Պանիր",
+    "yogurt": "Մածուն",
+    "butter": "Կարագ",
+    "jam": "Մուրաբա",
+    "other": "Այլ ապրանք"
   },
   "units": {
     "kg": "կգ",

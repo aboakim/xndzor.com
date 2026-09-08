@@ -3,18 +3,22 @@
 import { FormEvent, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { ProductOptgroupOptions } from "@/components/ProductOptgroupOptions";
+import type { CatalogProduct } from "@/lib/products";
 
 export function DemandAlertForm({
   products,
   isPro,
   existingProductIds,
 }: {
-  products: { id: string; nameKey: string }[];
+  products: CatalogProduct[];
   isPro: boolean;
   existingProductIds: string[];
 }) {
   const t = useTranslations("pricing");
-  const [productId, setProductId] = useState(products[0]?.id || "");
+  const [productId, setProductId] = useState(
+    () => products.find((p) => p.slug !== "other")?.id || products[0]?.id || "",
+  );
   const [msg, setMsg] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -56,12 +60,7 @@ export function DemandAlertForm({
       <label>
         {t("alerts.product")}
         <select value={productId} onChange={(e) => setProductId(e.target.value)}>
-          {products.map((p) => (
-            <option key={p.id} value={p.id}>
-              {/* nameKey like products.tomato — rendered by parent translation if needed */}
-              {p.nameKey.replace(/^products\./, "")}
-            </option>
-          ))}
+          <ProductOptgroupOptions products={products} valueKey="id" />
         </select>
       </label>
       <button type="submit" className="btn primary" disabled={saving || !productId}>

@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import locations from "../data/armenia-locations.json";
+import productsData from "../data/products.json";
 import { estimateYieldTons } from "../src/lib/yield";
 import { buildTodaySuggestions } from "../src/lib/farm-today";
 
@@ -8,17 +9,12 @@ import { buildTodaySuggestions } from "../src/lib/farm-today";
 
 const prisma = new PrismaClient();
 
-const products = [
-  { slug: "tomato", nameKey: "products.tomato", sortOrder: 1 },
-  { slug: "potato", nameKey: "products.potato", sortOrder: 2 },
-  { slug: "grape", nameKey: "products.grape", sortOrder: 3 },
-  { slug: "apple", nameKey: "products.apple", sortOrder: 4 },
-  { slug: "peach", nameKey: "products.peach", sortOrder: 5 },
-  { slug: "wheat", nameKey: "products.wheat", sortOrder: 6 },
-  { slug: "milk", nameKey: "products.milk", sortOrder: 7 },
-  { slug: "honey", nameKey: "products.honey", sortOrder: 8 },
-  { slug: "other", nameKey: "products.other", sortOrder: 9 },
-];
+const products = productsData.products.map((p) => ({
+  id: p.id,
+  slug: p.slug,
+  nameKey: p.nameKey,
+  sortOrder: p.sortOrder,
+}));
 
 function findVillageId(marzId: string, nameEn: string): string {
   const matches = locations.villages.filter(

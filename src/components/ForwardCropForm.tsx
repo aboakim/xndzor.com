@@ -6,10 +6,12 @@ import { useTranslations } from "next-intl";
 import { MARZES } from "@/lib/locations";
 import { UNITS } from "@/lib/validations";
 import { ProductIcon } from "@/components/AgIcons";
+import { ProductOptgroupOptions } from "@/components/ProductOptgroupOptions";
 import { LiveCropSignal } from "@/components/LiveCropSignal";
 import { ImageUploadField, uploadImages } from "@/components/ImageUploadField";
+import { getFeaturedProducts, type CatalogProduct } from "@/lib/products";
 
-type Product = { id: string; slug: string; nameKey: string };
+type Product = CatalogProduct;
 
 export function ForwardCropForm({
   products,
@@ -26,7 +28,10 @@ export function ForwardCropForm({
   const [error, setError] = useState("");
   const [uploadProgress, setUploadProgress] = useState<number | undefined>();
   const [files, setFiles] = useState<File[]>([]);
-  const [productId, setProductId] = useState(products[0]?.id || "");
+  const featured = getFeaturedProducts(products);
+  const [productId, setProductId] = useState(
+    () => featured.find((p) => p.slug !== "other")?.id || products[0]?.id || "",
+  );
   const selected = products.find((p) => p.id === productId);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -84,16 +89,12 @@ export function ForwardCropForm({
                 {t("forms.selectEmpty")}
               </option>
             ) : (
-              products.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {t(p.nameKey as "products.tomato")}
-                </option>
-              ))
+              <ProductOptgroupOptions products={products} valueKey="id" />
             )}
           </select>
         </span>
         <span className="product-icon-row" aria-hidden>
-          {products.map((p) => (
+          {featured.map((p) => (
             <button
               key={p.id}
               type="button"
