@@ -66,8 +66,15 @@ export default async function SupplyDetailPage({
       ? await resolveOwnerFreeCheckout(session.user.id)
       : false;
 
+  const priceLabel =
+    supply.priceAmd != null
+      ? formatPriceRange(supply.priceAmd, supply.priceAmd, supply.unit, (k) =>
+          t(k as "common.amd")
+        )
+      : t("detail.priceOpen");
+
   return (
-    <div className="section detail-page">
+    <div className="section detail-page detail-listam">
       <TrackRecentView
         id={supply.id}
         href={`/supply/${supply.id}`}
@@ -89,151 +96,150 @@ export default async function SupplyDetailPage({
         ]}
       />
 
-      <ListingGallery images={images} />
+      <div className="detail-split">
+        <div className="detail-split-main">
+          <ListingGallery images={images} />
 
-      <p className="eyebrow">{t("pillars.supply")}</p>
-      <h1>{supply.title}</h1>
-      <p className="detail-product">
-        <ProductIcon slugOrKey={supply.product.slug} size={18} />
-        {t(supply.product.nameKey as "products.tomato")}
-      </p>
-      <p className="detail-location">
-        {supply.village ? (
-          <>
-            <VillageLink village={supply.village} locale={locale} />
-            {", "}
-          </>
-        ) : null}
-        {marzLabel}
-      </p>
+          <div className="detail-body">
+            <h2>{t("detail.description")}</h2>
+            <p className="pre-wrap detail-desc">{supply.description}</p>
+          </div>
 
-      <div className="detail-stats">
-        <div>
-          <span>{t("detail.qty")}</span>
-          <strong>
-            {formatQty(supply.qtyAvailable, null, supply.unit, (k) => t(k as "units.kg"))}
-          </strong>
+          <section className="match-section killer-flow">
+            <h2>{t("findBuyer.title")}</h2>
+            <p className="lede">{t("findBuyer.lede")}</p>
+            {ranked.length === 0 ? (
+              <p className="empty-state">{t("detail.noMatches")}</p>
+            ) : (
+              <ul className="match-list">
+                {ranked.map(({ demand, score, reasons }) => (
+                  <li key={demand.id} className="match-row">
+                    <div>
+                      <Link href={`/demand/${demand.id}`}>
+                        <strong>{demand.title}</strong>
+                      </Link>
+                      <p>
+                        {formatQty(demand.qtyMin, demand.qtyMax, demand.unit, (k) =>
+                          t(k as "units.kg")
+                        )}
+                        {demand.priceMaxAmd != null
+                          ? ` · ≤ ${formatAmd(demand.priceMaxAmd)} ${t("common.amd")}`
+                          : ""}
+                        {" · "}
+                        {demand.village ? `${localizedPlaceName(demand.village, locale)}, ` : ""}
+                        {t(`marzes.${demand.marz.slug}` as "marzes.Yerevan")}
+                      </p>
+                      <p className="match-score">
+                        {t("detail.score", { score })} ·{" "}
+                        {reasons
+                          .map((r) => t(`reasons.${r}` as "reasons.same_product"))
+                          .join(", ")}
+                      </p>
+                    </div>
+                    <div className="match-actions">
+                      <ContactActions phone={demand.phone} whatsapp={demand.whatsapp} />
+                      {isOwner ? (
+                        <OfferButton
+                          supplyId={supply.id}
+                          demandId={demand.id}
+                          defaultMessage={
+                            locale === "hy"
+                              ? `Կարող եմ մատակարարել ${supply.qtyAvailable} ${t(`units.${supply.unit}` as "units.kg")}.`
+                              : `I can supply ${supply.qtyAvailable} ${supply.unit}.`
+                          }
+                        />
+                      ) : null}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
         </div>
-        <div>
-          <span>{t("detail.price")}</span>
-          <strong>
-            {supply.priceAmd != null
-              ? formatPriceRange(supply.priceAmd, supply.priceAmd, supply.unit, (k) =>
-                  t(k as "common.amd")
-                )
-              : t("detail.priceOpen")}
-          </strong>
-        </div>
-        <div>
-          <span>{t("detail.ready")}</span>
-          <strong>
-            {supply.readyInDays === 0
-              ? t("supply.readyNow")
-              : t("supply.readyIn", { days: supply.readyInDays })}
-          </strong>
-        </div>
+
+        <aside className="detail-split-aside">
+          <div className="detail-offer-card">
+            <p className="eyebrow">{t("pillars.supply")}</p>
+            <h1 className="detail-offer-title">{supply.title}</h1>
+            <p className="detail-offer-price">{priceLabel}</p>
+            <p className="detail-product">
+              <ProductIcon slugOrKey={supply.product.slug} size={18} />
+              {t(supply.product.nameKey as "products.tomato")}
+            </p>
+            <p className="detail-location">
+              {supply.village ? (
+                <>
+                  <VillageLink village={supply.village} locale={locale} />
+                  {", "}
+                </>
+              ) : null}
+              {marzLabel}
+            </p>
+
+            <div className="detail-stats">
+              <div>
+                <span>{t("detail.qty")}</span>
+                <strong>
+                  {formatQty(supply.qtyAvailable, null, supply.unit, (k) => t(k as "units.kg"))}
+                </strong>
+              </div>
+              <div>
+                <span>{t("detail.price")}</span>
+                <strong>{priceLabel}</strong>
+              </div>
+              <div>
+                <span>{t("detail.ready")}</span>
+                <strong>
+                  {supply.readyInDays === 0
+                    ? t("supply.readyNow")
+                    : t("supply.readyIn", { days: supply.readyInDays })}
+                </strong>
+              </div>
+            </div>
+
+            <SellerCard
+              user={supply.user}
+              viewerId={session?.user?.id}
+              locale={locale}
+              compact
+            />
+
+            <ShareButtons title={supply.title} priceSnippet={priceLabel} />
+
+            <ContactActions
+              phone={supply.phone}
+              whatsapp={supply.whatsapp}
+              waText={
+                locale === "hy"
+                  ? `Բարև, հետաքրքրված եմ՝ ${supply.title}`
+                  : `Hi, interested in: ${supply.title}`
+              }
+            />
+
+            {!isOwner ? (
+              <ReportListingButton
+                listingPath={`/supply/${supply.id}`}
+                listingTitle={supply.title}
+              />
+            ) : null}
+
+            {isOwner ? (
+              <section className="owner-panel">
+                <MyListingActions id={supply.id} status={supply.status} apiBase="/api/supply" />
+                <h2>{t("pricing.boost.cta")}</h2>
+                <BoostButton
+                  targetType="SUPPLY"
+                  targetId={supply.id}
+                  isPro={Boolean(ownerEnt?.isPro)}
+                  boostQuotaRemaining={ownerEnt?.boostQuotaRemaining ?? 0}
+                  currentlyBoostedUntil={boostedUntil?.toISOString() ?? null}
+                  freeMode={ownerFreeCheckout}
+                />
+              </section>
+            ) : null}
+          </div>
+        </aside>
       </div>
-
-      <div className="detail-body">
-        <h2>{t("detail.description")}</h2>
-        <p className="pre-wrap detail-desc">{supply.description}</p>
-        <SellerCard
-          user={supply.user}
-          viewerId={session?.user?.id}
-          locale={locale}
-          compact
-        />
-      </div>
-
-      <ShareButtons
-        title={supply.title}
-        priceSnippet={
-          supply.priceAmd != null
-            ? formatPriceRange(supply.priceAmd, supply.priceAmd, supply.unit, (k) =>
-                t(k as "common.amd")
-              )
-            : t("detail.priceOpen")
-        }
-      />
-
-      <ContactActions
-        phone={supply.phone}
-        whatsapp={supply.whatsapp}
-        waText={
-          locale === "hy"
-            ? `Բարև, հետաքրքրված եմ՝ ${supply.title}`
-            : `Hi, interested in: ${supply.title}`
-        }
-      />
-
-      {!isOwner ? (
-        <ReportListingButton
-          listingPath={`/supply/${supply.id}`}
-          listingTitle={supply.title}
-        />
-      ) : null}
-
-      {isOwner ? (
-        <section className="owner-panel">
-          <MyListingActions id={supply.id} status={supply.status} apiBase="/api/supply" />
-          <h2>{t("pricing.boost.cta")}</h2>
-          <BoostButton
-            targetType="SUPPLY"
-            targetId={supply.id}
-            isPro={Boolean(ownerEnt?.isPro)}
-            boostQuotaRemaining={ownerEnt?.boostQuotaRemaining ?? 0}
-            currentlyBoostedUntil={boostedUntil?.toISOString() ?? null}
-            freeMode={ownerFreeCheckout}
-          />
-        </section>
-      ) : null}
-
-      <section className="match-section killer-flow">
-        <h2>{t("findBuyer.title")}</h2>
-        <p className="lede">{t("findBuyer.lede")}</p>
-        {ranked.length === 0 ? (
-          <p className="empty-state">{t("detail.noMatches")}</p>
-        ) : (
-          <ul className="match-list">
-            {ranked.map(({ demand, score, reasons }) => (
-              <li key={demand.id} className="match-row">
-                <div>
-                  <Link href={`/demand/${demand.id}`}>
-                    <strong>{demand.title}</strong>
-                  </Link>
-                  <p>
-                    {formatQty(demand.qtyMin, demand.qtyMax, demand.unit, (k) => t(k as "units.kg"))}
-                    {demand.priceMaxAmd != null
-                      ? ` · ≤ ${formatAmd(demand.priceMaxAmd)} ${t("common.amd")}`
-                      : ""}
-                    {" · "}
-                    {demand.village ? `${localizedPlaceName(demand.village, locale)}, ` : ""}
-                    {t(`marzes.${demand.marz.slug}` as "marzes.Yerevan")}
-                  </p>
-                  <p className="match-score">
-                    {t("detail.score", { score })} ·{" "}
-                    {reasons.map((r) => t(`reasons.${r}` as "reasons.same_product")).join(", ")}
-                  </p>
-                </div>
-                <div className="match-actions">
-                  <ContactActions phone={demand.phone} whatsapp={demand.whatsapp} />
-                  {isOwner ? (
-                    <OfferButton
-                      supplyId={supply.id}
-                      demandId={demand.id}
-                      defaultMessage={
-                        locale === "hy"
-                          ? `Կարող եմ մատակարարել ${supply.qtyAvailable} ${t(`units.${supply.unit}` as "units.kg")}.`
-                          : `I can supply ${supply.qtyAvailable} ${supply.unit}.`
-                      }
-                    />
-                  ) : null}
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
     </div>
   );
 }
