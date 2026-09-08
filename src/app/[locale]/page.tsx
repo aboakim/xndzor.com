@@ -341,7 +341,7 @@ export default async function HomePage({
 
   return (
     <div className="home-vendo home-vendo-clean home-vendo-banners home-vendo-cockpit home-village">
-      <p className="home-welcome-line home-purpose">{t("home.purpose")}</p>
+      <p className="home-welcome-line home-purpose animate-fade">{t("home.purpose")}</p>
 
       <section className="section home-categories-scroll home-categories-primary" aria-label={t("home.chooseAction")}>
         <CategoryScroll items={categoryItems} />
@@ -491,9 +491,9 @@ export default async function HomePage({
         )}
       </HomeSection>
 
-      <div className="section home-promo-slider">
+      <Reveal as="div" className="section home-promo-slider" delayMs={60}>
         <HeroPromoSlider />
-      </div>
+      </Reveal>
 
       <HomeMoreFeeds label={t("home.moreFeeds")}>
       <HomeSection

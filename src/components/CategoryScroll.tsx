@@ -86,7 +86,7 @@ export function CategoryScroll({ items }: { items: CategoryItem[] }) {
       >
         <ScrollArrow dir="prev" />
       </button>
-      <div className="category-scroll" role="list" ref={trackRef}>
+      <div className="category-scroll motion-chip-stagger" role="list" ref={trackRef}>
         {items.map((cat) => (
           <CategoryScrollItem key={cat.href + cat.action} cat={cat} />
         ))}
