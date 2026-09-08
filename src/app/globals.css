@@ -6036,6 +6036,66 @@ a.post-card-title::after {
   border-radius: 999px;
 }
 
+.home-purpose {
+  display: block;
+  max-width: min(34rem, calc(100% - 2rem));
+  margin-top: 0.85rem;
+  margin-bottom: 0.15rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+  border-radius: 12px;
+}
+
+.home-more-feeds {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.home-more-feeds > summary {
+  list-style: none;
+}
+
+.home-more-feeds > summary::-webkit-details-marker {
+  display: none;
+}
+
+.home-more-feeds-summary {
+  display: none;
+  cursor: pointer;
+  user-select: none;
+  margin: 0.5rem var(--content-pad) 0.75rem;
+  padding: 0.85rem 1.1rem;
+  text-align: center;
+  font-size: 0.98rem;
+  font-weight: 650;
+  color: var(--pine);
+  background: rgba(15, 74, 60, 0.05);
+  border: 1px solid rgba(15, 74, 60, 0.14);
+  border-radius: 12px;
+}
+
+.home-more-feeds-summary::after {
+  content: " ▾";
+  opacity: 0.7;
+}
+
+.home-more-feeds[open] > .home-more-feeds-summary::after {
+  content: " ▴";
+}
+
+.home-more-feeds-body {
+  display: contents;
+}
+
+@media (min-width: 768px) {
+  .home-more-feeds-summary {
+    display: none !important;
+  }
+}
+
 .home-categories-scroll {
   padding: 0.55rem 0 0.15rem;
   max-width: none;
@@ -6731,9 +6791,10 @@ a.listing-card-title::after {
   }
 
   .home-village .wtb-subheadline {
-    font-size: 0.92rem;
+    font-size: 0.98rem;
     max-width: 28rem;
     margin-inline: auto;
+    line-height: 1.45;
   }
 
   .home-village .wtb-cta-row {
@@ -6755,11 +6816,19 @@ a.listing-card-title::after {
   }
 
   .home-village .wtb {
-    padding-block: 1rem;
+    padding-block: 1.15rem;
   }
 
   .home-village .wtb-headline {
-    font-size: clamp(1.25rem, 5vw, 1.55rem);
+    font-size: clamp(1.35rem, 5.2vw, 1.65rem);
+  }
+
+  .home-village .home-more-feeds-summary {
+    display: block;
+  }
+
+  .home-village .home-categories-primary .category-scroll-item:nth-child(n + 6) {
+    display: none;
   }
 }
 
@@ -9726,18 +9795,18 @@ body.mega-menu-open {
     font-size: 0.95rem;
   }
 
-  /* Sections / feature heroes */
+  /* Sections / feature heroes — slightly airier than full compaction */
   .section {
-    padding: 1.45rem 0.85rem;
+    padding: 1.65rem 0.9rem;
   }
 
   .section-head {
-    margin-bottom: 0.85rem;
+    margin-bottom: 0.95rem;
   }
 
   .section h1,
   .section h2 {
-    margin-bottom: 0.65rem;
+    margin-bottom: 0.75rem;
   }
 
   .hero {
@@ -9764,45 +9833,52 @@ body.mega-menu-open {
 
   /* Category chips */
   .home-categories {
-    padding-top: 0.75rem;
-    padding-bottom: 0.35rem;
+    padding-top: 0.85rem;
+    padding-bottom: 0.45rem;
   }
 
   .home-categories-primary.home-categories-scroll {
-    padding-top: 0.45rem;
-    padding-bottom: 0.3rem;
+    padding-top: 0.55rem;
+    padding-bottom: 0.45rem;
+  }
+
+  .home-purpose {
+    margin-top: 0.7rem;
+    margin-bottom: 0.25rem;
+    padding: 0.55rem 1rem;
+    font-size: 0.92rem;
   }
 
   .category-scroll {
-    gap: 0.35rem;
-    padding: 0.2rem 0.1rem 0.4rem;
+    gap: 0.4rem;
+    padding: 0.25rem 0.1rem 0.5rem;
   }
 
   .category-scroll-item {
-    min-width: 4.35rem;
-    max-width: 5.15rem;
-    padding: 0.4rem 0.3rem 0.4rem;
-    gap: 0.28rem;
+    min-width: 4.5rem;
+    max-width: 5.35rem;
+    padding: 0.45rem 0.32rem 0.45rem;
+    gap: 0.3rem;
     border-radius: 0.85rem;
-    font-size: 0.7rem;
+    font-size: 0.72rem;
   }
 
   .category-scroll-item .cat-icon {
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.35rem;
+    height: 2.35rem;
     border-radius: 0.7rem;
   }
 
   .home-village .home-categories-primary .category-scroll-item {
-    min-width: 4.65rem;
-    max-width: 5.5rem;
-    padding: 0.45rem 0.35rem 0.4rem;
-    font-size: 0.74rem;
+    min-width: 4.85rem;
+    max-width: 5.65rem;
+    padding: 0.5rem 0.38rem 0.45rem;
+    font-size: 0.76rem;
   }
 
   .home-village .home-categories-primary .category-scroll-item .cat-icon {
-    width: 2.45rem;
-    height: 2.45rem;
+    width: 2.55rem;
+    height: 2.55rem;
   }
 
   .home-village .home-categories-primary .category-scroll-item .cat-icon svg {
@@ -9822,19 +9898,19 @@ body.mega-menu-open {
     height: 2.55rem;
   }
 
-  /* Homepage feed */
+  /* Homepage feed — restore section title breathing room */
   .home-feed-section {
-    padding-top: 1.1rem;
-    padding-bottom: 0.9rem;
+    padding-top: 1.35rem;
+    padding-bottom: 1.15rem;
   }
 
   .home-feed-head {
-    margin-bottom: 0.65rem;
+    margin-bottom: 0.8rem;
     gap: 0.55rem;
   }
 
   .home-feed-head h2 {
-    font-size: 1.08rem;
+    font-size: 1.14rem;
     gap: 0.4rem;
   }
 

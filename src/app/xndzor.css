@@ -5975,35 +5975,39 @@
 
 /* ——— Mobile density (phones only; desktop unchanged) ——— */
 @media (max-width: 767px) {
-  /* Homepage solution hero */
+  /* Homepage solution hero — keep compact chrome, restore hierarchy air */
   .xndzor-hero {
-    padding: 0.85rem max(0.7rem, env(safe-area-inset-right)) 1rem
-      max(0.7rem, env(safe-area-inset-left));
+    padding: 1.05rem max(0.85rem, env(safe-area-inset-right)) 1.25rem
+      max(0.85rem, env(safe-area-inset-left));
   }
 
   .home-vendo > .xndzor-hero {
-    padding-top: 0.55rem;
+    padding-top: 0.75rem;
   }
 
   .xndzor-hero-brand {
-    margin-bottom: 0.85rem;
+    margin-bottom: 1.1rem;
   }
 
   .xndzor-apple {
-    font-size: 1.65rem;
-    margin-bottom: 0.2rem;
+    font-size: 1.75rem;
+    margin-bottom: 0.3rem;
   }
 
   .xndzor-hero-title {
-    font-size: clamp(1.55rem, 6.5vw, 1.95rem);
+    font-size: clamp(1.65rem, 6.8vw, 2.05rem);
+    margin-bottom: 0.35rem;
   }
 
   .xndzor-hero-tagline {
-    font-size: 0.94rem;
+    font-size: 0.98rem;
+    line-height: 1.45;
+    max-width: 22rem;
+    margin-inline: auto;
   }
 
   .xndzor-mode-toggle {
-    margin-bottom: 0.7rem;
+    margin-bottom: 0.85rem;
     gap: 0.25rem;
     padding: 0.2rem;
   }
@@ -6015,7 +6019,7 @@
   }
 
   .xndzor-input-block {
-    gap: 0.55rem;
+    gap: 0.65rem;
   }
 
   .xndzor-textarea {
@@ -6024,13 +6028,18 @@
   }
 
   .xndzor-chips {
-    gap: 0.3rem;
+    gap: 0.35rem;
+    max-height: 4.6rem;
   }
 
   .xndzor-chip {
     min-height: 2.35rem;
     padding: 0.32rem 0.62rem;
     font-size: 0.74rem;
+  }
+
+  .xndzor-chip:nth-child(n + 5) {
+    display: none;
   }
 
   .xndzor-find-btn {
@@ -6051,33 +6060,34 @@
     padding: 0.9rem 0.95rem;
   }
 
-  /* Trust / welcome banner */
+  /* Trust / welcome banner — short + clear, not crushed */
   .home-trust-banner {
-    padding-top: 0.3rem;
-    padding-bottom: 0.2rem;
+    padding-top: 0.55rem;
+    padding-bottom: 0.45rem;
   }
 
   .wtb {
-    padding: 0.95rem 0.85rem;
+    padding: 1.15rem 0.95rem;
     border-radius: calc(var(--radius-lg) + 2px);
   }
 
   .wtb-inner {
-    gap: 0.95rem;
+    gap: 1.05rem;
   }
 
   .wtb-badge {
-    margin-bottom: 0.45rem;
+    margin-bottom: 0.55rem;
     padding: 0.22rem 0.55rem;
   }
 
   .wtb-headline {
-    margin-bottom: 0.35rem;
-    font-size: clamp(1.25rem, 5vw, 1.5rem);
+    margin-bottom: 0.45rem;
+    font-size: clamp(1.35rem, 5.2vw, 1.6rem);
   }
 
   .wtb-subheadline {
-    font-size: 0.92rem;
+    font-size: 0.98rem;
+    line-height: 1.45;
   }
 
   .wtb-card {
@@ -6095,7 +6105,7 @@
   }
 
   .home-village .wtb {
-    padding-block: 0.8rem;
+    padding-block: 1.15rem;
   }
 
   .home-village .wtb-cta-primary,
@@ -6105,11 +6115,11 @@
     font-size: 0.95rem;
   }
 
-  /* Promo / banner gallery */
+  /* Promo demoted below Top 5 — still usable, less above-fold noise */
   .home-promo-slider,
   .home-vendo-banners > .home-promo-slider {
-    padding-top: 0.3rem;
-    padding-bottom: 0.4rem;
+    padding-top: 0.55rem;
+    padding-bottom: 0.65rem;
   }
 
   .home-banner-gallery {

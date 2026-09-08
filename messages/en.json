@@ -275,6 +275,8 @@
     }
   },
   "home": {
+    "purpose": "Armenian farm marketplace — sell and buy harvest.",
+    "moreFeeds": "More listings",
     "chooseAction": "Choose a section",
     "also": "More sections",
     "recentJobs": "Latest jobs",
@@ -1988,7 +1990,7 @@
   },
   "xndzor": {
     "heroTitle": "Xndzor — farm market OS",
-    "heroTagline": "What to grow by demand: plot → signal → pre-sale",
+    "heroTagline": "Sell or buy harvest — or describe what you need and get a solution.",
     "heroSide": {
       "quickLabel": "Quick links"
     },
@@ -2182,9 +2184,9 @@
       }
     },
     "welcomeTrust": {
-      "badge": "Simple market for villages",
+      "badge": "Armenian farm marketplace",
       "headline": "Sell and buy harvest easily",
-      "subheadline": "Big photos, AMD prices, village location. Post an ad with one button.",
+      "subheadline": "Crop from villages — list to sell or browse to buy. Prices in AMD, one-tap posting.",
       "farmerTitle": "If you sell",
       "farmerDesc": "List your crop, find a buyer, order help.",
       "farmerPerks": {

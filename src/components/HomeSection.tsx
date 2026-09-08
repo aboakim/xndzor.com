@@ -15,6 +15,7 @@ export function HomeSection({
   centered = false,
   subtitle,
   cue,
+  className,
 }: {
   action: string;
   title: string;
@@ -27,11 +28,12 @@ export function HomeSection({
   subtitle?: string;
   /** Subtle “what next” line under the section head. */
   cue?: string;
+  className?: string;
 }) {
   return (
     <Reveal
       as="section"
-      className={`section home-feed-section${centered ? " home-feed-section-centered" : ""}`}
+      className={`section home-feed-section${centered ? " home-feed-section-centered" : ""}${className ? ` ${className}` : ""}`}
       id={id}
     >
       <div className={`home-feed-head${centered ? " home-feed-head-centered" : ""}`}>

@@ -24,6 +24,7 @@ import { MonetizationPills } from "@/components/MonetizationBadges";
 import { XndzorHero } from "@/components/xndzor/XndzorHero";
 import { HomeStripSkeleton } from "@/components/HomeBannerSkeleton";
 import { PrefetchLink } from "@/components/PrefetchLink";
+import { HomeMoreFeeds } from "@/components/HomeMoreFeeds";
 
 const HeroPromoSlider = nextDynamic(
   () =>
@@ -339,20 +340,21 @@ export default async function HomePage({
 
   return (
     <div className="home-vendo home-vendo-clean home-vendo-banners home-vendo-cockpit home-village">
+      <p className="home-welcome-line home-purpose">{t("home.purpose")}</p>
+
       <section className="section home-categories-scroll home-categories-primary" aria-label={t("home.chooseAction")}>
         <CategoryScroll items={categoryItems} />
       </section>
-
-      <div className="section home-promo-slider">
-        <HeroPromoSlider />
-      </div>
 
       <Reveal as="section" className="section home-trust-banner" delayMs={40}>
         <WelcomeTrustBanner />
       </Reveal>
 
+      <XndzorHero greeting={heroGreeting} />
+
       <HomeSection
         action="sell"
+        className="home-feed--sell"
         title={t("home.supplyTitle")}
         href="/supply"
         seeAllLabel={t("home.seeAll")}
@@ -403,6 +405,7 @@ export default async function HomePage({
 
       <HomeSection
         action="buy"
+        className="home-feed--buy"
         title={t("home.demandTitle")}
         href="/demand"
         seeAllLabel={t("home.seeAll")}
@@ -439,10 +442,9 @@ export default async function HomePage({
         )}
       </HomeSection>
 
-      <XndzorHero greeting={heroGreeting} />
-
       <HomeSection
         action="groupBuy"
+        className="home-feed--group-buy"
         title={t("home.groupBuyTitle")}
         href="/group-buy"
         seeAllLabel={t("home.seeAll")}
@@ -484,8 +486,14 @@ export default async function HomePage({
         )}
       </HomeSection>
 
+      <div className="section home-promo-slider">
+        <HeroPromoSlider />
+      </div>
+
+      <HomeMoreFeeds label={t("home.moreFeeds")}>
       <HomeSection
         action="forward"
+        className="home-feed--forward"
         title={t("home.forwardTitle")}
         href="/forward"
         seeAllLabel={t("home.seeAll")}
@@ -602,6 +610,7 @@ export default async function HomePage({
 
       <HomeSection
         action="orderJob"
+        className="home-feed--jobs"
         title={t("home.jobsTitle")}
         href="/jobs"
         seeAllLabel={t("home.seeAll")}
@@ -637,6 +646,7 @@ export default async function HomePage({
 
       <HomeSection
         action="machinery"
+        className="home-feed--machinery"
         title={t("home.machineryTitle")}
         href="/machinery"
         seeAllLabel={t("home.seeAll")}
@@ -677,6 +687,7 @@ export default async function HomePage({
           </div>
         )}
       </HomeSection>
+      </HomeMoreFeeds>
     </div>
   );
 }
