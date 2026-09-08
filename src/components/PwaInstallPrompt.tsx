@@ -8,6 +8,8 @@ type BeforeInstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 };
 
+type Platform = "ios" | "android" | "other";
+
 const DISMISS_KEY = "xndzor-pwa-install-dismissed";
 
 function isStandalone(): boolean {
@@ -19,31 +21,43 @@ function isStandalone(): boolean {
   return mq || iosStandalone;
 }
 
-function isIos(): boolean {
-  if (typeof navigator === "undefined") return false;
-  return /iphone|ipad|ipod/i.test(navigator.userAgent);
+function detectPlatform(): Platform {
+  if (typeof navigator === "undefined") return "other";
+  const ua = navigator.userAgent || "";
+  // iPadOS 13+ may report as Mac; treat touch Macs as iOS for install UX.
+  const iPadOsDesktopUa =
+    /macintosh/i.test(ua) &&
+    typeof document !== "undefined" &&
+    "ontouchend" in document;
+  if (/iphone|ipad|ipod/i.test(ua) || iPadOsDesktopUa) return "ios";
+  if (/android/i.test(ua)) return "android";
+  return "other";
 }
 
-function isMobileish(): boolean {
+function isMobileish(platform: Platform): boolean {
   if (typeof window === "undefined") return false;
-  return window.matchMedia("(max-width: 900px)").matches || isIos();
+  return window.matchMedia("(max-width: 900px)").matches || platform === "ios" || platform === "android";
 }
 
 export function PwaInstallPrompt() {
   const t = useTranslations("pwa");
+  const [platform, setPlatform] = useState<Platform>("other");
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
-  const [showIosHelp, setShowIosHelp] = useState(false);
+  const [showSteps, setShowSteps] = useState(false);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (isStandalone() || !isMobileish()) return;
+    const detected = detectPlatform();
+    setPlatform(detected);
+
+    if (isStandalone() || !isMobileish(detected)) return;
     try {
       if (localStorage.getItem(DISMISS_KEY) === "1") return;
     } catch {
       /* ignore */
     }
 
-    if (isIos()) {
+    if (detected === "ios") {
       setVisible(true);
       return;
     }
@@ -55,7 +69,7 @@ export function PwaInstallPrompt() {
     };
     window.addEventListener("beforeinstallprompt", onBip);
 
-    // Fallback: show soft tip even if BIP hasn't fired yet (Chrome may delay it).
+    // Soft tip if BIP is delayed/unavailable (common on Android Chrome).
     const timer = window.setTimeout(() => {
       if (!isStandalone()) setVisible(true);
     }, 4000);
@@ -80,11 +94,7 @@ export function PwaInstallPrompt() {
       setVisible(false);
       return;
     }
-    if (isIos()) {
-      setShowIosHelp((v) => !v);
-      return;
-    }
-    setShowIosHelp(true);
+    setShowSteps((v) => !v);
   }
 
   function dismiss() {
@@ -94,30 +104,48 @@ export function PwaInstallPrompt() {
       /* ignore */
     }
     setVisible(false);
-    setShowIosHelp(false);
+    setShowSteps(false);
   }
 
-  const ios = isIos();
+  const hint =
+    platform === "ios"
+      ? t("iosHint")
+      : deferred
+        ? t("androidHint")
+        : platform === "android"
+          ? t("androidHint")
+          : t("genericHint");
+
+  const stepKeys =
+    platform === "ios"
+      ? (["iosStep1", "iosStep2", "iosStep3"] as const)
+      : platform === "android"
+        ? (["androidStep1", "androidStep2", "androidStep3"] as const)
+        : (["androidStep1", "androidStep2", "androidStep3"] as const);
+
+  const ctaLabel = deferred
+    ? t("install")
+    : showSteps
+      ? t("gotIt")
+      : t("howTo");
 
   return (
     <div className="pwa-install" role="region" aria-label={t("install")}>
       <div className="pwa-install-inner">
         <div className="pwa-install-copy">
           <strong className="pwa-install-title">{t("install")}</strong>
-          <p className="pwa-install-desc">
-            {ios ? t("iosHint") : deferred ? t("androidHint") : t("genericHint")}
-          </p>
-          {showIosHelp ? (
+          <p className="pwa-install-desc">{hint}</p>
+          {showSteps ? (
             <ol className="pwa-install-steps">
-              <li>{t("iosStep1")}</li>
-              <li>{t("iosStep2")}</li>
-              <li>{t("iosStep3")}</li>
+              {stepKeys.map((key) => (
+                <li key={key}>{t(key)}</li>
+              ))}
             </ol>
           ) : null}
         </div>
         <div className="pwa-install-actions">
           <button type="button" className="pwa-install-btn" onClick={onInstall}>
-            {ios ? (showIosHelp ? t("gotIt") : t("howTo")) : deferred ? t("install") : t("howTo")}
+            {ctaLabel}
           </button>
           <button type="button" className="pwa-install-dismiss" onClick={dismiss} aria-label={t("dismiss")}>
             ×

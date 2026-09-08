@@ -32,6 +32,14 @@ export function BoardFilters({
   const [villages, setVillages] = useState<LocationVillage[]>([]);
   const [query, setQuery] = useState(q || "");
 
+  // Keep form fields in sync with URL when category chips (or Apply) navigate.
+  useEffect(() => {
+    setProductSlug(product || "");
+    setMarzId(marz || "");
+    setVillageId(village || "");
+    setQuery(q || "");
+  }, [product, marz, village, q]);
+
   useEffect(() => {
     if (!marzId) {
       setVillages([]);
@@ -51,15 +59,41 @@ export function BoardFilters({
     };
   }, [marzId]);
 
-  function apply(e: FormEvent) {
-    e.preventDefault();
+  function pushFilters(next: {
+    product?: string;
+    marz?: string;
+    village?: string;
+    q?: string;
+  }) {
     const params = new URLSearchParams();
-    if (productSlug) params.set("product", productSlug);
-    if (marzId) params.set("marz", marzId);
-    if (villageId) params.set("village", villageId);
-    if (query.trim()) params.set("q", query.trim());
+    if (next.product) params.set("product", next.product);
+    if (next.marz) params.set("marz", next.marz);
+    if (next.village) params.set("village", next.village);
+    if (next.q?.trim()) params.set("q", next.q.trim());
     const qs = params.toString();
     router.push(qs ? `${basePath}?${qs}` : basePath);
+  }
+
+  function apply(e: FormEvent) {
+    e.preventDefault();
+    pushFilters({
+      product: productSlug,
+      marz: marzId,
+      village: villageId,
+      q: query,
+    });
+  }
+
+  function onProductChange(nextProduct: string) {
+    setProductSlug(nextProduct);
+    // Clear stale search text so chips / search / product stay aligned.
+    setQuery("");
+    pushFilters({
+      product: nextProduct,
+      marz: marzId,
+      village: villageId,
+      q: "",
+    });
   }
 
   return (
@@ -72,7 +106,7 @@ export function BoardFilters({
         <span>{t("board.product")}</span>
         <span className="select-with-icon">
           {productSlug ? <ProductIcon slugOrKey={productSlug} size={16} /> : null}
-          <select value={productSlug} onChange={(e) => setProductSlug(e.target.value)}>
+          <select value={productSlug} onChange={(e) => onProductChange(e.target.value)}>
             <option value="">{t("board.allProducts")}</option>
             {products.map((p) => (
               <option key={p.id} value={p.slug}>

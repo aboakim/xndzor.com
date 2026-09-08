@@ -1985,6 +1985,9 @@
     "iosStep1": "Սեղմեք Share Safari-ում",
     "iosStep2": "Ընտրեք «Add to Home Screen»",
     "iosStep3": "Սեղմեք Add",
+    "androidStep1": "Բացեք Chrome-ի ընտրացանկը (⋮)",
+    "androidStep2": "Սեղմեք «Install app» կամ «Add to Home screen»",
+    "androidStep3": "Հաստատեք տեղադրումը",
     "howTo": "Ինչպես տեղադրել",
     "gotIt": "Լավ",
     "dismiss": "Փակել"

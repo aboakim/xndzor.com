@@ -1984,6 +1984,9 @@
     "iosStep1": "Tap Share in Safari",
     "iosStep2": "Choose “Add to Home Screen”",
     "iosStep3": "Tap Add",
+    "androidStep1": "Open the Chrome menu (⋮)",
+    "androidStep2": "Tap “Install app” or “Add to Home screen”",
+    "androidStep3": "Confirm Install",
     "howTo": "How to install",
     "gotIt": "Got it",
     "dismiss": "Dismiss"

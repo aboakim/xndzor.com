@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { MARZES } from "@/lib/locations";
@@ -20,6 +20,12 @@ export function ResourceFilters({
   const [resourceType, setResourceType] = useState(type || "");
   const [marzId, setMarzId] = useState(marz || "");
   const [query, setQuery] = useState(q || "");
+
+  useEffect(() => {
+    setResourceType(type || "");
+    setMarzId(marz || "");
+    setQuery(q || "");
+  }, [type, marz, q]);
 
   function apply(e: FormEvent) {
     e.preventDefault();
