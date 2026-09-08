@@ -11,7 +11,10 @@ type ProductOption = Pick<
   "id" | "slug" | "nameKey" | "sortOrder" | "category"
 >;
 
-/** Renders categorized `<optgroup>` options for product `<select>`s. */
+/**
+ * Native `<optgroup>` options (text only). Prefer `ProductSelect` when icons are needed.
+ * Products are already Ա→Ֆ sorted via `groupProductsByCategory`.
+ */
 export function ProductOptgroupOptions({
   products,
   valueKey = "id",

@@ -4,8 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { MARZES, localizedPlaceName, type LocationVillage } from "@/lib/places";
-import { ProductIcon } from "@/components/AgIcons";
-import { ProductOptgroupOptions } from "@/components/ProductOptgroupOptions";
+import { ProductSelect } from "@/components/ProductSelect";
 import type { CatalogProduct } from "@/lib/products";
 
 type Product = Pick<CatalogProduct, "id" | "slug" | "nameKey" | "sortOrder" | "category">;
@@ -106,13 +105,14 @@ export function BoardFilters({
       </label>
       <label>
         <span>{t("board.product")}</span>
-        <span className="select-with-icon">
-          {productSlug ? <ProductIcon slugOrKey={productSlug} size={16} /> : null}
-          <select value={productSlug} onChange={(e) => onProductChange(e.target.value)}>
-            <option value="">{t("board.allProducts")}</option>
-            <ProductOptgroupOptions products={products} valueKey="slug" />
-          </select>
-        </span>
+        <ProductSelect
+          products={products}
+          value={productSlug}
+          onChange={onProductChange}
+          valueKey="slug"
+          allowEmpty
+          emptyLabel={t("board.allProducts")}
+        />
       </label>
       <label>
         <span>{t("board.marz")}</span>

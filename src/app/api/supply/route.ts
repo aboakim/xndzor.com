@@ -70,23 +70,30 @@ export async function POST(req: Request) {
 
   const imageUrls = JSON.stringify(filterListingImageUrls(data.imageUrls));
 
-  const supply = await prisma.supply.create({
-    data: {
-      title: data.title,
-      description: data.description,
-      productId: productRef.productId,
-      qtyAvailable: data.qtyAvailable,
-      unit: data.unit,
-      priceAmd: data.priceAmd === "" || data.priceAmd == null ? null : Number(data.priceAmd),
-      readyInDays: data.readyInDays ?? 0,
-      marzId: locRef.marzId,
-      villageId: locRef.villageId,
-      phone: data.phone,
-      whatsapp: data.whatsapp || null,
-      imageUrls,
-      userId: session.user.id,
-    },
-  });
-
-  return NextResponse.json(supply, { status: 201 });
+  try {
+    const supply = await prisma.supply.create({
+      data: {
+        title: data.title,
+        description: data.description,
+        productId: productRef.productId,
+        qtyAvailable: data.qtyAvailable,
+        unit: data.unit,
+        priceAmd: data.priceAmd === "" || data.priceAmd == null ? null : Number(data.priceAmd),
+        readyInDays: data.readyInDays ?? 0,
+        marzId: locRef.marzId,
+        villageId: locRef.villageId,
+        phone: data.phone,
+        whatsapp: data.whatsapp || null,
+        imageUrls,
+        userId: session.user.id,
+      },
+    });
+    return NextResponse.json(supply, { status: 201 });
+  } catch (e) {
+    console.error("[Xndzor] supply create failed", e instanceof Error ? e.message : e);
+    return NextResponse.json(
+      { error: "Could not publish listing. Check product and location, then try again." },
+      { status: 500 },
+    );
+  }
 }

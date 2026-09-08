@@ -3126,6 +3126,121 @@ input.readonly {
   flex: 1;
 }
 
+/* Custom product picker — icons inside options (native <select> cannot) */
+.product-select {
+  position: relative;
+  width: 100%;
+}
+
+.product-select-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm, 8px);
+  background: var(--surface-solid, #fff);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.product-select-trigger:hover:not(:disabled),
+.product-select.open .product-select-trigger {
+  border-color: var(--accent, #2f6b3a);
+}
+
+.product-select-trigger:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.product-select-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-select-icon,
+.product-select-icon-spacer {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--accent, #2f6b3a);
+}
+
+.product-select-option .product-select-icon,
+.product-select-option .product-select-icon-spacer {
+  width: 16px;
+  height: 16px;
+}
+
+.product-select-chevron {
+  flex-shrink: 0;
+  opacity: 0.65;
+  transition: transform 0.15s ease;
+}
+
+.product-select-chevron.open {
+  transform: rotate(180deg);
+}
+
+.product-select-panel {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: min(22rem, 60vh);
+  overflow: auto;
+  padding: 0.35rem 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm, 8px);
+  background: var(--surface-solid, #fff);
+  box-shadow: 0 10px 28px rgba(20, 40, 20, 0.12);
+}
+
+.product-select-group-label {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 0.4rem 0.65rem 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--muted);
+  background: var(--surface-solid, #fff);
+}
+
+.product-select-option {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  padding: 0.4rem 0.65rem;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.product-select-option:hover,
+.product-select-option.active {
+  background: color-mix(in srgb, var(--accent, #2f6b3a) 12%, transparent);
+}
+
+.filters-bar .product-select-trigger {
+  min-height: 2.35rem;
+}
+
 @media (max-width: 960px) {
   .filters-bar {
     grid-template-columns: 1fr 1fr;

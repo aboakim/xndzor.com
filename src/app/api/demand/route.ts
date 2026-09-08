@@ -66,28 +66,35 @@ export async function POST(req: Request) {
 
   const imageUrls = JSON.stringify(filterListingImageUrls(data.imageUrls));
 
-  const demand = await prisma.demand.create({
-    data: {
-      title: data.title,
-      description: data.description,
-      productId: productRef.productId,
-      qtyMin: data.qtyMin,
-      qtyMax: data.qtyMax === "" || data.qtyMax == null ? null : Number(data.qtyMax),
-      unit: data.unit,
-      priceMinAmd:
-        data.priceMinAmd === "" || data.priceMinAmd == null ? null : Number(data.priceMinAmd),
-      priceMaxAmd:
-        data.priceMaxAmd === "" || data.priceMaxAmd == null ? null : Number(data.priceMaxAmd),
-      timingNote: data.timingNote || null,
-      buyerKind: data.buyerKind || "WHOLESALE",
-      marzId: locRef.marzId,
-      villageId: locRef.villageId,
-      phone: data.phone,
-      whatsapp: data.whatsapp || null,
-      imageUrls,
-      userId: session.user.id,
-    },
-  });
-
-  return NextResponse.json(demand, { status: 201 });
+  try {
+    const demand = await prisma.demand.create({
+      data: {
+        title: data.title,
+        description: data.description,
+        productId: productRef.productId,
+        qtyMin: data.qtyMin,
+        qtyMax: data.qtyMax === "" || data.qtyMax == null ? null : Number(data.qtyMax),
+        unit: data.unit,
+        priceMinAmd:
+          data.priceMinAmd === "" || data.priceMinAmd == null ? null : Number(data.priceMinAmd),
+        priceMaxAmd:
+          data.priceMaxAmd === "" || data.priceMaxAmd == null ? null : Number(data.priceMaxAmd),
+        timingNote: data.timingNote || null,
+        buyerKind: data.buyerKind || "WHOLESALE",
+        marzId: locRef.marzId,
+        villageId: locRef.villageId,
+        phone: data.phone,
+        whatsapp: data.whatsapp || null,
+        imageUrls,
+        userId: session.user.id,
+      },
+    });
+    return NextResponse.json(demand, { status: 201 });
+  } catch (e) {
+    console.error("[Xndzor] demand create failed", e instanceof Error ? e.message : e);
+    return NextResponse.json(
+      { error: "Could not publish listing. Check product and location, then try again." },
+      { status: 500 },
+    );
+  }
 }

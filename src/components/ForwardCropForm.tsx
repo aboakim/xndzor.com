@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { MARZES } from "@/lib/locations";
 import { UNITS } from "@/lib/validations";
 import { ProductIcon } from "@/components/AgIcons";
-import { ProductOptgroupOptions } from "@/components/ProductOptgroupOptions";
+import { ProductSelect } from "@/components/ProductSelect";
 import { LiveCropSignal } from "@/components/LiveCropSignal";
 import { ImageUploadField, uploadImages } from "@/components/ImageUploadField";
 import { getFeaturedProducts, type CatalogProduct } from "@/lib/products";
@@ -32,7 +32,6 @@ export function ForwardCropForm({
   const [productId, setProductId] = useState(
     () => featured.find((p) => p.slug !== "other")?.id || products[0]?.id || "",
   );
-  const selected = products.find((p) => p.id === productId);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -75,24 +74,15 @@ export function ForwardCropForm({
     <form className="stack-form listing-form" onSubmit={onSubmit}>
       <label>
         <span>{t("forwardForm.product")}</span>
-        <span className="select-with-icon">
-          {selected ? <ProductIcon slugOrKey={selected.slug} size={18} /> : null}
-          <select
-            name="productId"
-            required
-            value={productId}
-            onChange={(e) => setProductId(e.target.value)}
-            disabled={products.length === 0}
-          >
-            {products.length === 0 ? (
-              <option value="" disabled>
-                {t("forms.selectEmpty")}
-              </option>
-            ) : (
-              <ProductOptgroupOptions products={products} valueKey="id" />
-            )}
-          </select>
-        </span>
+        <ProductSelect
+          products={products}
+          value={productId}
+          onChange={setProductId}
+          valueKey="id"
+          name="productId"
+          required
+          disabled={products.length === 0}
+        />
         <span className="product-icon-row" aria-hidden>
           {featured.map((p) => (
             <button

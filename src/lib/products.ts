@@ -1,4 +1,5 @@
 import productsData from "../../data/products.json";
+import hyMessages from "../../messages/hy.json";
 import { prisma } from "@/lib/prisma";
 import { safeQuery } from "@/lib/safe-query";
 
@@ -35,6 +36,21 @@ export type CatalogProduct = {
   category: ProductCategoryId;
   featured: boolean;
 };
+
+const hyProductNames = hyMessages.products as Record<string, string>;
+
+/** Armenian display name for stable Ա→Ֆ catalog sorting (independent of UI locale). */
+export function productHyLabel(nameKey: string): string {
+  const key = nameKey.replace(/^products\./, "");
+  return hyProductNames[key] ?? key;
+}
+
+export function compareProductsByHyName(
+  a: Pick<CatalogProduct, "nameKey">,
+  b: Pick<CatalogProduct, "nameKey">,
+): number {
+  return productHyLabel(a.nameKey).localeCompare(productHyLabel(b.nameKey), "hy");
+}
 
 export const PRODUCT_CATEGORIES = productsData.categories as ProductCategory[];
 
@@ -92,7 +108,7 @@ export function groupProductsByCategory(
     return {
       id: cat.id as ProductCategoryId,
       nameKey: cat.nameKey,
-      products: [...list].sort((a, b) => a.sortOrder - b.sortOrder),
+      products: [...list].sort(compareProductsByHyName),
     };
   }).filter((g): g is ProductCategoryGroup => g != null);
 }
@@ -116,8 +132,9 @@ function enrichFromCatalog(row: {
 
 /**
  * Load products for forms/filters.
- * Heals empty/partial Neon DB from the static catalog so selects never render empty
- * when the catalog exists.
+ * Never blocks the request on a full catalog sync (that used to take ~50s for 224
+ * products and timed out create pages). Missing DB rows are healed in the background;
+ * forms use catalog ids/slugs and POST paths call ensureProduct for the chosen crop.
  */
 export async function getProducts(): Promise<CatalogProduct[]> {
   const rows = await safeQuery(
@@ -125,26 +142,22 @@ export async function getProducts(): Promise<CatalogProduct[]> {
     [] as { id: string; slug: string; nameKey: string; sortOrder: number }[],
   );
 
-  const missing =
-    rows.length === 0 ||
-    PRODUCT_CATALOG.some((p) => !rows.some((r) => r.slug === p.slug));
+  const bySlug = new Map(rows.map((r) => [r.slug, r]));
+  const incomplete =
+    rows.length === 0 || PRODUCT_CATALOG.some((p) => !bySlug.has(p.slug));
 
-  if (missing) {
-    const { ensureAllProducts } = await import("@/lib/ensure-products");
-    await ensureAllProducts().catch(() => 0);
-    const healed = await safeQuery(
-      () => prisma.product.findMany({ orderBy: { sortOrder: "asc" } }),
-      [] as { id: string; slug: string; nameKey: string; sortOrder: number }[],
-    );
-    if (healed.length > 0) {
-      return healed.map(enrichFromCatalog);
-    }
+  if (incomplete) {
+    void import("@/lib/ensure-products")
+      .then(({ ensureAllProducts }) => ensureAllProducts())
+      .catch(() => 0);
+
+    // Prefer full catalog immediately so selects are never empty / partial after expansion.
+    // Use DB id when present (canonical FK); otherwise catalog id (ensureProduct on POST).
+    return PRODUCT_CATALOG.map((p) => {
+      const row = bySlug.get(p.slug);
+      return row ? enrichFromCatalog(row) : p;
+    });
   }
 
-  if (rows.length > 0) {
-    return rows.map(enrichFromCatalog);
-  }
-
-  // Last resort: static IDs (ensureAllProducts should have written them; APIs also ensure on POST).
-  return PRODUCT_CATALOG;
+  return rows.map(enrichFromCatalog);
 }

@@ -30,20 +30,34 @@ const prisma = new PrismaClient();
 
 try {
   console.log("[sync-reference-data] Syncing products…");
-  for (const p of productsData.products) {
-    await prisma.product.upsert({
-      where: { slug: p.slug },
-      create: {
+  const existing = await prisma.product.findMany({ select: { slug: true } });
+  const have = new Set(existing.map((r) => r.slug));
+  const missing = productsData.products.filter((p) => !have.has(p.slug));
+
+  if (missing.length > 0) {
+    await prisma.product.createMany({
+      data: missing.map((p) => ({
         id: p.id,
         slug: p.slug,
         nameKey: p.nameKey,
         sortOrder: p.sortOrder,
-      },
-      update: {
-        nameKey: p.nameKey,
-        sortOrder: p.sortOrder,
-      },
+      })),
+      skipDuplicates: true,
     });
+  }
+
+  // Refresh labels/order in parallel chunks (build-time only — OK if a few seconds).
+  const chunkSize = 50;
+  for (let i = 0; i < productsData.products.length; i += chunkSize) {
+    const chunk = productsData.products.slice(i, i + chunkSize);
+    await Promise.all(
+      chunk.map((p) =>
+        prisma.product.update({
+          where: { slug: p.slug },
+          data: { nameKey: p.nameKey, sortOrder: p.sortOrder },
+        }),
+      ),
+    );
   }
 
   console.log("[sync-reference-data] Syncing plans…");

@@ -68,23 +68,31 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: locRef.error }, { status: 400 });
   }
 
-  const crop = await prisma.futureHarvest.create({
-    data: {
-      productId: productRef.productId,
-      plotId: d.plotId || null,
-      title: d.title,
-      description: d.description,
-      qtyExpected: d.qtyExpected,
-      unit: d.unit,
-      harvestDate: new Date(d.harvestDate),
-      priceAmd: d.priceAmd === "" || d.priceAmd == null ? null : Number(d.priceAmd),
-      marzId: locRef.marzId,
-      villageId: locRef.villageId,
-      phone: d.phone,
-      whatsapp: d.whatsapp || null,
-      userId: session.user.id,
-      imageUrls: JSON.stringify(filterListingImageUrls(d.imageUrls)),
-    },
-  });
-  return NextResponse.json(crop, { status: 201 });
+  try {
+    const crop = await prisma.futureHarvest.create({
+      data: {
+        productId: productRef.productId,
+        plotId: d.plotId || null,
+        title: d.title,
+        description: d.description,
+        qtyExpected: d.qtyExpected,
+        unit: d.unit,
+        harvestDate: new Date(d.harvestDate),
+        priceAmd: d.priceAmd === "" || d.priceAmd == null ? null : Number(d.priceAmd),
+        marzId: locRef.marzId,
+        villageId: locRef.villageId,
+        phone: d.phone,
+        whatsapp: d.whatsapp || null,
+        userId: session.user.id,
+        imageUrls: JSON.stringify(filterListingImageUrls(d.imageUrls)),
+      },
+    });
+    return NextResponse.json(crop, { status: 201 });
+  } catch (e) {
+    console.error("[Xndzor] forward create failed", e instanceof Error ? e.message : e);
+    return NextResponse.json(
+      { error: "Could not publish listing. Check product and location, then try again." },
+      { status: 500 },
+    );
+  }
 }

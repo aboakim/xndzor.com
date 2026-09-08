@@ -7,7 +7,7 @@ import { MARZES, localizedPlaceName, type LocationVillage } from "@/lib/places";
 import { UNITS } from "@/lib/validations";
 import { ImageUploadField, uploadImages } from "@/components/ImageUploadField";
 import { ProductIcon } from "@/components/AgIcons";
-import { ProductOptgroupOptions } from "@/components/ProductOptgroupOptions";
+import { ProductSelect } from "@/components/ProductSelect";
 import { getFeaturedProducts, type CatalogProduct } from "@/lib/products";
 
 type Product = CatalogProduct;
@@ -36,7 +36,6 @@ export function DemandForm({
   const [productId, setProductId] = useState(
     () => featured.find((p) => p.slug !== "other")?.id || products[0]?.id || "",
   );
-  const selectedProduct = products.find((p) => p.id === productId);
 
   useEffect(() => {
     if (!marzId) {
@@ -93,7 +92,12 @@ export function DemandForm({
         body: JSON.stringify(body),
       });
       if (!res.ok) {
-        setError(t("postDemand.error"));
+        const data = await res.json().catch(() => ({}));
+        setError(
+          typeof data.error === "string" && data.error
+            ? data.error
+            : t("postDemand.error"),
+        );
         setSaving(false);
         return;
       }
@@ -130,24 +134,15 @@ export function DemandForm({
       <div className="form-row">
         <label>
           <span>{t("postDemand.fields.product")}</span>
-          <span className="select-with-icon">
-            {selectedProduct ? <ProductIcon slugOrKey={selectedProduct.slug} size={18} /> : null}
-            <select
-              name="productId"
-              required
-              value={productId}
-              onChange={(e) => setProductId(e.target.value)}
-              disabled={products.length === 0}
-            >
-              {products.length === 0 ? (
-                <option value="" disabled>
-                  {t("forms.selectEmpty")}
-                </option>
-              ) : (
-                <ProductOptgroupOptions products={products} valueKey="id" />
-              )}
-            </select>
-          </span>
+          <ProductSelect
+            products={products}
+            value={productId}
+            onChange={setProductId}
+            valueKey="id"
+            name="productId"
+            required
+            disabled={products.length === 0}
+          />
           <span className="product-icon-row" aria-hidden>
             {featured.map((p) => (
               <button

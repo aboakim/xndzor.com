@@ -5,8 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { MARZES, localizedPlaceName, type LocationVillage } from "@/lib/places";
 import { estimateYieldTons } from "@/lib/yield";
-import { ProductIcon } from "@/components/AgIcons";
-import { ProductOptgroupOptions } from "@/components/ProductOptgroupOptions";
+import { ProductSelect } from "@/components/ProductSelect";
 import { LiveDemandSnapshot } from "@/components/LiveDemandSnapshot";
 import type { CatalogProduct } from "@/lib/products";
 
@@ -110,23 +109,14 @@ export function PlotForm({
       </label>
       <label>
         <span>{t("plots.fields.crop")}</span>
-        <span className="select-with-icon">
-          {selected ? <ProductIcon slugOrKey={selected.slug} size={18} /> : null}
-          <select
-            required
-            value={productId}
-            onChange={(e) => setProductId(e.target.value)}
-            disabled={products.length === 0}
-          >
-            {products.length === 0 ? (
-              <option value="" disabled>
-                {t("forms.selectEmpty")}
-              </option>
-            ) : (
-              <ProductOptgroupOptions products={products} valueKey="id" />
-            )}
-          </select>
-        </span>
+        <ProductSelect
+          products={products}
+          value={productId}
+          onChange={setProductId}
+          valueKey="id"
+          required
+          disabled={products.length === 0}
+        />
         {products.length === 0 ? (
           <p className="form-error" role="status">
             {t("forms.selectEmptyHint")}

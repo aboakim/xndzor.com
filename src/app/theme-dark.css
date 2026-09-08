@@ -289,6 +289,27 @@ html[data-theme="dark"] .locale-dropdown-option.active {
   color: var(--pine-deep);
 }
 
+html.dark .product-select-trigger,
+html.dark .product-select-panel,
+html[data-theme="dark"] .product-select-trigger,
+html[data-theme="dark"] .product-select-panel {
+  background: var(--surface-solid);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+html.dark .product-select-group-label,
+html[data-theme="dark"] .product-select-group-label {
+  background: var(--surface-solid);
+}
+
+html.dark .product-select-option:hover,
+html.dark .product-select-option.active,
+html[data-theme="dark"] .product-select-option:hover,
+html[data-theme="dark"] .product-select-option.active {
+  background: rgba(110, 201, 168, 0.12);
+}
+
 html.dark input,
 html.dark textarea,
 html.dark select,

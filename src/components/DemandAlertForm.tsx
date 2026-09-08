@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { ProductOptgroupOptions } from "@/components/ProductOptgroupOptions";
+import { ProductSelect } from "@/components/ProductSelect";
 import type { CatalogProduct } from "@/lib/products";
 
 export function DemandAlertForm({
@@ -59,9 +59,13 @@ export function DemandAlertForm({
     <form className="demand-alert-form" onSubmit={onSubmit}>
       <label>
         {t("alerts.product")}
-        <select value={productId} onChange={(e) => setProductId(e.target.value)}>
-          <ProductOptgroupOptions products={products} valueKey="id" />
-        </select>
+        <ProductSelect
+          products={products}
+          value={productId}
+          onChange={setProductId}
+          valueKey="id"
+          required
+        />
       </label>
       <button type="submit" className="btn primary" disabled={saving || !productId}>
         {saving ? t("processing") : t("alerts.subscribe")}
