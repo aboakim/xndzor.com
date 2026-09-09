@@ -1,8 +1,8 @@
 /* Xndzor PWA service worker — production only (registered from client).
  * Caches a minimal offline shell; never caches auth/API. */
 
-const CACHE = "xndzor-shell-v1";
-const PRECACHE = ["/", "/hy", "/manifest.webmanifest", "/favicon.svg", "/icons/icon-192.png"];
+const CACHE = "xndzor-shell-v2";
+const PRECACHE = ["/", "/hy", "/manifest.webmanifest?v=2", "/favicon.svg?v=2", "/icons/icon-192.png?v=2"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -67,6 +67,8 @@ self.addEventListener("fetch", (event) => {
   const isStatic =
     url.pathname.startsWith("/icons/") ||
     url.pathname === "/favicon.svg" ||
+    url.pathname === "/favicon.ico" ||
+    url.pathname === "/favicon-32.png" ||
     url.pathname === "/manifest.webmanifest" ||
     url.pathname.startsWith("/_next/static/");
 

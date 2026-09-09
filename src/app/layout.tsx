@@ -16,7 +16,8 @@ import "./theme-dark.css";
 
 const siteUrl = resolveSiteUrl();
 const ogImage = {
-  url: "/og.png",
+  // ?v= busts Telegram/Messenger OG caches after logo refreshes
+  url: "/og.png?v=2",
   width: 1200,
   height: 630,
   alt: "Խնձոր — Xndzor",
@@ -63,7 +64,7 @@ export const metadata: Metadata = {
   description:
     "Խնձոր (Xndzor, xndzor.com) — Հայաստանի գյուղատնտեսական շուկա։ Ի՞նչ աճեցնել՝ ըստ պահանջարկի։ Հողամաս, ապագա բերք, գերտրամադրության ազդանշան, նախնական վաճառք և ֆերմերի շուկա։",
   applicationName: "Խնձոր",
-  manifest: "/manifest.webmanifest",
+  manifest: "/manifest.webmanifest?v=2",
   appleWebApp: {
     capable: true,
     title: "Խնձոր",
@@ -94,11 +95,12 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+      { url: "/favicon.ico?v=2", sizes: "48x48" },
+      { url: "/favicon.svg?v=2", type: "image/svg+xml" },
+      { url: "/icons/icon-192.png?v=2", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png?v=2", sizes: "512x512", type: "image/png" },
     ],
-    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    apple: [{ url: "/icons/apple-touch-icon.png?v=2", sizes: "180x180", type: "image/png" }],
   },
   other: {
     "mobile-web-app-capable": "yes",
