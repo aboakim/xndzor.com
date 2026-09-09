@@ -2,7 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Link } from "@/i18n/navigation";
-import { ContactActions } from "@/components/ContactActions";
+import { OwnerContactActions } from "@/components/OwnerContactActions";
 import { ShareButtons } from "@/components/ShareButtons";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ListingGallery } from "@/components/ListingGallery";
@@ -229,7 +229,12 @@ export default async function MachineryDetailPage({
               locale={locale}
             />
 
-            <ContactActions phone={listing.phone} whatsapp={listing.whatsapp} waText={waText} />
+            <OwnerContactActions
+              ownerId={listing.userId}
+              phone={listing.phone}
+              whatsapp={listing.whatsapp}
+              waText={waText}
+            />
             <ShareButtons title={title} priceSnippet={priceLabel} />
 
             {!isOwner ? (

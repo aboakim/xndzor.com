@@ -2,7 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
-import { ContactActions } from "@/components/ContactActions";
+import { OwnerContactActions } from "@/components/OwnerContactActions";
 import { ShareButtons } from "@/components/ShareButtons";
 import { ForwardInterestForm } from "@/components/ForwardInterestForm";
 import { formatAmd, parseImageUrls } from "@/lib/utils";
@@ -137,7 +137,11 @@ export default async function ForwardDetailPage({
           </Link>
         </div>
       ) : (
-        <ContactActions phone={crop.phone} whatsapp={crop.whatsapp} />
+        <OwnerContactActions
+          ownerId={crop.userId}
+          phone={crop.phone}
+          whatsapp={crop.whatsapp}
+        />
       )}
 
       {crop.user.farmId ? (

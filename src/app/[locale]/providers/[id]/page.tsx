@@ -2,7 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
-import { ContactActions } from "@/components/ContactActions";
+import { OwnerContactActions } from "@/components/OwnerContactActions";
 import { ShareButtons } from "@/components/ShareButtons";
 import { findJobsForProvider, parseJobTypesJson } from "@/lib/matching";
 import { formatAmd } from "@/lib/utils";
@@ -65,7 +65,11 @@ export default async function ProviderDetailPage({
         }
       />
 
-      <ContactActions phone={provider.phone} whatsapp={provider.whatsapp} />
+      <OwnerContactActions
+        ownerId={provider.userId}
+        phone={provider.phone}
+        whatsapp={provider.whatsapp}
+      />
 
       <section className="match-section killer-flow">
         <h2>{t("providersBoard.openJobs")}</h2>

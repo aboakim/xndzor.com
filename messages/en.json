@@ -672,6 +672,7 @@
     "optional": "Optional",
     "call": "Call",
     "whatsapp": "WhatsApp",
+    "contactUnavailable": "Contact is not available for this listing",
     "open": "Open",
     "add": "Add",
     "send": "Send",

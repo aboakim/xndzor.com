@@ -2,7 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Link } from "@/i18n/navigation";
-import { ContactActions } from "@/components/ContactActions";
+import { OwnerContactActions } from "@/components/OwnerContactActions";
 import { ShareButtons } from "@/components/ShareButtons";
 import { OfferButton } from "@/components/OfferButton";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -137,7 +137,11 @@ export default async function SupplyDetailPage({
                       </p>
                     </div>
                     <div className="match-actions">
-                      <ContactActions phone={demand.phone} whatsapp={demand.whatsapp} />
+                      <OwnerContactActions
+                        ownerId={demand.userId}
+                        phone={demand.phone}
+                        whatsapp={demand.whatsapp}
+                      />
                       {isOwner ? (
                         <OfferButton
                           supplyId={supply.id}
@@ -206,7 +210,8 @@ export default async function SupplyDetailPage({
 
             <ShareButtons title={supply.title} priceSnippet={priceLabel} />
 
-            <ContactActions
+            <OwnerContactActions
+              ownerId={supply.userId}
               phone={supply.phone}
               whatsapp={supply.whatsapp}
               waText={

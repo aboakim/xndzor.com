@@ -2,7 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
-import { ContactActions } from "@/components/ContactActions";
+import { OwnerContactActions } from "@/components/OwnerContactActions";
 import { ShareButtons } from "@/components/ShareButtons";
 import { findProvidersForJob, parseJobTypesJson } from "@/lib/matching";
 import { formatAmd } from "@/lib/utils";
@@ -99,7 +99,7 @@ export default async function JobDetailPage({
         }
       />
 
-      <ContactActions phone={job.phone} whatsapp={job.whatsapp} />
+      <OwnerContactActions phone={job.phone} whatsapp={job.whatsapp} ownerId={job.userId} />
 
       {isOwner ? (
         <section className="owner-panel">
@@ -138,7 +138,11 @@ export default async function JobDetailPage({
                     </p>
                   </div>
                   <div className="match-actions">
-                    <ContactActions phone={p.phone} whatsapp={p.whatsapp} />
+                    <OwnerContactActions
+                      ownerId={p.userId}
+                      phone={p.phone}
+                      whatsapp={p.whatsapp}
+                    />
                     {myProviders.some((mp) => mp.id === p.id) ? (
                       <ApplyToJobButton jobRequestId={job.id} providerId={p.id} />
                     ) : null}

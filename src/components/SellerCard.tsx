@@ -3,6 +3,7 @@ import {
   resolvePublicProfile,
   type UserProfileRecord,
 } from "@/lib/profile-privacy";
+import { userIsAdmin } from "@/lib/monetization";
 
 type SellerCardProps = {
   user: UserProfileRecord;
@@ -13,6 +14,7 @@ type SellerCardProps = {
 
 export async function SellerCard({ user, viewerId, locale, compact }: SellerCardProps) {
   const t = await getTranslations();
+  const hidePhone = await userIsAdmin(user.id);
   const profile = resolvePublicProfile(
     user,
     viewerId,
@@ -51,7 +53,7 @@ export async function SellerCard({ user, viewerId, locale, compact }: SellerCard
         <strong>{profile.displayName}</strong>
         <span className="muted">{t("detail.postedBy")}</span>
         {locationLine ? <span className="detail-seller-location">{locationLine}</span> : null}
-        {profile.phone ? (
+        {profile.phone && !hidePhone ? (
           <a href={`tel:${profile.phone.replace(/\s/g, "")}`} className="detail-seller-phone">
             {profile.phone}
           </a>
