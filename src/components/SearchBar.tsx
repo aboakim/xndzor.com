@@ -45,11 +45,12 @@ export function SearchBar({
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     const trimmed = q.trim();
-    router.push(trimmed ? `/demand?q=${encodeURIComponent(trimmed)}` : "/demand");
+    // Product search browses things for sale (supply), not buyer-request demand.
+    router.push(trimmed ? `/supply?q=${encodeURIComponent(trimmed)}` : "/supply");
   }
 
   function openFilters() {
-    router.push("/demand");
+    router.push("/supply");
   }
 
   const className = [

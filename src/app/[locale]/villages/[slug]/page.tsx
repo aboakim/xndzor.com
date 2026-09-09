@@ -87,7 +87,7 @@ export default async function VillagePage({
             {t("nav.supply")}
           </Link>
           <Link href={`/demand?marz=${village.marzId}&village=${village.id}`} className="btn ghost">
-            {t("nav.demand")}
+            {t("demandBoard.title")}
           </Link>
         </div>
       </div>

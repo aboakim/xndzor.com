@@ -13,7 +13,7 @@ import {
   getProUserIds,
   sortByMonetization,
 } from "@/lib/monetization";
-import { getFeaturedProducts, getProducts } from "@/lib/products";
+import { getFeaturedProducts, getProducts, listingTextSearchWhere } from "@/lib/products";
 
 export const dynamic = "force-dynamic";
 export default async function SupplyBoardPage({
@@ -43,11 +43,7 @@ export default async function SupplyBoardPage({
         ...(sp.marz ? { marzId: sp.marz } : {}),
         ...(sp.village ? { villageId: sp.village } : {}),
         ...(sp.product ? { product: { slug: sp.product } } : {}),
-        ...(sp.q
-          ? {
-              OR: [{ title: { contains: sp.q } }, { description: { contains: sp.q } }],
-            }
-          : {}),
+        ...listingTextSearchWhere(sp.q),
       },
       include: { product: true, marz: true, village: true, user: { select: { id: true } } },
       orderBy: { createdAt: "desc" },

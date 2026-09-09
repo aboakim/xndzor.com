@@ -19,10 +19,10 @@ const TABS = [
     match: (p: string) => p.startsWith("/plots"),
   },
   {
-    href: "/demand",
-    key: "findBuyer" as const,
+    href: "/supply",
+    key: "demand" as const,
     Icon: IconBuy,
-    match: (p: string) => p.startsWith("/demand") || p.startsWith("/forward"),
+    match: (p: string) => p.startsWith("/supply"),
   },
   {
     href: "/jobs",

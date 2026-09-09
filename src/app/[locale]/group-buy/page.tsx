@@ -90,7 +90,7 @@ export default async function GroupBuyPage({
         </ul>
       )}
       <p className="muted">
-        <Link href="/demand">{t("nav.demand")}</Link>
+        <Link href="/demand">{t("demandBoard.title")}</Link>
       </p>
     </div>
   );

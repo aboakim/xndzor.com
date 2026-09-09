@@ -37,7 +37,7 @@ export default async function NewDemandPage({
         defaultPhone={user?.phone}
       />
       <p className="muted">
-        <Link href="/demand">{t("nav.demand")}</Link>
+        <Link href="/demand">{t("demandBoard.title")}</Link>
       </p>
     </div>
   );

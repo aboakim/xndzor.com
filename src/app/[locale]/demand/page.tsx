@@ -7,7 +7,7 @@ import { TradeCard } from "@/components/TradeCard";
 import { ProductIcon } from "@/components/AgIcons";
 import { EmptyState } from "@/components/EmptyState";
 import { formatPriceRange, formatQty } from "@/lib/utils";
-import { getFeaturedProducts, getProducts } from "@/lib/products";
+import { getFeaturedProducts, getProducts, listingTextSearchWhere } from "@/lib/products";
 
 export const dynamic = "force-dynamic";
 
@@ -31,11 +31,7 @@ export default async function DemandBoardPage({
         ...(sp.marz ? { marzId: sp.marz } : {}),
         ...(sp.village ? { villageId: sp.village } : {}),
         ...(sp.product ? { product: { slug: sp.product } } : {}),
-        ...(sp.q
-          ? {
-              OR: [{ title: { contains: sp.q } }, { description: { contains: sp.q } }],
-            }
-          : {}),
+        ...listingTextSearchWhere(sp.q),
       },
       include: { product: true, marz: true, village: true },
       orderBy: { createdAt: "desc" },
@@ -92,6 +88,9 @@ export default async function DemandBoardPage({
           message={t("demandBoard.empty")}
           actionHref="/demand/new"
           actionLabel={t("common.add")}
+          secondaryHref="/supply"
+          secondaryLabel={t("demandBoard.browseSupply")}
+          cue={t("demandBoard.emptyCue")}
         />
       ) : (
         <div className="classified-list">

@@ -56,7 +56,7 @@ const RecentlyViewedStrip = nextDynamic(
  */
 const CATEGORIES = [
   { href: "/supply", action: "sell", labelKey: "menu.sellNow" as const },
-  { href: "/demand", action: "buy", labelKey: "menu.buy" as const },
+  { href: "/supply", action: "buy", labelKey: "menu.buy" as const },
   { href: "/forward", action: "forward", labelKey: "menu.forward" as const },
   { href: "/group-buy", action: "groupBuy", labelKey: "menu.groupBuy" as const },
   { href: "/grow", action: "grow", labelKey: "menu.grow" as const },

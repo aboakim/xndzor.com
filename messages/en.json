@@ -154,7 +154,7 @@
       "futureHarvest": "Future harvest",
       "preSell": "Pre-sell",
       "supply": "Sell (supply)",
-      "demand": "Buy (demand)",
+      "demand": "Buyer requests",
       "forward": "Forward contracts",
       "groupBuy": "Group buy",
       "tractors": "Tractors",
@@ -221,7 +221,7 @@
     "sellDesc": "Future or ready crop",
     "sellNow": "Sell now",
     "buy": "Buy",
-    "buyDesc": "Find a buyer or buy",
+    "buyDesc": "Browse crop for sale",
     "jobs": "Jobs",
     "jobsDesc": "Order field work",
     "machinery": "Machinery",
@@ -348,7 +348,7 @@
     "buy": {
       "emoji": "🛒",
       "title": "Buy",
-      "desc": "Post demand — find a supplier"
+      "desc": "Browse crop for sale and find a supplier"
     },
     "sell": {
       "emoji": "💰",
@@ -694,7 +694,7 @@
   },
   "board": {
     "search": "Search",
-    "searchHome": "Search crop, buyer, job…",
+    "searchHome": "Search crop for sale…",
     "product": "Product",
     "marz": "Marz",
     "village": "City/Village",
@@ -737,13 +737,15 @@
     "maxReached": "You can add at most {max} images"
   },
   "demandBoard": {
-    "title": "Buy / buyers",
-    "lede": "What buyers are looking for.",
-    "empty": "No listings yet. Add one."
+    "title": "Buyer requests",
+    "lede": "What buyers are looking for. To buy crop, browse listings for sale.",
+    "empty": "No buyer requests yet. Post a request, or browse crop for sale.",
+    "emptyCue": "This board is for buyer requests, not items for sale.",
+    "browseSupply": "Browse crop for sale"
   },
   "supplyBoard": {
     "title": "Sell now",
-    "lede": "Ready crop for sale.",
+    "lede": "Ready crop for sale. Buyers find what to purchase here.",
     "empty": "No listings yet. Add one."
   },
   "supply": {

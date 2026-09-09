@@ -1,5 +1,7 @@
 import productsData from "../../data/products.json";
+import enMessages from "../../messages/en.json";
 import hyMessages from "../../messages/hy.json";
+import ruMessages from "../../messages/ru.json";
 import { prisma } from "@/lib/prisma";
 import { safeQuery } from "@/lib/safe-query";
 
@@ -38,11 +40,54 @@ export type CatalogProduct = {
 };
 
 const hyProductNames = hyMessages.products as Record<string, string>;
+const enProductNames = enMessages.products as Record<string, string>;
+const ruProductNames = ruMessages.products as Record<string, string>;
 
 /** Armenian display name for stable Ա→Ֆ catalog sorting (independent of UI locale). */
 export function productHyLabel(nameKey: string): string {
   const key = nameKey.replace(/^products\./, "");
   return hyProductNames[key] ?? key;
+}
+
+/** Product slugs whose localized names (hy/en/ru) or slug match the search text. */
+export function productSlugsMatchingText(q: string): string[] {
+  const needle = q.trim().toLocaleLowerCase("hy");
+  if (!needle) return [];
+
+  return PRODUCT_CATALOG.filter((p) => {
+    const key = p.nameKey.replace(/^products\./, "");
+    const labels = [
+      productHyLabel(p.nameKey),
+      enProductNames[key] ?? "",
+      ruProductNames[key] ?? "",
+      p.slug.replace(/-/g, " "),
+      key,
+    ];
+    return labels.some((label) => label.toLocaleLowerCase("hy").includes(needle));
+  }).map((p) => p.slug);
+}
+
+/** Prisma `where` fragment: title/description + product name match for board `q`. */
+export function listingTextSearchWhere(q: string | undefined):
+  | Record<string, never>
+  | {
+      OR: Array<
+        | { title: { contains: string; mode: "insensitive" } }
+        | { description: { contains: string; mode: "insensitive" } }
+        | { product: { slug: { in: string[] } } }
+      >;
+    } {
+  const trimmed = q?.trim();
+  if (!trimmed) return {};
+
+  const slugs = productSlugsMatchingText(trimmed);
+  return {
+    OR: [
+      { title: { contains: trimmed, mode: "insensitive" } },
+      { description: { contains: trimmed, mode: "insensitive" } },
+      ...(slugs.length > 0 ? [{ product: { slug: { in: slugs } } }] : []),
+    ],
+  };
 }
 
 export function compareProductsByHyName(

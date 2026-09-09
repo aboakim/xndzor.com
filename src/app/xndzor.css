@@ -5838,6 +5838,13 @@
   pointer-events: none;
 }
 
+.empty-state-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+}
+
 .empty-state-cue {
   margin: 0;
   font-size: 0.82rem;
