@@ -471,8 +471,9 @@ html[data-theme="dark"] .farm-factor-list li {
 
 html.dark .logo-mark,
 html[data-theme="dark"] .logo-mark {
-  background: linear-gradient(145deg, #2f9e78, var(--fill-pine-deep));
-  color: #e8f5f0;
+  background: transparent;
+  color: inherit;
+  box-shadow: none;
 }
 
 html.dark .mega-menu-sidebar,
