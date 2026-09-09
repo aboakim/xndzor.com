@@ -3,11 +3,14 @@
 import {
   useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
+import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import { ProductIcon } from "@/components/AgIcons";
 import {
@@ -36,9 +39,20 @@ type ProductSelectProps = {
   id?: string;
 };
 
+type PanelCoords = {
+  top: number;
+  left: number;
+  width: number;
+  maxHeight: number;
+};
+
 /**
  * Accessible product picker with category groups, Ա→Ֆ sort, and inline icons.
  * Replaces native `<select>` which cannot render images in options.
+ *
+ * The options panel is portaled to document.body so listing chips / PRO badges
+ * (z-index: 1 inside rows) cannot paint through it — `.page-board form` uses
+ * `isolation: isolate`, which otherwise traps an in-tree panel's z-index.
  */
 export function ProductSelect({
   products,
@@ -56,8 +70,11 @@ export function ProductSelect({
   const t = useTranslations();
   const listId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [coords, setCoords] = useState<PanelCoords | null>(null);
 
   const groups = useMemo(() => groupProductsByCategory(products), [products]);
 
@@ -67,10 +84,59 @@ export function ProductSelect({
     : emptyLabel || t("forms.selectEmpty");
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!open) {
+      setCoords(null);
+      return;
+    }
+
+    function syncPosition() {
+      const trigger = triggerRef.current;
+      if (!trigger) return;
+      const rect = trigger.getBoundingClientRect();
+      const gap = 4;
+      const viewportPad = 8;
+      const spaceBelow = window.innerHeight - rect.bottom - gap - viewportPad;
+      const spaceAbove = rect.top - gap - viewportPad;
+      const preferBelow = spaceBelow >= 12 * 16 || spaceBelow >= spaceAbove;
+      const maxHeight = Math.min(
+        22 * 16,
+        Math.max(8 * 16, preferBelow ? spaceBelow : spaceAbove),
+      );
+      const width = Math.min(
+        Math.max(rect.width, 12 * 16),
+        window.innerWidth - viewportPad * 2,
+      );
+      const left = Math.min(
+        Math.max(viewportPad, rect.left),
+        window.innerWidth - width - viewportPad,
+      );
+      const top = preferBelow
+        ? rect.bottom + gap
+        : Math.max(viewportPad, rect.top - gap - maxHeight);
+      setCoords({ top, left, width, maxHeight });
+    }
+
+    syncPosition();
+    window.addEventListener("resize", syncPosition);
+    window.addEventListener("scroll", syncPosition, true);
+    return () => {
+      window.removeEventListener("resize", syncPosition);
+      window.removeEventListener("scroll", syncPosition, true);
+    };
+  }, [open]);
+
+  useEffect(() => {
     if (!open) return;
 
     const onPointerDown = (e: MouseEvent | TouchEvent) => {
-      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+      const target = e.target as Node;
+      if (rootRef.current?.contains(target)) return;
+      if (listRef.current?.contains(target)) return;
+      setOpen(false);
     };
     const onKeyDown = (e: globalThis.KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
@@ -107,6 +173,71 @@ export function ProductSelect({
     }
   }
 
+  const panelStyle: CSSProperties | undefined = coords
+    ? {
+        top: coords.top,
+        left: coords.left,
+        width: coords.width,
+        maxHeight: coords.maxHeight,
+      }
+    : undefined;
+
+  const panel =
+    open && mounted && coords ? (
+      <div
+        id={listId}
+        className="product-select-panel product-select-panel--portal"
+        role="listbox"
+        aria-label={selectedLabel}
+        ref={listRef}
+        style={panelStyle}
+      >
+        {allowEmpty ? (
+          <button
+            type="button"
+            role="option"
+            aria-selected={!value}
+            data-value=""
+            className={`product-select-option${!value ? " active" : ""}`}
+            onClick={() => choose("")}
+          >
+            <span className="product-select-icon-spacer" aria-hidden />
+            <span>{emptyLabel || t("board.allProducts")}</span>
+          </button>
+        ) : null}
+
+        {groups.map((group) => (
+          <div key={group.id} className="product-select-group" role="group">
+            <div className="product-select-group-label">
+              {t(group.nameKey as "productCategories.vegetables")}
+            </div>
+            {group.products.map((p) => {
+              const optValue = p[valueKey];
+              const active = optValue === value;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  role="option"
+                  aria-selected={active}
+                  data-value={optValue}
+                  className={`product-select-option${active ? " active" : ""}`}
+                  onClick={() => choose(optValue)}
+                >
+                  <ProductIcon
+                    slugOrKey={p.slug}
+                    size={16}
+                    className="product-select-icon"
+                  />
+                  <span>{t(p.nameKey as "products.tomato")}</span>
+                </button>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    ) : null;
+
   return (
     <div
       className={`product-select${className ? ` ${className}` : ""}${open ? " open" : ""}`}
@@ -116,6 +247,7 @@ export function ProductSelect({
       <button
         type="button"
         id={id}
+        ref={triggerRef}
         className="product-select-trigger"
         aria-expanded={open}
         aria-haspopup="listbox"
@@ -148,59 +280,9 @@ export function ProductSelect({
         </svg>
       </button>
 
-      {open ? (
-        <div
-          id={listId}
-          className="product-select-panel"
-          role="listbox"
-          aria-label={selectedLabel}
-          ref={listRef}
-        >
-          {allowEmpty ? (
-            <button
-              type="button"
-              role="option"
-              aria-selected={!value}
-              data-value=""
-              className={`product-select-option${!value ? " active" : ""}`}
-              onClick={() => choose("")}
-            >
-              <span className="product-select-icon-spacer" aria-hidden />
-              <span>{emptyLabel || t("board.allProducts")}</span>
-            </button>
-          ) : null}
-
-          {groups.map((group) => (
-            <div key={group.id} className="product-select-group" role="group">
-              <div className="product-select-group-label">
-                {t(group.nameKey as "productCategories.vegetables")}
-              </div>
-              {group.products.map((p) => {
-                const optValue = p[valueKey];
-                const active = optValue === value;
-                return (
-                  <button
-                    key={p.id}
-                    type="button"
-                    role="option"
-                    aria-selected={active}
-                    data-value={optValue}
-                    className={`product-select-option${active ? " active" : ""}`}
-                    onClick={() => choose(optValue)}
-                  >
-                    <ProductIcon
-                      slugOrKey={p.slug}
-                      size={16}
-                      className="product-select-icon"
-                    />
-                    <span>{t(p.nameKey as "products.tomato")}</span>
-                  </button>
-                );
-              })}
-            </div>
-          ))}
-        </div>
-      ) : null}
+      {panel && typeof document !== "undefined"
+        ? createPortal(panel, document.body)
+        : null}
     </div>
   );
 }

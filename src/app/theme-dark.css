@@ -293,14 +293,23 @@ html.dark .product-select-trigger,
 html.dark .product-select-panel,
 html[data-theme="dark"] .product-select-trigger,
 html[data-theme="dark"] .product-select-panel {
-  background: var(--surface-solid);
+  background-color: var(--surface-solid);
+  background-image: none;
   border-color: var(--line);
+  color: var(--ink);
+}
+
+html.dark .product-select-panel--portal,
+html[data-theme="dark"] .product-select-panel--portal {
+  background-color: var(--surface-solid);
+  background-image: none;
   color: var(--ink);
 }
 
 html.dark .product-select-group-label,
 html[data-theme="dark"] .product-select-group-label {
-  background: var(--surface-solid);
+  background-color: var(--surface-solid);
+  background-image: none;
 }
 
 html.dark .product-select-option:hover,

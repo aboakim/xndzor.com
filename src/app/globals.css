@@ -2753,6 +2753,9 @@ a.browse-clear:hover {
   gap: 0.75rem;
   margin: 1.25rem 0 1.75rem;
   align-items: end;
+  /* Stay above listing rows when a child select is open (portal is primary fix) */
+  position: relative;
+  z-index: 20;
 }
 
 .filters-bar label {
@@ -3467,8 +3470,20 @@ input.readonly {
   padding: 0.35rem 0;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm, 8px);
-  background: var(--surface-solid, #fff);
+  /* Opaque solid — listing chips must not show through */
+  background-color: var(--surface-solid, #fff);
+  background-image: none;
   box-shadow: 0 10px 28px rgba(20, 40, 20, 0.12);
+  opacity: 1;
+}
+
+/* Portaled to body so `.page-board form { isolation: isolate }` cannot trap stacking */
+.product-select-panel--portal {
+  position: fixed;
+  right: auto;
+  z-index: 1200;
+  background-color: var(--surface-solid, #fff);
+  background-image: none;
 }
 
 .product-select-group-label {
@@ -10184,7 +10199,8 @@ body.mega-menu-open {
   }
 }
 
-/* Keep forms / dense text clear of decorative imagery */
+/* Keep forms / dense text clear of decorative imagery.
+   Exclude `.filters-bar` — isolation traps ProductSelect stacking vs listing chips. */
 .stack-form,
 .browse-filter-form,
 .auth-card,
@@ -10192,11 +10208,15 @@ body.mega-menu-open {
 .fos-sell-form,
 .fos-expense-form,
 .fos-diary,
-.page-board form,
+.page-board form:not(.filters-bar),
 .listing-create form,
 .detail-offer-card,
 .detail-seller-card {
   isolation: isolate;
+  background-image: none !important;
+}
+
+.page-board form.filters-bar {
   background-image: none !important;
 }
 
