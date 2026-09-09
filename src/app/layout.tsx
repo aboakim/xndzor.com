@@ -16,8 +16,9 @@ import "./theme-dark.css";
 
 const siteUrl = resolveSiteUrl();
 const ogImage = {
-  // ?v= busts Telegram/Messenger OG caches after logo refreshes
-  url: "/og.png?v=2",
+  // New path (og-v3) forces Telegram/Messenger to fetch a fresh share image;
+  // absolute www URL keeps apex redirects consistent with metadataBase.
+  url: "https://www.xndzor.com/og-v3.png",
   width: 1200,
   height: 630,
   alt: "Խնձոր — Xndzor",

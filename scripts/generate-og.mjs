@@ -44,13 +44,20 @@ const svg = Buffer.from(`<svg width="${W}" height="${H}" xmlns="http://www.w3.or
   <text x="600" y="520" text-anchor="middle" class="sub">Xndzor · xndzor.com</text>
 </svg>`);
 
-const out = path.join(root, "public/og.png");
-await sharp(svg)
+const buf = await sharp(svg)
   .composite([{ input: logo, top: logoTop, left: logoLeft }])
   .png()
-  .toFile(out);
+  .toBuffer();
 
-const meta = await sharp(out).metadata();
-console.log(
-  `Wrote ${out} (${meta.width}x${meta.height}, ${meta.size} bytes) font=${fontFile || "fallback"}`,
+// Keep og.png in sync; ship og-v3.png as a new path so Telegram/Messenger
+// cannot reuse a previously cached image URL.
+const outs = ["public/og.png", "public/og-v3.png"].map((rel) =>
+  path.join(root, rel),
 );
+for (const out of outs) {
+  await fs.promises.writeFile(out, buf);
+  const meta = await sharp(out).metadata();
+  console.log(
+    `Wrote ${out} (${meta.width}x${meta.height}, ${meta.size} bytes) font=${fontFile || "fallback"}`,
+  );
+}
