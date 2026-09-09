@@ -307,9 +307,16 @@
 }
 
 .xndzor-apple {
-  font-size: 2rem;
-  display: block;
+  display: flex;
+  justify-content: center;
   margin-bottom: 0.35rem;
+}
+
+.xndzor-apple-logo {
+  width: 2.5rem;
+  height: 2.5rem;
+  object-fit: contain;
+  display: block;
 }
 
 .xndzor-hero-title {
@@ -1213,8 +1220,14 @@
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.95);
   border: 2px solid color-mix(in srgb, var(--color-harvest-gold) 45%, transparent);
-  font-size: 1.1rem;
   box-shadow: 0 4px 14px rgba(10, 40, 35, 0.1);
+}
+
+.wtb-bridge-logo {
+  width: 1.55rem;
+  height: 1.55rem;
+  object-fit: contain;
+  display: block;
 }
 
 .home-trust-banner.is-in .wtb-bridge-core {
@@ -2008,8 +2021,14 @@
   height: 2.5rem;
   border-radius: 50%;
   background: rgba(244, 251, 248, 0.95);
-  font-size: 1.15rem;
   box-shadow: 0 4px 16px rgba(10, 40, 35, 0.25);
+}
+
+.gbb-hub-logo {
+  width: 1.55rem;
+  height: 1.55rem;
+  object-fit: contain;
+  display: block;
 }
 
 .gbb-savings {
@@ -6003,8 +6022,12 @@
   }
 
   .xndzor-apple {
-    font-size: 1.75rem;
     margin-bottom: 0.3rem;
+  }
+
+  .xndzor-apple-logo {
+    width: 2.15rem;
+    height: 2.15rem;
   }
 
   .xndzor-hero-title {

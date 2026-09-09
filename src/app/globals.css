@@ -8091,10 +8091,24 @@ a.listing-card-title::after {
 }
 
 .site-footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
   font-size: 1.35rem;
   font-weight: 700;
   color: var(--pine);
   text-decoration: none;
+}
+
+.site-footer-logo-mark {
+  width: 2.25rem;
+  height: 2.25rem;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.site-footer-logo-text {
+  line-height: 1.1;
 }
 
 .site-footer-tagline {
@@ -10293,6 +10307,21 @@ body.mega-menu-open {
   background: #0a3329;
   color: #f3f7f4;
   box-shadow: 0 10px 28px rgba(8, 28, 22, 0.35);
+}
+
+.pwa-install-mark {
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+}
+
+.pwa-install-logo {
+  width: 2.25rem;
+  height: 2.25rem;
+  object-fit: contain;
+  display: block;
 }
 
 .pwa-install-copy {

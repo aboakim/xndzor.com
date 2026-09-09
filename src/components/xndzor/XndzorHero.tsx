@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { BrandLogo } from "@/components/BrandLogo";
 import { Link } from "@/i18n/navigation";
 import type { SolutionBundle, SolutionMode } from "@/lib/xndzor-solution";
 import { SolutionBundleCard } from "./SolutionBundle";
@@ -125,7 +126,7 @@ export function XndzorHero({ greeting }: XndzorHeroProps) {
         <div className="xndzor-hero-inner">
         <div className="xndzor-hero-brand">
           <span className="xndzor-apple" aria-hidden>
-            🍎
+            <BrandLogo size={40} className="xndzor-apple-logo" />
           </span>
           <h1 className="xndzor-hero-title">{t("heroTitle")}</h1>
           <p className="xndzor-hero-tagline">{t("heroTagline")}</p>

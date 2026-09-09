@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { BrandLogo } from "@/components/BrandLogo";
 import { Link } from "@/i18n/navigation";
 import { PaymentBadges } from "@/components/PaymentBadges";
 import { BackToTop } from "@/components/BackToTop";
@@ -59,7 +60,8 @@ export async function Footer() {
           <div className="site-footer-grid">
             <div className="site-footer-col site-footer-brand">
               <Link href="/" className="site-footer-logo">
-                {brand("brand")}
+                <BrandLogo size={36} className="site-footer-logo-mark" />
+                <span className="site-footer-logo-text">{brand("brand")}</span>
               </Link>
               <p className="site-footer-tagline">{t("tagline")}</p>
               <p className="site-footer-sub">{brand("brandLatin")}</p>

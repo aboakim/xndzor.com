@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { signOut, useSession } from "next-auth/react";
-import Image from "next/image";
+import { BrandLogo } from "@/components/BrandLogo";
 import { CategoriesMegaMenu } from "@/components/CategoriesMegaMenu";
 import { LanguageDropdown } from "@/components/LanguageDropdown";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -99,14 +99,7 @@ export function Header() {
         <div className="header-inner header-brand-row">
           <Link href="/" className="logo">
             <span className="logo-mark" aria-hidden>
-              <Image
-                src="/logo-xndzor.png"
-                alt=""
-                width={48}
-                height={48}
-                className="logo-mark-img"
-                priority
-              />
+              <BrandLogo size={48} className="logo-mark-img" priority />
             </span>
             <span className="logo-text">
               <strong>{brand("brand")}</strong>

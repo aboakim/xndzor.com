@@ -1,7 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" aria-hidden="true">
-  <path d="M60 28c-22 0-36 16-36 36s15 38 36 38 36-17 36-38-14-36-36-36z" fill="#0f4a3c" opacity=".55"/>
-  <path d="M46 42c6-5 13-5 18 0-6 8-13 12-22 10 0-4 1-7 4-10z" fill="#1a6b55" opacity=".4"/>
-  <path d="M60 28V16" stroke="#6b5236" stroke-width="4" stroke-linecap="round" opacity=".55"/>
-  <path d="M60 20c7-8 16-10 23-6-3 10-13 13-23 10z" fill="#6f9b7a" opacity=".65"/>
-  <circle cx="78" cy="58" r="5" fill="#d4a843" opacity=".45"/>
+  <!-- Light-green bitten-X apple motif (brand mark, not product icon) -->
+  <path
+    fill="#8BC34A"
+    opacity=".72"
+    d="
+      M38 32
+      C28 40 22 50 24 60
+      C25 68 33 71 40 65
+      C46 60 52 53 60 46
+      C68 53 74 60 80 65
+      C87 71 95 68 96 60
+      C98 50 92 40 82 32
+      C76 26 69 31 60 39
+      C51 31 44 26 38 32Z
+      M38 92
+      C28 84 22 74 24 64
+      C25 56 33 53 40 59
+      C46 64 52 71 60 78
+      C68 71 74 64 80 59
+      C87 53 95 56 96 64
+      C98 74 92 84 82 92
+      C76 98 69 93 60 85
+      C51 93 44 98 38 92Z
+    "
+  />
+  <path d="M60 24C60 18 63 13 67 11" fill="none" stroke="#8B6914" stroke-width="4" stroke-linecap="round" opacity=".75"/>
+  <ellipse cx="72" cy="16" rx="10" ry="6" transform="rotate(-32 72 16)" fill="#9CCC65" opacity=".85"/>
 </svg>

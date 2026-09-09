@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { BrandLogo } from "@/components/BrandLogo";
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -132,6 +133,9 @@ export function PwaInstallPrompt() {
   return (
     <div className="pwa-install" role="region" aria-label={t("install")}>
       <div className="pwa-install-inner">
+        <span className="pwa-install-mark" aria-hidden>
+          <BrandLogo size={36} className="pwa-install-logo" />
+        </span>
         <div className="pwa-install-copy">
           <strong className="pwa-install-title">{t("install")}</strong>
           <p className="pwa-install-desc">{hint}</p>

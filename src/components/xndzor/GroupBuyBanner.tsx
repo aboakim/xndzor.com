@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import { BrandLogo } from "@/components/BrandLogo";
 import { Link } from "@/i18n/navigation";
 import { formatAmd } from "@/lib/utils";
 
@@ -61,7 +62,9 @@ export function GroupBuyBanner() {
             ))}
             <span className="gbb-hub">
               <span className="gbb-hub-ring" />
-              <span className="gbb-hub-core">🍎</span>
+              <span className="gbb-hub-core">
+                <BrandLogo size={28} className="gbb-hub-logo" />
+              </span>
             </span>
             <svg className="gbb-links" viewBox="0 0 200 160" fill="none">
               <path className="gbb-link gbb-link-0" d="M40 40 C70 55, 90 70, 100 90" />

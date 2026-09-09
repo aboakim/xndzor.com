@@ -2,6 +2,7 @@
 
 import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
+import { BrandLogo } from "@/components/BrandLogo";
 import { Link } from "@/i18n/navigation";
 
 const TRUST_BADGES = ["verified", "amd", "exclusive"] as const;
@@ -64,7 +65,9 @@ export function WelcomeTrustBanner() {
             aria-hidden
           >
             <span className="wtb-bridge-line" />
-            <span className="wtb-bridge-core">🍎</span>
+            <span className="wtb-bridge-core">
+              <BrandLogo size={28} className="wtb-bridge-logo" />
+            </span>
             <span className="wtb-bridge-line" />
           </span>
 
