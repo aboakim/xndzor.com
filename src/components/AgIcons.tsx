@@ -47,7 +47,8 @@ export function IconBuy(p: IconProps) {
 export function IconSell(p: IconProps) {
   return (
     <Svg {...p}>
-      <path d="M12 3v18M8 7h6.5a3 3 0 010 6H9a3 3 0 000 6h7" />
+      <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" />
+      <circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none" />
     </Svg>
   );
 }
