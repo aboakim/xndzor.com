@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { resolveLocationRefs } from "@/lib/resolve-refs";
+import { filterListingImageUrls } from "@/lib/upload-urls";
 
 const spaceSchema = z.object({
   title: z.string().min(3).max(120),
@@ -16,6 +17,7 @@ const spaceSchema = z.object({
   marzId: z.string().min(1),
   villageId: z.string().optional().nullable(),
   phone: z.string().min(5).max(40),
+  imageUrls: z.array(z.string().min(1)).max(8).optional().default([]),
 });
 
 export async function GET(req: Request) {
@@ -71,6 +73,7 @@ export async function POST(req: Request) {
       marzId: locRef.marzId,
       villageId: locRef.villageId,
       phone: d.phone,
+      imageUrls: JSON.stringify(filterListingImageUrls(d.imageUrls)),
       userId: session.user.id,
     },
   });

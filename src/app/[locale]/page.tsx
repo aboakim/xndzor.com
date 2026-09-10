@@ -200,6 +200,7 @@ export default async function HomePage({
             workDate: true,
             dateFrom: true,
             budgetAmd: true,
+            imageUrls: true,
             marz: { select: { slug: true } },
             village: {
               select: {
@@ -226,6 +227,7 @@ export default async function HomePage({
             unit: true,
             deadline: true,
             pricePerUnitAmd: true,
+            imageUrls: true,
             product: { select: { slug: true } },
             marz: { select: { slug: true } },
             joins: { where: { status: "JOINED" }, select: { qty: true } },
@@ -467,6 +469,7 @@ export default async function HomePage({
                   key={c.id}
                   href="/group-buy"
                   title={c.title}
+                  thumb={parseImageUrls(c.imageUrls ?? "[]")[0]}
                   icon={<ProductIcon slugOrKey={c.product.slug} size={28} />}
                   categoryPill={t("nav.groupBuy")}
                   facts={[t("home.participants", { n: c.joins.length }), c.deadline ? day(c.deadline) : null]}
@@ -630,6 +633,7 @@ export default async function HomePage({
                 key={j.id}
                 href={`/jobs/${j.id}`}
                 title={j.title}
+                thumb={parseImageUrls(j.imageUrls ?? "[]")[0]}
                 icon={<JobTypeIcon type={j.jobType} size={28} />}
                 categoryPill={t(`jobTypes.${j.jobType}` as "jobTypes.HARVEST")}
                 facts={[

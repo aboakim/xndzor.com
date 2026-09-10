@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { jobRequestSchema } from "@/lib/validations";
 import { resolveLocationRefs } from "@/lib/resolve-refs";
+import { filterListingImageUrls } from "@/lib/upload-urls";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -48,6 +49,7 @@ export async function POST(req: Request) {
       villageId: locRef.villageId,
       phone: d.phone,
       whatsapp: d.whatsapp || null,
+      imageUrls: JSON.stringify(filterListingImageUrls(d.imageUrls)),
       userId: session.user.id,
     },
   });

@@ -84,13 +84,38 @@ const TARGETS = [
     field: "imageUrls",
     files: ["sample-shop-honey-01.jpg"],
   },
-];
-
-const SKIPPED_NO_IMAGE_FIELD = [
-  "jobs (JobRequest — no image field)",
-  "providers (ServiceProvider — no image field)",
-  "group-buy (GroupBuyCampaign — no image field)",
-  "spaces (SpaceListing — no image field)",
+  {
+    section: "jobs",
+    model: "jobRequest",
+    idHint: "cmtvb0ss2000bvbzw46t2mhuw",
+    titleStartsWith: `${MARKER} Աշխատանքի պատվերի`,
+    field: "imageUrls",
+    files: ["sample-jobs-harvest-01.jpg"],
+  },
+  {
+    section: "group-buy",
+    model: "groupBuyCampaign",
+    idHint: "cmtvb0v4j000jvbzwdn0mu8l3",
+    titleStartsWith: `${MARKER} Խմբային գնման`,
+    field: "imageUrls",
+    files: ["sample-group-buy-apples-01.jpg"],
+  },
+  {
+    section: "providers",
+    model: "serviceProvider",
+    idHint: "cmtvb0uk1000hvbzwl4t53agh",
+    titleStartsWith: `${MARKER} Ծառայության`,
+    field: "imageUrls",
+    files: ["sample-providers-service-01.jpg"],
+  },
+  {
+    section: "spaces",
+    model: "spaceListing",
+    idHint: "cmtvb0von000lvbzw9vbrlywn",
+    titleStartsWith: `${MARKER} Պահեստի տարածքի`,
+    field: "imageUrls",
+    files: ["sample-spaces-warehouse-01.jpg"],
+  },
 ];
 
 function hostKind(url) {
@@ -364,8 +389,6 @@ async function main() {
 
   console.log("\n=== Results ===");
   console.log(JSON.stringify(results, null, 2));
-  console.log("\n=== Skipped (no image field) ===");
-  for (const s of SKIPPED_NO_IMAGE_FIELD) console.log(`- ${s}`);
   console.log("\nDone.");
 }
 

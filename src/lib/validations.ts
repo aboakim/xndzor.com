@@ -186,6 +186,7 @@ export const jobRequestSchema = z.object({
   villageId: z.string().optional().or(z.literal("")),
   phone: z.string().min(8).max(20),
   whatsapp: z.string().min(8).max(20).optional().or(z.literal("")),
+  imageUrls: imageUrlsField,
 });
 
 export const providerSchema = z.object({
@@ -202,6 +203,7 @@ export const providerSchema = z.object({
   villageId: z.string().optional().or(z.literal("")),
   phone: z.string().min(8).max(20),
   whatsapp: z.string().min(8).max(20).optional().or(z.literal("")),
+  imageUrls: imageUrlsField,
 });
 
 export const jobApplicationSchema = z.object({
@@ -286,6 +288,7 @@ export const groupBuySchema = z.object({
   pricePerUnitAmd: z.coerce.number().int().nonnegative().optional().or(z.literal("")),
   deadline: z.string().optional().or(z.literal("")),
   marzId: z.enum(MARZES).optional().or(z.literal("")),
+  imageUrls: imageUrlsField,
 });
 
 export const groupBuyJoinSchema = z.object({

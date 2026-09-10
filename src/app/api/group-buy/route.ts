@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { groupBuyJoinSchema, groupBuySchema } from "@/lib/validations";
 import { resolveLocationRefs, resolveProductId } from "@/lib/resolve-refs";
+import { filterListingImageUrls } from "@/lib/upload-urls";
 
 export async function GET() {
   const campaigns = await prisma.groupBuyCampaign.findMany({
@@ -78,6 +79,7 @@ export async function POST(req: Request) {
         d.pricePerUnitAmd === "" || d.pricePerUnitAmd == null ? null : Number(d.pricePerUnitAmd),
       deadline: d.deadline ? new Date(d.deadline) : null,
       marzId,
+      imageUrls: JSON.stringify(filterListingImageUrls(d.imageUrls)),
       organizerId: session.user.id,
     },
   });
