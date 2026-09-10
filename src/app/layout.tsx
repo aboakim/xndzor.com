@@ -16,9 +16,9 @@ import "./theme-dark.css";
 
 const siteUrl = resolveSiteUrl();
 const ogImage = {
-  // New path (og-v3) forces Telegram/Messenger to fetch a fresh share image;
+  // New path (og-v4) forces Facebook/Telegram to fetch a fresh share image;
   // absolute www URL keeps apex redirects consistent with metadataBase.
-  url: "https://www.xndzor.com/og-v3.png",
+  url: "https://www.xndzor.com/og-v4.png",
   width: 1200,
   height: 630,
   alt: "Խնձոր — Xndzor",
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
   description:
     "Խնձոր (Xndzor, xndzor.com) — Հայաստանի գյուղատնտեսական շուկա։ Ի՞նչ աճեցնել՝ ըստ պահանջարկի։ Հողամաս, ապագա բերք, գերտրամադրության ազդանշան, նախնական վաճառք և ֆերմերի շուկա։",
   applicationName: "Խնձոր",
-  manifest: "/manifest.webmanifest?v=2",
+  manifest: "/manifest.webmanifest?v=3",
   appleWebApp: {
     capable: true,
     title: "Խնձոր",
@@ -96,12 +96,12 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.ico?v=2", sizes: "48x48" },
-      { url: "/favicon.svg?v=2", type: "image/svg+xml" },
-      { url: "/icons/icon-192.png?v=2", sizes: "192x192", type: "image/png" },
-      { url: "/icons/icon-512.png?v=2", sizes: "512x512", type: "image/png" },
+      { url: "/favicon.ico?v=3", sizes: "48x48" },
+      { url: "/favicon.svg?v=3", type: "image/svg+xml" },
+      { url: "/icons/icon-192.png?v=3", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png?v=3", sizes: "512x512", type: "image/png" },
     ],
-    apple: [{ url: "/icons/apple-touch-icon.png?v=2", sizes: "180x180", type: "image/png" }],
+    apple: [{ url: "/icons/apple-touch-icon.png?v=3", sizes: "180x180", type: "image/png" }],
   },
   other: {
     "mobile-web-app-capable": "yes",

@@ -49,9 +49,9 @@ const buf = await sharp(svg)
   .png()
   .toBuffer();
 
-// Keep og.png in sync; ship og-v3.png as a new path so Telegram/Messenger
-// cannot reuse a previously cached image URL.
-const outs = ["public/og.png", "public/og-v3.png"].map((rel) =>
+// Keep og.png in sync; ship og-v4.png as a new path so Facebook/Telegram
+// cannot reuse a previously cached image URL (og-v3 was still cached by FB).
+const outs = ["public/og.png", "public/og-v3.png", "public/og-v4.png"].map((rel) =>
   path.join(root, rel),
 );
 for (const out of outs) {

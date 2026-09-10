@@ -2,7 +2,7 @@
  * Caches a minimal offline shell; never caches auth/API. */
 
 const CACHE = "xndzor-shell-v2";
-const PRECACHE = ["/", "/hy", "/manifest.webmanifest?v=2", "/favicon.svg?v=2", "/icons/icon-192.png?v=2"];
+const PRECACHE = ["/", "/hy", "/manifest.webmanifest?v=3", "/favicon.svg?v=3", "/icons/icon-192.png?v=3"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
