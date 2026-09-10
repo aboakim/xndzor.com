@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 
 export type EarlyBirdApi = {
   totalRegistered: number;
@@ -29,6 +29,8 @@ export function EarlyBirdBannerClient({
   variant = "hero",
 }: Props) {
   const t = useTranslations("earlyBird");
+  const pathname = usePathname();
+  const onPricing = pathname === "/pricing" || pathname.endsWith("/pricing");
   const [data, setData] = useState<EarlyBirdApi | null>(initial);
   const [loading, setLoading] = useState(!initial);
 
@@ -73,9 +75,11 @@ export function EarlyBirdBannerClient({
               <span className="early-bird-banner-eyebrow">{t("slotsFullEyebrow")}</span>
               <p className="early-bird-strip-text">{t("slotsFullHeadline")}</p>
             </div>
-            <Link href="/pricing" className="btn primary early-bird-banner-cta early-bird-strip-cta">
-              {t("ctaPricing")}
-            </Link>
+            {!onPricing ? (
+              <Link href="/pricing" className="btn primary early-bird-banner-cta early-bird-strip-cta">
+                {t("ctaPricing")}
+              </Link>
+            ) : null}
           </div>
         </section>
       );
@@ -114,9 +118,11 @@ export function EarlyBirdBannerClient({
               <span className="early-bird-banner-eyebrow">{t("yoursEyebrow")}</span>
               <p className="early-bird-strip-text">{t("yoursHeadline")}</p>
             </div>
-            <Link href="/pricing" className="btn primary early-bird-banner-cta early-bird-strip-cta">
-              {t("ctaActivate")}
-            </Link>
+            {!onPricing ? (
+              <Link href="/pricing" className="btn primary early-bird-banner-cta early-bird-strip-cta">
+                {t("ctaActivate")}
+              </Link>
+            ) : null}
           </div>
         </section>
       );
@@ -157,9 +163,11 @@ export function EarlyBirdBannerClient({
             <span className="early-bird-strip-spots">
               {t("remaining", { remaining })}
             </span>
-            <Link href="/pricing" className="btn primary early-bird-banner-cta early-bird-strip-cta">
-              {t("ctaActivate")}
-            </Link>
+            {!onPricing ? (
+              <Link href="/pricing" className="btn primary early-bird-banner-cta early-bird-strip-cta">
+                {t("ctaActivate")}
+              </Link>
+            ) : null}
           </div>
         </div>
       </section>

@@ -47,11 +47,33 @@ export default async function PricingPage({
   const urgent3 = PRICING_PRODUCTS.URGENT_3;
   const urgent7 = PRICING_PRODUCTS.URGENT_7;
 
-  function remainingSpotsLine() {
-    if (!earlyBirdOfferOpen) return null;
+  function priceBlock(amountAmd: number, days: number) {
+    const suffix = `/ ${days} ${t("pricing.days")}`;
+    if (globalFree) {
+      return (
+        <p className="pricing-amount">
+          <strong>{t("pricing.free")}</strong>
+          <span>{suffix}</span>
+        </p>
+      );
+    }
+    if (earlyBirdOfferOpen || earlyBirdFree) {
+      return (
+        <p className="pricing-amount pricing-amount-early">
+          <span className="pricing-regular-price">
+            <s>
+              {formatAmd(amountAmd)} ֏
+            </s>
+          </span>
+          <strong className="pricing-free-now">{t("pricing.freeNow")}</strong>
+          <span>{suffix}</span>
+        </p>
+      );
+    }
     return (
-      <p className="pricing-remaining-spots">
-        {t("pricing.remainingFreeSpots", { remaining: stats.remaining })}
+      <p className="pricing-amount">
+        <strong>{formatAmd(amountAmd)}</strong> ֏
+        <span>{suffix}</span>
       </p>
     );
   }
@@ -67,18 +89,15 @@ export default async function PricingPage({
     }
     if (earlyBirdOfferOpen || earlyBirdFree) {
       return (
-        <div className="pricing-amount-block">
-          <p className="pricing-amount pricing-amount-early">
-            <span className="pricing-regular-price">
-              <s>
-                {formatAmd(amountAmd)} ֏
-              </s>
-            </span>
-            <strong className="pricing-free-now">{t("pricing.freeNow")}</strong>
-            <span>{suffix ? ` ${suffix}` : ""}</span>
-          </p>
-          {remainingSpotsLine()}
-        </div>
+        <p className="pricing-amount pricing-amount-early">
+          <span className="pricing-regular-price">
+            <s>
+              {formatAmd(amountAmd)} ֏
+            </s>
+          </span>
+          <strong className="pricing-free-now">{t("pricing.freeNow")}</strong>
+          <span>{suffix ? ` ${suffix}` : ""}</span>
+        </p>
       );
     }
     return (
@@ -98,6 +117,7 @@ export default async function PricingPage({
         ]}
       />
 
+      {/* One slim early-bird strip — avoids stacked duplicate banners */}
       {!globalFree ? <EarlyBirdBanner variant="strip" /> : null}
 
       <div className="section-head">
@@ -108,7 +128,7 @@ export default async function PricingPage({
             {globalFree
               ? t("pricing.ledeFree")
               : earlyBirdOfferOpen
-                ? t("pricing.ledeEarlyBird", { remaining: stats.remaining })
+                ? t("pricing.ledeEarlyBirdShort")
                 : t("pricing.lede")}
           </p>
         </div>
@@ -119,214 +139,21 @@ export default async function PricingPage({
         ) : null}
       </div>
 
-      {earlyBirdFree && !globalFree ? (
-        <div className="early-bird-user-banner" role="status">
-          <p className="early-bird-user-banner-title">
-            {t("earlyBird.pricingQualified")}
-          </p>
-          <p className="early-bird-user-banner-note">
-            {stats.slotsFull
-              ? t("earlyBird.pricingQualifiedFull")
-              : t("earlyBird.pricingQualifiedOpen", { remaining: stats.remaining })}
-          </p>
-        </div>
-      ) : null}
-
       {globalFree ? (
-        <div className="demo-mode-banner" role="status">
+        <div className="demo-mode-banner pricing-status-strip" role="status">
           <p className="demo-mode-banner-title">{t("pricing.freeBannerTitle")}</p>
           <p className="demo-mode-banner-note">{t("pricing.freeBanner")}</p>
         </div>
-      ) : earlyBirdOfferOpen ? (
-        <div className="demo-mode-banner early-bird-pricing-badge" role="status">
-          <p className="demo-mode-banner-title">
-            {t("earlyBird.pricingBadge", { remaining: stats.remaining })}
-          </p>
-          <p className="demo-mode-banner-note">
-            {t("earlyBird.pricingBadgeNote", {
-              claimed: stats.earlyBirdClaimed,
-              limit: stats.freeLimit,
-            })}
-          </p>
-        </div>
-      ) : demoMode ? (
-        <div className="demo-mode-banner" role="status">
+      ) : demoMode && !earlyBirdOfferOpen && !earlyBirdFree ? (
+        <div className="demo-mode-banner pricing-status-strip" role="status">
           <p className="demo-mode-banner-title">{t("pricing.demoModeTitle")}</p>
           <p className="demo-mode-banner-note">{t("pricing.demoBanner")}</p>
         </div>
-      ) : (
+      ) : !earlyBirdOfferOpen && !earlyBirdFree ? (
         <p className="tiny muted">{t("pricing.stripeNote", { rate: AMD_PER_USD })}</p>
-      )}
+      ) : null}
 
       {!showFreeOfferUi ? <AcceptedPayments badgesOnly /> : null}
-
-      {/* TOP BOOST — primary monetization: pay site to appear at top of lists */}
-      <article className="pricing-card pricing-card-featured pricing-card-top">
-        <p className="pricing-pill">{t("pricing.boost.heroPill")}</p>
-        <h2>{t("pricing.boost.name")}</h2>
-        <p className="pricing-tagline">
-          {showFreeOfferUi ? t("pricing.boost.taglineFree") : t("pricing.boost.tagline")}
-        </p>
-        <div className="pricing-amount-row">
-          {globalFree ? (
-            <>
-              <p className="pricing-amount">
-                <strong>{t("pricing.free")}</strong>
-                <span>/ 7 {t("pricing.days")}</span>
-              </p>
-              <p className="pricing-amount">
-                <strong>{t("pricing.free")}</strong>
-                <span>/ 30 {t("pricing.days")}</span>
-              </p>
-            </>
-          ) : earlyBirdOfferOpen || earlyBirdFree ? (
-            <>
-              <div className="pricing-amount-block">
-                <p className="pricing-amount pricing-amount-early">
-                  <span className="pricing-regular-price">
-                    <s>
-                      {formatAmd(boost7.amountAmd)} ֏
-                    </s>
-                  </span>
-                  <strong className="pricing-free-now">{t("pricing.freeNow")}</strong>
-                  <span>/ 7 {t("pricing.days")}</span>
-                </p>
-              </div>
-              <div className="pricing-amount-block">
-                <p className="pricing-amount pricing-amount-early">
-                  <span className="pricing-regular-price">
-                    <s>
-                      {formatAmd(boost30.amountAmd)} ֏
-                    </s>
-                  </span>
-                  <strong className="pricing-free-now">{t("pricing.freeNow")}</strong>
-                  <span>/ 30 {t("pricing.days")}</span>
-                </p>
-              </div>
-            </>
-          ) : (
-            <>
-              <p className="pricing-amount">
-                <strong>{formatAmd(boost7.amountAmd)}</strong> ֏
-                <span>/ 7 {t("pricing.days")}</span>
-              </p>
-              <p className="pricing-amount">
-                <strong>{formatAmd(boost30.amountAmd)}</strong> ֏
-                <span>/ 30 {t("pricing.days")}</span>
-              </p>
-            </>
-          )}
-        </div>
-        {earlyBirdOfferOpen ? remainingSpotsLine() : null}
-        <ul className="pricing-features">
-          <li>{t("pricing.boost.f1")}</li>
-          <li>{t("pricing.boost.f2")}</li>
-          <li>{showFreeOfferUi ? t("pricing.boost.f3Free") : t("pricing.boost.f3")}</li>
-          <li>{t("pricing.boost.f4")}</li>
-        </ul>
-        <p className="tiny muted">
-          {showFreeOfferUi
-            ? t("pricing.boost.fromListingFree")
-            : t("pricing.boost.fromListing")}
-        </p>
-        <div className="pricing-actions">
-          {session ? (
-            <>
-              <Link href="/my/machinery" className="btn primary">
-                {t("pricing.boost.openListings")}
-              </Link>
-              <Link href="/my/animals" className="btn ghost">
-                {t("nav.animals")}
-              </Link>
-              <Link href="/forward" className="btn ghost">
-                {t("nav.forward")}
-              </Link>
-            </>
-          ) : (
-            <Link href="/auth/register" className="btn primary">
-              {t("pricing.boost.cta")}
-            </Link>
-          )}
-        </div>
-      </article>
-
-      {/* URGENT SALE — homepage «Շտապ վաճառք» placement (Supply) */}
-      <article className="pricing-card pricing-card-urgent">
-        <p className="pricing-pill pricing-pill-urgent">{t("pricing.urgent.heroPill")}</p>
-        <h2>{t("pricing.urgent.name")}</h2>
-        <p className="pricing-tagline">
-          {showFreeOfferUi ? t("pricing.urgent.taglineFree") : t("pricing.urgent.tagline")}
-        </p>
-        <div className="pricing-amount-row">
-          {globalFree ? (
-            <>
-              <p className="pricing-amount">
-                <strong>{t("pricing.free")}</strong>
-                <span>/ 3 {t("pricing.days")}</span>
-              </p>
-              <p className="pricing-amount">
-                <strong>{t("pricing.free")}</strong>
-                <span>/ 7 {t("pricing.days")}</span>
-              </p>
-            </>
-          ) : earlyBirdOfferOpen || earlyBirdFree ? (
-            <>
-              <div className="pricing-amount-block">
-                <p className="pricing-amount pricing-amount-early">
-                  <span className="pricing-regular-price">
-                    <s>{formatAmd(urgent3.amountAmd)} ֏</s>
-                  </span>
-                  <strong className="pricing-free-now">{t("pricing.freeNow")}</strong>
-                  <span>/ 3 {t("pricing.days")}</span>
-                </p>
-              </div>
-              <div className="pricing-amount-block">
-                <p className="pricing-amount pricing-amount-early">
-                  <span className="pricing-regular-price">
-                    <s>{formatAmd(urgent7.amountAmd)} ֏</s>
-                  </span>
-                  <strong className="pricing-free-now">{t("pricing.freeNow")}</strong>
-                  <span>/ 7 {t("pricing.days")}</span>
-                </p>
-              </div>
-            </>
-          ) : (
-            <>
-              <p className="pricing-amount">
-                <strong>{formatAmd(urgent3.amountAmd)}</strong> ֏
-                <span>/ 3 {t("pricing.days")}</span>
-              </p>
-              <p className="pricing-amount">
-                <strong>{formatAmd(urgent7.amountAmd)}</strong> ֏
-                <span>/ 7 {t("pricing.days")}</span>
-              </p>
-            </>
-          )}
-        </div>
-        {earlyBirdOfferOpen ? remainingSpotsLine() : null}
-        <ul className="pricing-features">
-          <li>{t("pricing.urgent.f1")}</li>
-          <li>{t("pricing.urgent.f2")}</li>
-          <li>{showFreeOfferUi ? t("pricing.urgent.f3Free") : t("pricing.urgent.f3")}</li>
-          <li>{t("pricing.urgent.f4")}</li>
-        </ul>
-        <p className="tiny muted">
-          {showFreeOfferUi
-            ? t("pricing.urgent.fromListingFree")
-            : t("pricing.urgent.fromListing")}
-        </p>
-        <div className="pricing-actions">
-          {session ? (
-            <Link href="/supply" className="btn primary">
-              {t("pricing.urgent.openListings")}
-            </Link>
-          ) : (
-            <Link href="/auth/register" className="btn primary">
-              {t("pricing.urgent.cta")}
-            </Link>
-          )}
-        </div>
-      </article>
 
       {entitlements?.isPro ? (
         <p className="pro-active-banner">
@@ -338,103 +165,214 @@ export default async function PricingPage({
         </p>
       ) : null}
 
-      <div className="pricing-grid">
-        <article className="pricing-card">
-          <h2>{t("pricing.farmPro.name")}</h2>
-          <p className="pricing-tagline">{t("pricing.farmPro.tagline")}</p>
-          {priceLabel(farmMonthly.amountAmd, `/${t("pricing.perMonth")}`)}
-          {globalFree ? (
-            <p className="pricing-alt">
-              {t("pricing.free")} / {t("pricing.perYear")}
-            </p>
-          ) : earlyBirdOfferOpen || earlyBirdFree ? (
-            <p className="pricing-alt pricing-alt-early">
-              <s>
-                {formatAmd(farmYearly.amountAmd)} ֏
-              </s>{" "}
-              <span className="pricing-free-now">{t("pricing.freeNow")}</span> /{" "}
-              {t("pricing.perYear")}
-            </p>
-          ) : (
-            <p className="pricing-alt">
-              {formatAmd(farmYearly.amountAmd)} ֏ / {t("pricing.perYear")}
-            </p>
-          )}
-          <ul className="pricing-features">
-            <li>{t("pricing.farmPro.f1")}</li>
-            <li>{t("pricing.farmPro.f2")}</li>
-            <li>{t("pricing.farmPro.f3", { n: FARM_PRO_BOOST_QUOTA })}</li>
-            <li>{t("pricing.farmPro.f4")}</li>
-            <li>{t("pricing.farmPro.f5")}</li>
-          </ul>
-          <div className="pricing-actions">
-            <CheckoutButton
-              productCode="FARM_PRO_MONTHLY"
-              label={
-                userCheckoutFree
-                  ? t("pricing.activateMonth")
-                  : t("pricing.farmPro.ctaMonth")
-              }
-              disabled={Boolean(entitlements?.isPro)}
-              freeMode={userCheckoutFree}
-            />
-            <CheckoutButton
-              productCode="FARM_PRO_YEARLY"
-              className="btn ghost"
-              label={
-                userCheckoutFree
-                  ? t("pricing.activateYear")
-                  : t("pricing.farmPro.ctaYear")
-              }
-              disabled={Boolean(entitlements?.isPro)}
-              freeMode={userCheckoutFree}
-            />
-          </div>
-        </article>
+      {/* Placement packages — side-by-side duration cards */}
+      <section className="pricing-section" aria-labelledby="pricing-placement-heading">
+        <div className="pricing-section-head">
+          <h2 id="pricing-placement-heading">{t("pricing.placementSection")}</h2>
+          <p className="pricing-section-lede">{t("pricing.placementLede")}</p>
+        </div>
 
-        <article className="pricing-card">
-          <h2>{t("pricing.verifiedFarm.name")}</h2>
-          <p className="pricing-tagline">
-            {showFreeOfferUi
-              ? t("pricing.verifiedFarm.taglineFree")
-              : t("pricing.verifiedFarm.tagline")}
-          </p>
-          {priceLabel(verified.amountAmd, `/${t("pricing.perYear")}`)}
-          <ul className="pricing-features">
-            <li>{t("pricing.verifiedFarm.f1")}</li>
-            <li>
+        <div className="pricing-grid pricing-grid-placement">
+          <article className="pricing-card pricing-card-compact pricing-card-top">
+            <p className="pricing-pill">{t("pricing.boost.heroPill")}</p>
+            <h3>{t("pricing.boost.name7")}</h3>
+            {priceBlock(boost7.amountAmd, 7)}
+            <ul className="pricing-features">
+              <li>{t("pricing.boost.f1Short")}</li>
+              <li>{t("pricing.boost.f2")}</li>
+              <li>{showFreeOfferUi ? t("pricing.boost.f3Free") : t("pricing.boost.f3Short")}</li>
+            </ul>
+            <div className="pricing-actions">
+              {session ? (
+                <Link href="/my/machinery" className="btn primary">
+                  {t("pricing.boost.openListings")}
+                </Link>
+              ) : (
+                <Link href="/auth/register" className="btn primary">
+                  {t("pricing.boost.cta")}
+                </Link>
+              )}
+            </div>
+          </article>
+
+          <article className="pricing-card pricing-card-compact pricing-card-top">
+            <p className="pricing-pill">{t("pricing.boost.heroPill")}</p>
+            <h3>{t("pricing.boost.name30")}</h3>
+            {priceBlock(boost30.amountAmd, 30)}
+            <ul className="pricing-features">
+              <li>{t("pricing.boost.f1Short30")}</li>
+              <li>{t("pricing.boost.f2")}</li>
+              <li>{showFreeOfferUi ? t("pricing.boost.f3Free") : t("pricing.boost.f3Short")}</li>
+            </ul>
+            <div className="pricing-actions">
+              {session ? (
+                <Link href="/my/animals" className="btn primary">
+                  {t("pricing.boost.openListings")}
+                </Link>
+              ) : (
+                <Link href="/auth/register" className="btn primary">
+                  {t("pricing.boost.cta")}
+                </Link>
+              )}
+            </div>
+          </article>
+
+          <article className="pricing-card pricing-card-compact pricing-card-urgent">
+            <p className="pricing-pill pricing-pill-urgent">{t("pricing.urgent.heroPill")}</p>
+            <h3>{t("pricing.urgent.name3")}</h3>
+            {priceBlock(urgent3.amountAmd, 3)}
+            <ul className="pricing-features">
+              <li>{t("pricing.urgent.f1Short")}</li>
+              <li>{t("pricing.urgent.f2")}</li>
+              <li>{showFreeOfferUi ? t("pricing.urgent.f3Free") : t("pricing.urgent.f3Short")}</li>
+            </ul>
+            <div className="pricing-actions">
+              {session ? (
+                <Link href="/supply" className="btn primary">
+                  {t("pricing.urgent.openListings")}
+                </Link>
+              ) : (
+                <Link href="/auth/register" className="btn primary">
+                  {t("pricing.urgent.cta")}
+                </Link>
+              )}
+            </div>
+          </article>
+
+          <article className="pricing-card pricing-card-compact pricing-card-urgent">
+            <p className="pricing-pill pricing-pill-urgent">{t("pricing.urgent.heroPill")}</p>
+            <h3>{t("pricing.urgent.name7")}</h3>
+            {priceBlock(urgent7.amountAmd, 7)}
+            <ul className="pricing-features">
+              <li>{t("pricing.urgent.f1Short7")}</li>
+              <li>{t("pricing.urgent.f2")}</li>
+              <li>{showFreeOfferUi ? t("pricing.urgent.f3Free") : t("pricing.urgent.f3Short")}</li>
+            </ul>
+            <div className="pricing-actions">
+              {session ? (
+                <Link href="/supply" className="btn primary">
+                  {t("pricing.urgent.openListings")}
+                </Link>
+              ) : (
+                <Link href="/auth/register" className="btn primary">
+                  {t("pricing.urgent.cta")}
+                </Link>
+              )}
+            </div>
+          </article>
+        </div>
+
+        <p className="tiny muted pricing-section-hint">
+          {showFreeOfferUi
+            ? t("pricing.boost.fromListingFreeShort")
+            : t("pricing.boost.fromListingShort")}
+        </p>
+      </section>
+
+      {/* Membership packages */}
+      <section className="pricing-section" aria-labelledby="pricing-plans-heading">
+        <div className="pricing-section-head">
+          <h2 id="pricing-plans-heading">{t("pricing.plansSection")}</h2>
+          <p className="pricing-section-lede">{t("pricing.plansLede")}</p>
+        </div>
+
+        <div className="pricing-grid pricing-grid-plans">
+          <article className="pricing-card pricing-card-compact">
+            <h3>{t("pricing.farmPro.name")}</h3>
+            <p className="pricing-tagline">{t("pricing.farmPro.tagline")}</p>
+            {priceLabel(farmMonthly.amountAmd, `/${t("pricing.perMonth")}`)}
+            {globalFree ? (
+              <p className="pricing-alt">
+                {t("pricing.free")} / {t("pricing.perYear")}
+              </p>
+            ) : earlyBirdOfferOpen || earlyBirdFree ? (
+              <p className="pricing-alt pricing-alt-early">
+                <s>
+                  {formatAmd(farmYearly.amountAmd)} ֏
+                </s>{" "}
+                <span className="pricing-free-now">{t("pricing.freeNow")}</span> /{" "}
+                {t("pricing.perYear")}
+              </p>
+            ) : (
+              <p className="pricing-alt">
+                {formatAmd(farmYearly.amountAmd)} ֏ / {t("pricing.perYear")}
+              </p>
+            )}
+            <ul className="pricing-features">
+              <li>{t("pricing.farmPro.f1")}</li>
+              <li>{t("pricing.farmPro.f2")}</li>
+              <li>{t("pricing.farmPro.f3", { n: FARM_PRO_BOOST_QUOTA })}</li>
+              <li>{t("pricing.farmPro.f4")}</li>
+            </ul>
+            <div className="pricing-actions">
+              <CheckoutButton
+                productCode="FARM_PRO_MONTHLY"
+                label={
+                  userCheckoutFree
+                    ? t("pricing.activateMonth")
+                    : t("pricing.farmPro.ctaMonth")
+                }
+                disabled={Boolean(entitlements?.isPro)}
+                freeMode={userCheckoutFree}
+              />
+              <CheckoutButton
+                productCode="FARM_PRO_YEARLY"
+                className="btn ghost"
+                label={
+                  userCheckoutFree
+                    ? t("pricing.activateYear")
+                    : t("pricing.farmPro.ctaYear")
+                }
+                disabled={Boolean(entitlements?.isPro)}
+                freeMode={userCheckoutFree}
+              />
+            </div>
+          </article>
+
+          <article className="pricing-card pricing-card-compact">
+            <h3>{t("pricing.verifiedFarm.name")}</h3>
+            <p className="pricing-tagline">
               {showFreeOfferUi
-                ? t("pricing.verifiedFarm.f2Free")
-                : t("pricing.verifiedFarm.f2")}
-            </li>
-          </ul>
-          <CheckoutButton
-            productCode="VERIFIED_FARM_YEARLY"
-            label={
-              userCheckoutFree ? t("pricing.activate") : t("pricing.verifiedFarm.cta")
-            }
-            disabled={Boolean(entitlements?.isVerifiedPaid)}
-            freeMode={userCheckoutFree}
-          />
-        </article>
+                ? t("pricing.verifiedFarm.taglineFree")
+                : t("pricing.verifiedFarm.tagline")}
+            </p>
+            {priceLabel(verified.amountAmd, `/${t("pricing.perYear")}`)}
+            <ul className="pricing-features">
+              <li>{t("pricing.verifiedFarm.f1")}</li>
+              <li>
+                {showFreeOfferUi
+                  ? t("pricing.verifiedFarm.f2Free")
+                  : t("pricing.verifiedFarm.f2")}
+              </li>
+            </ul>
+            <CheckoutButton
+              productCode="VERIFIED_FARM_YEARLY"
+              label={
+                userCheckoutFree ? t("pricing.activate") : t("pricing.verifiedFarm.cta")
+              }
+              disabled={Boolean(entitlements?.isVerifiedPaid)}
+              freeMode={userCheckoutFree}
+            />
+          </article>
 
-        <article className="pricing-card">
-          <h2>{t("pricing.buyerPro.name")}</h2>
-          <p className="pricing-tagline">{t("pricing.buyerPro.tagline")}</p>
-          {priceLabel(buyer.amountAmd, `/${t("pricing.perMonth")}`)}
-          <ul className="pricing-features">
-            <li>{t("pricing.buyerPro.f1")}</li>
-            <li>{t("pricing.buyerPro.f2")}</li>
-            <li>{t("pricing.buyerPro.f3")}</li>
-          </ul>
-          <CheckoutButton
-            productCode="BUYER_PRO_MONTHLY"
-            label={userCheckoutFree ? t("pricing.activate") : t("pricing.buyerPro.cta")}
-            disabled={Boolean(entitlements?.isBuyerPro)}
-            freeMode={userCheckoutFree}
-          />
-        </article>
-      </div>
+          <article className="pricing-card pricing-card-compact">
+            <h3>{t("pricing.buyerPro.name")}</h3>
+            <p className="pricing-tagline">{t("pricing.buyerPro.tagline")}</p>
+            {priceLabel(buyer.amountAmd, `/${t("pricing.perMonth")}`)}
+            <ul className="pricing-features">
+              <li>{t("pricing.buyerPro.f1")}</li>
+              <li>{t("pricing.buyerPro.f2")}</li>
+              <li>{t("pricing.buyerPro.f3")}</li>
+            </ul>
+            <CheckoutButton
+              productCode="BUYER_PRO_MONTHLY"
+              label={userCheckoutFree ? t("pricing.activate") : t("pricing.buyerPro.cta")}
+              disabled={Boolean(entitlements?.isBuyerPro)}
+              freeMode={userCheckoutFree}
+            />
+          </article>
+        </div>
+      </section>
 
       <p className="tiny muted pricing-footnote">
         {showFreeOfferUi ? t("pricing.offlineNoteFree") : t("pricing.offlineNote")}
