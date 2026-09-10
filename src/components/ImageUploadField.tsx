@@ -100,12 +100,18 @@ export function ImageUploadField({
 
       setLocalPreparing(true);
       try {
-        const compressed = await Promise.all(
-          accepted.map((file) => compressImageForUpload(file, MAX_IMAGE_BYTES)),
-        );
+        // Sequential compress — parallel encode of several phone photos OOMs on mobile.
+        // Default ~1.8 MB target leaves headroom under Vercel's ~4.5 MB body limit.
+        const compressed: File[] = [];
+        for (const file of accepted) {
+          try {
+            compressed.push(await compressImageForUpload(file));
+          } catch {
+            compressed.push(file);
+          }
+        }
         onChange([...files, ...compressed]);
       } catch {
-        // Fall back to originals if encode fails mid-batch.
         onChange([...files, ...accepted]);
       } finally {
         setLocalPreparing(false);
@@ -289,15 +295,32 @@ export function ImageUploadField({
   );
 }
 
+const UPLOAD_TIMEOUT_MS = 90_000;
+const UPLOAD_MAX_ATTEMPTS = 3;
+
+function sleep(ms: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, ms));
+}
+
+function isNonRetryableUploadError(message: string): boolean {
+  return (
+    message === "Unauthorized" ||
+    message === "IMAGE_TOO_LARGE" ||
+    /too many uploads/i.test(message)
+  );
+}
+
 function uploadOneImage(
   file: File,
   opts?: { onProgress?: (pct: number) => void },
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const fd = new FormData();
-    fd.append("files", file);
+    // Explicit filename helps some runtimes accept canvas-compressed Blobs.
+    fd.append("files", file, file.name || "photo.jpg");
 
     const xhr = new XMLHttpRequest();
+    xhr.timeout = UPLOAD_TIMEOUT_MS;
     xhr.upload.addEventListener("progress", (e) => {
       if (e.lengthComputable && opts?.onProgress) {
         opts.onProgress(Math.round((e.loaded / e.total) * 100));
@@ -334,10 +357,33 @@ function uploadOneImage(
       resolve(data.urls[0]);
     });
     xhr.addEventListener("error", () => reject(new Error("NETWORK_ERROR")));
+    xhr.addEventListener("timeout", () => reject(new Error("NETWORK_ERROR")));
+    xhr.addEventListener("abort", () => reject(new Error("NETWORK_ERROR")));
     xhr.open("POST", "/api/upload");
     xhr.withCredentials = true;
     xhr.send(fd);
   });
+}
+
+async function uploadOneImageWithRetry(
+  file: File,
+  opts?: { onProgress?: (pct: number) => void },
+): Promise<string> {
+  let lastError = new Error("UPLOAD_FAILED");
+  for (let attempt = 0; attempt < UPLOAD_MAX_ATTEMPTS; attempt++) {
+    try {
+      return await uploadOneImage(file, opts);
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error("UPLOAD_FAILED");
+      if (isNonRetryableUploadError(lastError.message)) {
+        throw lastError;
+      }
+      if (attempt < UPLOAD_MAX_ATTEMPTS - 1) {
+        await sleep(400 * (attempt + 1));
+      }
+    }
+  }
+  throw lastError;
 }
 
 export type UploadImagesResult = {
@@ -348,8 +394,8 @@ export type UploadImagesResult = {
 
 /**
  * Compress then upload one file per request so payloads stay under Vercel's
- * ~4.5 MB serverless body limit. Continues after individual failures so the
- * caller can keep successes and retry only the failed files.
+ * ~4.5 MB serverless body limit. Uploads are sequential with per-file retries;
+ * individual failures do not abort the rest of the batch.
  */
 export async function uploadImagesDetailed(
   files: File[],
@@ -366,8 +412,10 @@ export async function uploadImagesDetailed(
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
     try {
-      const compressed = await compressImageForUpload(file, MAX_IMAGE_BYTES);
-      if (compressed.size > MAX_IMAGE_BYTES) {
+      // Default target (~1.8 MB) — MAX_IMAGE_BYTES alone is too close to the
+      // serverless body limit once multipart framing is added.
+      const compressed = await compressImageForUpload(file);
+      if (compressed.size <= 0 || compressed.size > MAX_IMAGE_BYTES) {
         failedFiles.push(file);
         errors.push("IMAGE_TOO_LARGE");
         opts?.onProgress?.(Math.round(((i + 1) / files.length) * 100));
@@ -375,7 +423,7 @@ export async function uploadImagesDetailed(
       }
       const base = Math.round((i / files.length) * 100);
       const span = Math.round(100 / files.length);
-      const url = await uploadOneImage(compressed, {
+      const url = await uploadOneImageWithRetry(compressed, {
         onProgress: (pct) =>
           opts?.onProgress?.(Math.min(99, base + Math.round((pct * span) / 100))),
       });

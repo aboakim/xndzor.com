@@ -11,6 +11,9 @@ import {
 import { detectImageKind, KIND_TO_EXT } from "@/lib/image-magic";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 
+/** Allow Blob puts on cold starts without cutting off mid-upload. */
+export const maxDuration = 60;
+
 function blobToken(): string | undefined {
   const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
   return token || undefined;

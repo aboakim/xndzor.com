@@ -722,7 +722,7 @@
     "uploading": "Загрузка…",
     "uploadingProgress": "Загрузка… {pct}%",
     "preparing": "Подготовка фото…",
-    "partialFail": "{failed} фото не загрузилось ({ok} ок). Можно повторить или опубликовать без них",
+    "partialFail": "{failed} фото не загрузилось ({ok} ок). Удалите неудачные или попробуйте снова",
     "previewLabel": "Выбранные фото",
     "previewAlt": "Фото {n}",
     "galleryLabel": "Фото объявления",

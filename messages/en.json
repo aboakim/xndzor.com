@@ -722,7 +722,7 @@
     "uploading": "Uploading…",
     "uploadingProgress": "Uploading… {pct}%",
     "preparing": "Preparing photos…",
-    "partialFail": "{failed} photo(s) failed ({ok} ok). Retry those, or publish without them",
+    "partialFail": "{failed} photo(s) failed to upload ({ok} ok). Remove failed photos or try again",
     "previewLabel": "Selected photos",
     "previewAlt": "Photo {n}",
     "galleryLabel": "Listing photos",

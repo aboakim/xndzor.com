@@ -116,18 +116,22 @@ export function SupplyForm({
         const result = await uploadImagesDetailed(files, { onProgress: setUploadProgress });
         imageUrls = [...uploadedUrls, ...result.urls];
         setUploadedUrls(imageUrls);
-        setFiles(result.failedFiles);
-        if (result.failedFiles.length > 0) {
+        // Only block when nothing uploaded at all — partial success still publishes.
+        if (imageUrls.length === 0) {
+          setFiles(result.failedFiles);
           setError(
-            t("images.partialFail", {
-              failed: result.failedFiles.length,
-              ok: imageUrls.length,
-            }),
+            result.failedFiles.length > 0
+              ? t("images.partialFail", {
+                  failed: result.failedFiles.length,
+                  ok: 0,
+                })
+              : t("images.uploadError"),
           );
           setPhase("idle");
           submittingRef.current = false;
           return;
         }
+        setFiles([]);
       }
 
       setPhase("publishing");

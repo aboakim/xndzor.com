@@ -4,8 +4,11 @@
  */
 
 const MAX_DIMENSION = 1920;
-const TARGET_BYTES = 1.8 * 1024 * 1024;
-const MIN_QUALITY = 0.55;
+/** Stay well under Vercel’s ~4.5 MB request body once multipart framing is added. */
+export const UPLOAD_TARGET_BYTES = 1.8 * 1024 * 1024;
+const TARGET_BYTES = UPLOAD_TARGET_BYTES;
+const MIN_QUALITY = 0.52;
+const MIN_DIMENSION = 1024;
 
 function canvasToBlob(
   canvas: HTMLCanvasElement,
@@ -21,6 +24,25 @@ function canvasToBlob(
   });
 }
 
+function drawToCanvas(
+  source: CanvasImageSource,
+  width: number,
+  height: number,
+): HTMLCanvasElement {
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    throw new Error("Canvas unsupported");
+  }
+  // White fill so transparent PNGs don't become black JPEG.
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, width, height);
+  ctx.drawImage(source, 0, 0, width, height);
+  return canvas;
+}
+
 /**
  * Returns a JPEG/WebP File small enough for a single `/api/upload` request.
  * Falls back to the original file when compression is unnecessary or unsupported.
@@ -33,7 +55,7 @@ export async function compressImageForUpload(
     return file;
   }
 
-  // Skip work for already-small files.
+  // Skip work for already-small files (under ~900 KB).
   if (file.size > 0 && file.size <= Math.min(maxBytes, 900 * 1024)) {
     return file;
   }
@@ -46,35 +68,38 @@ export async function compressImageForUpload(
   }
 
   try {
-    const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
-    const width = Math.max(1, Math.round(bitmap.width * scale));
-    const height = Math.max(1, Math.round(bitmap.height * scale));
+    let width = bitmap.width;
+    let height = bitmap.height;
+    const initialScale = Math.min(1, MAX_DIMENSION / Math.max(width, height));
+    width = Math.max(1, Math.round(width * initialScale));
+    height = Math.max(1, Math.round(height * initialScale));
 
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) {
-      bitmap.close();
-      return file;
-    }
-    // White fill so transparent PNGs don't become black JPEG.
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, width, height);
-    ctx.drawImage(bitmap, 0, 0, width, height);
+    const outType = file.type === "image/webp" ? "image/webp" : "image/jpeg";
+    let blob: Blob | null = null;
+    let canvas = drawToCanvas(bitmap, width, height);
     bitmap.close();
 
-    const outType =
-      file.type === "image/webp" ? "image/webp" : "image/jpeg";
-    let quality = 0.82;
-    let blob = await canvasToBlob(canvas, outType, quality);
-
-    while (blob.size > maxBytes && quality > MIN_QUALITY) {
-      quality = Math.max(MIN_QUALITY, quality - 0.1);
+    for (let pass = 0; pass < 4; pass++) {
+      let quality = 0.82;
       blob = await canvasToBlob(canvas, outType, quality);
+      while (blob.size > maxBytes && quality > MIN_QUALITY) {
+        quality = Math.max(MIN_QUALITY, quality - 0.1);
+        blob = await canvasToBlob(canvas, outType, quality);
+      }
+      if (blob.size <= maxBytes) break;
+
+      const nextW = Math.max(MIN_DIMENSION, Math.round(width * 0.75));
+      const nextH = Math.max(MIN_DIMENSION, Math.round(height * 0.75));
+      if (nextW >= width && nextH >= height) break;
+      width = nextW;
+      height = nextH;
+      canvas = drawToCanvas(canvas, width, height);
     }
 
-    if (blob.size >= file.size && scale === 1) {
+    if (!blob) return file;
+
+    // Prefer original only when we did not shrink and encode did not help.
+    if (blob.size >= file.size && initialScale === 1 && blob.size <= maxBytes) {
       return file;
     }
 
