@@ -2,7 +2,8 @@
  * Idempotent: one ACTIVE sample listing per major public marketplace board,
  * owned by site ADMIN so Call/WhatsApp stay hidden (OwnerContactActions + userIsAdmin).
  *
- * Marker title prefix: [Օրինակ] — re-run skips/updates existing rows with the same title.
+ * Quiet marker: description (or plot irrigationNotes) ends with `demo:admin-sample`
+ * so re-runs upsert without ugly [Օրինակ] title prefixes.
  *
  * Usage: node scripts/seed-admin-sample-listings.mjs
  * Does not print DATABASE_URL or other secrets.
@@ -12,8 +13,18 @@ import { PrismaClient } from "@prisma/client";
 
 loadEnvFile();
 
-const MARKER = "[Օրինակ]";
+const DEMO_TAG = "demo:admin-sample";
 const prisma = new PrismaClient();
+
+/** @param {string} body */
+function withDemoTag(body) {
+  const base = String(body || "")
+    .split("\n")
+    .filter((line) => !/^demo:[a-z0-9_-]+$/i.test(line.trim()))
+    .join("\n")
+    .trim();
+  return base ? `${base}\n${DEMO_TAG}` : DEMO_TAG;
+}
 
 /** @param {string} url */
 function hostKind(url) {
@@ -128,6 +139,32 @@ async function upsertListing({
   };
 }
 
+
+/**
+ * Find admin sample by clean title or legacy [Օրինակ] title.
+ * @param {object} delegate prisma model delegate
+ * @param {object} opts
+ * @param {string} opts.title
+ * @param {string} opts.adminId
+ * @param {string} [opts.ownerField]
+ * @param {string} [opts.titleField]
+ */
+async function findDemoListing(
+  delegate,
+  { title, adminId, ownerField = "userId", titleField = "title" },
+) {
+  const legacyTitle = `[Օրինակ] ${title}`;
+  return (
+    (await delegate.findFirst({
+      where: { [ownerField]: adminId, [titleField]: title },
+    })) ||
+    (await delegate.findFirst({
+      where: { [ownerField]: adminId, [titleField]: legacyTitle },
+    })) ||
+    null
+  );
+}
+
 async function main() {
   const url = process.env.DATABASE_URL?.trim();
   if (!url) {
@@ -158,21 +195,19 @@ async function main() {
 
   // 1) Supply
   {
-    const title = `${MARKER} Բերք վաճառքի օրինակ — ինչպես է աշխատում «Վաճառել» բաժինը`;
+    const title = `Բերք վաճառքի օրինակ — ինչպես է աշխատում «Վաճառել» բաժինը`;
     results.push(
       await upsertListing({
         section: "supply",
         pathPrefix: "/hy/supply",
         find: () =>
-          prisma.supply.findFirst({
-            where: { title, userId: admin.id },
-          }),
+          findDemoListing(prisma.supply, { title, adminId: admin.id }),
         update: (row) =>
           prisma.supply.update({
             where: { id: row.id },
             data: {
               description:
-                "Օրինակ հայտարարություն։ Այստեղ ֆերմերները տեղադրում են վաճառքի բերք՝ քանակ, գին և մարզ։ Սա ցուցադրական է, ոչ իրական վաճառք։",
+                withDemoTag("Օրինակ հայտարարություն։ Այստեղ ֆերմերները տեղադրում են վաճառքի բերք՝ քանակ, գին և մարզ։ Սա ցուցադրական է, ոչ իրական վաճառք։"),
               productId: "tomato",
               qtyAvailable: 500,
               unit: "kg",
@@ -192,7 +227,7 @@ async function main() {
             data: {
               title,
               description:
-                "Օրինակ հայտարարություն։ Այստեղ ֆերմերները տեղադրում են վաճառքի բերք՝ քանակ, գին և մարզ։ Սա ցուցադրական է, ոչ իրական վաճառք։",
+                withDemoTag("Օրինակ հայտարարություն։ Այստեղ ֆերմերները տեղադրում են վաճառքի բերք՝ քանակ, գին և մարզ։ Սա ցուցադրական է, ոչ իրական վաճառք։"),
               productId: "tomato",
               qtyAvailable: 500,
               unit: "kg",
@@ -214,21 +249,19 @@ async function main() {
 
   // 2) Demand
   {
-    const title = `${MARKER} Գնորդի պահանջարկի օրինակ — ինչպես է աշխատում «Գնել» բաժինը`;
+    const title = `Գնորդի պահանջարկի օրինակ — ինչպես է աշխատում «Գնել» բաժինը`;
     results.push(
       await upsertListing({
         section: "demand",
         pathPrefix: "/hy/demand",
         find: () =>
-          prisma.demand.findFirst({
-            where: { title, userId: admin.id },
-          }),
+          findDemoListing(prisma.demand, { title, adminId: admin.id }),
         update: (row) =>
           prisma.demand.update({
             where: { id: row.id },
             data: {
               description:
-                "Օրինակ պահանջարկ։ Գնորդները այստեղ նշում են՝ ինչ բերք են փնտրում, քանակ և ժամկետ։ Ցուցադրական է։",
+                withDemoTag("Օրինակ պահանջարկ։ Գնորդները այստեղ նշում են՝ ինչ բերք են փնտրում, քանակ և ժամկետ։ Ցուցադրական է։"),
               productId: "potato",
               qtyMin: 1000,
               qtyMax: 3000,
@@ -251,7 +284,7 @@ async function main() {
             data: {
               title,
               description:
-                "Օրինակ պահանջարկ։ Գնորդները այստեղ նշում են՝ ինչ բերք են փնտրում, քանակ և ժամկետ։ Ցուցադրական է։",
+                withDemoTag("Օրինակ պահանջարկ։ Գնորդները այստեղ նշում են՝ ինչ բերք են փնտրում, քանակ և ժամկետ։ Ցուցադրական է։"),
               productId: "potato",
               qtyMin: 1000,
               qtyMax: 3000,
@@ -276,7 +309,7 @@ async function main() {
 
   // 3) Forward (FutureHarvest)
   {
-    const title = `${MARKER} Ապագա բերքի օրինակ — նախավաճառք մինչև հավաքը`;
+    const title = `Ապագա բերքի օրինակ — նախավաճառք մինչև հավաքը`;
     const harvestDate = new Date();
     harvestDate.setMonth(harvestDate.getMonth() + 3);
     results.push(
@@ -284,15 +317,13 @@ async function main() {
         section: "forward",
         pathPrefix: "/hy/forward",
         find: () =>
-          prisma.futureHarvest.findFirst({
-            where: { title, userId: admin.id },
-          }),
+          findDemoListing(prisma.futureHarvest, { title, adminId: admin.id }),
         update: (row) =>
           prisma.futureHarvest.update({
             where: { id: row.id },
             data: {
               description:
-                "Օրինակ ապագա բերք։ Այստեղ ֆերմերները հայտարարում են սպասվող բերքը մինչև հավաքը՝ գնորդները կարող են հետաքրքրվել նախօրոք։ Ցուցադրական է։",
+                withDemoTag("Օրինակ ապագա բերք։ Այստեղ ֆերմերները հայտարարում են սպասվող բերքը մինչև հավաքը՝ գնորդները կարող են հետաքրքրվել նախօրոք։ Ցուցադրական է։"),
               productId: "apple",
               qtyExpected: 5,
               unit: "ton",
@@ -313,7 +344,7 @@ async function main() {
             data: {
               title,
               description:
-                "Օրինակ ապագա բերք։ Այստեղ ֆերմերները հայտարարում են սպասվող բերքը մինչև հավաքը՝ գնորդները կարող են հետաքրքրվել նախօրոք։ Ցուցադրական է։",
+                withDemoTag("Օրինակ ապագա բերք։ Այստեղ ֆերմերները հայտարարում են սպասվող բերքը մինչև հավաքը՝ գնորդները կարող են հետաքրքրվել նախօրոք։ Ցուցադրական է։"),
               productId: "apple",
               qtyExpected: 5,
               unit: "ton",
@@ -334,21 +365,19 @@ async function main() {
 
   // 4) Animals
   {
-    const title = `${MARKER} Կենդանիների վաճառքի օրինակ — անասնաբուծության բաժին`;
+    const title = `Կենդանիների վաճառքի օրինակ — անասնաբուծության բաժին`;
     results.push(
       await upsertListing({
         section: "animals",
         pathPrefix: "/hy/animals",
         find: () =>
-          prisma.animalListing.findFirst({
-            where: { title, userId: admin.id },
-          }),
+          findDemoListing(prisma.animalListing, { title, adminId: admin.id }),
         update: (row) =>
           prisma.animalListing.update({
             where: { id: row.id },
             data: {
               description:
-                "Օրինակ հայտարարություն։ Այստեղ վաճառում են կով, ոչխար, այծ և այլ կենդանիներ՝ տարիք, նպատակ և գին։ Ցուցադրական է։",
+                withDemoTag("Օրինակ հայտարարություն։ Այստեղ վաճառում են կով, ոչխար, այծ և այլ կենդանիներ՝ տարիք, նպատակ և գին։ Ցուցադրական է։"),
               animalType: "SHEEP",
               breed: "Տեղական",
               sex: "MIXED",
@@ -374,7 +403,7 @@ async function main() {
             data: {
               title,
               description:
-                "Օրինակ հայտարարություն։ Այստեղ վաճառում են կով, ոչխար, այծ և այլ կենդանիներ՝ տարիք, նպատակ և գին։ Ցուցադրական է։",
+                withDemoTag("Օրինակ հայտարարություն։ Այստեղ վաճառում են կով, ոչխար, այծ և այլ կենդանիներ՝ տարիք, նպատակ և գին։ Ցուցադրական է։"),
               animalType: "SHEEP",
               breed: "Տեղական",
               sex: "MIXED",
@@ -402,21 +431,19 @@ async function main() {
 
   // 5) Machinery
   {
-    const title = `${MARKER} Տեխնիկայի վաճառքի օրինակ — գյուղտեխնիկայի բաժին`;
+    const title = `Տեխնիկայի վաճառքի օրինակ — գյուղտեխնիկայի բաժին`;
     results.push(
       await upsertListing({
         section: "machinery",
         pathPrefix: "/hy/machinery",
         find: () =>
-          prisma.machineryListing.findFirst({
-            where: { title, userId: admin.id },
-          }),
+          findDemoListing(prisma.machineryListing, { title, adminId: admin.id }),
         update: (row) =>
           prisma.machineryListing.update({
             where: { id: row.id },
             data: {
               description:
-                "Օրինակ հայտարարություն։ Այստեղ վաճառում են տրակտոր, կոմբայն և այլ գյուղտեխնիկա՝ տարի, մոտորաժամ և վիճակ։ Ցուցադրական է։",
+                withDemoTag("Օրինակ հայտարարություն։ Այստեղ վաճառում են տրակտոր, կոմբայն և այլ գյուղտեխնիկա՝ տարի, մոտորաժամ և վիճակ։ Ցուցադրական է։"),
               machineryType: "TRACTOR",
               make: "MTZ",
               model: "82.1",
@@ -441,7 +468,7 @@ async function main() {
             data: {
               title,
               description:
-                "Օրինակ հայտարարություն։ Այստեղ վաճառում են տրակտոր, կոմբայն և այլ գյուղտեխնիկա՝ տարի, մոտորաժամ և վիճակ։ Ցուցադրական է։",
+                withDemoTag("Օրինակ հայտարարություն։ Այստեղ վաճառում են տրակտոր, կոմբայն և այլ գյուղտեխնիկա՝ տարի, մոտորաժամ և վիճակ։ Ցուցադրական է։"),
               machineryType: "TRACTOR",
               make: "MTZ",
               model: "82.1",
@@ -468,21 +495,19 @@ async function main() {
 
   // 6) Jobs
   {
-    const title = `${MARKER} Աշխատանքի պատվերի օրինակ — ինչպես է աշխատում «Պատվիրել աշխատանք»`;
+    const title = `Աշխատանքի պատվերի օրինակ — ինչպես է աշխատում «Պատվիրել աշխատանք»`;
     results.push(
       await upsertListing({
         section: "jobs",
         pathPrefix: "/hy/jobs",
         find: () =>
-          prisma.jobRequest.findFirst({
-            where: { title, userId: admin.id },
-          }),
+          findDemoListing(prisma.jobRequest, { title, adminId: admin.id }),
         update: (row) =>
           prisma.jobRequest.update({
             where: { id: row.id },
             data: {
               description:
-                "Օրինակ պատվեր։ Այստեղ ֆերմերները պատվիրում են հերկ, ցանք, բերքահավաք և այլ աշխատանքներ։ Ցուցադրական է։",
+                withDemoTag("Օրինակ պատվեր։ Այստեղ ֆերմերները պատվիրում են հերկ, ցանք, բերքահավաք և այլ աշխատանքներ։ Ցուցադրական է։"),
               jobType: "HARVEST",
               hectares: 5,
               areaNote: "Մոտ 5 հա այգի",
@@ -501,7 +526,7 @@ async function main() {
             data: {
               title,
               description:
-                "Օրինակ պատվեր։ Այստեղ ֆերմերները պատվիրում են հերկ, ցանք, բերքահավաք և այլ աշխատանքներ։ Ցուցադրական է։",
+                withDemoTag("Օրինակ պատվեր։ Այստեղ ֆերմերները պատվիրում են հերկ, ցանք, բերքահավաք և այլ աշխատանքներ։ Ցուցադրական է։"),
               jobType: "HARVEST",
               hectares: 5,
               areaNote: "Մոտ 5 հա այգի",
@@ -522,18 +547,20 @@ async function main() {
 
   // 7) Plots (login-only FarmOS board — still seeded for admin demo)
   {
-    const name = `${MARKER} Հողամասի օրինակ — FarmOS հողամասերի բաժին`;
+    const name = `Հողամասի օրինակ — FarmOS հողամասերի բաժին`;
     const plantDate = new Date();
     plantDate.setMonth(plantDate.getMonth() - 2);
-    const existing = await prisma.plot.findFirst({
-      where: { name, userId: admin.id },
+    const existing = await findDemoListing(prisma.plot, {
+      title: name,
+      adminId: admin.id,
+      titleField: "name",
     });
     const data = {
       name,
       hectares: 2.5,
       cropProductId: "wheat",
       plantDate,
-      irrigationNotes: "Օրինակ հողամաս։ Այստեղ ֆերմերը գրանցում է իր դաշտերը և մշակույթները։ Ցուցադրական է։",
+      irrigationNotes: withDemoTag("Օրինակ հողամաս։ Այստեղ ֆերմերը գրանցում է իր դաշտերը և մշակույթները։ Ցուցադրական է։"),
       status: "ACTIVE",
       marzId: gyumri.marzId,
       villageId: gyumri.id,
@@ -555,21 +582,19 @@ async function main() {
 
   // 8) Shop — natural products catalog
   {
-    const title = `${MARKER} Բնական արտադրանքի օրինակ — խանութի բաժին`;
+    const title = `Բնական արտադրանքի օրինակ — խանութի բաժին`;
     results.push(
       await upsertListing({
         section: "shop/natural-products",
         pathPrefix: "/hy/shop/natural-products",
         find: () =>
-          prisma.catalogListing.findFirst({
-            where: { title, userId: admin.id },
-          }),
+          findDemoListing(prisma.catalogListing, { title, adminId: admin.id }),
         update: (row) =>
           prisma.catalogListing.update({
             where: { id: row.id },
             data: {
               description:
-                "Օրինակ ապրանք։ Այստեղ վաճառում են մեղր, ձեթ, կաթնամթերք և այլ գյուղական արտադրանք։ Ցուցադրական է։",
+                withDemoTag("Օրինակ ապրանք։ Այստեղ վաճառում են մեղր, ձեթ, կաթնամթերք և այլ գյուղական արտադրանք։ Ցուցադրական է։"),
               category: "NATURAL_PRODUCT",
               subtype: "HONEY",
               brand: "Xndzor Sample",
@@ -594,7 +619,7 @@ async function main() {
             data: {
               title,
               description:
-                "Օրինակ ապրանք։ Այստեղ վաճառում են մեղր, ձեթ, կաթնամթերք և այլ գյուղական արտադրանք։ Ցուցադրական է։",
+                withDemoTag("Օրինակ ապրանք։ Այստեղ վաճառում են մեղր, ձեթ, կաթնամթերք և այլ գյուղական արտադրանք։ Ցուցադրական է։"),
               category: "NATURAL_PRODUCT",
               subtype: "HONEY",
               brand: "Xndzor Sample",
@@ -624,21 +649,19 @@ async function main() {
 
   // 9) Providers
   {
-    const title = `${MARKER} Ծառայության օրինակ — ինչպես է աշխատում «Կատարել աշխատանք»`;
+    const title = `Ծառայության օրինակ — ինչպես է աշխատում «Կատարել աշխատանք»`;
     results.push(
       await upsertListing({
         section: "providers",
         pathPrefix: "/hy/providers",
         find: () =>
-          prisma.serviceProvider.findFirst({
-            where: { title, userId: admin.id },
-          }),
+          findDemoListing(prisma.serviceProvider, { title, adminId: admin.id }),
         update: (row) =>
           prisma.serviceProvider.update({
             where: { id: row.id },
             data: {
               description:
-                "Օրինակ ծառայություն։ Այստեղ մասնագետները առաջարկում են հերկ, ցանք, բերքահավաք և այլ աշխատանքներ պատվերով։ Ցուցադրական է։",
+                withDemoTag("Օրինակ ծառայություն։ Այստեղ մասնագետները առաջարկում են հերկ, ցանք, բերքահավաք և այլ աշխատանքներ պատվերով։ Ցուցադրական է։"),
               jobTypesJson: JSON.stringify(["PLOW", "SOW", "HARVEST"]),
               coverageNote: "Շիրակ և հարակից մարզեր",
               hectaresMax: 20,
@@ -658,7 +681,7 @@ async function main() {
             data: {
               title,
               description:
-                "Օրինակ ծառայություն։ Այստեղ մասնագետները առաջարկում են հերկ, ցանք, բերքահավաք և այլ աշխատանքներ պատվերով։ Ցուցադրական է։",
+                withDemoTag("Օրինակ ծառայություն։ Այստեղ մասնագետները առաջարկում են հերկ, ցանք, բերքահավաք և այլ աշխատանքներ պատվերով։ Ցուցադրական է։"),
               jobTypesJson: JSON.stringify(["PLOW", "SOW", "HARVEST"]),
               coverageNote: "Շիրակ և հարակից մարզեր",
               hectaresMax: 20,
@@ -680,16 +703,18 @@ async function main() {
 
   // 10) Group-buy
   {
-    const title = `${MARKER} Խմբային գնման օրինակ — միասին ավելի էժան`;
+    const title = `Խմբային գնման օրինակ — միասին ավելի էժան`;
     const deadline = new Date();
     deadline.setDate(deadline.getDate() + 45);
-    const existing = await prisma.groupBuyCampaign.findFirst({
-      where: { title, organizerId: admin.id },
+    const existing = await findDemoListing(prisma.groupBuyCampaign, {
+      title,
+      adminId: admin.id,
+      ownerField: "organizerId",
     });
     const data = {
       title,
       description:
-        "Օրինակ խմբային գնում։ Գյուղացիները միավորվում են մեծածախ պատվերի համար՝ ավելի լավ գին ստանալու համար։ Ցուցադրական է։",
+        withDemoTag("Օրինակ խմբային գնում։ Գյուղացիները միավորվում են մեծածախ պատվերի համար՝ ավելի լավ գին ստանալու համար։ Ցուցադրական է։"),
       productId: "other",
       targetQty: 5000,
       unit: "kg",
@@ -719,21 +744,19 @@ async function main() {
 
   // 11) Spaces (public Farm OS board)
   {
-    const title = `${MARKER} Պահեստի տարածքի օրինակ — դատարկ տարածքների բաժին`;
+    const title = `Պահեստի տարածքի օրինակ — դատարկ տարածքների բաժին`;
     results.push(
       await upsertListing({
         section: "spaces",
         pathPrefix: "/hy/spaces",
         find: () =>
-          prisma.spaceListing.findFirst({
-            where: { title, userId: admin.id },
-          }),
+          findDemoListing(prisma.spaceListing, { title, adminId: admin.id }),
         update: (row) =>
           prisma.spaceListing.update({
             where: { id: row.id },
             data: {
               description:
-                "Օրինակ տարածք։ Այստեղ հայտարարում են դատարկ պահեստ, սառնարան, ջերմոց և այլ տարածքներ։ Ցուցադրական է։",
+                withDemoTag("Օրինակ տարածք։ Այստեղ հայտարարում են դատարկ պահեստ, սառնարան, ջերմոց և այլ տարածքներ։ Ցուցադրական է։"),
               spaceType: "WAREHOUSE",
               area: 200,
               areaUnit: "m2",
@@ -753,7 +776,7 @@ async function main() {
             data: {
               title,
               description:
-                "Օրինակ տարածք։ Այստեղ հայտարարում են դատարկ պահեստ, սառնարան, ջերմոց և այլ տարածքներ։ Ցուցադրական է։",
+                withDemoTag("Օրինակ տարածք։ Այստեղ հայտարարում են դատարկ պահեստ, սառնարան, ջերմոց և այլ տարածքներ։ Ցուցադրական է։"),
               spaceType: "WAREHOUSE",
               area: 200,
               areaUnit: "m2",

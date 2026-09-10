@@ -1,7 +1,8 @@
 /**
  * Seed demo Top (Boost) + Urgent placements on admin sample supplies.
  *
- * Uses existing [Օրինակ] … [batch-supply-v1] ACTIVE supplies with photos.
+ * Uses existing ACTIVE supplies tagged `demo:batch-supply-v1` (description footer)
+ * with photos. Legacy [Օրինակ]/[batch-supply-v1] titles still match until cleaned.
  * Does NOT touch Vazgen flax-oil or non-matching titles.
  *
  * Idempotent: upserts Boost rows by a stable marker source DEMO_SEED_TOP,
@@ -16,8 +17,9 @@ import { PrismaClient } from "@prisma/client";
 loadEnvFile();
 
 const prisma = new PrismaClient();
-const MARKER = "[Օրինակ]";
-const BATCH = "[batch-supply-v1]";
+const DEMO_TAG = "demo:batch-supply-v1";
+const LEGACY_MARKER = "[Օրինակ]";
+const LEGACY_BATCH = "[batch-supply-v1]";
 const DEMO_SOURCE = "DEMO_SEED_TOP";
 const TOP_COUNT = 4;
 const URGENT_COUNT = 4;
@@ -34,8 +36,15 @@ async function main() {
   const samples = await prisma.supply.findMany({
     where: {
       status: "ACTIVE",
-      title: { contains: MARKER },
-      AND: [{ title: { contains: BATCH } }],
+      OR: [
+        { description: { contains: DEMO_TAG } },
+        {
+          AND: [
+            { title: { contains: LEGACY_MARKER } },
+            { title: { contains: LEGACY_BATCH } },
+          ],
+        },
+      ],
       NOT: [{ title: { contains: "կտավատ" } }, { title: { contains: "flax" } }],
     },
     select: {

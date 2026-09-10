@@ -1,8 +1,8 @@
 /**
  * Idempotent: ~20 ACTIVE admin Supply (վաճառք) listings with matching Blob photos.
  *
- * Marker: titles start with [Օրինակ] and include batch tag [batch-supply-v1]
- * so re-runs upsert by exact title (no endless duplicates).
+ * Quiet marker: description ends with `demo:batch-supply-v1` (plus natural title).
+ * Re-runs upsert by demo tag + productId (also matches legacy [Օրինակ]…[batch-supply-v1] titles).
  * Does NOT touch Vazgen flax-oil (or any non-matching titles).
  *
  * Sources: public/ads/samples/batch-supply-*.png
@@ -24,8 +24,9 @@ loadEnvFile();
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SAMPLES = join(ROOT, "public", "ads", "samples");
-const MARKER = "[Օրինակ]";
-const BATCH = "[batch-supply-v1]";
+const DEMO_TAG = "demo:batch-supply-v1";
+const LEGACY_MARKER = "[Օրինակ]";
+const LEGACY_BATCH = "[batch-supply-v1]";
 const BASE = "https://www.xndzor.com";
 const FORCE_PHOTOS = process.argv.includes("--force-photos");
 
@@ -339,7 +340,21 @@ function hostKind(url) {
 }
 
 function titleFor(spec) {
-  return `${MARKER} ${spec.titleHy} ${BATCH}`;
+  return spec.titleHy;
+}
+
+/** @param {string} body */
+function withDemoTag(body) {
+  const base = String(body || "")
+    .split("\n")
+    .filter((line) => !/^demo:[a-z0-9_-]+$/i.test(line.trim()))
+    .join("\n")
+    .trim();
+  return base ? `${base}\n${DEMO_TAG}` : DEMO_TAG;
+}
+
+function legacyTitleFor(spec) {
+  return `${LEGACY_MARKER} ${spec.titleHy} ${LEGACY_BATCH}`;
 }
 
 function parseUrls(raw) {
@@ -586,13 +601,27 @@ async function main() {
 
   for (const spec of SPECS) {
     const title = titleFor(spec);
+    const description = withDemoTag(spec.description);
     const village = villageCache.get(`${spec.marzId}:${spec.villageNameEn}`);
     if (!village) throw new Error(`Village cache miss for ${spec.key}`);
 
-    const existing = await prisma.supply.findFirst({
-      where: { title, userId: admin.id },
-      select: { id: true, title: true, imageUrls: true, status: true },
-    });
+    const existing =
+      (await prisma.supply.findFirst({
+        where: {
+          userId: admin.id,
+          productId: spec.productId,
+          description: { contains: DEMO_TAG },
+        },
+        select: { id: true, title: true, imageUrls: true, status: true },
+      })) ||
+      (await prisma.supply.findFirst({
+        where: { title: legacyTitleFor(spec), userId: admin.id },
+        select: { id: true, title: true, imageUrls: true, status: true },
+      })) ||
+      (await prisma.supply.findFirst({
+        where: { title, userId: admin.id },
+        select: { id: true, title: true, imageUrls: true, status: true },
+      }));
 
     let imageUrls = parseUrls(existing?.imageUrls);
     if (FORCE_PHOTOS || !hasRemoteImages(imageUrls)) {
@@ -607,7 +636,7 @@ async function main() {
 
     const data = {
       title,
-      description: spec.description,
+      description,
       productId: spec.productId,
       qtyAvailable: spec.qtyAvailable,
       unit: spec.unit,

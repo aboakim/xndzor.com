@@ -1,5 +1,6 @@
 /**
- * Idempotent: upload sample photos for admin [Օրինակ] listings and set imageUrls/photoUrls.
+ * Idempotent: upload sample photos for admin demo listings and set imageUrls/photoUrls.
+ * Finds by known idHint, then by clean title prefix / legacy [Օրինակ] prefix.
  *
  * Sources: public/ads/samples/*.jpg (generated / curated).
  * Upload: BLOB_READ_WRITE_TOKEN via @vercel/blob, else production /api/upload with admin session.
@@ -20,7 +21,6 @@ loadEnvFile();
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SAMPLES = join(ROOT, "public", "ads", "samples");
-const MARKER = "[Օրինակ]";
 const BASE = "https://www.xndzor.com";
 const FORCE = process.argv.includes("--force");
 
@@ -32,7 +32,7 @@ const TARGETS = [
     section: "supply",
     model: "supply",
     idHint: "cmtvb0px20001vbzw30ufc2q5",
-    titleStartsWith: `${MARKER} Բերք վաճառքի`,
+    titleStartsWith: "Բերք վաճառքի",
     field: "imageUrls",
     files: ["sample-supply-tomato-01.jpg"],
   },
@@ -40,7 +40,7 @@ const TARGETS = [
     section: "demand",
     model: "demand",
     idHint: "cmtvb0qi80003vbzwg0isufyq",
-    titleStartsWith: `${MARKER} Գնորդի պահանջարկի`,
+    titleStartsWith: "Գնորդի պահանջարկի",
     field: "imageUrls",
     files: ["sample-demand-potato-01.jpg"],
   },
@@ -48,7 +48,7 @@ const TARGETS = [
     section: "forward",
     model: "futureHarvest",
     idHint: "cmtvb0r2w0005vbzw9fnzc330",
-    titleStartsWith: `${MARKER} Ապագա բերքի`,
+    titleStartsWith: "Ապագա բերքի",
     field: "imageUrls",
     files: ["sample-forward-apple-01.jpg"],
   },
@@ -56,7 +56,7 @@ const TARGETS = [
     section: "animals",
     model: "animalListing",
     idHint: "cmtvb0rn80007vbzwznt8u7jo",
-    titleStartsWith: `${MARKER} Կենդանիների վաճառքի`,
+    titleStartsWith: "Կենդանիների վաճառքի",
     field: "imageUrls",
     files: ["sample-animals-sheep-01.jpg"],
   },
@@ -64,7 +64,7 @@ const TARGETS = [
     section: "machinery",
     model: "machineryListing",
     idHint: "cmtvb0s7r0009vbzw8nb37yef",
-    titleStartsWith: `${MARKER} Տեխնիկայի վաճառքի`,
+    titleStartsWith: "Տեխնիկայի վաճառքի",
     field: "imageUrls",
     files: ["sample-machinery-tractor-01.jpg"],
   },
@@ -72,7 +72,7 @@ const TARGETS = [
     section: "plots",
     model: "plot",
     idHint: "cmtvb0tcc000dvbzwc4nf7946",
-    titleStartsWith: `${MARKER} Հողամասի`,
+    titleStartsWith: "Հողամասի",
     field: "photoUrls",
     files: ["sample-plots-wheat-01.jpg"],
   },
@@ -80,7 +80,7 @@ const TARGETS = [
     section: "shop/natural-products",
     model: "catalogListing",
     idHint: "cmtvb0tzp000fvbzwiscdcfkw",
-    titleStartsWith: `${MARKER} Բնական արտադրանքի`,
+    titleStartsWith: "Բնական արտադրանքի",
     field: "imageUrls",
     files: ["sample-shop-honey-01.jpg"],
   },
@@ -88,7 +88,7 @@ const TARGETS = [
     section: "jobs",
     model: "jobRequest",
     idHint: "cmtvb0ss2000bvbzw46t2mhuw",
-    titleStartsWith: `${MARKER} Աշխատանքի պատվերի`,
+    titleStartsWith: "Աշխատանքի պատվերի",
     field: "imageUrls",
     files: ["sample-jobs-harvest-01.jpg"],
   },
@@ -96,7 +96,7 @@ const TARGETS = [
     section: "group-buy",
     model: "groupBuyCampaign",
     idHint: "cmtvb0v4j000jvbzwdn0mu8l3",
-    titleStartsWith: `${MARKER} Խմբային գնման`,
+    titleStartsWith: "Խմբային գնման",
     field: "imageUrls",
     files: ["sample-group-buy-apples-01.jpg"],
   },
@@ -104,7 +104,7 @@ const TARGETS = [
     section: "providers",
     model: "serviceProvider",
     idHint: "cmtvb0uk1000hvbzwl4t53agh",
-    titleStartsWith: `${MARKER} Ծառայության`,
+    titleStartsWith: "Ծառայության",
     field: "imageUrls",
     files: ["sample-providers-service-01.jpg"],
   },
@@ -112,7 +112,7 @@ const TARGETS = [
     section: "spaces",
     model: "spaceListing",
     idHint: "cmtvb0von000lvbzw9vbrlywn",
-    titleStartsWith: `${MARKER} Պահեստի տարածքի`,
+    titleStartsWith: "Պահեստի տարածքի",
     field: "imageUrls",
     files: ["sample-spaces-warehouse-01.jpg"],
   },
@@ -279,16 +279,29 @@ async function findListing(prisma, target) {
     if (byId) return byId;
   }
 
+  const prefixes = [
+    target.titleStartsWith,
+    `[Օրինակ] ${target.titleStartsWith}`,
+  ];
+
   if (target.field === "photoUrls") {
-    return delegate.findFirst({
-      where: { name: { startsWith: target.titleStartsWith } },
+    for (const prefix of prefixes) {
+      const row = await delegate.findFirst({
+        where: { name: { startsWith: prefix } },
+        select,
+      });
+      if (row) return row;
+    }
+    return null;
+  }
+  for (const prefix of prefixes) {
+    const row = await delegate.findFirst({
+      where: { title: { startsWith: prefix } },
       select,
     });
+    if (row) return row;
   }
-  return delegate.findFirst({
-    where: { title: { startsWith: target.titleStartsWith } },
-    select,
-  });
+  return null;
 }
 
 /**
