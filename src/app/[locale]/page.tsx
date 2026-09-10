@@ -18,6 +18,7 @@ import { effectiveTons } from "@/lib/yield";
 import {
   getActiveBoostMap,
   getProUserIds,
+  getTopBoostedSupplyIds,
   sortByMonetization,
 } from "@/lib/monetization";
 import { MonetizationPills } from "@/components/MonetizationBadges";
@@ -67,6 +68,29 @@ const CATEGORIES = [
 
 const FEED_TAKE = 6;
 const FEED_FETCH = 18;
+const SPOTLIGHT_TAKE = 8;
+
+const supplyCardSelect = {
+  id: true,
+  userId: true,
+  title: true,
+  qtyAvailable: true,
+  unit: true,
+  readyInDays: true,
+  priceAmd: true,
+  imageUrls: true,
+  urgentUntil: true,
+  product: { select: { slug: true, nameKey: true } },
+  marz: { select: { slug: true } },
+  village: {
+    select: {
+      slug: true,
+      nameHy: true,
+      nameRu: true,
+      nameEn: true,
+    },
+  },
+} as const;
 
 /** Always render on request — Prisma feeds must not run at build against empty SQLite. */
 export const dynamic = "force-dynamic";
@@ -95,6 +119,8 @@ export default async function HomePage({
     campaignCount,
     machineryCount,
     defaultWeather,
+    topSupplyIds,
+    urgentSuppliesRaw,
   ] = await Promise.all([
     getSession(),
     safeQuery(
@@ -131,26 +157,7 @@ export default async function HomePage({
       () =>
         prisma.supply.findMany({
           where: { status: "ACTIVE" },
-          select: {
-            id: true,
-            userId: true,
-            title: true,
-            qtyAvailable: true,
-            unit: true,
-            readyInDays: true,
-            priceAmd: true,
-            imageUrls: true,
-            product: { select: { slug: true, nameKey: true } },
-            marz: { select: { slug: true } },
-            village: {
-              select: {
-                slug: true,
-                nameHy: true,
-                nameRu: true,
-                nameEn: true,
-              },
-            },
-          },
+          select: supplyCardSelect,
           orderBy: { createdAt: "desc" },
           take: FEED_FETCH,
         }),
@@ -278,7 +285,34 @@ export default async function HomePage({
     ),
     safeQuery(() => prisma.machineryListing.count({ where: { status: "ACTIVE" } }), 0),
     fetchMarzWeather("Ararat", locale),
+    getTopBoostedSupplyIds(SPOTLIGHT_TAKE),
+    safeQuery(
+      () =>
+        prisma.supply.findMany({
+          where: { status: "ACTIVE", urgentUntil: { gt: new Date() } },
+          select: supplyCardSelect,
+          orderBy: { urgentUntil: "desc" },
+          take: SPOTLIGHT_TAKE,
+        }),
+      [],
+    ),
   ]);
+
+  const topSuppliesRaw = topSupplyIds.length
+    ? await safeQuery(
+        () =>
+          prisma.supply.findMany({
+            where: { id: { in: topSupplyIds }, status: "ACTIVE" },
+            select: supplyCardSelect,
+          }),
+        [],
+      )
+    : [];
+  const topIdOrder = new Map(topSupplyIds.map((id, i) => [id, i]));
+  const topSupplies = [...topSuppliesRaw].sort(
+    (a, b) => (topIdOrder.get(a.id) ?? 99) - (topIdOrder.get(b.id) ?? 99),
+  );
+  const urgentSupplies = urgentSuppliesRaw;
 
   const [harvestBoost, supplyBoost, machBoost, harvestPro, supplyPro, machPro, plots] =
     await Promise.all([
@@ -359,6 +393,93 @@ export default async function HomePage({
 
       <XndzorHero greeting={heroGreeting} />
 
+      {topSupplies.length > 0 ? (
+        <HomeSection
+          action="sell"
+          className="home-feed--top-listings"
+          title={t("home.topListingsTitle")}
+          href="/pricing"
+          seeAllLabel={t("home.topListingsCta")}
+          count={topSupplies.length}
+          cue={t("home.topListingsCue")}
+        >
+          <div className="listing-card-grid home-spotlight-grid">
+            {topSupplies.map((s) => (
+              <PostCard
+                key={`top-${s.id}`}
+                href={`/supply/${s.id}`}
+                title={s.title}
+                thumb={parseImageUrls(s.imageUrls ?? "[]")[0]}
+                icon={<ProductIcon slugOrKey={s.product.slug} size={28} />}
+                categoryPill={t("nav.supply")}
+                facts={[
+                  formatQty(s.qtyAvailable, null, s.unit, (k) => t(k as "units.kg")),
+                  s.readyInDays === 0
+                    ? t("supply.readyNow")
+                    : t("supply.readyIn", { days: s.readyInDays }),
+                ]}
+                badge={<MonetizationPills boosted />}
+                value={
+                  s.priceAmd != null
+                    ? formatPriceRange(s.priceAmd, s.priceAmd, s.unit, (k) => t(k as "common.amd"))
+                    : undefined
+                }
+                place={
+                  <>
+                    {s.village ? <VillageLink village={s.village} locale={locale} /> : null}
+                    <span className="post-card-marz">{marzLabel(s.marz.slug)}</span>
+                  </>
+                }
+              />
+            ))}
+          </div>
+        </HomeSection>
+      ) : null}
+
+      {urgentSupplies.length > 0 ? (
+        <HomeSection
+          action="sell"
+          className="home-feed--urgent-sale"
+          title={t("home.urgentSaleTitle")}
+          href="/pricing"
+          seeAllLabel={t("home.urgentSaleCta")}
+          count={urgentSupplies.length}
+          cue={t("home.urgentSaleCue")}
+        >
+          <div className="listing-card-grid home-spotlight-grid">
+            {urgentSupplies.map((s) => (
+              <PostCard
+                key={`urgent-${s.id}`}
+                href={`/supply/${s.id}`}
+                title={s.title}
+                thumb={parseImageUrls(s.imageUrls ?? "[]")[0]}
+                icon={<ProductIcon slugOrKey={s.product.slug} size={28} />}
+                categoryPill={t("nav.supply")}
+                urgent
+                facts={[
+                  formatQty(s.qtyAvailable, null, s.unit, (k) => t(k as "units.kg")),
+                  s.readyInDays === 0
+                    ? t("supply.readyNow")
+                    : t("supply.readyIn", { days: s.readyInDays }),
+                ]}
+                badge={<MonetizationPills urgent />}
+                value={
+                  s.priceAmd != null
+                    ? formatPriceRange(s.priceAmd, s.priceAmd, s.unit, (k) => t(k as "common.amd"))
+                    : undefined
+                }
+                place={
+                  <>
+                    {s.village ? <VillageLink village={s.village} locale={locale} /> : null}
+                    <span className="post-card-marz">{marzLabel(s.marz.slug)}</span>
+                  </>
+                }
+              />
+            ))}
+          </div>
+        </HomeSection>
+      ) : null}
+
       <HomeSection
         action="sell"
         className="home-feed--sell"
@@ -371,7 +492,10 @@ export default async function HomePage({
           <EmptyFeed message={t("supplyBoard.empty")} href="/supply/new" label={t("common.add")} />
         ) : (
           <div className="listing-card-grid">
-            {supplies.map((s) => (
+            {supplies.map((s) => {
+              const isUrgent =
+                s.urgentUntil != null && s.urgentUntil.getTime() > Date.now();
+              return (
               <PostCard
                 key={s.id}
                 href={`/supply/${s.id}`}
@@ -379,6 +503,7 @@ export default async function HomePage({
                 thumb={parseImageUrls(s.imageUrls ?? "[]")[0]}
                 icon={<ProductIcon slugOrKey={s.product.slug} size={28} />}
                 categoryPill={t("nav.supply")}
+                urgent={isUrgent}
                 facts={[
                   formatQty(s.qtyAvailable, null, s.unit, (k) => t(k as "units.kg")),
                   s.readyInDays === 0
@@ -386,10 +511,11 @@ export default async function HomePage({
                     : t("supply.readyIn", { days: s.readyInDays }),
                 ]}
                 badge={
-                  supplyBoost.has(s.id) || supplyPro.has(s.userId) ? (
+                  supplyBoost.has(s.id) || supplyPro.has(s.userId) || isUrgent ? (
                     <MonetizationPills
                       boosted={supplyBoost.has(s.id)}
                       isPro={supplyPro.has(s.userId)}
+                      urgent={isUrgent}
                     />
                   ) : null
                 }
@@ -405,7 +531,8 @@ export default async function HomePage({
                   </>
                 }
               />
-            ))}
+              );
+            })}
           </div>
         )}
       </HomeSection>

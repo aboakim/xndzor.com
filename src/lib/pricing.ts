@@ -44,7 +44,9 @@ export type ProductCode =
   | "BUYER_PRO_MONTHLY"
   | "VERIFIED_FARM_YEARLY"
   | "BOOST_7"
-  | "BOOST_30";
+  | "BOOST_30"
+  | "URGENT_3"
+  | "URGENT_7";
 
 export type BoostTargetType =
   | "MACHINERY"
@@ -55,9 +57,9 @@ export type BoostTargetType =
 
 export type PricingProduct = {
   code: ProductCode;
-  kind: "FARM_PRO" | "BUYER_PRO" | "VERIFIED_FARM" | "BOOST";
+  kind: "FARM_PRO" | "BUYER_PRO" | "VERIFIED_FARM" | "BOOST" | "URGENT";
   amountAmd: number;
-  /** MONTHLY | YEARLY | ONE_TIME | DAYS_7 | DAYS_30 */
+  /** MONTHLY | YEARLY | ONE_TIME | DAYS_7 | DAYS_30 | DAYS_3 */
   interval: string;
   /** Period length in days when activating entitlement */
   periodDays: number;
@@ -119,6 +121,25 @@ export const PRICING_PRODUCTS: Record<ProductCode, PricingProduct> = {
     periodDays: 30,
     nameKey: "pricing.boost.name30",
     featuresKey: "pricing.boost.features",
+  },
+  /** Homepage «Շտապ վաճառք» — badge + dedicated section (Supply only) */
+  URGENT_3: {
+    code: "URGENT_3",
+    kind: "URGENT",
+    amountAmd: 1200,
+    interval: "DAYS_3",
+    periodDays: 3,
+    nameKey: "pricing.urgent.name3",
+    featuresKey: "pricing.urgent.features",
+  },
+  URGENT_7: {
+    code: "URGENT_7",
+    kind: "URGENT",
+    amountAmd: 2500,
+    interval: "DAYS_7",
+    periodDays: 7,
+    nameKey: "pricing.urgent.name7",
+    featuresKey: "pricing.urgent.features",
   },
 };
 

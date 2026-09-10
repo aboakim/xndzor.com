@@ -330,7 +330,13 @@
     "searchHint": "Use search above for harvest, buyers, jobs…",
     "recommendedTitle": "Recommended for you",
     "recommendedSubtitle": "Boosted and Pro listings",
-    "sectionCueBrowse": "Browse active listings"
+    "sectionCueBrowse": "Browse active listings",
+    "topListingsTitle": "Top listings",
+    "topListingsCue": "Paid placement at the top of the homepage",
+    "topListingsCta": "Pricing",
+    "urgentSaleTitle": "Urgent sale",
+    "urgentSaleCue": "Supply listings with an urgent badge",
+    "urgentSaleCta": "Pricing"
   },
   "village": {
     "mapTitle": "{village} — map",
@@ -1887,6 +1893,7 @@
     "badges": {
       "pro": "Pro",
       "boosted": "TOP",
+      "urgent": "Urgent",
       "verified": "✅ Verified farm"
     },
     "farmPro": {
@@ -1907,7 +1914,7 @@
       "tagline": "Pay the platform to pin your ad at the top of lists",
       "features": "TOP badge + top placement",
       "heroPill": "Most popular",
-      "f1": "Your listing at the top of category & home for 7 or 30 days",
+      "f1": "Your listing in category tops and the homepage «Top listings» section for 7 or 30 days",
       "f2": "«TOP» badge on boards",
       "f3": "Payment goes to the site owner (platform revenue)",
       "f4": "Works for machinery, animals, shop, supply, future harvest",
@@ -1927,6 +1934,31 @@
       "chooseFree": "Choose TOP duration (free)",
       "activate7": "TOP 7 days · Free",
       "activate30": "TOP 30 days · Free"
+    },
+    "urgent": {
+      "name": "Urgent sale",
+      "name3": "Urgent 3 days",
+      "name7": "Urgent 7 days",
+      "features": "Urgent badge + homepage section",
+      "heroPill": "Sell faster",
+      "tagline": "Pay to appear in the homepage «Urgent sale» section",
+      "taglineFree": "Activate urgent placement to appear in the homepage urgent section",
+      "f1": "Your supply listing in homepage «Urgent sale» for 3 or 7 days",
+      "f2": "«Urgent» badge on the card",
+      "f3": "Payment goes to the site owner (platform revenue)",
+      "f3Free": "Free for now — no payment",
+      "f4": "Supply (sell) listings only",
+      "fromListing": "Open your supply listing → «Urgent sale» → pay for 3 or 7 days.",
+      "fromListingFree": "Open your supply listing → «Urgent sale» → activate for 3 or 7 days.",
+      "openListings": "My supply listings",
+      "cta": "Urgent sale",
+      "choose": "Choose urgent duration (paid to the site)",
+      "chooseFree": "Choose urgent duration (free)",
+      "buy3": "Urgent 3 days · 1,200 AMD",
+      "buy7": "Urgent 7 days · 2,500 AMD",
+      "activate3": "Urgent 3 days · Free",
+      "activate7": "Urgent 7 days · Free",
+      "activeUntil": "Urgent until {date}"
     },
     "verifiedFarm": {
       "name": "Verified farm",
@@ -1964,7 +1996,8 @@
       "eyebrow": "Checkout",
       "title": "Success",
       "activated": "Your package is active.",
-      "pending": "Payment received — activation may take a moment."
+      "pending": "Payment received — activation may take a moment.",
+      "unlockedUrgent": "Urgent sale placement is active."
     },
     "cancel": {
       "eyebrow": "Checkout",

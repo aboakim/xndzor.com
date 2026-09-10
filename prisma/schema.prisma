@@ -196,6 +196,8 @@ model Supply {
   priceAmd     Int?
   readyInDays  Int       @default(0)
   status       String    @default("ACTIVE")
+  /// Paid «Շտապ վաճառք» homepage placement — active while urgentUntil > now
+  urgentUntil  DateTime?
   marzId       String
   marz         Marz      @relation(fields: [marzId], references: [id])
   villageId    String?
@@ -212,6 +214,7 @@ model Supply {
   @@index([productId])
   @@index([marzId])
   @@index([status])
+  @@index([urgentUntil])
 }
 
 model Offer {
@@ -679,7 +682,7 @@ model FarmReview {
 model Plan {
   id          String   @id @default(cuid())
   code        String   @unique
-  /// FARM_PRO | BUYER_PRO | VERIFIED_FARM | BOOST
+  /// FARM_PRO | BUYER_PRO | VERIFIED_FARM | BOOST | URGENT
   kind        String
   nameKey     String
   amountAmd   Int

@@ -38,6 +38,8 @@ const bodySchema = z.object({
     "VERIFIED_FARM_YEARLY",
     "BOOST_7",
     "BOOST_30",
+    "URGENT_3",
+    "URGENT_7",
   ]),
   locale: z.string().min(2).max(5).optional(),
   targetType: z
@@ -139,6 +141,16 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: err }, { status: 400 });
       }
       return NextResponse.json({ ok: true, mode: "pro_quota" });
+    }
+  }
+
+  if (product.kind === "URGENT") {
+    if (!targetId || targetType !== "SUPPLY") {
+      return NextResponse.json({ error: "urgent_supply_required" }, { status: 400 });
+    }
+    const owned = await assertListingOwnedBy(session.user.id, "SUPPLY", targetId);
+    if (!owned) {
+      return NextResponse.json({ error: "not_owner" }, { status: 403 });
     }
   }
 

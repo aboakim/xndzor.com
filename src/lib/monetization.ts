@@ -94,6 +94,30 @@ export async function getActiveBoostMap(
   return map;
 }
 
+/** Active paid Top (Boost) target IDs for homepage spotlight, newest endsAt first. */
+export async function getTopBoostedSupplyIds(limit = 8): Promise<string[]> {
+  const now = new Date();
+  const rows = await safeQuery(
+    () =>
+      prisma.boost.findMany({
+        where: { targetType: "SUPPLY", endsAt: { gt: now } },
+        select: { targetId: true, endsAt: true },
+        orderBy: { endsAt: "desc" },
+        take: limit * 3,
+      }),
+    [],
+  );
+  const seen = new Set<string>();
+  const ids: string[] = [];
+  for (const r of rows) {
+    if (seen.has(r.targetId)) continue;
+    seen.add(r.targetId);
+    ids.push(r.targetId);
+    if (ids.length >= limit) break;
+  }
+  return ids;
+}
+
 export async function getProUserIds(userIds: string[]): Promise<Set<string>> {
   if (!userIds.length) return new Set();
   const now = new Date();

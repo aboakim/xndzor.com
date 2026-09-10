@@ -25,6 +25,8 @@ const plans = [
   { code: "VERIFIED_FARM_YEARLY", kind: "VERIFIED_FARM", nameKey: "pricing.verifiedFarm.name", amountAmd: 9900, interval: "YEARLY", sortOrder: 4 },
   { code: "BOOST_7", kind: "BOOST", nameKey: "pricing.boost.name7", amountAmd: 1500, interval: "DAYS_7", sortOrder: 5 },
   { code: "BOOST_30", kind: "BOOST", nameKey: "pricing.boost.name30", amountAmd: 3900, interval: "DAYS_30", sortOrder: 6 },
+  { code: "URGENT_3", kind: "URGENT", nameKey: "pricing.urgent.name3", amountAmd: 1200, interval: "DAYS_3", sortOrder: 7 },
+  { code: "URGENT_7", kind: "URGENT", nameKey: "pricing.urgent.name7", amountAmd: 2500, interval: "DAYS_7", sortOrder: 8 },
 ];
 
 async function upsertReferenceData() {

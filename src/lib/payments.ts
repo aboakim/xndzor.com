@@ -206,6 +206,24 @@ async function grantEntitlements(
         });
       }
     }
+  } else if (product.kind === "URGENT") {
+    const targetId = String(meta.targetId || "");
+    if (targetId) {
+      const supply = await tx.supply.findFirst({
+        where: { id: targetId, userId: payment.userId },
+        select: { id: true, urgentUntil: true },
+      });
+      if (supply) {
+        const base =
+          supply.urgentUntil && supply.urgentUntil.getTime() > Date.now()
+            ? supply.urgentUntil
+            : new Date();
+        await tx.supply.update({
+          where: { id: supply.id },
+          data: { urgentUntil: addDays(base, product.periodDays) },
+        });
+      }
+    }
   }
 }
 
@@ -356,7 +374,11 @@ export async function resolveUnlockInfo(
   const targetType = String(meta.targetType || "") as BoostTargetType;
   const targetId = String(meta.targetId || "");
 
-  if (product.kind === "BOOST" && targetType && targetId) {
+  if (
+    (product.kind === "BOOST" || product.kind === "URGENT") &&
+    targetType &&
+    targetId
+  ) {
     listingHref = await listingPathForTarget(targetType, targetId, locale);
   }
 
@@ -367,6 +389,7 @@ export async function resolveUnlockInfo(
     BUYER_PRO: "pricing.success.unlockedBuyerPro",
     VERIFIED_FARM: "pricing.success.unlockedVerified",
     BOOST: "pricing.success.unlockedBoost",
+    URGENT: "pricing.success.unlockedUrgent",
   };
 
   return {

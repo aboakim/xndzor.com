@@ -28,6 +28,8 @@ type PostCardProps = {
   status?: "active" | "verified" | null;
   /** Dense footer facts (unit, relative date) — hide extras on small screens via CSS. */
   footMeta?: (string | null | undefined)[];
+  /** Paid urgent-sale highlight on the image frame (homepage «Շտապ»). */
+  urgent?: boolean;
 };
 
 /**
@@ -51,6 +53,7 @@ export function PostCard({
   variant = "card",
   status = null,
   footMeta = [],
+  urgent = false,
 }: PostCardProps) {
   const chips = facts.filter(Boolean) as string[];
   const foot = footMeta.filter(Boolean) as string[];
@@ -93,7 +96,9 @@ export function PostCard({
   }
 
   return (
-    <article className="listing-card listing-card--rich">
+    <article
+      className={`listing-card listing-card--rich${urgent ? " listing-card--urgent" : ""}`}
+    >
       <div className="listing-card-media">
         <ListingThumb
           src={thumb}

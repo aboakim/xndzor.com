@@ -12,6 +12,7 @@ import { formatAmd, formatPriceRange, formatQty, parseImageUrls } from "@/lib/ut
 import { localizedPlaceName } from "@/lib/places";
 import { getSession } from "@/lib/session";
 import { BoostButton } from "@/components/BoostButton";
+import { UrgentButton } from "@/components/UrgentButton";
 import { MyListingActions } from "@/components/MyListingActions";
 import { ReportListingButton } from "@/components/ReportListingButton";
 import { getActiveBoostMap, getUserEntitlements } from "@/lib/monetization";
@@ -238,6 +239,16 @@ export default async function SupplyDetailPage({
                   isPro={Boolean(ownerEnt?.isPro)}
                   boostQuotaRemaining={ownerEnt?.boostQuotaRemaining ?? 0}
                   currentlyBoostedUntil={boostedUntil?.toISOString() ?? null}
+                  freeMode={ownerFreeCheckout}
+                />
+                <h2>{t("pricing.urgent.cta")}</h2>
+                <UrgentButton
+                  targetId={supply.id}
+                  currentlyUrgentUntil={
+                    supply.urgentUntil && supply.urgentUntil.getTime() > Date.now()
+                      ? supply.urgentUntil.toISOString()
+                      : null
+                  }
                   freeMode={ownerFreeCheckout}
                 />
               </section>
