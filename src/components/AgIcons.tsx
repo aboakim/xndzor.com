@@ -45,20 +45,14 @@ export function IconBuy(p: IconProps) {
 }
 
 export function IconSell(p: IconProps) {
-  const size = p.size ?? 18;
   return (
-    // Photorealistic produce crate — not a currency / price glyph
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src="/icons/action-sell.webp"
-      alt=""
-      width={size}
-      height={size}
-      className={p.className ?? "ag-icon ag-icon-photo"}
-      aria-hidden={p.title ? undefined : true}
-      title={p.title}
-      draggable={false}
-    />
+    <Svg {...p}>
+      {/* Produce basket — offer goods for sale (no currency glyph) */}
+      <path d="M5 11h14l-1.4 8.5H6.4L5 11z" />
+      <path d="M8.5 11V8.5a3.5 3.5 0 017 0V11" />
+      <path d="M9.5 14.5h5M9.5 17h5" />
+      <path d="M12 3.5v4M10 5.5h4" />
+    </Svg>
   );
 }
 

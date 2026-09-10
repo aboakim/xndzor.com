@@ -165,11 +165,6 @@ h3,
   vertical-align: middle;
 }
 
-.ag-icon-photo {
-  object-fit: cover;
-  border-radius: 0.45rem;
-}
-
 .icon-label {
   display: inline-flex;
   align-items: center;
@@ -3301,17 +3296,6 @@ input.readonly {
 .action-sell .action-icon-wrap {
   background: rgba(15, 74, 60, 0.08);
   color: var(--pine);
-  padding: 0;
-  overflow: hidden;
-}
-
-.action-sell .action-icon-wrap .ag-icon-photo,
-.action-sell .action-icon-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: inherit;
-  display: block;
 }
 .action-orderJob .action-icon-wrap {
   background: var(--harvest-soft);
@@ -4372,17 +4356,6 @@ button.utility-btn-ghost {
 .cat-icon.action-sell {
   background: rgba(201, 162, 39, 0.12);
   color: #7a6418;
-  padding: 0;
-  overflow: hidden;
-}
-
-.cat-icon.action-sell .ag-icon-photo,
-.cat-icon.action-sell img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: inherit;
-  display: block;
 }
 .cat-icon.action-orderJob {
   background: var(--harvest-soft);
@@ -4895,17 +4868,6 @@ a.classified-title::after {
 .home-feed-icon.action-sell {
   background: rgba(201, 162, 39, 0.12);
   color: #7a6418;
-  padding: 0;
-  overflow: hidden;
-}
-
-.home-feed-icon.action-sell .ag-icon-photo,
-.home-feed-icon.action-sell img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: inherit;
-  display: block;
 }
 .home-feed-icon.action-orderJob {
   background: var(--harvest-soft);
@@ -7321,11 +7283,6 @@ a.listing-card-title::after {
 .home-village .home-categories-primary .category-scroll-item .cat-icon svg {
   width: 26px;
   height: 26px;
-}
-
-.home-village .home-categories-primary .category-scroll-item .cat-icon.action-sell img {
-  width: 100%;
-  height: 100%;
 }
 
 @media (min-width: 901px) {
@@ -10694,11 +10651,6 @@ body.mega-menu-open {
   .home-village .home-categories-primary .category-scroll-item .cat-icon svg {
     width: 22px;
     height: 22px;
-  }
-
-  .home-village .home-categories-primary .category-scroll-item .cat-icon.action-sell img {
-    width: 100%;
-    height: 100%;
   }
 
   .category-icon-tile {
