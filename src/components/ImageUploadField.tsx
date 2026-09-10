@@ -35,6 +35,8 @@ type ImageUploadFieldProps = {
   /** Shown while client compresses newly picked photos. */
   preparing?: boolean;
   disabled?: boolean;
+  /** Indices into `files` that failed the last upload attempt. */
+  failedIndices?: number[];
 };
 
 export function ImageUploadField({
@@ -47,6 +49,7 @@ export function ImageUploadField({
   uploadProgress,
   preparing = false,
   disabled = false,
+  failedIndices = [],
 }: ImageUploadFieldProps) {
   const t = useTranslations("images");
   const inputId = useId();
@@ -252,9 +255,14 @@ export function ImageUploadField({
       {(existingUrls.length > 0 || previews.length > 0) && (
         <ul className="image-preview-grid" aria-label={t("previewLabel")}>
           {existingUrls.map((src, i) => (
-            <li key={`existing-${src}-${i}`}>
+            <li key={`existing-${src}-${i}`} className="image-preview-ok">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={src} alt={t("previewAlt", { n: i + 1 })} />
+              {failedIndices.length > 0 ? (
+                <span className="image-preview-badge ok" aria-hidden>
+                  {t("statusOk")}
+                </span>
+              ) : null}
               {onExistingChange && (
                 <button
                   type="button"
@@ -268,21 +276,35 @@ export function ImageUploadField({
               )}
             </li>
           ))}
-          {previews.map((src, i) => (
-            <li key={`new-${src}-${i}`}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={src} alt={t("previewAlt", { n: existingUrls.length + i + 1 })} />
-              <button
-                type="button"
-                className="btn ghost tiny"
-                onClick={() => removeNew(i)}
-                disabled={busy}
-                aria-label={t("removePhoto", { n: existingUrls.length + i + 1 })}
+          {previews.map((src, i) => {
+            const failed = failedIndices.includes(i);
+            return (
+              <li
+                key={`new-${src}-${i}`}
+                className={failed ? "image-preview-failed" : undefined}
               >
-                {t("remove")}
-              </button>
-            </li>
-          ))}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={src}
+                  alt={t("previewAlt", { n: existingUrls.length + i + 1 })}
+                />
+                {failed ? (
+                  <span className="image-preview-badge fail" role="status">
+                    {t("statusFailed")}
+                  </span>
+                ) : null}
+                <button
+                  type="button"
+                  className="btn ghost tiny"
+                  onClick={() => removeNew(i)}
+                  disabled={busy}
+                  aria-label={t("removePhoto", { n: existingUrls.length + i + 1 })}
+                >
+                  {t("remove")}
+                </button>
+              </li>
+            );
+          })}
         </ul>
       )}
 
@@ -302,10 +324,31 @@ function sleep(ms: number) {
   return new Promise<void>((resolve) => setTimeout(resolve, ms));
 }
 
+function normalizeUploadErrorCode(
+  status: number,
+  serverError: string | undefined,
+): string {
+  if (status === 401) return "Unauthorized";
+  if (status === 413) return "IMAGE_TOO_LARGE";
+  if (status === 429) return "RATE_LIMITED";
+  const msg = (serverError || "").trim();
+  if (/BLOB_READ_WRITE_TOKEN|not configured|Image storage/i.test(msg)) {
+    return "STORAGE_ERROR";
+  }
+  if (/too many uploads/i.test(msg)) return "RATE_LIMITED";
+  if (/too large|under \d+ MB|exceeds limit/i.test(msg)) return "IMAGE_TOO_LARGE";
+  if (/Only JPEG|PNG, or WebP/i.test(msg)) return "INVALID_TYPE";
+  if (msg === "Unauthorized") return "Unauthorized";
+  return msg || "UPLOAD_FAILED";
+}
+
 function isNonRetryableUploadError(message: string): boolean {
   return (
     message === "Unauthorized" ||
     message === "IMAGE_TOO_LARGE" ||
+    message === "INVALID_TYPE" ||
+    message === "STORAGE_ERROR" ||
+    message === "RATE_LIMITED" ||
     /too many uploads/i.test(message)
   );
 }
@@ -340,13 +383,7 @@ function uploadOneImage(
       }
       if (xhr.status < 200 || xhr.status >= 300) {
         reject(
-          new Error(
-            xhr.status === 401
-              ? "Unauthorized"
-              : xhr.status === 413
-                ? "IMAGE_TOO_LARGE"
-                : data.error || "UPLOAD_FAILED",
-          ),
+          new Error(normalizeUploadErrorCode(xhr.status, data.error)),
         );
         return;
       }
@@ -390,6 +427,7 @@ export type UploadImagesResult = {
   urls: string[];
   failedFiles: File[];
   errors: string[];
+  failures: Array<{ index: number; file: File; code: string }>;
 };
 
 /**
@@ -402,12 +440,13 @@ export async function uploadImagesDetailed(
   opts?: { onProgress?: (pct: number) => void },
 ): Promise<UploadImagesResult> {
   if (files.length === 0) {
-    return { urls: [], failedFiles: [], errors: [] };
+    return { urls: [], failedFiles: [], errors: [], failures: [] };
   }
 
   const urls: string[] = [];
   const failedFiles: File[] = [];
   const errors: string[] = [];
+  const failures: Array<{ index: number; file: File; code: string }> = [];
 
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
@@ -418,6 +457,7 @@ export async function uploadImagesDetailed(
       if (compressed.size <= 0 || compressed.size > MAX_IMAGE_BYTES) {
         failedFiles.push(file);
         errors.push("IMAGE_TOO_LARGE");
+        failures.push({ index: i, file, code: "IMAGE_TOO_LARGE" });
         opts?.onProgress?.(Math.round(((i + 1) / files.length) * 100));
         continue;
       }
@@ -429,13 +469,15 @@ export async function uploadImagesDetailed(
       });
       urls.push(url);
     } catch (err) {
+      const code = err instanceof Error ? err.message : "UPLOAD_FAILED";
       failedFiles.push(file);
-      errors.push(err instanceof Error ? err.message : "UPLOAD_FAILED");
+      errors.push(code);
+      failures.push({ index: i, file, code });
     }
     opts?.onProgress?.(Math.round(((i + 1) / files.length) * 100));
   }
 
-  return { urls, failedFiles, errors };
+  return { urls, failedFiles, errors, failures };
 }
 
 /**

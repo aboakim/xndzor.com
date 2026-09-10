@@ -2365,6 +2365,7 @@ a.browse-clear:hover {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+  position: relative;
 }
 
 .image-preview-grid img {
@@ -2372,6 +2373,44 @@ a.browse-clear:hover {
   aspect-ratio: 1;
   object-fit: cover;
   border: 1px solid var(--line);
+}
+
+.image-preview-failed img {
+  border-color: #c45c3e;
+  outline: 2px solid rgba(196, 92, 62, 0.35);
+}
+
+.image-preview-badge {
+  position: absolute;
+  top: 0.35rem;
+  left: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 0.28rem 0.4rem;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--line);
+}
+
+.image-preview-badge.ok {
+  color: #2f6b3a;
+  border-color: #2f6b3a;
+}
+
+.image-preview-badge.fail {
+  color: #c45c3e;
+  border-color: #c45c3e;
+}
+
+.listing-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.listing-form-actions .btn {
+  margin: 0;
 }
 
 .btn.tiny {

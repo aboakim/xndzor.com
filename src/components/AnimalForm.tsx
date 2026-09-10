@@ -11,8 +11,12 @@ import {
   ANIMAL_SEXES,
   ANIMAL_TYPES,
 } from "@/lib/animals";
-import { ImageUploadField, uploadImages } from "@/components/ImageUploadField";
+import { ImageUploadField, uploadImagesDetailed } from "@/components/ImageUploadField";
 import { AnimalTypeIcon } from "@/components/AgIcons";
+import {
+  formatUploadBatchError,
+  resolveListingError,
+} from "@/lib/listing-create";
 
 export function AnimalForm({
   defaultMarzId,
@@ -29,6 +33,8 @@ export function AnimalForm({
   const [villages, setVillages] = useState<LocationVillage[]>([]);
   const [loadingVillages, setLoadingVillages] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
+  const [failedIndices, setFailedIndices] = useState<number[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number | undefined>();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -67,7 +73,28 @@ export function AnimalForm({
     try {
       // Read before any await — React nullifies event.currentTarget after the handler yields.
       const fd = new FormData(e.currentTarget);
-      const imageUrls = await uploadImages(files, { onProgress: setUploadProgress });
+      let imageUrls = uploadedUrls;
+      if (files.length > 0) {
+        const alreadyOk = uploadedUrls.length;
+        const result = await uploadImagesDetailed(files, { onProgress: setUploadProgress });
+        imageUrls = [...uploadedUrls, ...result.urls];
+        setUploadedUrls(imageUrls);
+        if (result.failures.length > 0) {
+          setFiles(result.failedFiles);
+          setFailedIndices(result.failedFiles.map((_, i) => i));
+          setError(
+            formatUploadBatchError(
+              (key, values) => t(key as "images.photoFailOne", values),
+              result,
+              alreadyOk,
+            ),
+          );
+          setSaving(false);
+          return;
+        }
+        setFiles([]);
+        setFailedIndices([]);
+      }
       const body = {
         title: String(fd.get("title") || ""),
         description: String(fd.get("description") || ""),
@@ -98,7 +125,12 @@ export function AnimalForm({
         body: JSON.stringify(body),
       });
       if (!res.ok) {
-        setError(t("postAnimals.error"));
+        const data = await res.json().catch(() => ({}));
+        try {
+          setError(t(resolveListingError(data).key as "listingErrors.publishFailed"));
+        } catch {
+          setError(t("postAnimals.error"));
+        }
         setSaving(false);
         return;
       }
@@ -106,11 +138,16 @@ export function AnimalForm({
       router.push(`/animals/${created.id}`);
       router.refresh();
     } catch (err) {
-      setError(
-        err instanceof Error && err.message
-          ? err.message
-          : t("images.uploadError"),
-      );
+      try {
+        setError(
+          t(
+            resolveListingError(err instanceof Error ? err.message : undefined)
+              .key as "listingErrors.publishFailed",
+          ),
+        );
+      } catch {
+        setError(t("images.uploadError"));
+      }
       setSaving(false);
     }
   }
@@ -325,7 +362,13 @@ export function AnimalForm({
         </label>
         <ImageUploadField
           files={files}
-          onChange={setFiles}
+          onChange={(next) => {
+            setFiles(next);
+            setFailedIndices([]);
+          }}
+          existingUrls={uploadedUrls}
+          onExistingChange={setUploadedUrls}
+          failedIndices={failedIndices}
           uploading={saving}
           uploadProgress={uploadProgress}
           disabled={saving}
