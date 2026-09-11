@@ -27,6 +27,8 @@ import { EarlyBirdBanner } from "@/components/xndzor/EarlyBirdBanner";
 import { HomeStripSkeleton } from "@/components/HomeBannerSkeleton";
 import { PrefetchLink } from "@/components/PrefetchLink";
 import { HomeMoreFeeds } from "@/components/HomeMoreFeeds";
+import { MARZES } from "@/lib/places";
+import { marzRegionPath } from "@/lib/marz-seo";
 
 import { seoMessagesMetadata } from "@/lib/seo-metadata";
 
@@ -835,6 +837,24 @@ export default async function HomePage({
         )}
       </HomeSection>
       </HomeMoreFeeds>
+
+      <Reveal as="section" className="section home-regions" id="regions">
+        <div className="home-feed-head">
+          <h2>{t("home.regionsTitle")}</h2>
+          <PrefetchLink href="/regions" className="text-link home-feed-more" pressable>
+            {t("home.seeAll")} →
+          </PrefetchLink>
+        </div>
+        <p className="lede home-regions-lede">{t("home.regionsLede")}</p>
+        <nav className="region-link-grid region-link-grid--home" aria-label={t("home.regionsTitle")}>
+          {MARZES.map((id) => (
+            <Link key={id} href={marzRegionPath(id)} className="region-link-card">
+              <strong>{t(`marzes.${id}` as "marzes.Yerevan")}</strong>
+              <span>{t("regions.openMarz")}</span>
+            </Link>
+          ))}
+        </nav>
+      </Reveal>
     </div>
   );
 }

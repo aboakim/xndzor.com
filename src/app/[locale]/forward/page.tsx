@@ -34,7 +34,7 @@ export default async function ForwardBoardPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ trusted?: string }>;
+  searchParams: Promise<{ trusted?: string; marz?: string }>;
 }) {
   const { locale } = await params;
   const sp = await searchParams;
@@ -43,7 +43,10 @@ export default async function ForwardBoardPage({
   const trustedOnly = sp.trusted === "1" || sp.trusted === "true";
 
   const crops = await prisma.futureHarvest.findMany({
-    where: { status: "ACTIVE" },
+    where: {
+      status: "ACTIVE",
+      ...(sp.marz ? { marzId: sp.marz } : {}),
+    },
     include: {
       product: true,
       marz: true,

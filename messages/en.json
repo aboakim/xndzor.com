@@ -315,6 +315,8 @@
       "shop": "Shop"
     },
     "marketPulseTitle": "Market pulse",
+    "regionsTitle": "Across all of Armenia",
+    "regionsLede": "Open your marz page for local sell, buy, and farm work listings.",
     "marketPulseSubtitle": "Live counts across the marketplace",
     "marketPulseLive": "Live",
     "weatherTitle": "Farm weather",
@@ -659,6 +661,17 @@
     "Syunik": "Syunik",
     "Tavush": "Tavush",
     "VayotsDzor": "Vayots Dzor"
+  },
+  "regions": {
+    "title": "Regions",
+    "lede": "Xndzor covers agriculture across all of Armenia — browse by marz.",
+    "heading": "{marz} — agriculture",
+    "marzLede": "Sell and buy produce in {marz}, see forward harvests, and find farm work on Xndzor.",
+    "openMarz": "Open region",
+    "empty": "No listings in {marz} yet. Be the first to post.",
+    "listingsIn": "Listings in {marz}",
+    "boards": "Boards",
+    "otherMarzes": "Other regions"
   },
   "jobTypes": {
     "PLOW": "Plow",
@@ -1181,7 +1194,9 @@
     "cookiesNote": "We use cookies for sign-in and language preference.",
     "cookies": "Cookies",
     "copyright": "© {year} FarmOS Armenia / Xndzor",
-    "backToTop": "Back to top"
+    "backToTop": "Back to top",
+    "regions": "Regions",
+    "allRegions": "All regions"
   },
   "os": {
     "ctaStart": "Get started",
@@ -4028,6 +4043,14 @@
       "loginDescription": "Sign in to the Xndzor agricultural marketplace.",
       "registerDescription": "Create an Xndzor account to buy and sell."
     },
-    "itemListName": "Listings"
+    "itemListName": "Listings",
+    "regions": {
+      "title": "Regions — agriculture across Armenia | Xndzor",
+      "description": "Browse every Armenian marz on Xndzor for local produce sales, demand, and farm work."
+    },
+    "region": {
+      "title": "Sell and buy produce in {marz} — Xndzor",
+      "description": "Find agricultural listings in {marz} on Xndzor: produce, forward harvest, machinery, and farm jobs."
+    }
   }
 }

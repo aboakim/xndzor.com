@@ -67,7 +67,7 @@ export default async function VillagePage({
       <Breadcrumbs
         items={[
           { href: "/", label: t("nav.home") },
-          { href: `/supply?marz=${village.marzId}`, label: marzLabel },
+          { href: `/regions/${village.marz.slug}`, label: marzLabel },
           { label: villageName },
         ]}
       />

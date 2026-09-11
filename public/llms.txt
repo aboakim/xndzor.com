@@ -1,0 +1,40 @@
+# Xndzor (Խնձոր) — https://www.xndzor.com
+
+> Armenian agricultural marketplace: sell and buy produce, livestock, machinery, farm jobs, and forward harvests across all marzes of Armenia.
+
+## Locales
+- Armenian (default): /hy/
+- Russian: /ru/
+- English: /en/
+
+## Primary boards
+- /{locale}/supply — ready produce for sale
+- /{locale}/demand — buyer requests
+- /{locale}/forward — future harvest / forward sales
+- /{locale}/animals — livestock
+- /{locale}/machinery — farm machinery
+- /{locale}/jobs — farm work
+- /{locale}/grow — what to grow by demand
+- /{locale}/group-buy — group purchases
+
+## Geographic coverage (all Armenia)
+Index of marzes: /{locale}/regions
+
+Marz landing pages (hy examples):
+- /hy/regions/Yerevan
+- /hy/regions/Aragatsotn
+- /hy/regions/Ararat
+- /hy/regions/Armavir
+- /hy/regions/Gegharkunik
+- /hy/regions/Kotayk
+- /hy/regions/Lori
+- /hy/regions/Shirak
+- /hy/regions/Syunik
+- /hy/regions/Tavush
+- /hy/regions/VayotsDzor
+
+## Sitemap
+https://www.xndzor.com/sitemap.xml
+
+## Contact
+https://www.xndzor.com/hy/contact

@@ -4,6 +4,8 @@ import { Link } from "@/i18n/navigation";
 import { PaymentBadges } from "@/components/PaymentBadges";
 import { BackToTop } from "@/components/BackToTop";
 import { isDemoModeAllowed } from "@/lib/pricing";
+import { MARZES } from "@/lib/places";
+import { marzRegionPath } from "@/lib/marz-seo";
 
 function FooterLink({
   href,
@@ -125,6 +127,22 @@ export async function Footer() {
                   {t("jobs")}
                 </FooterLink>
               </li>
+            </FooterColumn>
+
+            <FooterColumn title={t("regions")}>
+              <li>
+                <FooterLink href="/regions">
+                  <FooterIcon>◈</FooterIcon>
+                  {t("allRegions")}
+                </FooterLink>
+              </li>
+              {MARZES.map((id) => (
+                <li key={id}>
+                  <FooterLink href={marzRegionPath(id)}>
+                    {brand(`marzes.${id}` as "marzes.Yerevan")}
+                  </FooterLink>
+                </li>
+              ))}
             </FooterColumn>
           </div>
 

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 import { CATALOG_ROUTE } from "@/lib/catalog";
+import { MARZES } from "@/lib/places";
 import { resolveSiteUrl } from "@/lib/site-url";
 import { safeQuery } from "@/lib/safe-query";
 
@@ -18,6 +19,7 @@ const STATIC_PATHS: { path: string; changeFrequency: MetadataRoute.Sitemap[0]["c
   { path: "/animals", changeFrequency: "daily", priority: 0.85 },
   { path: "/machinery", changeFrequency: "daily", priority: 0.85 },
   { path: "/jobs", changeFrequency: "daily", priority: 0.85 },
+  { path: "/regions", changeFrequency: "weekly", priority: 0.9 },
   { path: "/group-buy", changeFrequency: "weekly", priority: 0.8 },
   { path: "/group-buy/about", changeFrequency: "monthly", priority: 0.6 },
   { path: "/spaces", changeFrequency: "weekly", priority: 0.75 },
@@ -82,6 +84,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             : locale === "hy"
               ? item.priority
               : Math.max(0.4, item.priority - 0.05),
+      });
+    }
+    for (const marz of MARZES) {
+      entries.push({
+        url: `${siteUrl}/${locale}/regions/${marz}`,
+        lastModified: now,
+        changeFrequency: "daily",
+        priority: locale === "hy" ? 0.88 : 0.82,
       });
     }
   }

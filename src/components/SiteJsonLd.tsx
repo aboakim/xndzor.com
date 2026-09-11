@@ -2,12 +2,26 @@ import { getTranslations } from "next-intl/server";
 import { JsonLd } from "@/components/JsonLd";
 import { absoluteUrl, PRODUCTION_SITE_URL } from "@/lib/seo";
 import { resolveSiteUrl } from "@/lib/site-url";
+import { MARZES } from "@/lib/places";
 
 /** Sitewide Organization + WebSite (+ SearchAction) JSON-LD for the active locale. */
 export async function SiteJsonLd({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: "seo" });
+  const tRoot = await getTranslations({ locale });
   const site = resolveSiteUrl();
   const home = absoluteUrl(locale, "");
+
+  const areaServed = [
+    {
+      "@type": "Country",
+      name: "Armenia",
+    },
+    ...MARZES.map((id) => ({
+      "@type": "AdministrativeArea",
+      name: tRoot(`marzes.${id}` as "marzes.Yerevan"),
+      url: absoluteUrl(locale, `/regions/${id}`),
+    })),
+  ];
 
   const data = [
     {
@@ -18,10 +32,7 @@ export async function SiteJsonLd({ locale }: { locale: string }) {
       url: site,
       logo: `${PRODUCTION_SITE_URL}/icons/icon-512.png`,
       description: t("orgDescription"),
-      areaServed: {
-        "@type": "Country",
-        name: "Armenia",
-      },
+      areaServed,
       sameAs: [PRODUCTION_SITE_URL],
     },
     {
@@ -36,6 +47,10 @@ export async function SiteJsonLd({ locale }: { locale: string }) {
         "@type": "Organization",
         name: t("orgName"),
         url: site,
+      },
+      areaServed: {
+        "@type": "Country",
+        name: "Armenia",
       },
       potentialAction: {
         "@type": "SearchAction",
