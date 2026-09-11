@@ -17,12 +17,15 @@ const EARLY_BIRD_LOCK_KEY = 87201401;
 
 let reconcileDone = false;
 
-/** Default 50; set EARLY_BIRD_FREE_LIMIT=0 to disable early-bird mode. */
+/**
+ * Hard-coded free-slot cap (source of truth for banner + claims).
+ * Intentionally ignores EARLY_BIRD_FREE_LIMIT so a stale Vercel value (e.g. 100)
+ * cannot override production. Re-introduce env parsing later if needed.
+ */
+export const EARLY_BIRD_FREE_SLOTS = 50;
+
 export function getEarlyBirdFreeLimit(): number {
-  const raw = process.env.EARLY_BIRD_FREE_LIMIT?.trim();
-  if (raw === "" || raw === "0" || raw?.toLowerCase() === "off") return 0;
-  const n = Number(raw ?? "50");
-  return Number.isFinite(n) && n > 0 ? Math.floor(n) : 50;
+  return EARLY_BIRD_FREE_SLOTS;
 }
 
 export function isEarlyBirdEnabled(): boolean {
