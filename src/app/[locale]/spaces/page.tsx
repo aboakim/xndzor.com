@@ -65,7 +65,7 @@ export default async function SpacesPage({
       ) : (
         <ul className="match-list">
           {listings.map((s) => (
-            <li key={s.id} className="match-row">
+            <li key={s.id} id={s.id} className="match-row">
               <div>
                 <strong>{s.title}</strong>
                 <p>

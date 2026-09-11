@@ -64,7 +64,7 @@ export default async function GroupBuyPage({
             const joinedQty = c.joins.reduce((s, j) => s + j.qty, 0);
             const pct = Math.min(100, Math.round((joinedQty / c.targetQty) * 100));
             return (
-              <li key={c.id} className="match-row group-buy-row">
+              <li key={c.id} id={c.id} className="match-row group-buy-row">
                 <div>
                   <strong>{c.title}</strong>
                   <p>

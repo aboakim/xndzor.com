@@ -45,8 +45,7 @@ export function SearchBar({
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     const trimmed = q.trim();
-    // Product search browses things for sale (supply), not buyer-request demand.
-    router.push(trimmed ? `/supply?q=${encodeURIComponent(trimmed)}` : "/supply");
+    router.push(trimmed ? `/search?q=${encodeURIComponent(trimmed)}` : "/search");
   }
 
   function openFilters() {

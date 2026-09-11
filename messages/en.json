@@ -720,7 +720,7 @@
   },
   "board": {
     "search": "Search",
-    "searchHome": "Search crop for sale…",
+    "searchHome": "Search produce, machinery, jobs…",
     "product": "Product",
     "marz": "Marz",
     "village": "City/Village",
@@ -730,6 +730,16 @@
     "apply": "Apply",
     "searchShortcut": "Ctrl+K",
     "filters": "Filters"
+  },
+  "searchPage": {
+    "title": "Search",
+    "lede": "Find produce, machinery, livestock, jobs, and more across Xndzor.",
+    "emptyQuery": "Type what you’re looking for — crops, tractors, jobs…",
+    "queryTooShort": "Enter at least {min} characters.",
+    "noResults": "Nothing found for “{q}”.",
+    "resultsFor": "{count} results for “{q}”",
+    "viewAll": "View all",
+    "browseSupply": "Browse produce"
   },
   "images": {
     "none": "No image",
@@ -3940,6 +3950,10 @@
     "supply": {
       "title": "Sell produce now — Xndzor",
       "description": "Ready produce listings across Armenia. Buyers find tomatoes, wheat, fruit, and more on Xndzor."
+    },
+    "search": {
+      "title": "Search Xndzor — produce, machinery, jobs",
+      "description": "Search Armenia’s agricultural marketplace: crops, livestock, machinery, jobs, shop listings, and more."
     },
     "demand": {
       "title": "Demand and buy requests — Xndzor",
