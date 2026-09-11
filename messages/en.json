@@ -3914,5 +3914,120 @@
     "saving": "Saving…",
     "error": "Could not save changes. Please try again.",
     "forbidden": "You can only edit your own listings."
+  },
+  "seo": {
+    "orgName": "Xndzor (Խնձոր)",
+    "orgDescription": "Armenia agricultural marketplace: produce, livestock, machinery, jobs, and forward harvest sales.",
+    "home": {
+      "title": "Xndzor (Խնձոր) — Armenia agriculture marketplace | xndzor.com",
+      "description": "Xndzor — Armenia farmer marketplace. Buy and sell produce, livestock, machinery, hire farm work, and sell future harvests early."
+    },
+    "supply": {
+      "title": "Sell produce now — Xndzor",
+      "description": "Ready produce listings across Armenia. Buyers find tomatoes, wheat, fruit, and more on Xndzor."
+    },
+    "demand": {
+      "title": "Demand and buy requests — Xndzor",
+      "description": "Buyer requests across Armenia. Match demand and find buyers for your harvest."
+    },
+    "forward": {
+      "title": "Future harvest & forward sales — Xndzor",
+      "description": "Sell future harvest early. Lock price and volume before harvest — for Armenian farmers."
+    },
+    "animals": {
+      "title": "Livestock buy & sell — Xndzor",
+      "description": "Cattle, sheep, pigs, poultry and more across Armenia. Browse livestock by region."
+    },
+    "machinery": {
+      "title": "Farm machinery — Xndzor",
+      "description": "Tractors, harvesters and farm equipment in Armenia — buy, sell, or rent."
+    },
+    "jobs": {
+      "title": "Farm jobs & field work — Xndzor",
+      "description": "Order or take farm work: harvest, cultivation, transport across Armenia."
+    },
+    "plots": {
+      "title": "My plots — Xndzor",
+      "description": "Manage your farm plots and harvest plan on Xndzor."
+    },
+    "pricing": {
+      "title": "Pricing & Pro plans — Xndzor",
+      "description": "Top placement and Pro packages for farmers. See Xndzor pricing."
+    },
+    "groupBuy": {
+      "title": "Group buy — Xndzor",
+      "description": "Buy together for lower prices. Group purchases of seeds, fertilizer, and supplies."
+    },
+    "spaces": {
+      "title": "Empty space & storage — Xndzor",
+      "description": "Warehouse, cold storage, silo, greenhouse — list spare capacity in Armenia."
+    },
+    "grow": {
+      "title": "What to grow by demand — Xndzor",
+      "description": "See demand signals and decide what to grow in Armenia based on the market."
+    },
+    "shop": {
+      "title": "Ag shop — Xndzor",
+      "description": "Fertilizers, seeds, feed, crop protection, tools, and village products."
+    },
+    "shopCategory": {
+      "fertilizers": {
+        "title": "Fertilizers — Xndzor",
+        "description": "Organic and mineral fertilizers across Armenia."
+      },
+      "seeds": {
+        "title": "Seeds & seedlings — Xndzor",
+        "description": "Seeds and seedlings for Armenian farmers."
+      },
+      "feed": {
+        "title": "Animal feed — Xndzor",
+        "description": "Hay, silage, grain, and mixed feeds."
+      },
+      "chemicals": {
+        "title": "Crop protection — Xndzor",
+        "description": "Herbicides, fungicides, and insecticides in Armenia."
+      },
+      "tools": {
+        "title": "Farm tools — Xndzor",
+        "description": "Tools and equipment for the farm."
+      },
+      "land": {
+        "title": "Land & orchard — Xndzor",
+        "description": "Plots and orchards for sale or rent."
+      },
+      "natural-products": {
+        "title": "Village products — Xndzor",
+        "description": "Milk, honey, oils, and other village products from Armenia."
+      }
+    },
+    "about": {
+      "title": "About — Xndzor",
+      "description": "Xndzor — Armenia agricultural marketplace for farmers and buyers."
+    },
+    "contact": {
+      "title": "Contact — Xndzor",
+      "description": "Contact the Xndzor team."
+    },
+    "help": {
+      "title": "Help — Xndzor",
+      "description": "FAQs and help for using Xndzor."
+    },
+    "listing": {
+      "priceOpen": "Price on request",
+      "supplyDesc": "{title}. {price}. {region}. For sale in Armenia — Xndzor marketplace.",
+      "demandDesc": "{title}. {price}. {region}. Buyer request on Xndzor.",
+      "animalDesc": "{title}. {price}. {region}. Livestock on Xndzor.",
+      "machineryDesc": "{title}. {price}. {region}. Farm machinery on Xndzor.",
+      "jobDesc": "{title}. {price}. {region}. Farm job on Xndzor.",
+      "forwardDesc": "{title}. {price}. {region}. Future harvest on Xndzor.",
+      "catalogDesc": "{title}. {price}. {region}. Shop listing on Xndzor."
+    },
+    "auth": {
+      "loginTitle": "Log in — Xndzor",
+      "registerTitle": "Register — Xndzor",
+      "loginDescription": "Sign in to the Xndzor agricultural marketplace.",
+      "registerDescription": "Create an Xndzor account to buy and sell."
+    },
+    "itemListName": "Listings"
   }
 }

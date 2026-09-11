@@ -9,6 +9,17 @@ import { EmptyState } from "@/components/EmptyState";
 import { VillageLink } from "@/components/VillageLink";
 import { JOB_TYPES } from "@/lib/matching";
 
+import { seoMessagesMetadata } from "@/lib/seo-metadata";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return seoMessagesMetadata(locale, "/jobs", "jobs");
+}
+
 export const dynamic = "force-dynamic";
 
 export default async function JobsBoardPage({

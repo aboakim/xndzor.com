@@ -7,6 +7,7 @@ import { ShareButtons } from "@/components/ShareButtons";
 import { OfferButton } from "@/components/OfferButton";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ListingGallery } from "@/components/ListingGallery";
+import { JsonLd } from "@/components/JsonLd";
 import { findMatchesForSupply } from "@/lib/matching";
 import { formatAmd, formatPriceRange, formatQty, parseImageUrls } from "@/lib/utils";
 import { localizedPlaceName } from "@/lib/places";
@@ -22,8 +23,49 @@ import { VillageLink } from "@/components/VillageLink";
 import { TrackRecentView } from "@/components/TrackRecentView";
 import { SellerCard } from "@/components/SellerCard";
 import { USER_PROFILE_SELECT } from "@/lib/profile-privacy";
+import { listingPageMetadata, productJsonLd } from "@/lib/listing-seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}) {
+  const { locale, id } = await params;
+  const supply = await prisma.supply.findUnique({
+    where: { id },
+    select: {
+      title: true,
+      description: true,
+      priceAmd: true,
+      unit: true,
+      status: true,
+      imageUrls: true,
+      marz: { select: { slug: true } },
+    },
+  });
+  if (!supply || supply.status === "HIDDEN") return {};
+  const t = await getTranslations({ locale });
+  const region = t(`marzes.${supply.marz.slug}` as "marzes.Yerevan");
+  const priceLabel =
+    supply.priceAmd != null
+      ? formatPriceRange(supply.priceAmd, supply.priceAmd, supply.unit, (k) =>
+          t(k as "common.amd"),
+        ) || t("detail.priceOpen")
+      : t("detail.priceOpen");
+  return listingPageMetadata({
+    locale,
+    path: `/supply/${id}`,
+    title: supply.title,
+    descriptionKey: "listing.supplyDesc",
+    priceLabel,
+    region,
+    imageUrlsJson: supply.imageUrls,
+    body: supply.description,
+  });
+}
 
 export default async function SupplyDetailPage({
   params,
@@ -74,8 +116,33 @@ export default async function SupplyDetailPage({
         )
       : t("detail.priceOpen");
 
+  const crumbs = [
+    { href: "/", label: t("nav.home") },
+    { href: "/supply", label: t("supplyBoard.title") },
+    {
+      href: `/supply?product=${supply.product.slug}`,
+      label: t(supply.product.nameKey as "products.tomato"),
+    },
+    { href: `/supply?marz=${supply.marzId}`, label: marzLabel },
+    { label: supply.title },
+  ];
+  const pageUrl = absoluteUrl(locale, `/supply/${supply.id}`);
+
   return (
     <div className="section detail-page detail-listam">
+      <JsonLd
+        data={[
+          breadcrumbJsonLd(locale, crumbs),
+          productJsonLd({
+            name: supply.title,
+            description: supply.description || supply.title,
+            url: pageUrl,
+            image: images[0] ?? null,
+            priceAmd: supply.priceAmd,
+            region: marzLabel,
+          }),
+        ]}
+      />
       <TrackRecentView
         id={supply.id}
         href={`/supply/${supply.id}`}
@@ -84,18 +151,7 @@ export default async function SupplyDetailPage({
         thumb={images[0] ?? null}
         subtitle={t(supply.product.nameKey as "products.tomato")}
       />
-      <Breadcrumbs
-        items={[
-          { href: "/", label: t("nav.home") },
-          { href: "/supply", label: t("supplyBoard.title") },
-          {
-            href: `/supply?product=${supply.product.slug}`,
-            label: t(supply.product.nameKey as "products.tomato"),
-          },
-          { href: `/supply?marz=${supply.marzId}`, label: marzLabel },
-          { label: supply.title },
-        ]}
-      />
+      <Breadcrumbs items={crumbs} />
 
       <div className="detail-split">
         <div className="detail-split-main">

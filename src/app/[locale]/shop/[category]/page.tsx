@@ -20,8 +20,31 @@ import {
   getProUserIds,
   sortByMonetization,
 } from "@/lib/monetization";
+import { buildPageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; category: string }>;
+}) {
+  const { locale, category: slug } = await params;
+  const category = categoryFromRoute(slug);
+  if (!category) return {};
+  const t = await getTranslations({ locale, namespace: "seo" });
+  const catKey = `shopCategory.${slug}.title` as "shopCategory.fertilizers.title";
+  const useCat = t.has(catKey);
+  return buildPageMetadata({
+    locale,
+    path: `/shop/${slug}`,
+    title: useCat ? t(catKey) : t("shop.title"),
+    description: useCat
+      ? t(`shopCategory.${slug}.description` as "shopCategory.fertilizers.description")
+      : t("shop.description"),
+  });
+}
+
 export default async function CatalogBoardPage({
   params,
   searchParams,

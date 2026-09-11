@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { OwnerContactActions } from "@/components/OwnerContactActions";
 import { ShareButtons } from "@/components/ShareButtons";
 import { ForwardInterestForm } from "@/components/ForwardInterestForm";
+import { JsonLd } from "@/components/JsonLd";
 import { formatAmd, parseImageUrls } from "@/lib/utils";
 import { getSession } from "@/lib/session";
 import { VillageLink } from "@/components/VillageLink";
@@ -18,8 +19,47 @@ import { MyListingActions } from "@/components/MyListingActions";
 import { getActiveBoostMap, getUserEntitlements } from "@/lib/monetization";
 import { resolveOwnerFreeCheckout } from "@/lib/early-bird";
 import { TrackRecentView } from "@/components/TrackRecentView";
+import { listingPageMetadata, productJsonLd } from "@/lib/listing-seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}) {
+  const { locale, id } = await params;
+  const crop = await prisma.futureHarvest.findUnique({
+    where: { id },
+    select: {
+      title: true,
+      description: true,
+      priceAmd: true,
+      status: true,
+      imageUrls: true,
+      marz: { select: { slug: true } },
+    },
+  });
+  if (!crop || crop.status === "HIDDEN") return {};
+  const t = await getTranslations({ locale, namespace: "seo" });
+  const tRoot = await getTranslations({ locale });
+  const region = tRoot(`marzes.${crop.marz.slug}` as "marzes.Yerevan");
+  const priceLabel =
+    crop.priceAmd != null
+      ? `${formatAmd(crop.priceAmd, locale)} ֏`
+      : t("listing.priceOpen");
+  return listingPageMetadata({
+    locale,
+    path: `/forward/${id}`,
+    title: crop.title,
+    descriptionKey: "listing.forwardDesc",
+    priceLabel,
+    region,
+    imageUrlsJson: crop.imageUrls,
+    body: crop.description,
+  });
+}
 
 export default async function ForwardDetailPage({
   params,
@@ -79,6 +119,23 @@ export default async function ForwardDetailPage({
 
   return (
     <div className="section detail-page">
+      <JsonLd
+        data={[
+          breadcrumbJsonLd(locale, [
+            { href: "/", label: t("nav.home") },
+            { href: "/forward", label: t("forwardBoard.title") },
+            { label: crop.title },
+          ]),
+          productJsonLd({
+            name: crop.title,
+            description: crop.description || crop.title,
+            url: absoluteUrl(locale, `/forward/${crop.id}`),
+            image: images[0] ?? null,
+            priceAmd: crop.priceAmd,
+            region: t(`marzes.${crop.marz.slug}` as "marzes.Yerevan"),
+          }),
+        ]}
+      />
       <TrackRecentView
         id={crop.id}
         href={`/forward/${crop.id}`}

@@ -1,6 +1,22 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AdminSidebar } from "@/components/AdminSidebar";
 import { requireAdmin } from "@/lib/admin";
+import { buildPageMetadata } from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return buildPageMetadata({
+    locale,
+    path: "/admin",
+    title: "Admin",
+    description: "Xndzor admin",
+    noIndex: true,
+  });
+}
 
 export default async function AdminLayout({
   children,

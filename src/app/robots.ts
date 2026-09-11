@@ -2,6 +2,11 @@ import type { MetadataRoute } from "next";
 import { resolveSiteUrl } from "@/lib/site-url";
 
 const siteUrl = resolveSiteUrl();
+const locales = ["hy", "ru", "en"] as const;
+
+function localePaths(suffix: string): string[] {
+  return locales.map((l) => `/${l}${suffix}`);
+}
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -10,12 +15,17 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: [
         "/api/",
-        "/hy/account/",
-        "/ru/account/",
-        "/en/account/",
-        "/hy/admin/",
-        "/ru/admin/",
-        "/en/admin/",
+        ...localePaths("/account/"),
+        ...localePaths("/admin/"),
+        ...localePaths("/checkout/"),
+        ...localePaths("/my/"),
+        ...localePaths("/farm/"),
+        ...localePaths("/diary"),
+        ...localePaths("/costs"),
+        ...localePaths("/auth/login"),
+        ...localePaths("/auth/register"),
+        "/*/edit",
+        "/*/new",
       ],
     },
     sitemap: `${siteUrl}/sitemap.xml`,

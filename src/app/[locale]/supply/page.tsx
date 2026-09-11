@@ -6,6 +6,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { TradeCard } from "@/components/TradeCard";
 import { ProductIcon } from "@/components/AgIcons";
 import { EmptyState } from "@/components/EmptyState";
+import { JsonLd } from "@/components/JsonLd";
 import { formatPriceRange, formatQty } from "@/lib/utils";
 import { getFarmScoreSnippets, TRUSTED_SCORE_MIN } from "@/lib/farm-score";
 import {
@@ -14,6 +15,18 @@ import {
   sortByMonetization,
 } from "@/lib/monetization";
 import { getFeaturedProducts, getProducts, listingTextSearchWhere } from "@/lib/products";
+import { absoluteUrl } from "@/lib/seo";
+
+import { seoMessagesMetadata } from "@/lib/seo-metadata";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return seoMessagesMetadata(locale, "/supply", "supply");
+}
 
 export const dynamic = "force-dynamic";
 export default async function SupplyBoardPage({
@@ -88,6 +101,22 @@ export default async function SupplyBoardPage({
 
   return (
     <div className="section page-board">
+      {rows.length > 0 ? (
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            name: t("supplyBoard.title"),
+            numberOfItems: rows.length,
+            itemListElement: rows.slice(0, 30).map(({ s }, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              url: absoluteUrl(locale, `/supply/${s.id}`),
+              name: s.title,
+            })),
+          }}
+        />
+      ) : null}
       <Breadcrumbs
         items={[
           { href: "/", label: t("nav.home") },

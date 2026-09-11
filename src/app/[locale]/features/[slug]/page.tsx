@@ -9,6 +9,7 @@ import {
   type FeatureAboutStep,
 } from "@/components/xndzor/FeatureAboutLayout";
 import { formatAmd } from "@/lib/utils";
+import { buildPageMetadata } from "@/lib/seo";
 import {
   FEATURE_ABOUT_EXAMPLE,
   FEATURE_ABOUT_SLUGS,
@@ -30,10 +31,12 @@ export async function generateMetadata({ params }: PageProps) {
   const { locale, slug } = await params;
   if (!isFeatureAboutSlug(slug)) return {};
   const t = await getTranslations({ locale, namespace: `features.about.${slug}` });
-  return {
+  return buildPageMetadata({
+    locale,
+    path: `/features/${slug}`,
     title: t("title"),
     description: t("lede"),
-  };
+  });
 }
 
 function exampleValues(

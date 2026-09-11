@@ -34,7 +34,7 @@ export function ClassifiedRow({
     <div className="classified-row">
       {thumb ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={thumb} alt="" className="classified-thumb" loading="lazy" />
+        <img src={thumb} alt={title} className="classified-thumb" loading="lazy" />
       ) : icon ? (
         <span className="classified-icon" aria-hidden>
           {icon}

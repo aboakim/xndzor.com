@@ -66,6 +66,7 @@ export function PostCard({
           {thumb || icon ? (
             <ListingThumb
               src={thumb}
+              alt={title}
               className="post-card-thumb"
               fallback={icon}
               placeholderClassName="post-card-icon"
@@ -102,6 +103,7 @@ export function PostCard({
       <div className="listing-card-media">
         <ListingThumb
           src={thumb}
+          alt={title}
           className="listing-card-img"
           fallback={icon}
         />

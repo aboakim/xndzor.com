@@ -28,6 +28,17 @@ import { HomeStripSkeleton } from "@/components/HomeBannerSkeleton";
 import { PrefetchLink } from "@/components/PrefetchLink";
 import { HomeMoreFeeds } from "@/components/HomeMoreFeeds";
 
+import { seoMessagesMetadata } from "@/lib/seo-metadata";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return seoMessagesMetadata(locale, "", "home");
+}
+
 const HeroPromoSlider = nextDynamic(
   () =>
     import("@/components/xndzor/HeroPromoSlider").then((m) => ({

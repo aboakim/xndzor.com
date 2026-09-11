@@ -10,6 +10,17 @@ import { EmptyState } from "@/components/EmptyState";
 import { VillageLink } from "@/components/VillageLink";
 import { effectiveTons } from "@/lib/yield";
 
+import { seoMessagesMetadata } from "@/lib/seo-metadata";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return seoMessagesMetadata(locale, "/plots", "plots", { noIndex: true });
+}
+
 export const dynamic = "force-dynamic";
 
 export default async function PlotsPage({

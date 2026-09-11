@@ -6,6 +6,7 @@ import { OwnerContactActions } from "@/components/OwnerContactActions";
 import { ShareButtons } from "@/components/ShareButtons";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ListingGallery } from "@/components/ListingGallery";
+import { JsonLd } from "@/components/JsonLd";
 import { CatalogListingActions } from "@/components/CatalogListingActions";
 import { CommentSection } from "@/components/CommentSection";
 import { VillageLink } from "@/components/VillageLink";
@@ -26,8 +27,51 @@ import { getActiveBoostMap, getUserEntitlements } from "@/lib/monetization";
 import { resolveOwnerFreeCheckout } from "@/lib/early-bird";
 import { SellerCard } from "@/components/SellerCard";
 import { USER_PROFILE_SELECT } from "@/lib/profile-privacy";
+import { listingPageMetadata, productJsonLd } from "@/lib/listing-seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; category: string; id: string }>;
+}) {
+  const { locale, category: slug, id } = await params;
+  const category = categoryFromRoute(slug);
+  if (!category) return {};
+  const listing = await prisma.catalogListing.findUnique({
+    where: { id },
+    select: {
+      title: true,
+      description: true,
+      priceAmd: true,
+      status: true,
+      category: true,
+      imageUrls: true,
+      marz: { select: { slug: true } },
+    },
+  });
+  if (!listing || listing.status === "HIDDEN" || listing.category !== category) return {};
+  const t = await getTranslations({ locale, namespace: "seo" });
+  const tRoot = await getTranslations({ locale });
+  const region = tRoot(`marzes.${listing.marz.slug}` as "marzes.Yerevan");
+  const title = tContent(locale, listing.title);
+  const priceLabel =
+    listing.priceAmd != null
+      ? `${formatAmd(listing.priceAmd, locale)} ֏`
+      : t("listing.priceOpen");
+  return listingPageMetadata({
+    locale,
+    path: `/shop/${slug}/${id}`,
+    title,
+    descriptionKey: "listing.catalogDesc",
+    priceLabel,
+    region,
+    imageUrlsJson: listing.imageUrls,
+    body: tContent(locale, listing.description),
+  });
+}
 
 export default async function CatalogDetailPage({
   params,
@@ -115,6 +159,26 @@ export default async function CatalogDetailPage({
 
   return (
     <div className="section detail-page machinery-detail">
+      <JsonLd
+        data={[
+          breadcrumbJsonLd(locale, [
+            { href: "/", label: t("nav.home") },
+            {
+              href: `/shop/${route}`,
+              label: t(`catalogCategories.${category}` as "catalogCategories.FERTILIZER"),
+            },
+            { label: title },
+          ]),
+          productJsonLd({
+            name: title,
+            description: description || title,
+            url: absoluteUrl(locale, `/shop/${route}/${listing.id}`),
+            image: images[0] ?? null,
+            priceAmd: listing.priceAmd,
+            region: marzLabel,
+          }),
+        ]}
+      />
       <Breadcrumbs
         items={[
           { href: "/", label: t("nav.home") },

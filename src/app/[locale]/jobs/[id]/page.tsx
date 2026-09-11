@@ -4,8 +4,9 @@ import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
 import { OwnerContactActions } from "@/components/OwnerContactActions";
 import { ShareButtons } from "@/components/ShareButtons";
+import { JsonLd } from "@/components/JsonLd";
 import { findProvidersForJob, parseJobTypesJson } from "@/lib/matching";
-import { formatAmd } from "@/lib/utils";
+import { formatAmd, parseImageUrls } from "@/lib/utils";
 import { getSession } from "@/lib/session";
 import { ApplyToJobButton } from "@/components/ApplyToJobButton";
 import { JobTypeIcon } from "@/components/AgIcons";
@@ -13,8 +14,47 @@ import { VillageLink } from "@/components/VillageLink";
 import { SellerCard } from "@/components/SellerCard";
 import { USER_PROFILE_SELECT } from "@/lib/profile-privacy";
 import { MyListingActions } from "@/components/MyListingActions";
+import { listingPageMetadata, productJsonLd } from "@/lib/listing-seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}) {
+  const { locale, id } = await params;
+  const job = await prisma.jobRequest.findUnique({
+    where: { id },
+    select: {
+      title: true,
+      description: true,
+      budgetAmd: true,
+      status: true,
+      imageUrls: true,
+      marz: { select: { slug: true } },
+    },
+  });
+  if (!job || job.status === "HIDDEN") return {};
+  const t = await getTranslations({ locale, namespace: "seo" });
+  const tRoot = await getTranslations({ locale });
+  const region = tRoot(`marzes.${job.marz.slug}` as "marzes.Yerevan");
+  const priceLabel =
+    job.budgetAmd != null
+      ? `${formatAmd(job.budgetAmd, locale)} ֏`
+      : t("listing.priceOpen");
+  return listingPageMetadata({
+    locale,
+    path: `/jobs/${id}`,
+    title: job.title,
+    descriptionKey: "listing.jobDesc",
+    priceLabel,
+    region,
+    imageUrlsJson: job.imageUrls,
+    body: job.description,
+  });
+}
 
 export default async function JobDetailPage({
   params,
@@ -51,6 +91,23 @@ export default async function JobDetailPage({
 
   return (
     <div className="section detail-page">
+      <JsonLd
+        data={[
+          breadcrumbJsonLd(locale, [
+            { href: "/", label: t("nav.home") },
+            { href: "/jobs", label: t("jobsBoard.title") },
+            { label: job.title },
+          ]),
+          productJsonLd({
+            name: job.title,
+            description: job.description || job.title,
+            url: absoluteUrl(locale, `/jobs/${job.id}`),
+            image: parseImageUrls(job.imageUrls)[0] ?? null,
+            priceAmd: job.budgetAmd,
+            region: t(`marzes.${job.marz.slug}` as "marzes.Yerevan"),
+          }),
+        ]}
+      />
       <p className="eyebrow">{t("actions.orderJob.title")}</p>
       <h1>{job.title}</h1>
       <p className="detail-product">

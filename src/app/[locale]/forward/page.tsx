@@ -17,6 +17,17 @@ import {
 } from "@/lib/monetization";
 import { getProducts } from "@/lib/products";
 
+import { seoMessagesMetadata } from "@/lib/seo-metadata";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return seoMessagesMetadata(locale, "/forward", "forward");
+}
+
 export const dynamic = "force-dynamic";
 export default async function ForwardBoardPage({
   params,

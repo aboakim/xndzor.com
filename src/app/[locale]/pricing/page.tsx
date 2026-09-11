@@ -16,6 +16,17 @@ import { getEarlyBirdUserContext } from "@/lib/early-bird";
 import { getSession } from "@/lib/session";
 import { getUserEntitlements } from "@/lib/monetization";
 
+import { seoMessagesMetadata } from "@/lib/seo-metadata";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return seoMessagesMetadata(locale, "/pricing", "pricing");
+}
+
 export default async function PricingPage({
   params,
 }: {

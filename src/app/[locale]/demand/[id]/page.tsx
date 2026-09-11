@@ -7,6 +7,7 @@ import { ShareButtons } from "@/components/ShareButtons";
 import { OfferButton } from "@/components/OfferButton";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ListingGallery } from "@/components/ListingGallery";
+import { JsonLd } from "@/components/JsonLd";
 import { findMatchesForDemand } from "@/lib/matching";
 import { formatAmd, formatPriceRange, formatQty, parseImageUrls } from "@/lib/utils";
 import { localizedPlaceName } from "@/lib/places";
@@ -16,8 +17,51 @@ import { VillageLink } from "@/components/VillageLink";
 import { SellerCard } from "@/components/SellerCard";
 import { USER_PROFILE_SELECT } from "@/lib/profile-privacy";
 import { MyListingActions } from "@/components/MyListingActions";
+import { listingPageMetadata, productJsonLd } from "@/lib/listing-seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}) {
+  const { locale, id } = await params;
+  const demand = await prisma.demand.findUnique({
+    where: { id },
+    select: {
+      title: true,
+      description: true,
+      priceMinAmd: true,
+      priceMaxAmd: true,
+      unit: true,
+      status: true,
+      imageUrls: true,
+      marz: { select: { slug: true } },
+    },
+  });
+  if (!demand || demand.status === "HIDDEN") return {};
+  const t = await getTranslations({ locale });
+  const region = t(`marzes.${demand.marz.slug}` as "marzes.Yerevan");
+  const priceLabel =
+    formatPriceRange(
+      demand.priceMinAmd,
+      demand.priceMaxAmd,
+      demand.unit,
+      (k) => t(k as "common.amd"),
+    ) || t("detail.priceOpen");
+  return listingPageMetadata({
+    locale,
+    path: `/demand/${id}`,
+    title: demand.title,
+    descriptionKey: "listing.demandDesc",
+    priceLabel,
+    region,
+    imageUrlsJson: demand.imageUrls,
+    body: demand.description,
+  });
+}
 
 export default async function DemandDetailPage({
   params,
@@ -59,6 +103,28 @@ export default async function DemandDetailPage({
 
   return (
     <div className="section detail-page detail-listam">
+      <JsonLd
+        data={[
+          breadcrumbJsonLd(locale, [
+            { href: "/", label: t("nav.home") },
+            { href: "/demand", label: t("demandBoard.title") },
+            {
+              href: `/demand?product=${demand.product.slug}`,
+              label: t(demand.product.nameKey as "products.tomato"),
+            },
+            { href: `/demand?marz=${demand.marzId}`, label: marzLabel },
+            { label: demand.title },
+          ]),
+          productJsonLd({
+            name: demand.title,
+            description: demand.description || demand.title,
+            url: absoluteUrl(locale, `/demand/${demand.id}`),
+            image: images[0] ?? null,
+            priceAmd: demand.priceMaxAmd ?? demand.priceMinAmd,
+            region: marzLabel,
+          }),
+        ]}
+      />
       <Breadcrumbs
         items={[
           { href: "/", label: t("nav.home") },

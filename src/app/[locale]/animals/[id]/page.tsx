@@ -6,6 +6,7 @@ import { OwnerContactActions } from "@/components/OwnerContactActions";
 import { ShareButtons } from "@/components/ShareButtons";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ListingGallery } from "@/components/ListingGallery";
+import { JsonLd } from "@/components/JsonLd";
 import { AnimalTypeIcon, ActionIcon } from "@/components/AgIcons";
 import { AnimalListingActions } from "@/components/AnimalListingActions";
 import { CommentSection } from "@/components/CommentSection";
@@ -21,8 +22,48 @@ import { resolveOwnerFreeCheckout } from "@/lib/early-bird";
 import { TrackRecentView } from "@/components/TrackRecentView";
 import { SellerCard } from "@/components/SellerCard";
 import { USER_PROFILE_SELECT } from "@/lib/profile-privacy";
+import { listingPageMetadata, productJsonLd } from "@/lib/listing-seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}) {
+  const { locale, id } = await params;
+  const listing = await prisma.animalListing.findUnique({
+    where: { id },
+    select: {
+      title: true,
+      description: true,
+      priceAmd: true,
+      status: true,
+      imageUrls: true,
+      marz: { select: { slug: true } },
+    },
+  });
+  if (!listing || listing.status === "HIDDEN") return {};
+  const t = await getTranslations({ locale, namespace: "seo" });
+  const tRoot = await getTranslations({ locale });
+  const region = tRoot(`marzes.${listing.marz.slug}` as "marzes.Yerevan");
+  const title = tContent(locale, listing.title);
+  const priceLabel =
+    listing.priceAmd != null
+      ? `${formatAmd(listing.priceAmd, locale)} ֏`
+      : t("listing.priceOpen");
+  return listingPageMetadata({
+    locale,
+    path: `/animals/${id}`,
+    title,
+    descriptionKey: "listing.animalDesc",
+    priceLabel,
+    region,
+    imageUrlsJson: listing.imageUrls,
+    body: tContent(locale, listing.description),
+  });
+}
 
 export default async function AnimalDetailPage({
   params,
@@ -127,6 +168,28 @@ export default async function AnimalDetailPage({
 
   return (
     <div className="section detail-page machinery-detail detail-listam">
+      <JsonLd
+        data={[
+          breadcrumbJsonLd(locale, [
+            { href: "/", label: t("nav.home") },
+            { href: "/animals", label: t("animalsBoard.title") },
+            {
+              href: `/animals?type=${listing.animalType}`,
+              label: t(`animalTypes.${listing.animalType}` as "animalTypes.COW"),
+            },
+            { href: `/animals?marz=${listing.marzId}`, label: marzLabel },
+            { label: title },
+          ]),
+          productJsonLd({
+            name: title,
+            description: description || title,
+            url: absoluteUrl(locale, `/animals/${listing.id}`),
+            image: images[0] ?? null,
+            priceAmd: listing.priceAmd,
+            region: marzLabel,
+          }),
+        ]}
+      />
       <TrackRecentView
         id={listing.id}
         href={`/animals/${listing.id}`}

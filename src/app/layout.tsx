@@ -1,29 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import {
-  Noto_Sans,
-  Noto_Sans_Armenian,
-  Noto_Serif,
-  Noto_Serif_Armenian,
-} from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { resolveSiteUrl } from "@/lib/site-url";
-import { THEME_BOOT_SCRIPT } from "@/lib/theme";
+import { OG_IMAGE } from "@/lib/seo";
 import "./globals.css";
 /* Load after globals so dark tokens/overrides beat later :root and component colors */
 import "./theme-dark.css";
 
 const siteUrl = resolveSiteUrl();
-const ogImage = {
-  // New path (og-v4) forces Facebook/Telegram to fetch a fresh share image;
-  // absolute www URL keeps apex redirects consistent with metadataBase.
-  url: "https://www.xndzor.com/og-v4.png",
-  width: 1200,
-  height: 630,
-  alt: "Խնձոր — Xndzor",
-  type: "image/png" as const,
-};
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -32,30 +15,7 @@ export const viewport: Viewport = {
   themeColor: "#0a3329",
 };
 
-const displayHy = Noto_Serif_Armenian({
-  subsets: ["armenian"],
-  variable: "--font-display-hy",
-  weight: ["400", "700"],
-});
-
-const displayLat = Noto_Serif({
-  subsets: ["latin", "cyrillic"],
-  variable: "--font-display",
-  weight: ["400", "600", "700"],
-});
-
-const sansHy = Noto_Sans_Armenian({
-  subsets: ["armenian"],
-  variable: "--font-sans-hy",
-  weight: ["400", "500", "600", "700"],
-});
-
-const sans = Noto_Sans({
-  subsets: ["latin", "cyrillic"],
-  variable: "--font-sans",
-  weight: ["400", "500", "600", "700"],
-});
-
+/** Default metadata; locale pages override via generateMetadata + buildPageMetadata. */
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
@@ -115,14 +75,14 @@ export const metadata: Metadata = {
     title: "Խնձոր (Xndzor) — գյուղատնտեսական շուկա | xndzor.com",
     description:
       "Խնձոր — xndzor.com։ Ի՞նչ աճեցնել՝ ըստ պահանջարկի։ Հողամաս → ազդանշան → նախնական վաճառք։ Հայաստանի ֆերմերների համար։",
-    images: [ogImage],
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: "Խնձոր — Xndzor | xndzor.com",
     description:
       "Xndzor (xndzor.com) — what to grow by demand. Plots, harvest, machinery, jobs — Armenia's agricultural marketplace.",
-    images: [ogImage.url],
+    images: [OG_IMAGE.url],
   },
   robots: {
     index: true,
@@ -134,19 +94,10 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Passthrough root so `[locale]/layout` can own `<html lang>`.
+ * Required by next-intl App Router; metadata/viewport still export from here.
+ */
 export default function RootLayout({ children }: { children: ReactNode }) {
-  return (
-    <html suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
-      </head>
-      <body
-        className={`${displayHy.variable} ${displayLat.variable} ${sansHy.variable} ${sans.variable}`}
-      >
-        {children}
-        <Analytics />
-        <SpeedInsights />
-      </body>
-    </html>
-  );
+  return children;
 }

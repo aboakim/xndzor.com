@@ -9,6 +9,17 @@ import {
   getMatchLists,
 } from "@/lib/exchange";
 
+import { seoMessagesMetadata } from "@/lib/seo-metadata";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return seoMessagesMetadata(locale, "/grow", "grow");
+}
+
 export default async function GrowPage({
   params,
   searchParams,

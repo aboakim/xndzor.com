@@ -8,6 +8,7 @@ import {
 } from "@/components/xndzor/FeatureAboutLayout";
 import { formatAmd } from "@/lib/utils";
 import { GROUP_BUY_ABOUT_VISUALS } from "@/lib/featureAbout";
+import { buildPageMetadata } from "@/lib/seo";
 
 const SOLO_PRICE = 85_000;
 const GROUP_PRICE = 48_000;
@@ -20,10 +21,12 @@ type PageProps = {
 export async function generateMetadata({ params }: PageProps) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "groupBuy.about" });
-  return {
+  return buildPageMetadata({
+    locale,
+    path: "/group-buy/about",
     title: t("title"),
     description: t("lede"),
-  };
+  });
 }
 
 export default async function GroupBuyAboutPage({ params }: PageProps) {

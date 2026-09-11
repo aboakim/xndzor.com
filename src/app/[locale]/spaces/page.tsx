@@ -9,6 +9,17 @@ import { getSession } from "@/lib/session";
 import { SpaceListingForm } from "@/components/farm-os/SpaceListingForm";
 import { getMarzOptions } from "@/lib/marz-options";
 
+import { seoMessagesMetadata } from "@/lib/seo-metadata";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return seoMessagesMetadata(locale, "/spaces", "spaces");
+}
+
 export const dynamic = "force-dynamic";
 
 export default async function SpacesPage({

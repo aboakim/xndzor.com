@@ -6,6 +6,17 @@ import { formatAmd } from "@/lib/utils";
 import { GroupBuyJoinForm } from "@/components/GroupBuyJoinForm";
 import { ProductIcon } from "@/components/AgIcons";
 
+import { seoMessagesMetadata } from "@/lib/seo-metadata";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return seoMessagesMetadata(locale, "/group-buy", "groupBuy");
+}
+
 export const dynamic = "force-dynamic";
 
 export default async function GroupBuyPage({
