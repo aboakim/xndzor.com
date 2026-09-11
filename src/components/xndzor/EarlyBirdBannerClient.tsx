@@ -183,8 +183,8 @@ export function EarlyBirdBannerClient({
       <div className="early-bird-banner-glow" aria-hidden />
       <div className="early-bird-banner-inner">
         <p className="early-bird-banner-eyebrow">{t("eyebrow")}</p>
-        <h2 className="early-bird-banner-headline">{t("headline")}</h2>
-        <p className="early-bird-banner-sub">{t("subheadline")}</p>
+        <h2 className="early-bird-banner-headline">{t("headline", { limit })}</h2>
+        <p className="early-bird-banner-sub">{t("subheadline", { limit })}</p>
         {!slotsFull ? (
           <div className="early-bird-banner-stats">
             <p className="early-bird-banner-counter early-bird-banner-counter-big">

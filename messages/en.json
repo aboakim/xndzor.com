@@ -2274,7 +2274,7 @@
   },
   "earlyBird": {
     "eyebrow": "Early bird",
-    "headline": "First 100 package claims — free forever",
+    "headline": "First {limit} package claims — free forever",
     "stripOffer": "First {limit} package claims — free forever",
     "subheadline": "Activate a package to claim your free slot. Registration alone does not reduce remaining spots.",
     "remaining": "{remaining} free spots left",

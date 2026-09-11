@@ -17,12 +17,12 @@ const EARLY_BIRD_LOCK_KEY = 87201401;
 
 let reconcileDone = false;
 
-/** Default 100; set EARLY_BIRD_FREE_LIMIT=0 to disable early-bird mode. */
+/** Default 50; set EARLY_BIRD_FREE_LIMIT=0 to disable early-bird mode. */
 export function getEarlyBirdFreeLimit(): number {
   const raw = process.env.EARLY_BIRD_FREE_LIMIT?.trim();
   if (raw === "" || raw === "0" || raw?.toLowerCase() === "off") return 0;
-  const n = Number(raw ?? "100");
-  return Number.isFinite(n) && n > 0 ? Math.floor(n) : 100;
+  const n = Number(raw ?? "50");
+  return Number.isFinite(n) && n > 0 ? Math.floor(n) : 50;
 }
 
 export function isEarlyBirdEnabled(): boolean {

@@ -17,7 +17,7 @@
 
 ```env
 PACKAGES_FREE=false
-EARLY_BIRD_FREE_LIMIT=100
+EARLY_BIRD_FREE_LIMIT=50
 
 OWNER_BANK_NAME=Ameriabank
 OWNER_BANK_ACCOUNT=0123456789012345
@@ -233,10 +233,10 @@ Live launch pattern:
 
 ```env
 PACKAGES_FREE=false
-EARLY_BIRD_FREE_LIMIT=100
+EARLY_BIRD_FREE_LIMIT=50
 ```
 
-- First 100 **package activations** are free forever (`provider: FREE`)
+- First 50 **package activations** are free forever (`provider: FREE`)
 - When slots are full → paid path (bank / Stripe / iDram / TelCell)
 - Paid activations **do not** consume early-bird slots
 
@@ -253,7 +253,7 @@ EARLY_BIRD_FREE_LIMIT=0
 ```env
 # Free launch / early-bird
 PACKAGES_FREE=false
-EARLY_BIRD_FREE_LIMIT=100
+EARLY_BIRD_FREE_LIMIT=50
 
 # Bank transfer → your AMD account (recommended start)
 OWNER_BANK_NAME=

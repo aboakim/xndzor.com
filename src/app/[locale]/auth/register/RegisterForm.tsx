@@ -151,7 +151,7 @@ export default function RegisterForm({ callbackUrl }: Props) {
         setSuccess(
           `${tEarly("registerSuccess")} ${tEarly("registerSuccessRemaining", {
             remaining: eb.remaining,
-            limit: eb.freeLimit ?? 100,
+            limit: eb.freeLimit ?? 50,
           })}`,
         );
       } else if (eb?.slotsFull) {
