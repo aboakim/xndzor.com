@@ -15,6 +15,7 @@ import {
   resolveListingError,
   type ListingField,
 } from "@/lib/listing-create";
+import { toDateInput } from "@/lib/date-input";
 
 type Product = CatalogProduct;
 type Phase = "idle" | "uploading" | "publishing";
@@ -23,26 +24,49 @@ export function ForwardCropForm({
   products,
   defaultMarzId,
   defaultPhone,
+  listingId,
+  initial,
 }: {
   products: Product[];
   defaultMarzId?: string | null;
   defaultPhone?: string | null;
+  listingId?: string;
+  initial?: {
+    title: string;
+    description: string;
+    productId: string;
+    qtyExpected: number;
+    unit: string;
+    harvestDate: Date | string;
+    priceAmd: number | null;
+    marzId: string;
+    villageId: string | null;
+    phone: string;
+    whatsapp: string | null;
+    plotId: string | null;
+    imageUrls: string[];
+  };
 }) {
   const t = useTranslations();
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const submittingRef = useRef(false);
   const publishWithOkOnlyRef = useRef(false);
+  const isEdit = Boolean(listingId);
   const [phase, setPhase] = useState<Phase>("idle");
   const [error, setError] = useState("");
   const [fieldError, setFieldError] = useState<Partial<Record<ListingField, string>>>({});
   const [uploadProgress, setUploadProgress] = useState<number | undefined>();
   const [files, setFiles] = useState<File[]>([]);
-  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
+  const [uploadedUrls, setUploadedUrls] = useState<string[]>(() => initial?.imageUrls ?? []);
   const [failedIndices, setFailedIndices] = useState<number[]>([]);
   const featured = getFeaturedProducts(products);
   const [productId, setProductId] = useState(
-    () => featured.find((p) => p.slug !== "other")?.id || products[0]?.id || "",
+    () =>
+      initial?.productId ||
+      featured.find((p) => p.slug !== "other")?.id ||
+      products[0]?.id ||
+      "",
   );
   const saving = phase !== "idle";
   const canContinueAfterUploadFail = failedIndices.length > 0;
@@ -155,8 +179,8 @@ export function ForwardCropForm({
       }
 
       setPhase("publishing");
-      const res = await fetch("/api/forward", {
-        method: "POST",
+      const res = await fetch(isEdit ? `/api/forward/${listingId}` : "/api/forward", {
+        method: isEdit ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...Object.fromEntries(fd.entries()),
@@ -167,13 +191,13 @@ export function ForwardCropForm({
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(translateResolved(data, "images.uploadError"));
+        setError(translateResolved(data, isEdit ? "listingEdit.error" : "images.uploadError"));
         setPhase("idle");
         submittingRef.current = false;
         return;
       }
       const crop = await res.json();
-      router.push(`/forward/${crop.id}`);
+      router.push(`/forward/${isEdit ? listingId : crop.id}`);
       router.refresh();
     } catch (err) {
       setError(
@@ -193,8 +217,8 @@ export function ForwardCropForm({
         ? t("images.uploadingProgress", { pct: uploadProgress })
         : t("images.uploading");
     }
-    if (phase === "publishing") return t("forwardForm.saving");
-    return t("forwardForm.submit");
+    if (phase === "publishing") return t(isEdit ? "listingEdit.saving" : "forwardForm.saving");
+    return t(isEdit ? "listingEdit.submit" : "forwardForm.submit");
   }
 
   return (
@@ -241,7 +265,13 @@ export function ForwardCropForm({
       {productId ? <LiveCropSignal productId={productId} /> : null}
       <label>
         <span>{t("forwardForm.title")}</span>
-        <input name="title" required minLength={5} disabled={saving} />
+        <input
+          name="title"
+          required
+          minLength={5}
+          disabled={saving}
+          defaultValue={initial?.title || ""}
+        />
         {fieldError.title ? (
           <span className="form-error small" role="alert">
             {fieldError.title}
@@ -250,7 +280,14 @@ export function ForwardCropForm({
       </label>
       <label>
         <span>{t("forwardForm.description")}</span>
-        <textarea name="description" required minLength={10} rows={4} disabled={saving} />
+        <textarea
+          name="description"
+          required
+          minLength={10}
+          rows={4}
+          disabled={saving}
+          defaultValue={initial?.description || ""}
+        />
         {fieldError.description ? (
           <span className="form-error small" role="alert">
             {fieldError.description}
@@ -260,7 +297,14 @@ export function ForwardCropForm({
       <div className="form-row">
         <label>
           <span>{t("forwardForm.qty")}</span>
-          <input name="qtyExpected" type="number" min={1} required disabled={saving} />
+          <input
+            name="qtyExpected"
+            type="number"
+            min={1}
+            required
+            disabled={saving}
+            defaultValue={initial?.qtyExpected ?? ""}
+          />
           {fieldError.qty ? (
             <span className="form-error small" role="alert">
               {fieldError.qty}
@@ -269,7 +313,7 @@ export function ForwardCropForm({
         </label>
         <label>
           <span>{t("forwardForm.unit")}</span>
-          <select name="unit" defaultValue="ton" disabled={saving}>
+          <select name="unit" defaultValue={initial?.unit || "ton"} disabled={saving}>
             {UNITS.map((u) => (
               <option key={u} value={u}>
                 {t(`units.${u}` as "units.kg")}
@@ -281,16 +325,33 @@ export function ForwardCropForm({
       <div className="form-row">
         <label>
           <span>{t("forwardForm.harvestDate")}</span>
-          <input name="harvestDate" type="date" required disabled={saving} />
+          <input
+            name="harvestDate"
+            type="date"
+            required
+            disabled={saving}
+            defaultValue={toDateInput(initial?.harvestDate)}
+          />
         </label>
         <label>
           <span>{t("forwardForm.price")}</span>
-          <input name="priceAmd" type="number" min={0} disabled={saving} />
+          <input
+            name="priceAmd"
+            type="number"
+            min={0}
+            disabled={saving}
+            defaultValue={initial?.priceAmd ?? ""}
+          />
         </label>
       </div>
       <label>
         <span>{t("jobsForm.marz")}</span>
-        <select name="marzId" required defaultValue={defaultMarzId || ""} disabled={saving}>
+        <select
+          name="marzId"
+          required
+          defaultValue={initial?.marzId || defaultMarzId || ""}
+          disabled={saving}
+        >
           <option value="" disabled>
             —
           </option>
@@ -309,7 +370,12 @@ export function ForwardCropForm({
       <div className="form-row">
         <label>
           <span>{t("jobsForm.phone")}</span>
-          <input name="phone" required defaultValue={defaultPhone || ""} disabled={saving} />
+          <input
+            name="phone"
+            required
+            defaultValue={initial?.phone || defaultPhone || ""}
+            disabled={saving}
+          />
           {fieldError.phone ? (
             <span className="form-error small" role="alert">
               {fieldError.phone}
@@ -318,7 +384,11 @@ export function ForwardCropForm({
         </label>
         <label>
           <span>WhatsApp</span>
-          <input name="whatsapp" defaultValue={defaultPhone || ""} disabled={saving} />
+          <input
+            name="whatsapp"
+            defaultValue={initial?.whatsapp || defaultPhone || ""}
+            disabled={saving}
+          />
         </label>
       </div>
       <ImageUploadField

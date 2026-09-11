@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useState } from "react";
 
 type Props = {
@@ -11,6 +11,8 @@ type Props = {
   apiBase: string;
   /** Extra terminal statuses besides ACTIVE / HIDDEN (default SOLD) */
   soldStatus?: string | null;
+  /** Owner edit page path, e.g. /supply/xyz/edit */
+  editHref?: string;
 };
 
 /**
@@ -22,6 +24,7 @@ export function MyListingActions({
   status,
   apiBase,
   soldStatus = "SOLD",
+  editHref,
 }: Props) {
   const t = useTranslations("my");
   const router = useRouter();
@@ -72,6 +75,11 @@ export function MyListingActions({
 
   return (
     <div className="my-actions">
+      {editHref ? (
+        <Link href={editHref} className="btn ghost">
+          {t("edit")}
+        </Link>
+      ) : null}
       {status !== "ACTIVE" && (
         <button
           type="button"

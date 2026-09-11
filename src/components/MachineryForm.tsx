@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { MARZES, localizedPlaceName, type LocationVillage } from "@/lib/places";
@@ -20,25 +20,58 @@ import {
 export function MachineryForm({
   defaultMarzId,
   defaultPhone,
+  listingId,
+  initial,
 }: {
   defaultMarzId?: string | null;
   defaultPhone?: string | null;
+  listingId?: string;
+  initial?: {
+    title?: string;
+    description?: string;
+    make?: string;
+    model?: string;
+    year?: number | null;
+    engineHours?: number | null;
+    mileageKm?: number | null;
+    condition?: string;
+    priceAmd?: number | null;
+    powerHp?: number | null;
+    transmission?: string | null;
+    driveType?: string | null;
+    fuel?: string | null;
+    workingWidth?: string | null;
+    capacity?: string | null;
+    attachments?: string | null;
+    documentsNote?: string | null;
+    phone?: string | null;
+    whatsapp?: string | null;
+    imageUrls?: string[];
+    marzId?: string;
+    villageId?: string | null;
+    machineryType?: string;
+    priceNegotiable?: boolean;
+  };
 }) {
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
-  const [marzId, setMarzId] = useState(defaultMarzId || "");
-  const [villageId, setVillageId] = useState("");
+  const isEdit = Boolean(listingId);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [marzId, setMarzId] = useState(initial?.marzId || defaultMarzId || "");
+  const [villageId, setVillageId] = useState(String(initial?.villageId || ""));
   const [villages, setVillages] = useState<LocationVillage[]>([]);
   const [loadingVillages, setLoadingVillages] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
-  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
+  const [uploadedUrls, setUploadedUrls] = useState<string[]>(() => initial?.imageUrls ?? []);
   const [failedIndices, setFailedIndices] = useState<number[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number | undefined>();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [machineryType, setMachineryType] = useState<(typeof MACHINERY_TYPES)[number]>("TRACTOR");
-  const [negotiable, setNegotiable] = useState(false);
+  const [machineryType, setMachineryType] = useState<(typeof MACHINERY_TYPES)[number]>(
+    (initial?.machineryType as (typeof MACHINERY_TYPES)[number]) || "TRACTOR",
+  );
+  const [negotiable, setNegotiable] = useState(Boolean(initial?.priceNegotiable));
 
   useEffect(() => {
     if (!marzId) {
@@ -52,8 +85,9 @@ export function MachineryForm({
       .then((r) => r.json())
       .then((data) => {
         if (cancelled) return;
-        setVillages(Array.isArray(data) ? data : []);
-        setVillageId("");
+        const list = Array.isArray(data) ? data : [];
+        setVillages(list);
+        setVillageId((prev) => (prev && list.some((v: LocationVillage) => v.id === prev) ? prev : ""));
       })
       .finally(() => {
         if (!cancelled) setLoadingVillages(false);
@@ -62,6 +96,44 @@ export function MachineryForm({
       cancelled = true;
     };
   }, [marzId]);
+
+  useEffect(() => {
+    if (!initial || !formRef.current) return;
+    const form = formRef.current;
+    const names = [
+      "title",
+      "description",
+      "make",
+      "model",
+      "year",
+      "engineHours",
+      "mileageKm",
+      "condition",
+      "priceAmd",
+      "powerHp",
+      "transmission",
+      "driveType",
+      "fuel",
+      "workingWidth",
+      "capacity",
+      "attachments",
+      "documentsNote",
+      "phone",
+      "whatsapp",
+    ] as const;
+    for (const name of names) {
+      const el = form.elements.namedItem(name);
+      if (
+        el &&
+        (el instanceof HTMLInputElement ||
+          el instanceof HTMLTextAreaElement ||
+          el instanceof HTMLSelectElement)
+      ) {
+        const v = initial[name as keyof typeof initial];
+        el.value = v == null ? "" : String(v);
+      }
+    }
+  }, [initial]);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -119,8 +191,8 @@ export function MachineryForm({
         whatsapp: String(fd.get("whatsapp") || ""),
         imageUrls,
       };
-      const res = await fetch("/api/machinery", {
-        method: "POST",
+      const res = await fetch(isEdit ? `/api/machinery/${listingId}` : "/api/machinery", {
+        method: isEdit ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
@@ -129,13 +201,13 @@ export function MachineryForm({
         try {
           setError(t(resolveListingError(data).key as "listingErrors.publishFailed"));
         } catch {
-          setError(t("postMachinery.error"));
+          setError(t(isEdit ? "listingEdit.error" : "postMachinery.error"));
         }
         setSaving(false);
         return;
       }
       const created = await res.json();
-      router.push(`/machinery/${created.id}`);
+      router.push(`/machinery/${isEdit ? listingId : created.id}`);
       router.refresh();
     } catch (err) {
       try {
@@ -156,7 +228,11 @@ export function MachineryForm({
   const showKm = prefersMileage(machineryType) || machineryType === "OTHER";
 
   return (
-    <form className="listing-form stack-form machinery-form" onSubmit={onSubmit}>
+    <form
+      ref={formRef}
+      className="listing-form stack-form machinery-form"
+      onSubmit={onSubmit}
+    >
       <fieldset className="form-section">
         <legend>{t("postMachinery.sections.basics")}</legend>
         <label>
@@ -385,7 +461,9 @@ export function MachineryForm({
 
       {error ? <p className="form-error">{error}</p> : null}
       <button type="submit" className="btn primary" disabled={saving || !marzId || !villageId}>
-        {saving ? t("postMachinery.saving") : t("postMachinery.submit")}
+        {saving
+          ? t(isEdit ? "listingEdit.saving" : "postMachinery.saving")
+          : t(isEdit ? "listingEdit.submit" : "postMachinery.submit")}
       </button>
     </form>
   );

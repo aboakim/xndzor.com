@@ -108,6 +108,7 @@ export default async function JobDetailPage({
             status={job.status}
             apiBase="/api/jobs"
             soldStatus="FILLED"
+            editHref={`/jobs/${job.id}/edit`}
           />
         </section>
       ) : null}

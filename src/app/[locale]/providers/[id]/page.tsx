@@ -71,6 +71,14 @@ export default async function ProviderDetailPage({
         whatsapp={provider.whatsapp}
       />
 
+      {isOwner ? (
+        <section className="owner-panel">
+          <Link href={`/providers/${provider.id}/edit`} className="btn ghost">
+            {t("my.edit")}
+          </Link>
+        </section>
+      ) : null}
+
       <section className="match-section killer-flow">
         <h2>{t("providersBoard.openJobs")}</h2>
         {matches.length === 0 ? (

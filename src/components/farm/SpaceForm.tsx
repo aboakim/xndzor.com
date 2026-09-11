@@ -9,27 +9,44 @@ const TYPES = ["WAREHOUSE", "COLD", "SILO", "GREENHOUSE", "DRYER", "LAND"] as co
 export function SpaceForm({
   marzes,
   defaultMarzId,
+  listingId,
+  initial,
 }: {
   marzes: { id: string; slug: string; name: string }[];
   defaultMarzId?: string | null;
+  listingId?: string;
+  initial?: {
+    title: string;
+    description: string;
+    spaceType: string;
+    area: number | null;
+    priceAmd: number | null;
+    marzId: string;
+    phone: string;
+    capacityNote: string | null;
+  };
 }) {
   const t = useTranslations("farm.spaces");
+  const tEdit = useTranslations("listingEdit");
   const router = useRouter();
+  const isEdit = Boolean(listingId);
   const [error, setError] = useState<string | null>(null);
-  const [title, setTitle] = useState("");
-  const [spaceType, setSpaceType] = useState<string>("WAREHOUSE");
-  const [description, setDescription] = useState("");
-  const [area, setArea] = useState("");
-  const [priceAmd, setPriceAmd] = useState("");
-  const [marzId, setMarzId] = useState(defaultMarzId || marzes[0]?.id || "");
-  const [phone, setPhone] = useState("");
-  const [capacityNote, setCapacityNote] = useState("");
+  const [title, setTitle] = useState(initial?.title || "");
+  const [spaceType, setSpaceType] = useState<string>(initial?.spaceType || "WAREHOUSE");
+  const [description, setDescription] = useState(initial?.description || "");
+  const [area, setArea] = useState(initial?.area != null ? String(initial.area) : "");
+  const [priceAmd, setPriceAmd] = useState(
+    initial?.priceAmd != null ? String(initial.priceAmd) : "",
+  );
+  const [marzId, setMarzId] = useState(initial?.marzId || defaultMarzId || marzes[0]?.id || "");
+  const [phone, setPhone] = useState(initial?.phone || "");
+  const [capacityNote, setCapacityNote] = useState(initial?.capacityNote || "");
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    const res = await fetch("/api/farm/spaces", {
-      method: "POST",
+    const res = await fetch(isEdit ? `/api/farm/spaces/${listingId}` : "/api/farm/spaces", {
+      method: isEdit ? "PATCH" : "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         title,
@@ -43,7 +60,7 @@ export function SpaceForm({
       }),
     });
     if (!res.ok) {
-      setError(t("saveError"));
+      setError(isEdit ? tEdit("error") : t("saveError"));
       return;
     }
     router.push("/farm/spaces");
@@ -97,7 +114,7 @@ export function SpaceForm({
         <input value={phone} onChange={(e) => setPhone(e.target.value)} />
       </label>
       <button type="submit" className="btn primary">
-        {t("publish")}
+        {isEdit ? tEdit("submit") : t("publish")}
       </button>
       {error ? <p className="form-error">{error}</p> : null}
     </form>

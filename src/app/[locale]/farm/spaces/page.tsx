@@ -19,7 +19,9 @@ export default async function SpacesPage({
   const session = await getSession();
 
   const spaces = await prisma.spaceListing.findMany({
-    where: { status: "ACTIVE" },
+    where: session?.user?.id
+      ? { OR: [{ status: "ACTIVE" }, { userId: session.user.id }] }
+      : { status: "ACTIVE" },
     include: { marz: true, village: true },
     orderBy: { createdAt: "desc" },
     take: 50,
@@ -76,6 +78,11 @@ export default async function SpacesPage({
                 ) : null}
                 {s.phone ? <p className="muted small">{s.phone}</p> : null}
                 {s.description ? <p className="muted small">{s.description}</p> : null}
+                {session?.user?.id === s.userId ? (
+                  <Link href={`/farm/spaces/${s.id}/edit`} className="btn ghost">
+                    {root("my.edit")}
+                  </Link>
+                ) : null}
               </div>
             </li>
           ))}

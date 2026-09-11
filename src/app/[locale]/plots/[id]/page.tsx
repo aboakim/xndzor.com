@@ -107,6 +107,11 @@ export default async function PlotDetailPage({
         ]}
       />
       <h1>{plot.name}</h1>
+      <p className="lede">
+        <Link href={`/plots/${plot.id}/edit`} className="btn ghost">
+          {t("my.edit")}
+        </Link>
+      </p>
       <p className="detail-product icon-label">
         <ProductIcon slugOrKey={plot.cropProduct.slug} size={18} />
         {t(plot.cropProduct.nameKey as "products.tomato")} · {plot.hectares} հա ·{" "}

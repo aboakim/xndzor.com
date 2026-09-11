@@ -80,7 +80,11 @@ export default async function MyAnimalsPage({
                     </span>
                   </span>
                 </Link>
-                <AnimalListingActions id={a.id} status={a.status} />
+                <AnimalListingActions
+                  id={a.id}
+                  status={a.status}
+                  editHref={`/animals/${a.id}/edit`}
+                />
               </li>
             );
           })}

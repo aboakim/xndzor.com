@@ -3775,7 +3775,8 @@
     "hide": "Hide",
     "delete": "Delete",
     "confirmDelete": "Permanently delete this listing? This cannot be undone.",
-    "actionError": "Could not update the listing. Please try again."
+    "actionError": "Could not update the listing. Please try again.",
+    "edit": "Edit"
   },
   "myListings": {
     "title": "My listings",
@@ -3905,5 +3906,13 @@
       "interval": "Interval",
       "active": "Active"
     }
+  },
+  "listingEdit": {
+    "title": "Edit listing",
+    "lede": "Update your listing details and save.",
+    "submit": "Save changes",
+    "saving": "Saving…",
+    "error": "Could not save changes. Please try again.",
+    "forbidden": "You can only edit your own listings."
   }
 }

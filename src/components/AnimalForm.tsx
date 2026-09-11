@@ -21,26 +21,56 @@ import {
 export function AnimalForm({
   defaultMarzId,
   defaultPhone,
+  listingId,
+  initial,
 }: {
   defaultMarzId?: string | null;
   defaultPhone?: string | null;
+  listingId?: string;
+  initial?: {
+    title: string;
+    description: string;
+    animalType: string;
+    breed: string;
+    sex: string;
+    ageValue: number | null;
+    ageUnit: string;
+    weightKg: number | null;
+    quantity: number;
+    purpose: string;
+    vaccinated: boolean;
+    healthNotes: string | null;
+    documentsNote: string | null;
+    pedigreeNote: string | null;
+    priceAmd: number | null;
+    priceNegotiable: boolean;
+    priceMode: string;
+    marzId: string;
+    villageId: string | null;
+    phone: string;
+    whatsapp: string | null;
+    imageUrls: string[];
+  };
 }) {
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
-  const [marzId, setMarzId] = useState(defaultMarzId || "");
-  const [villageId, setVillageId] = useState("");
+  const isEdit = Boolean(listingId);
+  const [marzId, setMarzId] = useState(initial?.marzId || defaultMarzId || "");
+  const [villageId, setVillageId] = useState(initial?.villageId || "");
   const [villages, setVillages] = useState<LocationVillage[]>([]);
   const [loadingVillages, setLoadingVillages] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
-  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
+  const [uploadedUrls, setUploadedUrls] = useState<string[]>(() => initial?.imageUrls ?? []);
   const [failedIndices, setFailedIndices] = useState<number[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number | undefined>();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [animalType, setAnimalType] = useState<(typeof ANIMAL_TYPES)[number]>("COW");
-  const [negotiable, setNegotiable] = useState(false);
-  const [vaccinated, setVaccinated] = useState(false);
+  const [animalType, setAnimalType] = useState<(typeof ANIMAL_TYPES)[number]>(
+    (initial?.animalType as (typeof ANIMAL_TYPES)[number]) || "COW",
+  );
+  const [negotiable, setNegotiable] = useState(Boolean(initial?.priceNegotiable));
+  const [vaccinated, setVaccinated] = useState(Boolean(initial?.vaccinated));
 
   useEffect(() => {
     if (!marzId) {
@@ -54,8 +84,9 @@ export function AnimalForm({
       .then((r) => r.json())
       .then((data) => {
         if (cancelled) return;
-        setVillages(Array.isArray(data) ? data : []);
-        setVillageId("");
+        const list = Array.isArray(data) ? data : [];
+        setVillages(list);
+        setVillageId((prev) => (prev && list.some((v: LocationVillage) => v.id === prev) ? prev : ""));
       })
       .finally(() => {
         if (!cancelled) setLoadingVillages(false);
@@ -119,8 +150,8 @@ export function AnimalForm({
         whatsapp: String(fd.get("whatsapp") || ""),
         imageUrls,
       };
-      const res = await fetch("/api/animals", {
-        method: "POST",
+      const res = await fetch(isEdit ? `/api/animals/${listingId}` : "/api/animals", {
+        method: isEdit ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
@@ -129,13 +160,13 @@ export function AnimalForm({
         try {
           setError(t(resolveListingError(data).key as "listingErrors.publishFailed"));
         } catch {
-          setError(t("postAnimals.error"));
+          setError(t(isEdit ? "listingEdit.error" : "postAnimals.error"));
         }
         setSaving(false);
         return;
       }
       const created = await res.json();
-      router.push(`/animals/${created.id}`);
+      router.push(`/animals/${isEdit ? listingId : created.id}`);
       router.refresh();
     } catch (err) {
       try {
@@ -164,6 +195,7 @@ export function AnimalForm({
             minLength={5}
             maxLength={160}
             placeholder={t("postAnimals.fields.titleHint")}
+            defaultValue={initial?.title || ""}
           />
         </label>
         <label>
@@ -199,11 +231,17 @@ export function AnimalForm({
         <div className="form-row">
           <label>
             <span>{t("postAnimals.fields.breed")}</span>
-            <input name="breed" required maxLength={80} placeholder={t("postAnimals.fields.breedHint")} />
+            <input
+              name="breed"
+              required
+              maxLength={80}
+              placeholder={t("postAnimals.fields.breedHint")}
+              defaultValue={initial?.breed || ""}
+            />
           </label>
           <label>
             <span>{t("postAnimals.fields.sex")}</span>
-            <select name="sex" defaultValue="MIXED" required>
+            <select name="sex" defaultValue={initial?.sex || "MIXED"} required>
               {ANIMAL_SEXES.map((s) => (
                 <option key={s} value={s}>
                   {t(`animalSexes.${s}` as "animalSexes.MIXED")}
@@ -215,7 +253,7 @@ export function AnimalForm({
         <div className="form-row">
           <label>
             <span>{t("postAnimals.fields.purpose")}</span>
-            <select name="purpose" defaultValue="OTHER" required>
+            <select name="purpose" defaultValue={initial?.purpose || "OTHER"} required>
               {ANIMAL_PURPOSES.map((p) => (
                 <option key={p} value={p}>
                   {t(`animalPurposes.${p}` as "animalPurposes.DAIRY")}
@@ -225,7 +263,13 @@ export function AnimalForm({
           </label>
           <label>
             <span>{t("postAnimals.fields.quantity")}</span>
-            <input name="quantity" type="number" min={1} defaultValue={1} required />
+            <input
+              name="quantity"
+              type="number"
+              min={1}
+              defaultValue={initial?.quantity ?? 1}
+              required
+            />
           </label>
         </div>
       </fieldset>
@@ -235,11 +279,16 @@ export function AnimalForm({
         <div className="form-row">
           <label>
             <span>{t("postAnimals.fields.ageValue")}</span>
-            <input name="ageValue" type="number" min={0} />
+            <input
+              name="ageValue"
+              type="number"
+              min={0}
+              defaultValue={initial?.ageValue ?? ""}
+            />
           </label>
           <label>
             <span>{t("postAnimals.fields.ageUnit")}</span>
-            <select name="ageUnit" defaultValue="MONTHS">
+            <select name="ageUnit" defaultValue={initial?.ageUnit || "MONTHS"}>
               {ANIMAL_AGE_UNITS.map((u) => (
                 <option key={u} value={u}>
                   {t(`animalAgeUnits.${u}` as "animalAgeUnits.MONTHS")}
@@ -251,7 +300,13 @@ export function AnimalForm({
         <div className="form-row">
           <label>
             <span>{t("postAnimals.fields.weightKg")}</span>
-            <input name="weightKg" type="number" min={0.1} step="0.1" />
+            <input
+              name="weightKg"
+              type="number"
+              min={0.1}
+              step="0.1"
+              defaultValue={initial?.weightKg ?? ""}
+            />
           </label>
           <label className="checkbox-label">
             <span>{t("postAnimals.fields.vaccinated")}</span>
@@ -264,15 +319,31 @@ export function AnimalForm({
         </div>
         <label>
           <span>{t("postAnimals.fields.healthNotes")}</span>
-          <textarea name="healthNotes" rows={3} maxLength={2000} placeholder={t("postAnimals.fields.healthHint")} />
+          <textarea
+            name="healthNotes"
+            rows={3}
+            maxLength={2000}
+            placeholder={t("postAnimals.fields.healthHint")}
+            defaultValue={initial?.healthNotes || ""}
+          />
         </label>
         <label>
           <span>{t("postAnimals.fields.pedigreeNote")}</span>
-          <textarea name="pedigreeNote" rows={2} maxLength={500} />
+          <textarea
+            name="pedigreeNote"
+            rows={2}
+            maxLength={500}
+            defaultValue={initial?.pedigreeNote || ""}
+          />
         </label>
         <label>
           <span>{t("postAnimals.fields.documentsNote")}</span>
-          <textarea name="documentsNote" rows={2} maxLength={500} />
+          <textarea
+            name="documentsNote"
+            rows={2}
+            maxLength={500}
+            defaultValue={initial?.documentsNote || ""}
+          />
         </label>
       </fieldset>
 
@@ -281,11 +352,16 @@ export function AnimalForm({
         <div className="form-row">
           <label>
             <span>{t("postAnimals.fields.price")}</span>
-            <input name="priceAmd" type="number" min={0} />
+            <input
+              name="priceAmd"
+              type="number"
+              min={0}
+              defaultValue={initial?.priceAmd ?? ""}
+            />
           </label>
           <label>
             <span>{t("postAnimals.fields.priceMode")}</span>
-            <select name="priceMode" defaultValue="LOT">
+            <select name="priceMode" defaultValue={initial?.priceMode || "LOT"}>
               {ANIMAL_PRICE_MODES.map((m) => (
                 <option key={m} value={m}>
                   {t(`animalPriceModes.${m}` as "animalPriceModes.LOT")}
@@ -338,11 +414,11 @@ export function AnimalForm({
         <div className="form-row">
           <label>
             <span>{t("postAnimals.fields.phone")}</span>
-            <input name="phone" required defaultValue={defaultPhone || ""} />
+            <input name="phone" required defaultValue={initial?.phone || defaultPhone || ""} />
           </label>
           <label>
             <span>{t("postAnimals.fields.whatsapp")}</span>
-            <input name="whatsapp" defaultValue={defaultPhone || ""} />
+            <input name="whatsapp" defaultValue={initial?.whatsapp || defaultPhone || ""} />
           </label>
         </div>
       </fieldset>
@@ -358,6 +434,7 @@ export function AnimalForm({
             maxLength={12000}
             rows={10}
             placeholder={t("postAnimals.fields.descriptionHint")}
+            defaultValue={initial?.description || ""}
           />
         </label>
         <ImageUploadField
@@ -377,7 +454,9 @@ export function AnimalForm({
 
       {error ? <p className="form-error">{error}</p> : null}
       <button type="submit" className="btn primary" disabled={saving || !marzId || !villageId}>
-        {saving ? t("postAnimals.saving") : t("postAnimals.submit")}
+        {saving
+          ? t(isEdit ? "listingEdit.saving" : "postAnimals.saving")
+          : t(isEdit ? "listingEdit.submit" : "postAnimals.submit")}
       </button>
     </form>
   );

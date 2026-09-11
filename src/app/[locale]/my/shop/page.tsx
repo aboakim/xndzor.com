@@ -82,7 +82,11 @@ export default async function MyShopPage({
                     </span>
                   </span>
                 </Link>
-                <CatalogListingActions id={row.id} status={row.status} />
+                <CatalogListingActions
+                  id={row.id}
+                  status={row.status}
+                  editHref={`/shop/${route}/${row.id}/edit`}
+                />
               </li>
             );
           })}

@@ -189,7 +189,12 @@ export default async function DemandDetailPage({
 
             {isOwner ? (
               <section className="owner-panel">
-                <MyListingActions id={demand.id} status={demand.status} apiBase="/api/demand" />
+                <MyListingActions
+                  id={demand.id}
+                  status={demand.status}
+                  apiBase="/api/demand"
+                  editHref={`/demand/${demand.id}/edit`}
+                />
               </section>
             ) : null}
           </div>

@@ -8,28 +8,55 @@ import { estimateYieldTons } from "@/lib/yield";
 import { ProductSelect } from "@/components/ProductSelect";
 import { LiveDemandSnapshot } from "@/components/LiveDemandSnapshot";
 import type { CatalogProduct } from "@/lib/products";
+import { toDateInput } from "@/lib/date-input";
 
 type Product = CatalogProduct;
 
 export function PlotForm({
   products,
   defaultMarzId,
+  listingId,
+  initial,
 }: {
   products: Product[];
   defaultMarzId?: string | null;
+  listingId?: string;
+  initial?: {
+    name: string;
+    hectares: number;
+    cropProductId: string;
+    plantDate: Date | string;
+    irrigationNotes: string | null;
+    lastFertilizer: string | null;
+    lastIrrigationAt: Date | string | null;
+    harvestFrom: Date | string | null;
+    harvestTo: Date | string | null;
+    marzId: string;
+    villageId: string | null;
+    farmerOverrideTons?: number | null;
+  };
 }) {
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
-  const [marzId, setMarzId] = useState(defaultMarzId || "");
-  const [villageId, setVillageId] = useState("");
+  const isEdit = Boolean(listingId);
+  const [marzId, setMarzId] = useState(initial?.marzId || defaultMarzId || "");
+  const [villageId, setVillageId] = useState(initial?.villageId || "");
   const [villages, setVillages] = useState<LocationVillage[]>([]);
   const [loadingVillages, setLoadingVillages] = useState(false);
   const [productId, setProductId] = useState(
-    () => products.find((p) => p.slug !== "other")?.id || products[0]?.id || "",
+    () =>
+      initial?.cropProductId ||
+      products.find((p) => p.slug !== "other")?.id ||
+      products[0]?.id ||
+      "",
   );
-  const [hectares, setHectares] = useState("2");
-  const [override, setOverride] = useState("");
+  const [hectares, setHectares] = useState(
+    initial?.hectares != null ? String(initial.hectares) : "2",
+  );
+  const [override, setOverride] = useState(
+    initial?.farmerOverrideTons != null ? String(initial.farmerOverrideTons) : "",
+  );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -52,8 +79,9 @@ export function PlotForm({
       .then((r) => r.json())
       .then((data) => {
         if (cancelled) return;
-        setVillages(Array.isArray(data) ? data : []);
-        setVillageId("");
+        const list = Array.isArray(data) ? data : [];
+        setVillages(list);
+        setVillageId((prev) => (prev && list.some((v: LocationVillage) => v.id === prev) ? prev : ""));
       })
       .finally(() => {
         if (!cancelled) setLoadingVillages(false);
@@ -82,8 +110,8 @@ export function PlotForm({
       villageId,
       farmerOverrideTons: override || "",
     };
-    const res = await fetch("/api/plots", {
-      method: "POST",
+    const res = await fetch(isEdit ? `/api/plots/${listingId}` : "/api/plots", {
+      method: isEdit ? "PATCH" : "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
@@ -93,11 +121,11 @@ export function PlotForm({
       return;
     }
     if (!res.ok) {
-      setError(t("plots.error"));
+      setError(t(isEdit ? "listingEdit.error" : "plots.error"));
       return;
     }
     const plot = await res.json();
-    router.push(`/plots/${plot.id}`);
+    router.push(`/plots/${isEdit ? listingId : plot.id}`);
     router.refresh();
   }
 
@@ -105,7 +133,13 @@ export function PlotForm({
     <form className="stack-form listing-form" onSubmit={onSubmit}>
       <label>
         <span>{t("plots.fields.name")}</span>
-        <input name="name" required minLength={2} placeholder={t("plots.fields.nameHint")} />
+        <input
+          name="name"
+          required
+          minLength={2}
+          placeholder={t("plots.fields.nameHint")}
+          defaultValue={initial?.name || ""}
+        />
       </label>
       <label>
         <span>{t("plots.fields.crop")}</span>
@@ -157,29 +191,50 @@ export function PlotForm({
       {productId ? <LiveDemandSnapshot productId={productId} marzId={marzId || undefined} /> : null}
       <label>
         <span>{t("plots.fields.plantDate")}</span>
-        <input name="plantDate" type="date" required />
+        <input
+          name="plantDate"
+          type="date"
+          required
+          defaultValue={toDateInput(initial?.plantDate)}
+        />
       </label>
       <div className="form-row-2">
         <label>
           <span>{t("plots.fields.harvestFrom")}</span>
-          <input name="harvestFrom" type="date" />
+          <input
+            name="harvestFrom"
+            type="date"
+            defaultValue={toDateInput(initial?.harvestFrom)}
+          />
         </label>
         <label>
           <span>{t("plots.fields.harvestTo")}</span>
-          <input name="harvestTo" type="date" />
+          <input
+            name="harvestTo"
+            type="date"
+            defaultValue={toDateInput(initial?.harvestTo)}
+          />
         </label>
       </div>
       <label>
         <span>{t("plots.fields.lastIrrigation")}</span>
-        <input name="lastIrrigationAt" type="date" />
+        <input
+          name="lastIrrigationAt"
+          type="date"
+          defaultValue={toDateInput(initial?.lastIrrigationAt)}
+        />
       </label>
       <label>
         <span>{t("plots.fields.irrigationNotes")}</span>
-        <textarea name="irrigationNotes" rows={2} />
+        <textarea
+          name="irrigationNotes"
+          rows={2}
+          defaultValue={initial?.irrigationNotes || ""}
+        />
       </label>
       <label>
         <span>{t("plots.fields.lastFertilizer")}</span>
-        <input name="lastFertilizer" />
+        <input name="lastFertilizer" defaultValue={initial?.lastFertilizer || ""} />
       </label>
       <label>
         <span>{t("board.marz")}</span>
@@ -209,7 +264,9 @@ export function PlotForm({
       </label>
       {error ? <p className="form-error">{error}</p> : null}
       <button type="submit" className="btn primary" disabled={saving || !productId}>
-        {saving ? t("plots.saving") : t("plots.submit")}
+        {saving
+          ? t(isEdit ? "listingEdit.saving" : "plots.saving")
+          : t(isEdit ? "listingEdit.submit" : "plots.submit")}
       </button>
     </form>
   );

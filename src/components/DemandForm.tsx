@@ -25,11 +25,31 @@ export function DemandForm({
   defaultMarzId,
   defaultVillageId,
   defaultPhone,
+  listingId,
+  initial,
 }: {
   products: Product[];
   defaultMarzId?: string | null;
   defaultVillageId?: string | null;
   defaultPhone?: string | null;
+  listingId?: string;
+  initial?: {
+    title: string;
+    description: string;
+    productId: string;
+    qtyMin: number;
+    qtyMax: number | null;
+    unit: string;
+    buyerKind: string;
+    priceMinAmd: number | null;
+    priceMaxAmd: number | null;
+    timingNote: string | null;
+    marzId: string;
+    villageId: string | null;
+    phone: string;
+    whatsapp: string | null;
+    imageUrls: string[];
+  };
 }) {
   const t = useTranslations();
   const locale = useLocale();
@@ -37,12 +57,13 @@ export function DemandForm({
   const formRef = useRef<HTMLFormElement>(null);
   const submittingRef = useRef(false);
   const publishWithOkOnlyRef = useRef(false);
-  const [marzId, setMarzId] = useState(defaultMarzId || "");
-  const [villageId, setVillageId] = useState(defaultVillageId || "");
+  const isEdit = Boolean(listingId);
+  const [marzId, setMarzId] = useState(initial?.marzId || defaultMarzId || "");
+  const [villageId, setVillageId] = useState(initial?.villageId || defaultVillageId || "");
   const [villages, setVillages] = useState<LocationVillage[]>([]);
   const [loadingVillages, setLoadingVillages] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
-  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
+  const [uploadedUrls, setUploadedUrls] = useState<string[]>(() => initial?.imageUrls ?? []);
   const [failedIndices, setFailedIndices] = useState<number[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number | undefined>();
   const [phase, setPhase] = useState<Phase>("idle");
@@ -50,7 +71,11 @@ export function DemandForm({
   const [fieldError, setFieldError] = useState<Partial<Record<ListingField, string>>>({});
   const featured = getFeaturedProducts(products);
   const [productId, setProductId] = useState(
-    () => featured.find((p) => p.slug !== "other")?.id || products[0]?.id || "",
+    () =>
+      initial?.productId ||
+      featured.find((p) => p.slug !== "other")?.id ||
+      products[0]?.id ||
+      "",
   );
 
   useEffect(() => {
@@ -211,20 +236,20 @@ export function DemandForm({
         whatsapp: String(fd.get("whatsapp") || ""),
         imageUrls,
       };
-      const res = await fetch("/api/demand", {
-        method: "POST",
+      const res = await fetch(isEdit ? `/api/demand/${listingId}` : "/api/demand", {
+        method: isEdit ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(translateResolved(data, "postDemand.error"));
+        setError(translateResolved(data, isEdit ? "listingEdit.error" : "postDemand.error"));
         setPhase("idle");
         submittingRef.current = false;
         return;
       }
       const created = await res.json();
-      router.push(`/demand/${created.id}`);
+      router.push(`/demand/${isEdit ? listingId : created.id}`);
       router.refresh();
     } catch (err) {
       setError(
@@ -244,15 +269,22 @@ export function DemandForm({
         ? t("images.uploadingProgress", { pct: uploadProgress })
         : t("images.uploading");
     }
-    if (phase === "publishing") return t("postDemand.saving");
-    return t("postDemand.submit");
+    if (phase === "publishing") return t(isEdit ? "listingEdit.saving" : "postDemand.saving");
+    return t(isEdit ? "listingEdit.submit" : "postDemand.submit");
   }
 
   return (
     <form ref={formRef} className="listing-form stack-form" onSubmit={onSubmit}>
       <label>
         <span>{t("postDemand.fields.title")}</span>
-        <input name="title" required minLength={5} maxLength={120} disabled={saving} />
+        <input
+          name="title"
+          required
+          minLength={5}
+          maxLength={120}
+          disabled={saving}
+          defaultValue={initial?.title || ""}
+        />
         {fieldError.title ? (
           <span className="form-error small" role="alert">
             {fieldError.title}
@@ -269,6 +301,7 @@ export function DemandForm({
           rows={10}
           placeholder={t("postDemand.fields.descriptionHint")}
           disabled={saving}
+          defaultValue={initial?.description || ""}
         />
         {fieldError.description ? (
           <span className="form-error small" role="alert">
@@ -318,7 +351,7 @@ export function DemandForm({
         </label>
         <label>
           <span>{t("postDemand.fields.unit")}</span>
-          <select name="unit" defaultValue="kg" disabled={saving}>
+          <select name="unit" defaultValue={initial?.unit || "kg"} disabled={saving}>
             {UNITS.map((u) => (
               <option key={u} value={u}>
                 {t(`units.${u}` as "units.kg")}
@@ -329,7 +362,7 @@ export function DemandForm({
       </div>
       <label>
         <span>{t("postDemand.fields.buyerKind")}</span>
-        <select name="buyerKind" defaultValue="WHOLESALE" disabled={saving}>
+        <select name="buyerKind" defaultValue={initial?.buyerKind || "WHOLESALE"} disabled={saving}>
           {(["FACTORY", "SHOP_CHAIN", "RESTAURANT", "WHOLESALE", "EXPORTER", "OTHER"] as const).map(
             (k) => (
               <option key={k} value={k}>
@@ -342,7 +375,14 @@ export function DemandForm({
       <div className="form-row">
         <label>
           <span>{t("postDemand.fields.qtyMin")}</span>
-          <input name="qtyMin" type="number" min={1} required disabled={saving} />
+          <input
+            name="qtyMin"
+            type="number"
+            min={1}
+            required
+            disabled={saving}
+            defaultValue={initial?.qtyMin ?? ""}
+          />
           {fieldError.qty ? (
             <span className="form-error small" role="alert">
               {fieldError.qty}
@@ -351,17 +391,35 @@ export function DemandForm({
         </label>
         <label>
           <span>{t("postDemand.fields.qtyMax")}</span>
-          <input name="qtyMax" type="number" min={1} disabled={saving} />
+          <input
+            name="qtyMax"
+            type="number"
+            min={1}
+            disabled={saving}
+            defaultValue={initial?.qtyMax ?? ""}
+          />
         </label>
       </div>
       <div className="form-row">
         <label>
           <span>{t("postDemand.fields.priceMin")}</span>
-          <input name="priceMinAmd" type="number" min={0} disabled={saving} />
+          <input
+            name="priceMinAmd"
+            type="number"
+            min={0}
+            disabled={saving}
+            defaultValue={initial?.priceMinAmd ?? ""}
+          />
         </label>
         <label>
           <span>{t("postDemand.fields.priceMax")}</span>
-          <input name="priceMaxAmd" type="number" min={0} disabled={saving} />
+          <input
+            name="priceMaxAmd"
+            type="number"
+            min={0}
+            disabled={saving}
+            defaultValue={initial?.priceMaxAmd ?? ""}
+          />
         </label>
       </div>
       <label>
@@ -371,6 +429,7 @@ export function DemandForm({
           maxLength={200}
           placeholder={t("postDemand.fields.timingHint")}
           disabled={saving}
+          defaultValue={initial?.timingNote || ""}
         />
       </label>
       <div className="form-row">
@@ -443,7 +502,12 @@ export function DemandForm({
       <div className="form-row">
         <label>
           <span>{t("postDemand.fields.phone")}</span>
-          <input name="phone" required defaultValue={defaultPhone || ""} disabled={saving} />
+          <input
+            name="phone"
+            required
+            defaultValue={initial?.phone || defaultPhone || ""}
+            disabled={saving}
+          />
           {fieldError.phone ? (
             <span className="form-error small" role="alert">
               {fieldError.phone}
@@ -452,7 +516,11 @@ export function DemandForm({
         </label>
         <label>
           <span>{t("postDemand.fields.whatsapp")}</span>
-          <input name="whatsapp" defaultValue={defaultPhone || ""} disabled={saving} />
+          <input
+            name="whatsapp"
+            defaultValue={initial?.whatsapp || defaultPhone || ""}
+            disabled={saving}
+          />
         </label>
       </div>
       <ImageUploadField

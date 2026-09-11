@@ -79,7 +79,11 @@ export default async function MyMachineryPage({
                     </span>
                   </span>
                 </Link>
-                <MachineryListingActions id={m.id} status={m.status} />
+                <MachineryListingActions
+                  id={m.id}
+                  status={m.status}
+                  editHref={`/machinery/${m.id}/edit`}
+                />
               </li>
             );
           })}

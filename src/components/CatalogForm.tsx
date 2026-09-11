@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { MARZES, localizedPlaceName, type LocationVillage } from "@/lib/places";
@@ -17,33 +17,58 @@ import {
   formatUploadBatchError,
   resolveListingError,
 } from "@/lib/listing-create";
+import { toDateInput } from "@/lib/date-input";
 
 export function CatalogForm({
   category,
   defaultMarzId,
   defaultPhone,
+  listingId,
+  initial,
 }: {
   category: CatalogCategory;
   defaultMarzId?: string | null;
   defaultPhone?: string | null;
+  listingId?: string;
+  initial?: {
+    title?: string;
+    description?: string;
+    brand?: string | null;
+    quantity?: number | null;
+    unit?: string | null;
+    packageSize?: string | null;
+    priceAmd?: number | null;
+    priceUnit?: string | null;
+    expiryDate?: string | null;
+    phone?: string | null;
+    whatsapp?: string | null;
+    imageUrls?: string[];
+    marzId?: string;
+    villageId?: string | null;
+    subtype?: string;
+    priceNegotiable?: boolean;
+    specs?: Record<string, string | number | boolean | null>;
+  };
 }) {
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
+  const isEdit = Boolean(listingId);
   const route = CATALOG_ROUTE[category];
   const subtypes = CATALOG_SUBTYPES[category];
-  const [marzId, setMarzId] = useState(defaultMarzId || "");
-  const [villageId, setVillageId] = useState("");
+  const [marzId, setMarzId] = useState(initial?.marzId || defaultMarzId || "");
+  const [villageId, setVillageId] = useState(String(initial?.villageId || ""));
   const [villages, setVillages] = useState<LocationVillage[]>([]);
   const [loadingVillages, setLoadingVillages] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
-  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
+  const [uploadedUrls, setUploadedUrls] = useState<string[]>(() => initial?.imageUrls ?? []);
   const [failedIndices, setFailedIndices] = useState<number[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number | undefined>();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [subtype, setSubtype] = useState(subtypes[0]);
-  const [negotiable, setNegotiable] = useState(false);
+  const [subtype, setSubtype] = useState(initial?.subtype || subtypes[0]);
+  const [negotiable, setNegotiable] = useState(Boolean(initial?.priceNegotiable));
 
   useEffect(() => {
     if (!marzId) {
@@ -57,8 +82,9 @@ export function CatalogForm({
       .then((r) => r.json())
       .then((data) => {
         if (cancelled) return;
-        setVillages(Array.isArray(data) ? data : []);
-        setVillageId("");
+        const list = Array.isArray(data) ? data : [];
+        setVillages(list);
+        setVillageId((prev) => (prev && list.some((v: LocationVillage) => v.id === prev) ? prev : ""));
       })
       .finally(() => {
         if (!cancelled) setLoadingVillages(false);
@@ -67,6 +93,50 @@ export function CatalogForm({
       cancelled = true;
     };
   }, [marzId]);
+
+  useEffect(() => {
+    if (!initial || !formRef.current) return;
+    const form = formRef.current;
+    const names = [
+      "title",
+      "description",
+      "brand",
+      "quantity",
+      "unit",
+      "packageSize",
+      "priceAmd",
+      "priceUnit",
+      "expiryDate",
+      "phone",
+      "whatsapp",
+    ] as const;
+    for (const name of names) {
+      const el = form.elements.namedItem(name);
+      if (
+        el &&
+        (el instanceof HTMLInputElement ||
+          el instanceof HTMLTextAreaElement ||
+          el instanceof HTMLSelectElement)
+      ) {
+        let v = initial[name as keyof typeof initial];
+        if (name === "expiryDate") v = toDateInput(v as string | null | undefined);
+        el.value = v == null || Array.isArray(v) || typeof v === "object" ? "" : String(v);
+      }
+    }
+    if (initial.specs) {
+      for (const [key, value] of Object.entries(initial.specs)) {
+        const el = form.elements.namedItem(`spec_${key}`);
+        if (
+          el &&
+          (el instanceof HTMLInputElement ||
+            el instanceof HTMLTextAreaElement ||
+            el instanceof HTMLSelectElement)
+        ) {
+          el.value = value == null ? "" : String(value);
+        }
+      }
+    }
+  }, [initial]);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -130,8 +200,8 @@ export function CatalogForm({
         whatsapp: String(fd.get("whatsapp") || ""),
         imageUrls,
       };
-      const res = await fetch("/api/catalog", {
-        method: "POST",
+      const res = await fetch(isEdit ? `/api/catalog/${listingId}` : "/api/catalog", {
+        method: isEdit ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
@@ -140,13 +210,13 @@ export function CatalogForm({
         try {
           setError(t(resolveListingError(data).key as "listingErrors.publishFailed"));
         } catch {
-          setError(t("postCatalog.error"));
+          setError(t(isEdit ? "listingEdit.error" : "postCatalog.error"));
         }
         setSaving(false);
         return;
       }
       const created = await res.json();
-      router.push(`/shop/${route}/${created.id}`);
+      router.push(`/shop/${route}/${isEdit ? listingId : created.id}`);
       router.refresh();
     } catch (err) {
       try {
@@ -164,7 +234,11 @@ export function CatalogForm({
   }
 
   return (
-    <form className="listing-form stack-form machinery-form" onSubmit={onSubmit}>
+    <form
+      ref={formRef}
+      className="listing-form stack-form machinery-form"
+      onSubmit={onSubmit}
+    >
       <fieldset className="form-section">
         <legend>{t("postCatalog.sections.basics")}</legend>
         <label>
@@ -326,7 +400,9 @@ export function CatalogForm({
 
       {error ? <p className="form-error">{error}</p> : null}
       <button type="submit" className="btn primary" disabled={saving || !marzId || !villageId}>
-        {saving ? t("postCatalog.saving") : t("postCatalog.submit")}
+        {saving
+          ? t(isEdit ? "listingEdit.saving" : "postCatalog.saving")
+          : t(isEdit ? "listingEdit.submit" : "postCatalog.submit")}
       </button>
     </form>
   );

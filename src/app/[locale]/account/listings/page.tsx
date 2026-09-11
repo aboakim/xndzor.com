@@ -20,6 +20,7 @@ type Row = {
   title: string;
   status: string;
   href: string;
+  editHref: string;
   kind: string;
   updatedAt: Date;
   imageUrls?: string;
@@ -95,6 +96,7 @@ export default async function AccountListingsPage({
       title: r.title,
       status: r.status,
       href: `/supply/${r.id}`,
+      editHref: `/supply/${r.id}/edit`,
       kind: t("myListings.kinds.supply"),
       updatedAt: r.updatedAt,
       imageUrls: r.imageUrls,
@@ -106,6 +108,7 @@ export default async function AccountListingsPage({
       title: r.title,
       status: r.status,
       href: `/demand/${r.id}`,
+      editHref: `/demand/${r.id}/edit`,
       kind: t("myListings.kinds.demand"),
       updatedAt: r.updatedAt,
       imageUrls: r.imageUrls,
@@ -117,6 +120,7 @@ export default async function AccountListingsPage({
       title: r.title,
       status: r.status,
       href: `/forward/${r.id}`,
+      editHref: `/forward/${r.id}/edit`,
       kind: t("myListings.kinds.forward"),
       updatedAt: r.updatedAt,
       imageUrls: r.imageUrls,
@@ -128,6 +132,7 @@ export default async function AccountListingsPage({
       title: r.title,
       status: r.status,
       href: `/jobs/${r.id}`,
+      editHref: `/jobs/${r.id}/edit`,
       kind: t("myListings.kinds.jobs"),
       updatedAt: r.updatedAt,
       apiBase: "/api/jobs",
@@ -139,6 +144,7 @@ export default async function AccountListingsPage({
       title: r.title,
       status: r.status,
       href: `/animals/${r.id}`,
+      editHref: `/animals/${r.id}/edit`,
       kind: t("myListings.kinds.animals"),
       updatedAt: r.updatedAt,
       imageUrls: r.imageUrls,
@@ -149,6 +155,7 @@ export default async function AccountListingsPage({
       title: r.title,
       status: r.status,
       href: `/machinery/${r.id}`,
+      editHref: `/machinery/${r.id}/edit`,
       kind: t("myListings.kinds.machinery"),
       updatedAt: r.updatedAt,
       imageUrls: r.imageUrls,
@@ -161,6 +168,7 @@ export default async function AccountListingsPage({
         title: r.title,
         status: r.status,
         href: `/shop/${route}/${r.id}`,
+        editHref: `/shop/${route}/${r.id}/edit`,
         kind: t("myListings.kinds.shop"),
         updatedAt: r.updatedAt,
         imageUrls: r.imageUrls,
@@ -226,16 +234,29 @@ export default async function AccountListingsPage({
                     status={row.status}
                     apiBase={row.apiBase}
                     soldStatus={row.soldStatus}
+                    editHref={row.editHref}
                   />
                 ) : null}
                 {row.actions === "animal" ? (
-                  <AnimalListingActions id={row.id} status={row.status} />
+                  <AnimalListingActions
+                    id={row.id}
+                    status={row.status}
+                    editHref={row.editHref}
+                  />
                 ) : null}
                 {row.actions === "machinery" ? (
-                  <MachineryListingActions id={row.id} status={row.status} />
+                  <MachineryListingActions
+                    id={row.id}
+                    status={row.status}
+                    editHref={row.editHref}
+                  />
                 ) : null}
                 {row.actions === "catalog" ? (
-                  <CatalogListingActions id={row.id} status={row.status} />
+                  <CatalogListingActions
+                    id={row.id}
+                    status={row.status}
+                    editHref={row.editHref}
+                  />
                 ) : null}
               </li>
             );

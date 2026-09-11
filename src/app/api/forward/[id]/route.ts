@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
-import { forwardStatusSchema } from "@/lib/validations";
+import { futureHarvestSchema, forwardStatusSchema } from "@/lib/validations";
+import { resolveLocationRefs, resolveProductId } from "@/lib/resolve-refs";
+import { filterListingImageUrls } from "@/lib/upload-urls";
+import { isStatusOnlyBody, listingAuthError } from "@/lib/listing-ownership";
 
 export async function GET(
   _req: Request,
@@ -28,13 +31,12 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const session = await getSession();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
   const { id } = await params;
   const existing = await prisma.futureHarvest.findUnique({ where: { id } });
-  if (!existing || existing.userId !== session.user.id) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const authErr = listingAuthError(session, existing?.userId);
+  if (authErr) return authErr;
+  if (!existing) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
   let body: unknown;
@@ -43,31 +45,75 @@ export async function PATCH(
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const parsed = forwardStatusSchema.safeParse(body);
+
+  if (isStatusOnlyBody(body)) {
+    const parsed = forwardStatusSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    }
+    const listing = await prisma.futureHarvest.update({
+      where: { id },
+      data: { status: parsed.data.status },
+    });
+    return NextResponse.json(listing);
+  }
+
+  const parsed = futureHarvestSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  }
+  const d = parsed.data;
+
+  if (d.plotId) {
+    const plot = await prisma.plot.findFirst({
+      where: { id: d.plotId, userId: existing.userId },
+    });
+    if (!plot) return NextResponse.json({ error: "Plot not found" }, { status: 404 });
+  }
+
+  const [productRef, locRef] = await Promise.all([
+    resolveProductId(d.productId),
+    resolveLocationRefs(d.marzId, d.villageId || null),
+  ]);
+  if (!productRef.ok) {
+    return NextResponse.json({ error: productRef.error }, { status: 400 });
+  }
+  if (!locRef.ok) {
+    return NextResponse.json({ error: locRef.error }, { status: 400 });
   }
 
   const listing = await prisma.futureHarvest.update({
     where: { id },
-    data: { status: parsed.data.status },
+    data: {
+      productId: productRef.productId,
+      plotId: d.plotId || null,
+      title: d.title,
+      description: d.description,
+      qtyExpected: d.qtyExpected,
+      unit: d.unit,
+      harvestDate: new Date(d.harvestDate),
+      priceAmd: d.priceAmd === "" || d.priceAmd == null ? null : Number(d.priceAmd),
+      marzId: locRef.marzId,
+      villageId: locRef.villageId,
+      phone: d.phone,
+      whatsapp: d.whatsapp || null,
+      imageUrls: JSON.stringify(filterListingImageUrls(d.imageUrls)),
+    },
   });
   return NextResponse.json(listing);
 }
 
-/** Hard-delete listing (related rows cleared first). Use PATCH status=HIDDEN to hide. */
 export async function DELETE(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const session = await getSession();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
   const { id } = await params;
   const existing = await prisma.futureHarvest.findUnique({ where: { id } });
-  if (!existing || existing.userId !== session.user.id) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const authErr = listingAuthError(session, existing?.userId);
+  if (authErr) return authErr;
+  if (!existing) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
   await prisma.preOffer.deleteMany({ where: { futureHarvestId: id } });
   await prisma.productBatch.updateMany({

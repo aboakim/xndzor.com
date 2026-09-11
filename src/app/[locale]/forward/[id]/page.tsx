@@ -155,7 +155,12 @@ export default async function ForwardDetailPage({
 
       {isOwner ? (
         <div className="passport-create-batch owner-panel">
-          <MyListingActions id={crop.id} status={crop.status} apiBase="/api/forward" />
+          <MyListingActions
+            id={crop.id}
+            status={crop.status}
+            apiBase="/api/forward"
+            editHref={`/forward/${crop.id}/edit`}
+          />
           <BoostButton
             targetType="FUTURE_HARVEST"
             targetId={crop.id}

@@ -266,7 +266,11 @@ export default async function AnimalDetailPage({
                 currentlyBoostedUntil={boostedUntil?.toISOString() ?? null}
                 freeMode={ownerFreeCheckout}
               />
-              <AnimalListingActions id={listing.id} status={listing.status} />
+              <AnimalListingActions
+                id={listing.id}
+                status={listing.status}
+                editHref={`/animals/${listing.id}/edit`}
+              />
               <p className="muted">
                 <Link href="/my/animals">{t("myAnimals.title")}</Link>
               </p>

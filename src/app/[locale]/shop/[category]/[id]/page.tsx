@@ -218,7 +218,11 @@ export default async function CatalogDetailPage({
             currentlyBoostedUntil={boostedUntil?.toISOString() ?? null}
             freeMode={ownerFreeCheckout}
           />
-          <CatalogListingActions id={listing.id} status={listing.status} />
+          <CatalogListingActions
+            id={listing.id}
+            status={listing.status}
+            editHref={`/shop/${route}/${listing.id}/edit`}
+          />
           <p className="muted">
             <Link href="/my/shop">{t("myCatalog.title")}</Link>
           </p>

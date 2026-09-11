@@ -1,10 +1,18 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useState } from "react";
 
-export function CatalogListingActions({ id, status }: { id: string; status: string }) {
+export function CatalogListingActions({
+  id,
+  status,
+  editHref,
+}: {
+  id: string;
+  status: string;
+  editHref?: string;
+}) {
   const t = useTranslations("myCatalog");
   const tMy = useTranslations("my");
   const router = useRouter();
@@ -55,6 +63,11 @@ export function CatalogListingActions({ id, status }: { id: string; status: stri
 
   return (
     <div className="my-actions">
+      {editHref ? (
+        <Link href={editHref} className="btn ghost">
+          {tMy("edit")}
+        </Link>
+      ) : null}
       {status !== "ACTIVE" && (
         <button type="button" className="btn ghost" disabled={busy} onClick={() => setStatus("ACTIVE")}>
           {t("markActive")}

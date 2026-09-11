@@ -231,7 +231,12 @@ export default async function SupplyDetailPage({
 
             {isOwner ? (
               <section className="owner-panel">
-                <MyListingActions id={supply.id} status={supply.status} apiBase="/api/supply" />
+                <MyListingActions
+                  id={supply.id}
+                  status={supply.status}
+                  apiBase="/api/supply"
+                  editHref={`/supply/${supply.id}/edit`}
+                />
                 <h2>{t("pricing.boost.cta")}</h2>
                 <BoostButton
                   targetType="SUPPLY"

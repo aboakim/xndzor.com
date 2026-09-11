@@ -282,7 +282,11 @@ export default async function MachineryDetailPage({
                 currentlyBoostedUntil={boostedUntil?.toISOString() ?? null}
                 freeMode={ownerFreeCheckout}
               />
-              <MachineryListingActions id={listing.id} status={listing.status} />
+              <MachineryListingActions
+                id={listing.id}
+                status={listing.status}
+                editHref={`/machinery/${listing.id}/edit`}
+              />
               <p className="muted">
                 <Link href="/my/machinery">{t("myMachinery.title")}</Link>
               </p>

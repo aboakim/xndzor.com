@@ -25,11 +25,28 @@ export function SupplyForm({
   defaultMarzId,
   defaultVillageId,
   defaultPhone,
+  listingId,
+  initial,
 }: {
   products: Product[];
   defaultMarzId?: string | null;
   defaultVillageId?: string | null;
   defaultPhone?: string | null;
+  listingId?: string;
+  initial?: {
+    title: string;
+    description: string;
+    productId: string;
+    qtyAvailable: number;
+    unit: string;
+    priceAmd: number | null;
+    readyInDays: number;
+    marzId: string;
+    villageId: string | null;
+    phone: string;
+    whatsapp: string | null;
+    imageUrls: string[];
+  };
 }) {
   const t = useTranslations();
   const locale = useLocale();
@@ -37,12 +54,13 @@ export function SupplyForm({
   const formRef = useRef<HTMLFormElement>(null);
   const submittingRef = useRef(false);
   const publishWithOkOnlyRef = useRef(false);
-  const [marzId, setMarzId] = useState(defaultMarzId || "");
-  const [villageId, setVillageId] = useState(defaultVillageId || "");
+  const isEdit = Boolean(listingId);
+  const [marzId, setMarzId] = useState(initial?.marzId || defaultMarzId || "");
+  const [villageId, setVillageId] = useState(initial?.villageId || defaultVillageId || "");
   const [villages, setVillages] = useState<LocationVillage[]>([]);
   const [loadingVillages, setLoadingVillages] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
-  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
+  const [uploadedUrls, setUploadedUrls] = useState<string[]>(() => initial?.imageUrls ?? []);
   const [failedIndices, setFailedIndices] = useState<number[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number | undefined>();
   const [phase, setPhase] = useState<Phase>("idle");
@@ -50,7 +68,11 @@ export function SupplyForm({
   const [fieldError, setFieldError] = useState<Partial<Record<ListingField, string>>>({});
   const featured = getFeaturedProducts(products);
   const [productId, setProductId] = useState(
-    () => featured.find((p) => p.slug !== "other")?.id || products[0]?.id || "",
+    () =>
+      initial?.productId ||
+      featured.find((p) => p.slug !== "other")?.id ||
+      products[0]?.id ||
+      "",
   );
 
   useEffect(() => {
@@ -210,20 +232,20 @@ export function SupplyForm({
         whatsapp: String(fd.get("whatsapp") || ""),
         imageUrls,
       };
-      const res = await fetch("/api/supply", {
-        method: "POST",
+      const res = await fetch(isEdit ? `/api/supply/${listingId}` : "/api/supply", {
+        method: isEdit ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(translateResolved(data, "postSupply.error"));
+        setError(translateResolved(data, isEdit ? "listingEdit.error" : "postSupply.error"));
         setPhase("idle");
         submittingRef.current = false;
         return;
       }
       const created = await res.json();
-      router.push(`/supply/${created.id}`);
+      router.push(`/supply/${isEdit ? listingId : created.id}`);
       router.refresh();
     } catch (err) {
       setError(
@@ -243,15 +265,21 @@ export function SupplyForm({
         ? t("images.uploadingProgress", { pct: uploadProgress })
         : t("images.uploading");
     }
-    if (phase === "publishing") return t("postSupply.saving");
-    return t("postSupply.submit");
+    if (phase === "publishing") return t(isEdit ? "listingEdit.saving" : "postSupply.saving");
+    return t(isEdit ? "listingEdit.submit" : "postSupply.submit");
   }
 
   return (
     <form ref={formRef} className="listing-form stack-form" onSubmit={onSubmit}>
       <label>
         <span>{t("postSupply.fields.title")}</span>
-        <input name="title" required minLength={5} maxLength={120} />
+        <input
+          name="title"
+          required
+          minLength={5}
+          maxLength={120}
+          defaultValue={initial?.title || ""}
+        />
         {fieldError.title ? (
           <span className="form-error small" role="alert">
             {fieldError.title}
@@ -267,6 +295,7 @@ export function SupplyForm({
           maxLength={8000}
           rows={10}
           placeholder={t("postSupply.fields.descriptionHint")}
+          defaultValue={initial?.description || ""}
         />
         {fieldError.description ? (
           <span className="form-error small" role="alert">
@@ -316,7 +345,7 @@ export function SupplyForm({
         </label>
         <label>
           <span>{t("postSupply.fields.unit")}</span>
-          <select name="unit" defaultValue="kg" disabled={saving}>
+          <select name="unit" defaultValue={initial?.unit || "kg"} disabled={saving}>
             {UNITS.map((u) => (
               <option key={u} value={u}>
                 {t(`units.${u}` as "units.kg")}
@@ -328,7 +357,14 @@ export function SupplyForm({
       <div className="form-row">
         <label>
           <span>{t("postSupply.fields.qty")}</span>
-          <input name="qtyAvailable" type="number" min={1} required disabled={saving} />
+          <input
+            name="qtyAvailable"
+            type="number"
+            min={1}
+            required
+            disabled={saving}
+            defaultValue={initial?.qtyAvailable ?? ""}
+          />
           {fieldError.qty ? (
             <span className="form-error small" role="alert">
               {fieldError.qty}
@@ -337,7 +373,13 @@ export function SupplyForm({
         </label>
         <label>
           <span>{t("postSupply.fields.price")}</span>
-          <input name="priceAmd" type="number" min={0} disabled={saving} />
+          <input
+            name="priceAmd"
+            type="number"
+            min={0}
+            disabled={saving}
+            defaultValue={initial?.priceAmd ?? ""}
+          />
         </label>
       </div>
       <label>
@@ -347,7 +389,7 @@ export function SupplyForm({
           type="number"
           min={0}
           max={365}
-          defaultValue={0}
+          defaultValue={initial?.readyInDays ?? 0}
           disabled={saving}
         />
       </label>
@@ -421,7 +463,12 @@ export function SupplyForm({
       <div className="form-row">
         <label>
           <span>{t("postSupply.fields.phone")}</span>
-          <input name="phone" required defaultValue={defaultPhone || ""} disabled={saving} />
+          <input
+            name="phone"
+            required
+            defaultValue={initial?.phone || defaultPhone || ""}
+            disabled={saving}
+          />
           {fieldError.phone ? (
             <span className="form-error small" role="alert">
               {fieldError.phone}
@@ -430,7 +477,11 @@ export function SupplyForm({
         </label>
         <label>
           <span>{t("postSupply.fields.whatsapp")}</span>
-          <input name="whatsapp" defaultValue={defaultPhone || ""} disabled={saving} />
+          <input
+            name="whatsapp"
+            defaultValue={initial?.whatsapp || defaultPhone || ""}
+            disabled={saving}
+          />
         </label>
       </div>
       <ImageUploadField
