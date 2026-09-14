@@ -1,3 +1,4 @@
+import { searchQueryVariants } from "@/lib/armenian-translit";
 import { prisma } from "@/lib/prisma";
 import { safeQuery } from "@/lib/safe-query";
 import {
@@ -42,9 +43,14 @@ function contains(field: string, q: string) {
   return { [field]: { contains: q, mode: "insensitive" as const } };
 }
 
-function titleDescOr(q: string, extra: Record<string, unknown>[] = []) {
+/** Title/description (+ optional fields) matched against all query variants. */
+function titleDescOr(variants: string[], extraFields: string[] = []) {
   return {
-    OR: [contains("title", q), contains("description", q), ...extra],
+    OR: variants.flatMap((q) => [
+      contains("title", q),
+      contains("description", q),
+      ...extraFields.map((field) => contains(field, q)),
+    ]),
   };
 }
 
@@ -78,6 +84,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
     return { query, tooShort: true, sections: [] };
   }
 
+  const variants = searchQueryVariants(query);
   const productWhere = listingTextSearchWhere(query);
   const productSlugs = productSlugsMatchingText(query);
   const groupBuyProductOr =
@@ -134,7 +141,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
         prisma.animalListing.findMany({
           where: {
             status: "ACTIVE",
-            ...titleDescOr(query, [contains("breed", query)]),
+            ...titleDescOr(variants, ["breed"]),
           },
           select: { id: true, title: true, description: true },
           orderBy: { createdAt: "desc" },
@@ -147,7 +154,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
         prisma.machineryListing.findMany({
           where: {
             status: "ACTIVE",
-            ...titleDescOr(query, [contains("make", query), contains("model", query)]),
+            ...titleDescOr(variants, ["make", "model"]),
           },
           select: { id: true, title: true, description: true },
           orderBy: { createdAt: "desc" },
@@ -158,7 +165,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
     safeQuery(
       () =>
         prisma.jobRequest.findMany({
-          where: { status: "ACTIVE", ...titleDescOr(query) },
+          where: { status: "ACTIVE", ...titleDescOr(variants) },
           select: { id: true, title: true, description: true },
           orderBy: { createdAt: "desc" },
           take,
@@ -168,7 +175,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
     safeQuery(
       () =>
         prisma.serviceProvider.findMany({
-          where: { status: "ACTIVE", ...titleDescOr(query) },
+          where: { status: "ACTIVE", ...titleDescOr(variants) },
           select: { id: true, title: true, description: true },
           orderBy: { createdAt: "desc" },
           take,
@@ -180,7 +187,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
         prisma.catalogListing.findMany({
           where: {
             status: "ACTIVE",
-            ...titleDescOr(query, [contains("brand", query)]),
+            ...titleDescOr(variants, ["brand"]),
           },
           select: { id: true, title: true, description: true, category: true },
           orderBy: { createdAt: "desc" },
@@ -194,8 +201,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
           where: {
             status: { in: ["OPEN", "QUOTED"] },
             OR: [
-              contains("title", query),
-              contains("description", query),
+              ...variants.flatMap((v) => [contains("title", v), contains("description", v)]),
               ...groupBuyProductOr,
             ],
           },
@@ -208,7 +214,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
     safeQuery(
       () =>
         prisma.spaceListing.findMany({
-          where: { status: "ACTIVE", ...titleDescOr(query) },
+          where: { status: "ACTIVE", ...titleDescOr(variants) },
           select: { id: true, title: true, description: true },
           orderBy: { createdAt: "desc" },
           take,

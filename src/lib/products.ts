@@ -2,6 +2,7 @@ import productsData from "../../data/products.json";
 import enMessages from "../../messages/en.json";
 import hyMessages from "../../messages/hy.json";
 import ruMessages from "../../messages/ru.json";
+import { latinAliasesForArmenian, searchQueryVariants } from "@/lib/armenian-translit";
 import { prisma } from "@/lib/prisma";
 import { safeQuery } from "@/lib/safe-query";
 
@@ -43,28 +44,46 @@ const hyProductNames = hyMessages.products as Record<string, string>;
 const enProductNames = enMessages.products as Record<string, string>;
 const ruProductNames = ruMessages.products as Record<string, string>;
 
+export const PRODUCT_CATEGORIES = productsData.categories as ProductCategory[];
+
+export const PRODUCT_CATALOG = productsData.products as CatalogProduct[];
+
 /** Armenian display name for stable Ա→Ֆ catalog sorting (independent of UI locale). */
 export function productHyLabel(nameKey: string): string {
   const key = nameKey.replace(/^products\./, "");
   return hyProductNames[key] ?? key;
 }
 
-/** Product slugs whose localized names (hy/en/ru) or slug match the search text. */
-export function productSlugsMatchingText(q: string): string[] {
-  const needle = q.trim().toLocaleLowerCase("hy");
-  if (!needle) return [];
+type ProductSearchEntry = {
+  slug: string;
+  labels: string[];
+};
 
-  return PRODUCT_CATALOG.filter((p) => {
-    const key = p.nameKey.replace(/^products\./, "");
-    const labels = [
-      productHyLabel(p.nameKey),
-      enProductNames[key] ?? "",
-      ruProductNames[key] ?? "",
-      p.slug.replace(/-/g, " "),
-      key,
-    ];
-    return labels.some((label) => label.toLocaleLowerCase("hy").includes(needle));
-  }).map((p) => p.slug);
+/** Precomputed hy/en/ru + Latin translit aliases for catalog product matching. */
+const PRODUCT_SEARCH_INDEX: ProductSearchEntry[] = PRODUCT_CATALOG.map((p) => {
+  const key = p.nameKey.replace(/^products\./, "");
+  const hy = productHyLabel(p.nameKey);
+  const labels = [
+    hy,
+    enProductNames[key] ?? "",
+    ruProductNames[key] ?? "",
+    p.slug.replace(/-/g, " "),
+    key,
+    ...latinAliasesForArmenian(hy),
+  ]
+    .map((label) => label.toLocaleLowerCase("hy").trim())
+    .filter(Boolean);
+  return { slug: p.slug, labels: [...new Set(labels)] };
+});
+
+/** Product slugs whose localized names (hy/en/ru), Latin aliases, or slug match the search text. */
+export function productSlugsMatchingText(q: string): string[] {
+  const variants = searchQueryVariants(q).map((v) => v.toLocaleLowerCase("hy"));
+  if (variants.length === 0) return [];
+
+  return PRODUCT_SEARCH_INDEX.filter((entry) =>
+    variants.some((needle) => entry.labels.some((label) => label.includes(needle))),
+  ).map((entry) => entry.slug);
 }
 
 /** Prisma `where` fragment: title/description + product name match for board `q`. */
@@ -80,11 +99,14 @@ export function listingTextSearchWhere(q: string | undefined):
   const trimmed = q?.trim();
   if (!trimmed) return {};
 
+  const variants = searchQueryVariants(trimmed);
   const slugs = productSlugsMatchingText(trimmed);
   return {
     OR: [
-      { title: { contains: trimmed, mode: "insensitive" } },
-      { description: { contains: trimmed, mode: "insensitive" } },
+      ...variants.flatMap((v) => [
+        { title: { contains: v, mode: "insensitive" as const } },
+        { description: { contains: v, mode: "insensitive" as const } },
+      ]),
       ...(slugs.length > 0 ? [{ product: { slug: { in: slugs } } }] : []),
     ],
   };
@@ -96,10 +118,6 @@ export function compareProductsByHyName(
 ): number {
   return productHyLabel(a.nameKey).localeCompare(productHyLabel(b.nameKey), "hy");
 }
-
-export const PRODUCT_CATEGORIES = productsData.categories as ProductCategory[];
-
-export const PRODUCT_CATALOG = productsData.products as CatalogProduct[];
 
 const byId = new Map(PRODUCT_CATALOG.map((p) => [p.id, p]));
 const bySlug = new Map(PRODUCT_CATALOG.map((p) => [p.slug, p]));

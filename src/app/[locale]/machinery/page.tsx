@@ -9,6 +9,7 @@ import { MachineryCard } from "@/components/MachineryCard";
 import { MachineryFilters } from "@/components/MachineryFilters";
 import { MachineryTypeIcon } from "@/components/AgIcons";
 import { MACHINERY_TYPES } from "@/lib/machinery";
+import { textContainsOr } from "@/lib/armenian-translit";
 import { getSession } from "@/lib/session";
 import { getFarmScoreSnippets } from "@/lib/farm-score";
 import {
@@ -77,16 +78,7 @@ export default async function MachineryBoardPage({
               },
             }
           : {}),
-        ...(sp.q
-          ? {
-              OR: [
-                { title: { contains: sp.q } },
-                { description: { contains: sp.q } },
-                { make: { contains: sp.q } },
-                { model: { contains: sp.q } },
-              ],
-            }
-          : {}),
+        ...(textContainsOr(sp.q, ["title", "description", "make", "model"]) ?? {}),
       },
       include: { marz: true, village: true },
       orderBy: browseOrderBy(sp.sort),

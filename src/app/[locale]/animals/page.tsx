@@ -9,6 +9,7 @@ import { AnimalCard } from "@/components/AnimalCard";
 import { AnimalFilters } from "@/components/AnimalFilters";
 import { AnimalTypeIcon } from "@/components/AgIcons";
 import { ANIMAL_TYPES } from "@/lib/animals";
+import { textContainsOr } from "@/lib/armenian-translit";
 import { getSession } from "@/lib/session";
 import { getFarmScoreSnippets } from "@/lib/farm-score";
 import {
@@ -77,15 +78,7 @@ export default async function AnimalsBoardPage({
               },
             }
           : {}),
-        ...(sp.q
-          ? {
-              OR: [
-                { title: { contains: sp.q } },
-                { description: { contains: sp.q } },
-                { breed: { contains: sp.q } },
-              ],
-            }
-          : {}),
+        ...(textContainsOr(sp.q, ["title", "description", "breed"]) ?? {}),
       },
       include: { marz: true, village: true },
       orderBy: browseOrderBy(sp.sort),

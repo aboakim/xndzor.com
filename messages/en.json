@@ -735,6 +735,7 @@
     "title": "Search",
     "lede": "Find produce, machinery, livestock, jobs, and more across Xndzor.",
     "emptyQuery": "Type what you’re looking for — crops, tractors, jobs…",
+    "latinHint": "You can also type in Latin letters (e.g. xndzor, lolik, traktor)",
     "queryTooShort": "Enter at least {min} characters.",
     "noResults": "Nothing found for “{q}”.",
     "resultsFor": "{count} results for “{q}”",

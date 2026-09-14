@@ -67,6 +67,7 @@ export default async function SearchPage({
 
       <div className="search-page-bar">
         <SearchBar large key={query || "empty"} defaultValue={query} />
+        <p className="muted search-latin-hint">{t("searchPage.latinHint")}</p>
       </div>
 
       {!hasQuery ? (

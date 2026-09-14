@@ -10065,6 +10065,11 @@ body.mega-menu-open {
   margin: 0 auto 1.25rem;
 }
 
+.page-search .search-latin-hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+}
+
 .page-search .search-page-hint,
 .page-search .search-page-summary {
   max-width: 40rem;
