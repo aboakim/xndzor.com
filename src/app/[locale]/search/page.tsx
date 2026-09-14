@@ -1,14 +1,17 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { ClassifiedRow } from "@/components/ClassifiedRow";
 import { EmptyState } from "@/components/EmptyState";
 import { SearchBar } from "@/components/SearchBar";
 import {
   runSiteSearch,
   SITE_SEARCH_MIN_LEN,
+  type SearchHit,
   type SearchSectionId,
 } from "@/lib/site-search";
 import { seoMessagesMetadata } from "@/lib/seo-metadata";
+import { formatAmd, formatPriceRange } from "@/lib/utils";
 
 export async function generateMetadata({
   params,
@@ -34,6 +37,32 @@ const SECTION_TITLE_KEY: Record<SearchSectionId, string> = {
   groupBuy: "groupBuy.title",
   spaces: "farmOs.spaces.title",
 };
+
+function hitPriceLabel(
+  hit: SearchHit,
+  t: Awaited<ReturnType<typeof getTranslations>>,
+): string | undefined {
+  if (hit.priceAmd == null && hit.priceAmdMax == null) return undefined;
+  if (hit.unit) {
+    return formatPriceRange(hit.priceAmd, hit.priceAmdMax ?? hit.priceAmd, hit.unit, (k) =>
+      t(k as "common.amd"),
+    );
+  }
+  const amount = hit.priceAmd ?? hit.priceAmdMax!;
+  return `${formatAmd(amount)} ${t("common.amd")}`;
+}
+
+function hitMeta(
+  hit: SearchHit,
+  t: Awaited<ReturnType<typeof getTranslations>>,
+): string {
+  const parts: string[] = [];
+  if (hit.marzSlug) {
+    parts.push(t(`marzes.${hit.marzSlug}` as "marzes.Yerevan"));
+  }
+  if (hit.snippet) parts.push(hit.snippet);
+  return parts.join(" · ");
+}
 
 export default async function SearchPage({
   params,
@@ -105,18 +134,18 @@ export default async function SearchPage({
                     {t("searchPage.viewAll")}
                   </Link>
                 </div>
-                <ul className="search-hit-list">
+                <div className="classified-list search-hit-list">
                   {section.items.map((hit) => (
-                    <li key={hit.id} className="search-hit">
-                      <Link href={hit.href} className="search-hit-link">
-                        <span className="search-hit-title">{hit.title}</span>
-                        {hit.snippet ? (
-                          <span className="search-hit-snippet">{hit.snippet}</span>
-                        ) : null}
-                      </Link>
-                    </li>
+                    <ClassifiedRow
+                      key={hit.id}
+                      href={hit.href}
+                      title={hit.title}
+                      meta={hitMeta(hit, t)}
+                      value={hitPriceLabel(hit, t)}
+                      thumb={hit.imageUrl}
+                    />
                   ))}
-                </ul>
+                </div>
               </section>
             ))}
           </div>

@@ -7,6 +7,7 @@ import {
   isCatalogCategory,
 } from "@/lib/catalog";
 import { listingTextSearchWhere, productSlugsMatchingText } from "@/lib/products";
+import { parseImageUrls } from "@/lib/utils";
 
 /** Minimum trimmed query length before running DB search. */
 export const SITE_SEARCH_MIN_LEN = 2;
@@ -48,6 +49,15 @@ export type SearchHit = {
   title: string;
   href: string;
   snippet: string | null;
+  /** First listing photo, if any. */
+  imageUrl: string | null;
+  /** Price in AMD (min for ranges). */
+  priceAmd: number | null;
+  /** Upper bound for demand-style ranges. */
+  priceAmdMax: number | null;
+  /** Unit key for formatPriceRange (kg, ton, …); null = flat AMD amount. */
+  unit: string | null;
+  marzSlug: string | null;
 };
 
 export type SearchSectionResult = {
@@ -71,11 +81,53 @@ function titleDescOr(variants: string[], extraFields: string[] = []) {
   };
 }
 
+/** Strip quiet seed footers like `demo:batch-supply-v1` from public snippets. */
+function stripDemoMarkers(text: string): string {
+  return text
+    .split("\n")
+    .filter((line) => !/^demo:[a-z0-9_-]+$/i.test(line.trim()))
+    .join("\n")
+    .replace(/\s*demo:[a-z0-9_-]+\b/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function snippetFrom(description: string | null | undefined, max = 120): string | null {
-  const t = description?.replace(/\s+/g, " ").trim();
+  const t = stripDemoMarkers(description ?? "");
   if (!t) return null;
   return t.length > max ? `${t.slice(0, max - 1)}…` : t;
 }
+
+function firstImage(imageUrls: string | null | undefined): string | null {
+  return parseImageUrls(imageUrls ?? "[]")[0] ?? null;
+}
+
+type HitSource = {
+  id: string;
+  title: string;
+  description?: string | null;
+  imageUrls?: string | null;
+  priceAmd?: number | null;
+  priceAmdMax?: number | null;
+  unit?: string | null;
+  marzSlug?: string | null;
+};
+
+function toHit(href: string, row: HitSource): SearchHit {
+  return {
+    id: row.id,
+    title: row.title,
+    href,
+    snippet: snippetFrom(row.description),
+    imageUrl: firstImage(row.imageUrls),
+    priceAmd: row.priceAmd ?? null,
+    priceAmdMax: row.priceAmdMax ?? null,
+    unit: row.unit ?? null,
+    marzSlug: row.marzSlug ?? null,
+  };
+}
+
+const marzSelect = { select: { slug: true } } as const;
 
 /**
  * Lower is better: exact title → title starts with query → title contains query →
@@ -147,7 +199,15 @@ export async function runSiteSearch(rawQ: string): Promise<{
       () =>
         prisma.supply.findMany({
           where: { status: "ACTIVE", ...productWhere },
-          select: { id: true, title: true, description: true },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            imageUrls: true,
+            priceAmd: true,
+            unit: true,
+            marz: marzSelect,
+          },
           orderBy: { createdAt: "desc" },
           take,
         }),
@@ -157,7 +217,16 @@ export async function runSiteSearch(rawQ: string): Promise<{
       () =>
         prisma.demand.findMany({
           where: { status: "ACTIVE", ...productWhere },
-          select: { id: true, title: true, description: true },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            imageUrls: true,
+            priceMinAmd: true,
+            priceMaxAmd: true,
+            unit: true,
+            marz: marzSelect,
+          },
           orderBy: { createdAt: "desc" },
           take,
         }),
@@ -167,7 +236,15 @@ export async function runSiteSearch(rawQ: string): Promise<{
       () =>
         prisma.futureHarvest.findMany({
           where: { status: "ACTIVE", ...productWhere },
-          select: { id: true, title: true, description: true },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            imageUrls: true,
+            priceAmd: true,
+            unit: true,
+            marz: marzSelect,
+          },
           orderBy: { createdAt: "desc" },
           take,
         }),
@@ -180,7 +257,14 @@ export async function runSiteSearch(rawQ: string): Promise<{
             status: "ACTIVE",
             ...titleDescOr(variants, ["breed"]),
           },
-          select: { id: true, title: true, description: true },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            imageUrls: true,
+            priceAmd: true,
+            marz: marzSelect,
+          },
           orderBy: { createdAt: "desc" },
           take,
         }),
@@ -193,7 +277,14 @@ export async function runSiteSearch(rawQ: string): Promise<{
             status: "ACTIVE",
             ...titleDescOr(variants, ["make", "model"]),
           },
-          select: { id: true, title: true, description: true },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            imageUrls: true,
+            priceAmd: true,
+            marz: marzSelect,
+          },
           orderBy: { createdAt: "desc" },
           take,
         }),
@@ -203,7 +294,14 @@ export async function runSiteSearch(rawQ: string): Promise<{
       () =>
         prisma.jobRequest.findMany({
           where: { status: "ACTIVE", ...titleDescOr(variants) },
-          select: { id: true, title: true, description: true },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            imageUrls: true,
+            budgetAmd: true,
+            marz: marzSelect,
+          },
           orderBy: { createdAt: "desc" },
           take,
         }),
@@ -213,7 +311,14 @@ export async function runSiteSearch(rawQ: string): Promise<{
       () =>
         prisma.serviceProvider.findMany({
           where: { status: "ACTIVE", ...titleDescOr(variants) },
-          select: { id: true, title: true, description: true },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            imageUrls: true,
+            rateAmd: true,
+            marz: marzSelect,
+          },
           orderBy: { createdAt: "desc" },
           take,
         }),
@@ -226,7 +331,16 @@ export async function runSiteSearch(rawQ: string): Promise<{
             status: "ACTIVE",
             ...titleDescOr(variants, ["brand"]),
           },
-          select: { id: true, title: true, description: true, category: true },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            category: true,
+            imageUrls: true,
+            priceAmd: true,
+            unit: true,
+            marz: marzSelect,
+          },
           orderBy: { createdAt: "desc" },
           take,
         }),
@@ -242,7 +356,15 @@ export async function runSiteSearch(rawQ: string): Promise<{
               ...groupBuyProductOr,
             ],
           },
-          select: { id: true, title: true, description: true },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            imageUrls: true,
+            pricePerUnitAmd: true,
+            unit: true,
+            marz: marzSelect,
+          },
           orderBy: { createdAt: "desc" },
           take,
         }),
@@ -252,7 +374,14 @@ export async function runSiteSearch(rawQ: string): Promise<{
       () =>
         prisma.spaceListing.findMany({
           where: { status: "ACTIVE", ...titleDescOr(variants) },
-          select: { id: true, title: true, description: true },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            imageUrls: true,
+            priceAmd: true,
+            marz: marzSelect,
+          },
           orderBy: { createdAt: "desc" },
           take,
         }),
@@ -267,104 +396,150 @@ export async function runSiteSearch(rawQ: string): Promise<{
       id: "supply",
       boardHref: `/supply${qParam}`,
       items: rankHitsByTitleMatch(
-        supply.map((r) => ({
-          id: r.id,
-          title: r.title,
-          href: `/supply/${r.id}`,
-          snippet: snippetFrom(r.description),
-        })),
+        supply.map((r) =>
+          toHit(`/supply/${r.id}`, {
+            id: r.id,
+            title: r.title,
+            description: r.description,
+            imageUrls: r.imageUrls,
+            priceAmd: r.priceAmd,
+            unit: r.unit,
+            marzSlug: r.marz.slug,
+          }),
+        ),
         variants,
       ),
     },
     demand: {
       id: "demand",
       boardHref: `/demand${qParam}`,
-      items: demand.map((r) => ({
-        id: r.id,
-        title: r.title,
-        href: `/demand/${r.id}`,
-        snippet: snippetFrom(r.description),
-      })),
+      items: demand.map((r) =>
+        toHit(`/demand/${r.id}`, {
+          id: r.id,
+          title: r.title,
+          description: r.description,
+          imageUrls: r.imageUrls,
+          priceAmd: r.priceMinAmd,
+          priceAmdMax: r.priceMaxAmd,
+          unit: r.unit,
+          marzSlug: r.marz.slug,
+        }),
+      ),
     },
     forward: {
       id: "forward",
       boardHref: `/forward`,
-      items: forward.map((r) => ({
-        id: r.id,
-        title: r.title,
-        href: `/forward/${r.id}`,
-        snippet: snippetFrom(r.description),
-      })),
+      items: forward.map((r) =>
+        toHit(`/forward/${r.id}`, {
+          id: r.id,
+          title: r.title,
+          description: r.description,
+          imageUrls: r.imageUrls,
+          priceAmd: r.priceAmd,
+          unit: r.unit,
+          marzSlug: r.marz.slug,
+        }),
+      ),
     },
     animals: {
       id: "animals",
       boardHref: `/animals${qParam}`,
-      items: animals.map((r) => ({
-        id: r.id,
-        title: r.title,
-        href: `/animals/${r.id}`,
-        snippet: snippetFrom(r.description),
-      })),
+      items: animals.map((r) =>
+        toHit(`/animals/${r.id}`, {
+          id: r.id,
+          title: r.title,
+          description: r.description,
+          imageUrls: r.imageUrls,
+          priceAmd: r.priceAmd,
+          marzSlug: r.marz.slug,
+        }),
+      ),
     },
     machinery: {
       id: "machinery",
       boardHref: `/machinery${qParam}`,
-      items: machinery.map((r) => ({
-        id: r.id,
-        title: r.title,
-        href: `/machinery/${r.id}`,
-        snippet: snippetFrom(r.description),
-      })),
+      items: machinery.map((r) =>
+        toHit(`/machinery/${r.id}`, {
+          id: r.id,
+          title: r.title,
+          description: r.description,
+          imageUrls: r.imageUrls,
+          priceAmd: r.priceAmd,
+          marzSlug: r.marz.slug,
+        }),
+      ),
     },
     jobs: {
       id: "jobs",
       boardHref: `/jobs`,
-      items: jobs.map((r) => ({
-        id: r.id,
-        title: r.title,
-        href: `/jobs/${r.id}`,
-        snippet: snippetFrom(r.description),
-      })),
+      items: jobs.map((r) =>
+        toHit(`/jobs/${r.id}`, {
+          id: r.id,
+          title: r.title,
+          description: r.description,
+          imageUrls: r.imageUrls,
+          priceAmd: r.budgetAmd,
+          marzSlug: r.marz.slug,
+        }),
+      ),
     },
     shop: {
       id: "shop",
       boardHref: `/shop/fertilizers${qParam}`,
-      items: shop.map((r) => ({
-        id: r.id,
-        title: r.title,
-        href: shopHref(r.category, r.id),
-        snippet: snippetFrom(r.description),
-      })),
+      items: shop.map((r) =>
+        toHit(shopHref(r.category, r.id), {
+          id: r.id,
+          title: r.title,
+          description: r.description,
+          imageUrls: r.imageUrls,
+          priceAmd: r.priceAmd,
+          unit: r.unit,
+          marzSlug: r.marz.slug,
+        }),
+      ),
     },
     providers: {
       id: "providers",
       boardHref: `/providers`,
-      items: providers.map((r) => ({
-        id: r.id,
-        title: r.title,
-        href: `/providers/${r.id}`,
-        snippet: snippetFrom(r.description),
-      })),
+      items: providers.map((r) =>
+        toHit(`/providers/${r.id}`, {
+          id: r.id,
+          title: r.title,
+          description: r.description,
+          imageUrls: r.imageUrls,
+          priceAmd: r.rateAmd,
+          marzSlug: r.marz.slug,
+        }),
+      ),
     },
     groupBuy: {
       id: "groupBuy",
       boardHref: `/group-buy`,
-      items: groupBuy.map((r) => ({
-        id: r.id,
-        title: r.title,
-        href: `/group-buy#${r.id}`,
-        snippet: snippetFrom(r.description),
-      })),
+      items: groupBuy.map((r) =>
+        toHit(`/group-buy#${r.id}`, {
+          id: r.id,
+          title: r.title,
+          description: r.description,
+          imageUrls: r.imageUrls,
+          priceAmd: r.pricePerUnitAmd,
+          unit: r.unit,
+          marzSlug: r.marz?.slug ?? null,
+        }),
+      ),
     },
     spaces: {
       id: "spaces",
       boardHref: `/spaces`,
-      items: spaces.map((r) => ({
-        id: r.id,
-        title: r.title,
-        href: `/spaces#${r.id}`,
-        snippet: snippetFrom(r.description),
-      })),
+      items: spaces.map((r) =>
+        toHit(`/spaces#${r.id}`, {
+          id: r.id,
+          title: r.title,
+          description: r.description,
+          imageUrls: r.imageUrls,
+          priceAmd: r.priceAmd,
+          marzSlug: r.marz.slug,
+        }),
+      ),
     },
   };
 
