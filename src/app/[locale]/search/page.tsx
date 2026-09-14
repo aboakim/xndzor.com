@@ -21,6 +21,7 @@ export async function generateMetadata({
 
 export const dynamic = "force-dynamic";
 
+/** Labels only — section order is enforced by SEARCH_SECTION_ORDER in site-search. */
 const SECTION_TITLE_KEY: Record<SearchSectionId, string> = {
   supply: "supplyBoard.title",
   demand: "demandBoard.title",
@@ -28,8 +29,8 @@ const SECTION_TITLE_KEY: Record<SearchSectionId, string> = {
   animals: "animalsBoard.title",
   machinery: "machineryBoard.title",
   jobs: "jobsBoard.title",
-  providers: "providersBoard.title",
   shop: "nav.shop",
+  providers: "providersBoard.title",
   groupBuy: "groupBuy.title",
   spaces: "farmOs.spaces.title",
 };

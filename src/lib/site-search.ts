@@ -21,10 +21,27 @@ export type SearchSectionId =
   | "animals"
   | "machinery"
   | "jobs"
-  | "providers"
   | "shop"
+  | "providers"
   | "groupBuy"
   | "spaces";
+
+/**
+ * Canonical UI order for search sections.
+ * ACTIVE supply («Վաճառել հիմա») is always first when it has hits.
+ */
+export const SEARCH_SECTION_ORDER: readonly SearchSectionId[] = [
+  "supply",
+  "demand",
+  "forward",
+  "animals",
+  "machinery",
+  "jobs",
+  "shop",
+  "providers",
+  "groupBuy",
+  "spaces",
+] as const;
 
 export type SearchHit = {
   id: string;
@@ -58,6 +75,26 @@ function snippetFrom(description: string | null | undefined, max = 120): string 
   const t = description?.replace(/\s+/g, " ").trim();
   if (!t) return null;
   return t.length > max ? `${t.slice(0, max - 1)}…` : t;
+}
+
+/**
+ * Lower is better: exact title → title starts with query → title contains query →
+ * description/product-only hits (no title match).
+ */
+function titleMatchRank(title: string, variants: string[]): number {
+  const t = title.toLocaleLowerCase("hy").trim();
+  const needles = variants.map((v) => v.toLocaleLowerCase("hy").trim()).filter(Boolean);
+  if (needles.some((n) => t === n)) return 0;
+  if (needles.some((n) => t.startsWith(n))) return 1;
+  if (needles.some((n) => t.includes(n))) return 2;
+  return 3;
+}
+
+function rankHitsByTitleMatch(items: SearchHit[], variants: string[]): SearchHit[] {
+  return [...items]
+    .map((item, index) => ({ item, index, rank: titleMatchRank(item.title, variants) }))
+    .sort((a, b) => a.rank - b.rank || a.index - b.index)
+    .map(({ item }) => item);
 }
 
 function shopHref(category: string, id: string): string {
@@ -225,18 +262,21 @@ export async function runSiteSearch(rawQ: string): Promise<{
 
   const qParam = `?q=${encodeURIComponent(query)}`;
 
-  const allSections: SearchSectionResult[] = [
-    {
+  const byId: Record<SearchSectionId, SearchSectionResult> = {
+    supply: {
       id: "supply",
       boardHref: `/supply${qParam}`,
-      items: supply.map((r) => ({
-        id: r.id,
-        title: r.title,
-        href: `/supply/${r.id}`,
-        snippet: snippetFrom(r.description),
-      })),
+      items: rankHitsByTitleMatch(
+        supply.map((r) => ({
+          id: r.id,
+          title: r.title,
+          href: `/supply/${r.id}`,
+          snippet: snippetFrom(r.description),
+        })),
+        variants,
+      ),
     },
-    {
+    demand: {
       id: "demand",
       boardHref: `/demand${qParam}`,
       items: demand.map((r) => ({
@@ -246,7 +286,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
         snippet: snippetFrom(r.description),
       })),
     },
-    {
+    forward: {
       id: "forward",
       boardHref: `/forward`,
       items: forward.map((r) => ({
@@ -256,7 +296,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
         snippet: snippetFrom(r.description),
       })),
     },
-    {
+    animals: {
       id: "animals",
       boardHref: `/animals${qParam}`,
       items: animals.map((r) => ({
@@ -266,7 +306,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
         snippet: snippetFrom(r.description),
       })),
     },
-    {
+    machinery: {
       id: "machinery",
       boardHref: `/machinery${qParam}`,
       items: machinery.map((r) => ({
@@ -276,7 +316,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
         snippet: snippetFrom(r.description),
       })),
     },
-    {
+    jobs: {
       id: "jobs",
       boardHref: `/jobs`,
       items: jobs.map((r) => ({
@@ -286,17 +326,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
         snippet: snippetFrom(r.description),
       })),
     },
-    {
-      id: "providers",
-      boardHref: `/providers`,
-      items: providers.map((r) => ({
-        id: r.id,
-        title: r.title,
-        href: `/providers/${r.id}`,
-        snippet: snippetFrom(r.description),
-      })),
-    },
-    {
+    shop: {
       id: "shop",
       boardHref: `/shop/fertilizers${qParam}`,
       items: shop.map((r) => ({
@@ -306,7 +336,17 @@ export async function runSiteSearch(rawQ: string): Promise<{
         snippet: snippetFrom(r.description),
       })),
     },
-    {
+    providers: {
+      id: "providers",
+      boardHref: `/providers`,
+      items: providers.map((r) => ({
+        id: r.id,
+        title: r.title,
+        href: `/providers/${r.id}`,
+        snippet: snippetFrom(r.description),
+      })),
+    },
+    groupBuy: {
       id: "groupBuy",
       boardHref: `/group-buy`,
       items: groupBuy.map((r) => ({
@@ -316,7 +356,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
         snippet: snippetFrom(r.description),
       })),
     },
-    {
+    spaces: {
       id: "spaces",
       boardHref: `/spaces`,
       items: spaces.map((r) => ({
@@ -326,11 +366,16 @@ export async function runSiteSearch(rawQ: string): Promise<{
         snippet: snippetFrom(r.description),
       })),
     },
-  ];
+  };
+
+  // Emit in SEARCH_SECTION_ORDER so supply is always first among non-empty sections.
+  const sections = SEARCH_SECTION_ORDER.map((id) => byId[id]).filter(
+    (s) => s.items.length > 0,
+  );
 
   return {
     query,
     tooShort: false,
-    sections: allSections.filter((s) => s.items.length > 0),
+    sections,
   };
 }
