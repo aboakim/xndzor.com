@@ -106,6 +106,17 @@ export function IconMatch(p: IconProps) {
   );
 }
 
+/** «Որոնում եմ» / need listing — search + need mark */
+export function IconNeed(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <circle cx="10" cy="10" r="5.5" />
+      <path d="M14.5 14.5L20 20" />
+      <path d="M10 7.5v5M7.5 10h5" />
+    </Svg>
+  );
+}
+
 export function IconTomato(p: IconProps) {
   return (
     <Svg {...p}>
@@ -782,6 +793,8 @@ const JOB_ICONS: Record<string, (p: IconProps) => ReactElement> = {
 const ACTION_ICONS: Record<string, (p: IconProps) => ReactElement> = {
   buy: IconBuy,
   sell: IconSell,
+  demand: IconNeed,
+  lookingFor: IconNeed,
   orderJob: IconOrderJob,
   doJob: IconDoJob,
   forward: IconForward,

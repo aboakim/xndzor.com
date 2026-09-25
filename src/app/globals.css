@@ -3293,6 +3293,10 @@ input.readonly {
   background: rgba(122, 163, 176, 0.2);
   color: #3d6670;
 }
+.action-demand .action-icon-wrap {
+  background: rgba(176, 122, 140, 0.18);
+  color: #6b3d52;
+}
 .action-sell .action-icon-wrap {
   background: rgba(15, 74, 60, 0.08);
   color: var(--pine);
@@ -4396,6 +4400,10 @@ button.utility-btn-ghost {
   background: rgba(122, 163, 176, 0.18);
   color: #3d6670;
 }
+.cat-icon.action-demand {
+  background: rgba(176, 122, 140, 0.16);
+  color: #6b3d52;
+}
 .cat-icon.action-sell {
   background: rgba(201, 162, 39, 0.12);
   color: #7a6418;
@@ -4907,6 +4915,10 @@ a.classified-title::after {
 .home-feed-icon.action-buy {
   background: rgba(122, 163, 176, 0.18);
   color: #3d6670;
+}
+.home-feed-icon.action-demand {
+  background: rgba(176, 122, 140, 0.16);
+  color: #6b3d52;
 }
 .home-feed-icon.action-sell {
   background: rgba(201, 162, 39, 0.12);

@@ -65,12 +65,13 @@ const RecentlyViewedStrip = nextDynamic(
 );
 
 /**
- * Homepage categories: Top 5 first, then a few farm helpers.
+ * Homepage categories: Sell / Buy / Looking for / Forward first, then helpers.
  * Shop & niche sections stay in Բաժիններ mega menu — not a wall of icons.
  */
 const CATEGORIES = [
   { href: "/supply", action: "sell", labelKey: "menu.sellNow" as const },
   { href: "/supply", action: "buy", labelKey: "menu.buy" as const },
+  { href: "/demand", action: "demand", labelKey: "menu.lookingFor" as const },
   { href: "/forward", action: "forward", labelKey: "menu.forward" as const },
   { href: "/group-buy", action: "groupBuy", labelKey: "menu.groupBuy" as const },
   { href: "/grow", action: "grow", labelKey: "menu.grow" as const },
@@ -551,8 +552,8 @@ export default async function HomePage({
       </HomeSection>
 
       <HomeSection
-        action="buy"
-        className="home-feed--buy"
+        action="demand"
+        className="home-feed--demand"
         title={t("home.demandTitle")}
         href="/demand"
         seeAllLabel={t("home.seeAll")}

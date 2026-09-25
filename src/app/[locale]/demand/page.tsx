@@ -65,7 +65,7 @@ export default async function DemandBoardPage({
           <p className="lede">{t("demandBoard.lede")}</p>
         </div>
         <Link href="/demand/new" className="btn primary">
-          {t("common.add")}
+          {t("demandBoard.postCta")}
         </Link>
       </div>
 

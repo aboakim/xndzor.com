@@ -10,7 +10,7 @@
     "futureHarvest": "Future harvest",
     "farmOs": "FarmOS",
     "market": "Market",
-    "demand": "Buy",
+    "demand": "Looking for",
     "supply": "Sell",
     "jobs": "Jobs",
     "jobsShort": "Jobs",
@@ -145,7 +145,7 @@
       "farmOps": "Tools"
     },
     "subs": {
-      "demandBoard": "Demand board",
+      "demandBoard": "Looking for",
       "overproduction": "Overproduction signal",
       "cropRanking": "Crop ranking",
       "marzMap": "Marz map",
@@ -154,7 +154,7 @@
       "futureHarvest": "Future harvest",
       "preSell": "Pre-sell",
       "supply": "Sell (supply)",
-      "demand": "Buyer requests",
+      "demand": "Looking for",
       "forward": "Forward contracts",
       "groupBuy": "Group buy",
       "tractors": "Tractors",
@@ -222,6 +222,8 @@
     "sellNow": "Sell now",
     "buy": "Buy",
     "buyDesc": "Browse crop for sale",
+    "lookingFor": "Looking for",
+    "lookingForDesc": "Post what you need from the catalog",
     "jobs": "Jobs",
     "jobsDesc": "Order field work",
     "machinery": "Machinery",
@@ -284,7 +286,7 @@
     "recentDemand": "Latest demand",
     "forwardTitle": "Future harvest",
     "supplyTitle": "For sale",
-    "demandTitle": "Looking to buy",
+    "demandTitle": "Looking for",
     "jobsTitle": "Jobs",
     "machineryTitle": "Agricultural machinery",
     "groupBuyTitle": "Group buy",
@@ -310,7 +312,7 @@
       "catalog": "Shop",
       "animals": "Animals",
       "forward": "Future harvest",
-      "demand": "Buy",
+      "demand": "Looking for",
       "jobs": "Jobs",
       "shop": "Shop"
     },
@@ -326,7 +328,7 @@
     "quickActions": "Quick actions",
     "quickCue": "Post or browse in one tap",
     "quickSell": "Sell crop",
-    "quickBuy": "Post demand",
+    "quickBuy": "Looking for",
     "quickMachinery": "Machinery",
     "quickFarm": "My farm",
     "searchHint": "Use search above for harvest, buyers, jobs…",
@@ -358,6 +360,11 @@
       "title": "Buy",
       "desc": "Browse crop for sale and find a supplier"
     },
+    "demand": {
+      "emoji": "🔍",
+      "title": "Looking for",
+      "desc": "Post what you need — any product from the catalog"
+    },
     "sell": {
       "emoji": "💰",
       "title": "Sell",
@@ -386,8 +393,8 @@
   },
   "pillars": {
     "active": "active",
-    "demand": "Demand",
-    "demandShort": "Demand",
+    "demand": "Looking for",
+    "demandShort": "Looking for",
     "supply": "Supply",
     "supplyShort": "Supply",
     "machinery": "Machinery"
@@ -791,11 +798,12 @@
     "maxReached": "You can add at most {max} images"
   },
   "demandBoard": {
-    "title": "Buyer requests",
-    "lede": "What buyers are looking for. To buy crop, browse listings for sale.",
-    "empty": "No buyer requests yet. Post a request, or browse crop for sale.",
-    "emptyCue": "This board is for buyer requests, not items for sale.",
-    "browseSupply": "Browse crop for sale"
+    "title": "Looking for",
+    "lede": "Need listings from the catalog. To buy ready crop, browse items for sale.",
+    "empty": "No “looking for” posts yet. Add one, or browse crop for sale.",
+    "emptyCue": "This board is for need requests, not items for sale.",
+    "browseSupply": "Browse crop for sale",
+    "postCta": "I need…"
   },
   "supplyBoard": {
     "title": "Sell now",
@@ -1054,7 +1062,7 @@
   },
   "postDemand": {
     "title": "I need…",
-    "lede": "Demand",
+    "lede": "Pick a product from the catalog and add quantity, region, and details.",
     "submit": "Publish",
     "saving": "Publishing…",
     "error": "Could not publish",
@@ -1062,7 +1070,7 @@
       "title": "Title",
       "description": "Details",
       "descriptionHint": "Describe quality, packing, timing…",
-      "product": "Product",
+      "product": "Product (catalog)",
       "unit": "Unit",
       "qtyMin": "Min qty",
       "qtyMax": "Max qty",
@@ -3810,7 +3818,7 @@
     "empty": "You have no listings yet.",
     "kinds": {
       "supply": "Sell",
-      "demand": "Buy",
+      "demand": "Looking for",
       "forward": "Future harvest",
       "jobs": "Jobs",
       "animals": "Animals",
@@ -3869,7 +3877,7 @@
     "suspend": "Suspend",
     "listingsLede": "Moderate marketplace listings.",
     "tabSupply": "Supply",
-    "tabDemand": "Demand",
+    "tabDemand": "Looking for",
     "tabAnimal": "Animals",
     "tabMachinery": "Machinery",
     "tabCatalog": "Shop",
@@ -3957,8 +3965,8 @@
       "description": "Search Armenia’s agricultural marketplace: crops, livestock, machinery, jobs, shop listings, and more."
     },
     "demand": {
-      "title": "Demand and buy requests — Xndzor",
-      "description": "Buyer requests across Armenia. Match demand and find buyers for your harvest."
+      "title": "Looking for / I need — Xndzor",
+      "description": "Need listings across Armenia. Pick a product from the catalog and find a supplier."
     },
     "forward": {
       "title": "Future harvest & forward sales — Xndzor",
