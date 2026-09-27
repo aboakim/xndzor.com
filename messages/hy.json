@@ -3941,7 +3941,15 @@
       "visits24h": "24 ժամ",
       "visits7d": "7 օր",
       "visits30d": "30 օր",
-      "visits90d": "90 օր"
+      "visits90d": "90 օր",
+      "visitors": "այցելուներ",
+      "pageViews": "էջադիտումներ",
+      "onlineNow": "Հիմա կայքում",
+      "bounce": "ցատկում",
+      "bounceAsOf": "27 սեպտեմբեր",
+      "trackingSince": "Հաշվարկը սկսվել է 6 սեպտեմբերից",
+      "snapshotSource": "Vercel-ի թվերը 27 սեպտեմբերի դրությամբ, գումարած նոր այցերը",
+      "liveSource": "Vercel Analytics · Production"
     },
     "col": {
       "name": "Անուն",

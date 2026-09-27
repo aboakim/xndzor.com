@@ -942,12 +942,23 @@ model VillageGoalJoin {
   @@index([userId])
 }
 
-/// Hourly public page views for the admin dashboard.
-/// `@vercel/analytics` is installed, but the Web Analytics query API needs
-/// VERCEL_ACCESS_TOKEN (not set in this project). Counts shown in admin come
-/// from this table, recorded by the public page beacon — not a Vercel API call.
+/// Hourly public page views recorded by the site beacon.
+/// The admin dashboard prefers the Vercel Web Analytics API when
+/// VERCEL_ACCESS_TOKEN is set. These rows are added on top of the
+/// 27 Sep 2026 Vercel snapshot until that token is available.
 model PageView {
   id    String   @id @default(cuid())
   hour  DateTime @unique
   count Int      @default(0)
+}
+
+/// One browser on the public site. Heartbeats update lastSeen.
+/// Admin "on the site now" counts rows seen in the last 75 seconds.
+model SiteSession {
+  id        String   @id
+  firstSeen DateTime @default(now())
+  lastSeen  DateTime @default(now())
+
+  @@index([lastSeen])
+  @@index([firstSeen])
 }

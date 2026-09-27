@@ -3940,7 +3940,15 @@
       "visits24h": "24 hours",
       "visits7d": "7 days",
       "visits30d": "30 days",
-      "visits90d": "90 days"
+      "visits90d": "90 days",
+      "visitors": "visitors",
+      "pageViews": "page views",
+      "onlineNow": "On the site now",
+      "bounce": "bounce",
+      "bounceAsOf": "27 September",
+      "trackingSince": "Counting started on 6 September",
+      "snapshotSource": "Vercel figures as of 27 September, plus visits since then",
+      "liveSource": "Vercel Analytics · Production"
     },
     "col": {
       "name": "Name",

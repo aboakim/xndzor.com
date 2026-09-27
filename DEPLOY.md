@@ -23,6 +23,7 @@ In [Vercel → Project → Settings → Environment Variables](https://vercel.co
 | `AUTH_URL` | same as `NEXTAUTH_URL` |
 | `NEXTAUTH_SECRET` / `AUTH_SECRET` | long random secret |
 | `ADMIN_EMAIL` | your admin email |
+| `VERCEL_ACCESS_TOKEN` | optional. Live Production visitors and page views on `/hy/admin`. Without it, the dashboard shows the 27 Sep 2026 Vercel snapshot plus visits counted after that. Create a token at [vercel.com/account/tokens](https://vercel.com/account/tokens) for team `aboakim`. |
 
 Redeploy after saving env vars. Build runs `prisma db push` when `DATABASE_URL` is Postgres.
 

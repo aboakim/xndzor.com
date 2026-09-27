@@ -1,6 +1,9 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { AdminTrafficPanel } from "@/components/AdminTrafficPanel";
 import { getAdminDashboardStats } from "@/lib/admin";
+import { countOnline } from "@/lib/presence";
+import { getTrafficStats } from "@/lib/traffic";
 import { formatAmd } from "@/lib/utils";
 import {
   AdminEmpty,
@@ -19,7 +22,11 @@ export default async function AdminDashboardPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("admin");
-  const stats = await getAdminDashboardStats();
+  const [stats, traffic, online] = await Promise.all([
+    getAdminDashboardStats(),
+    getTrafficStats(),
+    countOnline(),
+  ]);
 
   const cards: { label: string; value: string | number; href: string; hint?: string }[] = [
     { label: t("stats.users"), value: stats.users, href: "/admin/users" },
@@ -84,27 +91,7 @@ export default async function AdminDashboardPage({
     <>
       <p className="lede">{t("dashboardLede")}</p>
 
-      <section className="admin-visits" aria-labelledby="admin-visits-heading">
-        <h2 id="admin-visits-heading">{t("stats.visits")}</h2>
-        <div className="admin-stat-grid">
-          <div className="admin-stat-card">
-            <span>{t("stats.visits24h")}</span>
-            <strong>{stats.visits.h24.toLocaleString(locale)}</strong>
-          </div>
-          <div className="admin-stat-card">
-            <span>{t("stats.visits7d")}</span>
-            <strong>{stats.visits.d7.toLocaleString(locale)}</strong>
-          </div>
-          <div className="admin-stat-card">
-            <span>{t("stats.visits30d")}</span>
-            <strong>{stats.visits.d30.toLocaleString(locale)}</strong>
-          </div>
-          <div className="admin-stat-card">
-            <span>{t("stats.visits90d")}</span>
-            <strong>{stats.visits.d90.toLocaleString(locale)}</strong>
-          </div>
-        </div>
-      </section>
+      <AdminTrafficPanel initial={traffic} initialOnline={online} />
 
       <div className="admin-stat-grid">
         {cards.map((card) => (

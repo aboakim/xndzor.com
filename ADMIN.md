@@ -44,11 +44,24 @@ npm run admin:set-password
 
 | Section | URL | Actions |
 |---------|-----|---------|
-| Dashboard | `/hy/admin` | Users, early-bird remaining, listings by type, revenue, recent users & listings |
+| Dashboard | `/hy/admin` | Users, early-bird remaining, listings by type, revenue, Vercel traffic, who is on the site now, recent users & listings |
 | Users | `/hy/admin/users` | Search, change role, verify farm, suspend |
 | Listings | `/hy/admin/listings` | Moderate supply, demand, animals, machinery, catalog, jobs, future harvest |
 | Payments | `/hy/admin/payments` | Revenue overview, payment history, subscriptions |
 | Plans | `/hy/admin/plans` | View/toggle active pricing plans |
+
+## Traffic on the dashboard
+
+The top of `/hy/admin` shows Production visitors, page views, and bounce for 24 hours, 7 days, and 30 days, plus **Հիմա կայքում** (people on the public site in the last minute or so).
+
+| Variable | Effect |
+|----------|--------|
+| `VERCEL_ACCESS_TOKEN` | When set, visitors and page views come from the Vercel Web Analytics API (`xndzor-com`, team `aboakim`). Refresh about once a minute. |
+| unset | Shows the Vercel dashboard snapshot from 27 Sep 2026, plus page views and visitors the site has counted since then. |
+
+Counting in Vercel started on 6 Sep 2026. Bounce rate is the 27 Sep dashboard figure — the Web Analytics API does not return it. Create a token at [vercel.com/account/tokens](https://vercel.com/account/tokens) and add it in Vercel → Settings → Environment Variables, then redeploy.
+
+Public pages send a heartbeat every 25 seconds. Admin pages are not counted.
 
 ## Demo vs real mode
 

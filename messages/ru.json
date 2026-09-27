@@ -3940,7 +3940,15 @@
       "visits24h": "24 часа",
       "visits7d": "7 дней",
       "visits30d": "30 дней",
-      "visits90d": "90 дней"
+      "visits90d": "90 дней",
+      "visitors": "посетители",
+      "pageViews": "просмотры",
+      "onlineNow": "Сейчас на сайте",
+      "bounce": "отказы",
+      "bounceAsOf": "27 сентября",
+      "trackingSince": "Подсчёт начался 6 сентября",
+      "snapshotSource": "Цифры Vercel на 27 сентября плюс визиты после этой даты",
+      "liveSource": "Vercel Analytics · Production"
     },
     "col": {
       "name": "Имя",

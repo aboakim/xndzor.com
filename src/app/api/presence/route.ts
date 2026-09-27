@@ -1,26 +1,21 @@
 import { NextResponse } from "next/server";
-import { isPublicPagePath, recordPageView } from "@/lib/pageviews";
 import { touchSession } from "@/lib/presence";
 
 export const dynamic = "force-dynamic";
 
+/** Public-page heartbeat. Admin pages do not call this. */
 export async function POST(req: Request) {
-  let path = "";
   let sessionId = "";
   try {
     const raw = await req.text();
     if (raw) {
-      const data = JSON.parse(raw) as { path?: unknown; sessionId?: unknown };
-      if (typeof data.path === "string") path = data.path.slice(0, 200);
+      const data = JSON.parse(raw) as { sessionId?: unknown };
       if (typeof data.sessionId === "string") sessionId = data.sessionId.slice(0, 80);
     }
   } catch {
-    path = "";
+    sessionId = "";
   }
 
-  if (isPublicPagePath(path)) {
-    await Promise.all([recordPageView(), touchSession(sessionId)]);
-  }
-
+  await touchSession(sessionId);
   return new NextResponse(null, { status: 204 });
 }
