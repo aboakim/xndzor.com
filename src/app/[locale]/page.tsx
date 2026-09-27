@@ -14,6 +14,7 @@ import { VillageLink } from "@/components/VillageLink";
 import { resolveTaskCopy } from "@/lib/task-copy";
 import { fetchMarzWeather } from "@/lib/weather";
 import { formatAmd, formatPriceRange, formatQty, parseImageUrls } from "@/lib/utils";
+import { upcomingSupplyWhere } from "@/lib/upcoming-supply";
 import { effectiveTons } from "@/lib/yield";
 import {
   getActiveBoostMap,
@@ -122,11 +123,13 @@ export default async function HomePage({
     session,
     harvestsRaw,
     suppliesRaw,
+    upcomingSuppliesRaw,
     demands,
     jobs,
     campaigns,
     machineryRaw,
     harvestCount,
+    upcomingSupplyCount,
     supplyCount,
     demandCount,
     jobCount,
@@ -173,6 +176,16 @@ export default async function HomePage({
           where: { status: "ACTIVE" },
           select: supplyCardSelect,
           orderBy: { createdAt: "desc" },
+          take: FEED_FETCH,
+        }),
+      [],
+    ),
+    safeQuery(
+      () =>
+        prisma.supply.findMany({
+          where: upcomingSupplyWhere(),
+          select: supplyCardSelect,
+          orderBy: { readyInDays: "asc" },
           take: FEED_FETCH,
         }),
       [],
@@ -287,6 +300,7 @@ export default async function HomePage({
       [],
     ),
     safeQuery(() => prisma.futureHarvest.count({ where: { status: "ACTIVE" } }), 0),
+    safeQuery(() => prisma.supply.count({ where: upcomingSupplyWhere() }), 0),
     safeQuery(() => prisma.supply.count({ where: { status: "ACTIVE" } }), 0),
     safeQuery(() => prisma.demand.count({ where: { status: "ACTIVE" } }), 0),
     safeQuery(() => prisma.jobRequest.count({ where: { status: "ACTIVE" } }), 0),
@@ -336,19 +350,38 @@ export default async function HomePage({
       ),
       getActiveBoostMap(
         "SUPPLY",
-        suppliesRaw.map((s) => s.id),
+        [...suppliesRaw, ...upcomingSuppliesRaw].map((s) => s.id),
       ),
       getActiveBoostMap(
         "MACHINERY",
         machineryRaw.map((m) => m.id),
       ),
       getProUserIds(harvestsRaw.map((h) => h.userId)),
-      getProUserIds(suppliesRaw.map((s) => s.userId)),
+      getProUserIds([...suppliesRaw, ...upcomingSuppliesRaw].map((s) => s.userId)),
       getProUserIds(machineryRaw.map((m) => m.userId)),
       session?.user?.id ? loadPlots(session.user.id) : Promise.resolve([]),
     ]);
 
-  const harvests = sortByMonetization(harvestsRaw, harvestBoost, harvestPro).slice(
+  const dayMs = 86_400_000;
+  const forwardPool = [
+    ...harvestsRaw.map((h) => ({
+      kind: "harvest" as const,
+      id: h.id,
+      userId: h.userId,
+      at: h.harvestDate.getTime(),
+      harvest: h,
+    })),
+    ...upcomingSuppliesRaw.map((s) => ({
+      kind: "supply" as const,
+      id: s.id,
+      userId: s.userId,
+      at: Date.now() + s.readyInDays * dayMs,
+      supply: s,
+    })),
+  ].sort((a, b) => a.at - b.at);
+  const forwardBoost = new Map<string, Date>([...harvestBoost, ...supplyBoost]);
+  const forwardPro = new Set<string>([...harvestPro, ...supplyPro]);
+  const forwardFeed = sortByMonetization(forwardPool, forwardBoost, forwardPro).slice(
     0,
     FEED_TAKE,
   );
@@ -646,21 +679,55 @@ export default async function HomePage({
         title={t("home.forwardTitle")}
         href="/forward"
         seeAllLabel={t("home.seeAll")}
-        count={harvestCount}
+        count={harvestCount + upcomingSupplyCount}
         cue={t("home.sectionCueBrowse")}
       >
-        {harvests.length === 0 ? (
+        {forwardFeed.length === 0 ? (
           <EmptyFeed message={t("forwardBoard.empty")} href="/forward/new" label={t("common.add")} />
         ) : (
           <div className="listing-card-grid">
-            {harvests.map((h) => {
+            {forwardFeed.map((item) => {
+              if (item.kind === "supply") {
+                const s = item.supply;
+                const top = supplyBoost.has(s.id);
+                return (
+                  <PostCard
+                    key={`supply-${s.id}`}
+                    href={`/supply/${s.id}`}
+                    title={s.title}
+                    thumb={parseImageUrls(s.imageUrls ?? "[]")[0]}
+                    icon={<ProductIcon slugOrKey={s.product.slug} size={28} />}
+                    categoryPill={t(s.product.nameKey as "products.tomato")}
+                    facts={[
+                      formatQty(s.qtyAvailable, null, s.unit, (k) => t(k as "units.kg")),
+                      t("supply.readyIn", { days: s.readyInDays }),
+                    ]}
+                    badge={top ? <MonetizationPills boosted /> : null}
+                    value={
+                      s.priceAmd != null
+                        ? formatPriceRange(s.priceAmd, s.priceAmd, s.unit, (k) =>
+                            t(k as "common.amd"),
+                          )
+                        : undefined
+                    }
+                    place={
+                      <>
+                        {s.village ? <VillageLink village={s.village} locale={locale} /> : null}
+                        <span className="post-card-marz">{marzLabel(s.marz.slug)}</span>
+                      </>
+                    }
+                  />
+                );
+              }
+
+              const h = item.harvest;
               const reserved = h.preOffers
                 .filter((o) => o.status !== "DECLINED")
                 .reduce((s, o) => s + o.qtyWanted, 0);
               const top = harvestBoost.has(h.id);
               return (
                 <PostCard
-                  key={h.id}
+                  key={`harvest-${h.id}`}
                   href={`/forward/${h.id}`}
                   title={h.title}
                   thumb={parseImageUrls(h.imageUrls ?? "[]")[0]}

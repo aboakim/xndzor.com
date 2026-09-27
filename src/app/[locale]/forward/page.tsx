@@ -1,7 +1,8 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
-import { formatAmd } from "@/lib/utils";
+import { formatAmd, formatPriceRange, formatQty } from "@/lib/utils";
+import { upcomingSupplyWhere } from "@/lib/upcoming-supply";
 import { ProductIcon } from "@/components/AgIcons";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ClassifiedRow } from "@/components/ClassifiedRow";
@@ -42,41 +43,72 @@ export default async function ForwardBoardPage({
   const t = await getTranslations();
   const trustedOnly = sp.trusted === "1" || sp.trusted === "true";
 
-  const crops = await prisma.futureHarvest.findMany({
-    where: {
-      status: "ACTIVE",
-      ...(sp.marz ? { marzId: sp.marz } : {}),
-    },
-    include: {
-      product: true,
-      marz: true,
-      village: true,
-      plot: true,
-      preOffers: { where: { status: { in: ["SENT", "RESERVED"] } } },
-    },
-    orderBy: { harvestDate: "asc" },
-  });
+  const [crops, upcomingSupplies] = await Promise.all([
+    prisma.futureHarvest.findMany({
+      where: {
+        status: "ACTIVE",
+        ...(sp.marz ? { marzId: sp.marz } : {}),
+      },
+      include: {
+        product: true,
+        marz: true,
+        village: true,
+        plot: true,
+        preOffers: { where: { status: { in: ["SENT", "RESERVED"] } } },
+      },
+      orderBy: { harvestDate: "asc" },
+    }),
+    prisma.supply.findMany({
+      where: upcomingSupplyWhere(sp.marz ? { marzId: sp.marz } : undefined),
+      include: {
+        product: true,
+        marz: true,
+        village: true,
+      },
+      orderBy: { readyInDays: "asc" },
+    }),
+  ]);
 
-  const snippets = await getFarmScoreSnippets(crops.map((c) => c.userId));
-  const boostMap = await getActiveBoostMap(
-    "FUTURE_HARVEST",
-    crops.map((c) => c.id),
-  );
-  const proIds = await getProUserIds(crops.map((c) => c.userId));
-  const ranked = sortByMonetization(crops, boostMap, proIds);
+  const userIds = [
+    ...crops.map((c) => c.userId),
+    ...upcomingSupplies.map((s) => s.userId),
+  ];
+  const [snippets, harvestBoost, supplyBoost, proIds] = await Promise.all([
+    getFarmScoreSnippets(userIds),
+    getActiveBoostMap(
+      "FUTURE_HARVEST",
+      crops.map((c) => c.id),
+    ),
+    getActiveBoostMap(
+      "SUPPLY",
+      upcomingSupplies.map((s) => s.id),
+    ),
+    getProUserIds(userIds),
+  ]);
+  const boostMap = new Map([...harvestBoost, ...supplyBoost]);
 
-  let cropRows = ranked.map((c) => {
-    const sn = snippets.get(c.userId);
-    return {
+  const now = Date.now();
+  const dayMs = 86_400_000;
+  const board = [
+    ...crops.map((c) => ({
+      kind: "harvest" as const,
+      id: c.id,
+      userId: c.userId,
+      at: c.harvestDate.getTime(),
       c,
-      farmScore: sn?.score ?? null,
-      trusted: sn?.trusted ?? false,
-      boosted: boostMap.has(c.id),
-      isPro: proIds.has(c.userId),
-    };
-  });
+    })),
+    ...upcomingSupplies.map((s) => ({
+      kind: "supply" as const,
+      id: s.id,
+      userId: s.userId,
+      at: now + s.readyInDays * dayMs,
+      s,
+    })),
+  ].sort((a, b) => a.at - b.at);
+
+  let ranked = sortByMonetization(board, boostMap, proIds);
   if (trustedOnly) {
-    cropRows = cropRows.filter((r) => r.trusted);
+    ranked = ranked.filter((r) => snippets.get(r.userId)?.trusted ?? false);
   }
 
   const demandByProduct = await prisma.demand.groupBy({
@@ -129,9 +161,13 @@ export default async function ForwardBoardPage({
             {demandByProduct.map((row) => {
               const p = productMap[row.productId];
               if (!p) return null;
-              const offered = crops
-                .filter((c) => c.productId === row.productId)
-                .reduce((s, c) => s + c.qtyExpected, 0);
+              const offered =
+                crops
+                  .filter((c) => c.productId === row.productId)
+                  .reduce((s, c) => s + c.qtyExpected, 0) +
+                upcomingSupplies
+                  .filter((s) => s.productId === row.productId)
+                  .reduce((s, c) => s + c.qtyAvailable, 0);
               return (
                 <ClassifiedRow
                   key={row.productId}
@@ -146,7 +182,7 @@ export default async function ForwardBoardPage({
         </section>
       ) : null}
 
-      {cropRows.length === 0 ? (
+      {ranked.length === 0 ? (
         <EmptyState
           message={t("forwardBoard.empty")}
           actionHref="/forward/new"
@@ -154,7 +190,58 @@ export default async function ForwardBoardPage({
         />
       ) : (
         <div className="classified-list">
-          {cropRows.map(({ c, farmScore, trusted, boosted, isPro }) => {
+          {ranked.map((row) => {
+            const sn = snippets.get(row.userId);
+            const farmScore = sn?.score ?? null;
+            const trusted = sn?.trusted ?? false;
+            const boosted = boostMap.has(row.id);
+            const isPro = proIds.has(row.userId);
+            const badge = (
+              <>
+                <MonetizationPills isPro={isPro} boosted={boosted} />
+                {trusted && farmScore != null ? <TrustedPill score={farmScore} /> : null}
+              </>
+            );
+
+            if (row.kind === "supply") {
+              const s = row.s;
+              const marzLabel = t(`marzes.${s.marz.slug}` as "marzes.Yerevan");
+              const meta = [
+                t(s.product.nameKey as "products.tomato"),
+                formatQty(s.qtyAvailable, null, s.unit, (k) => t(k as "units.kg")),
+                t("supply.readyIn", { days: s.readyInDays }),
+                s.village ? null : marzLabel,
+              ]
+                .filter(Boolean)
+                .join(" · ");
+              return (
+                <ClassifiedRow
+                  key={`supply-${s.id}`}
+                  href={`/supply/${s.id}`}
+                  title={s.title}
+                  meta={meta}
+                  value={
+                    s.priceAmd != null
+                      ? formatPriceRange(s.priceAmd, s.priceAmd, s.unit, (k) =>
+                          t(k as "common.amd"),
+                        )
+                      : undefined
+                  }
+                  icon={<ProductIcon slugOrKey={s.product.slug} size={20} />}
+                  badge={badge}
+                  place={
+                    s.village ? (
+                      <>
+                        <VillageLink village={s.village} locale={locale} />
+                        <span className="classified-marz">{marzLabel}</span>
+                      </>
+                    ) : null
+                  }
+                />
+              );
+            }
+
+            const c = row.c;
             const reserved = c.preOffers.reduce((s, i) => s + i.qtyWanted, 0);
             const marzLabel = t(`marzes.${c.marz.slug}` as "marzes.Yerevan");
             const meta = [
@@ -169,20 +256,13 @@ export default async function ForwardBoardPage({
               .join(" · ");
             return (
               <ClassifiedRow
-                key={c.id}
+                key={`harvest-${c.id}`}
                 href={`/forward/${c.id}`}
                 title={c.title}
                 meta={meta}
                 value={c.priceAmd != null ? `${formatAmd(c.priceAmd)} ֏` : undefined}
                 icon={<ProductIcon slugOrKey={c.product.slug} size={20} />}
-                badge={
-                  <>
-                    <MonetizationPills isPro={isPro} boosted={boosted} />
-                    {trusted && farmScore != null ? (
-                      <TrustedPill score={farmScore} />
-                    ) : null}
-                  </>
-                }
+                badge={badge}
                 place={
                   c.village ? (
                     <>

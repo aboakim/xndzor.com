@@ -8,6 +8,7 @@ import { VillageMap } from "@/components/VillageMap";
 import { JobTypeIcon, ProductIcon } from "@/components/AgIcons";
 import { localizedPlaceName } from "@/lib/places";
 import { formatAmd, formatPriceRange, formatQty, parseImageUrls } from "@/lib/utils";
+import { upcomingSupplyWhere } from "@/lib/upcoming-supply";
 
 export const dynamic = "force-dynamic";
 
@@ -26,11 +27,17 @@ export default async function VillagePage({
   });
   if (!village) notFound();
 
-  const [supplies, demands, jobs, harvests, providers] = await Promise.all([
+  const [supplies, upcomingSupplies, demands, jobs, harvests, providers] = await Promise.all([
     prisma.supply.findMany({
       where: { villageId: village.id, status: "ACTIVE" },
       include: { product: true },
       orderBy: { createdAt: "desc" },
+      take: 12,
+    }),
+    prisma.supply.findMany({
+      where: upcomingSupplyWhere({ villageId: village.id }),
+      include: { product: true },
+      orderBy: { readyInDays: "asc" },
       take: 12,
     }),
     prisma.demand.findMany({
@@ -109,7 +116,7 @@ export default async function VillagePage({
         </div>
       ) : null}
 
-      {harvests.length > 0 ? (
+      {harvests.length > 0 || upcomingSupplies.length > 0 ? (
         <section className="compact-section">
           <div className="section-head">
             <h2>{t("forwardBoard.title")}</h2>
@@ -117,7 +124,7 @@ export default async function VillagePage({
           <div className="classified-list">
             {harvests.map((h) => (
               <ClassifiedRow
-                key={h.id}
+                key={`harvest-${h.id}`}
                 href={`/forward/${h.id}`}
                 title={h.title}
                 meta={[
@@ -127,6 +134,24 @@ export default async function VillagePage({
                 ].join(" · ")}
                 value={h.priceAmd != null ? `${formatAmd(h.priceAmd)} ֏` : undefined}
                 icon={<ProductIcon slugOrKey={h.product.slug} size={20} />}
+              />
+            ))}
+            {upcomingSupplies.map((s) => (
+              <ClassifiedRow
+                key={`supply-${s.id}`}
+                href={`/supply/${s.id}`}
+                title={s.title}
+                meta={[
+                  t(s.product.nameKey as "products.tomato"),
+                  formatQty(s.qtyAvailable, null, s.unit, (k) => t(k as "units.kg")),
+                  t("supply.readyIn", { days: s.readyInDays }),
+                ].join(" · ")}
+                value={
+                  s.priceAmd != null
+                    ? formatPriceRange(s.priceAmd, s.priceAmd, s.unit, (k) => t(k as "common.amd"))
+                    : undefined
+                }
+                icon={<ProductIcon slugOrKey={s.product.slug} size={20} />}
               />
             ))}
           </div>

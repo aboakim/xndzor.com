@@ -10,6 +10,7 @@ import { MARZES } from "@/lib/places";
 import { absoluteUrl, breadcrumbJsonLd, buildPageMetadata } from "@/lib/seo";
 import { marzPlaceJsonLd, marzRegionPath, resolveMarzSlug } from "@/lib/marz-seo";
 import { formatAmd, formatPriceRange, formatQty, parseImageUrls } from "@/lib/utils";
+import { upcomingSupplyWhere } from "@/lib/upcoming-supply";
 import { safeQuery } from "@/lib/safe-query";
 
 export function generateStaticParams() {
@@ -57,13 +58,24 @@ export default async function MarzRegionPage({
   const pageUrl = absoluteUrl(locale, path);
 
   const empty: never[] = [];
-  const [supplies, demands, forwards, jobs, animals, machinery] = await Promise.all([
+  const [supplies, upcomingSupplies, demands, forwards, jobs, animals, machinery] =
+    await Promise.all([
     safeQuery(
       () =>
         prisma.supply.findMany({
           where: { status: "ACTIVE", marzId },
           include: { product: true },
           orderBy: { createdAt: "desc" },
+          take: TAKE,
+        }),
+      empty,
+    ),
+    safeQuery(
+      () =>
+        prisma.supply.findMany({
+          where: upcomingSupplyWhere({ marzId }),
+          include: { product: true },
+          orderBy: { readyInDays: "asc" },
           take: TAKE,
         }),
       empty,
@@ -237,7 +249,7 @@ export default async function MarzRegionPage({
         </div>
       ) : null}
 
-      {forwards.length > 0 ? (
+      {forwards.length > 0 || upcomingSupplies.length > 0 ? (
         <section className="compact-section">
           <div className="section-head">
             <h2>{t("forwardBoard.title")}</h2>
@@ -248,7 +260,7 @@ export default async function MarzRegionPage({
           <div className="classified-list">
             {forwards.map((h) => (
               <ClassifiedRow
-                key={h.id}
+                key={`harvest-${h.id}`}
                 href={`/forward/${h.id}`}
                 title={h.title}
                 meta={[
@@ -258,6 +270,26 @@ export default async function MarzRegionPage({
                 ].join(" · ")}
                 value={h.priceAmd != null ? `${formatAmd(h.priceAmd)} ֏` : undefined}
                 icon={<ProductIcon slugOrKey={h.product.slug} size={20} />}
+              />
+            ))}
+            {upcomingSupplies.map((s) => (
+              <ClassifiedRow
+                key={`supply-${s.id}`}
+                href={`/supply/${s.id}`}
+                title={s.title}
+                meta={[
+                  t(s.product.nameKey as "products.tomato"),
+                  formatQty(s.qtyAvailable, null, s.unit, (k) => t(k as "units.kg")),
+                  t("supply.readyIn", { days: s.readyInDays }),
+                ].join(" · ")}
+                value={
+                  s.priceAmd != null
+                    ? formatPriceRange(s.priceAmd, s.priceAmd, s.unit, (k) =>
+                        t(k as "common.amd"),
+                      )
+                    : undefined
+                }
+                icon={<ProductIcon slugOrKey={s.product.slug} size={20} />}
               />
             ))}
           </div>
