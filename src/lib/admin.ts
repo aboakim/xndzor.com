@@ -5,6 +5,7 @@ import { userIsAdmin } from "./monetization";
 import { CATALOG_ROUTE, type CatalogCategory } from "./catalog";
 import { getEarlyBirdStats } from "./early-bird";
 import { upcomingSupplyWhere } from "./upcoming-supply";
+import { getVisitWindowCounts } from "./pageviews";
 
 export function catalogPublicHref(category: string, id: string) {
   const slug = CATALOG_ROUTE[category as CatalogCategory] ?? "fertilizers";
@@ -46,6 +47,7 @@ export type RecentAdminListing = {
 
 export async function getAdminDashboardStats() {
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const visitsPromise = getVisitWindowCounts();
 
   const [
     users,
@@ -165,6 +167,7 @@ export async function getAdminDashboardStats() {
     }),
     getEarlyBirdStats(),
   ]);
+  const visits = await visitsPromise;
 
   const revenue = await prisma.payment.aggregate({
     where: { status: "SUCCEEDED" },
@@ -250,6 +253,7 @@ export async function getAdminDashboardStats() {
     },
     recentUsersList: recentUsersList as RecentAdminUser[],
     recentListings,
+    visits,
   };
 }
 

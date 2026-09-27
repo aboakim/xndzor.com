@@ -3935,7 +3935,12 @@
       "earlyBirdRemaining": "Early bird left",
       "earlyBirdOpen": "{remaining} left / {limit}",
       "earlyBirdFull": "Slots full",
-      "earlyBirdClaimed": "{count} early-bird claims"
+      "earlyBirdClaimed": "{count} early-bird claims",
+      "visits": "Visits",
+      "visits24h": "24 hours",
+      "visits7d": "7 days",
+      "visits30d": "30 days",
+      "visits90d": "90 days"
     },
     "col": {
       "name": "Name",

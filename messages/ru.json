@@ -3935,7 +3935,12 @@
       "earlyBirdRemaining": "Early bird осталось",
       "earlyBirdOpen": "{remaining} осталось / {limit}",
       "earlyBirdFull": "Слоты заполнены",
-      "earlyBirdClaimed": "{count} early-bird активаций"
+      "earlyBirdClaimed": "{count} early-bird активаций",
+      "visits": "Посещения",
+      "visits24h": "24 часа",
+      "visits7d": "7 дней",
+      "visits30d": "30 дней",
+      "visits90d": "90 дней"
     },
     "col": {
       "name": "Имя",

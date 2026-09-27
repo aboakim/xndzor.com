@@ -4,6 +4,7 @@ import { useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { togglePlanActive } from "@/app/actions/admin";
 import { formatAmd } from "@/lib/utils";
+import { AdminField, AdminRecord, AdminRecordList } from "@/components/AdminRecord";
 
 export type AdminPlanRow = {
   id: string;
@@ -27,43 +28,30 @@ export function AdminPlansTable({
   const [pending, startTransition] = useTransition();
 
   return (
-    <div className="admin-table-wrap">
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>{t("col.code")}</th>
-            <th>{t("col.kind")}</th>
-            <th>{t("col.price")}</th>
-            <th>{t("col.interval")}</th>
-            <th>{t("col.active")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {plans.map((p) => (
-            <tr key={p.id}>
-              <td>{p.code}</td>
-              <td>{p.kind}</td>
-              <td>{formatAmd(p.amountAmd, locale)} ֏</td>
-              <td>{p.interval}</td>
-              <td>
-                <label className="admin-check">
-                  <input
-                    type="checkbox"
-                    defaultChecked={p.active}
-                    disabled={pending}
-                    onChange={(e) =>
-                      startTransition(() => {
-                        void togglePlanActive(p.id, e.target.checked);
-                      })
-                    }
-                  />
-                  {p.active ? t("active") : t("inactive")}
-                </label>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <AdminRecordList>
+      {plans.map((p) => (
+        <AdminRecord key={p.id} title={p.code} subtitle={p.kind}>
+          <AdminField label={t("col.price")}>
+            {formatAmd(p.amountAmd, locale)} ֏
+          </AdminField>
+          <AdminField label={t("col.interval")}>{p.interval}</AdminField>
+          <AdminField label={t("col.active")}>
+            <label className="admin-check">
+              <input
+                type="checkbox"
+                defaultChecked={p.active}
+                disabled={pending}
+                onChange={(e) =>
+                  startTransition(() => {
+                    void togglePlanActive(p.id, e.target.checked);
+                  })
+                }
+              />
+              {p.active ? t("active") : t("inactive")}
+            </label>
+          </AdminField>
+        </AdminRecord>
+      ))}
+    </AdminRecordList>
   );
 }

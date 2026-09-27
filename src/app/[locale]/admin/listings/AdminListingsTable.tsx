@@ -5,6 +5,12 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { deleteListing, updateListingStatus } from "@/app/actions/admin";
 import type { ListingKind } from "@/lib/admin";
+import {
+  AdminEmpty,
+  AdminField,
+  AdminRecord,
+  AdminRecordList,
+} from "@/components/AdminRecord";
 
 export type AdminListingRow = {
   id: string;
@@ -50,28 +56,16 @@ export function AdminListingsTable({
   }
 
   return (
-    <div className="admin-table-wrap admin-responsive-table">
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>{t("col.title")}</th>
-            <th>{t("col.owner")}</th>
-            <th>{t("col.status")}</th>
-            <th>{t("col.created")}</th>
-            <th>{t("col.actions")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.length === 0 ? (
-            <tr>
-              <td colSpan={5} className="muted">
-                {t("noResults")}
-              </td>
-            </tr>
-          ) : (
-            rows.map((row) => (
-              <tr key={`${row.kind}-${row.id}`}>
-                <td data-label={t("col.title")}>
+    <div>
+      {rows.length === 0 ? (
+        <AdminEmpty>{t("noResults")}</AdminEmpty>
+      ) : (
+        <AdminRecordList>
+          {rows.map((row) => (
+            <AdminRecord
+              key={`${row.kind}-${row.id}`}
+              title={
+                <>
                   <Link href={row.href} className="linkish">
                     {row.title}
                   </Link>
@@ -83,49 +77,22 @@ export function AdminListingsTable({
                       {t("sourceSupply", { days: row.readyInDays })}
                     </span>
                   ) : null}
-                </td>
-                <td data-label={t("col.owner")}>
-                  {row.ownerName}
-                  <span className="tiny muted block">{row.ownerEmail}</span>
-                </td>
-                <td data-label={t("col.status")}>
-                  <select
-                    defaultValue={row.status}
-                    disabled={pending}
-                    className="admin-select"
-                    onChange={(e) =>
-                      run(() => updateListingStatus(row.kind, row.id, e.target.value))
-                    }
-                  >
-                    {(STATUS_OPTIONS.includes(row.status)
-                      ? STATUS_OPTIONS
-                      : [row.status, ...STATUS_OPTIONS]
-                    ).map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-                <td data-label={t("col.created")}>
-                  <time dateTime={row.createdAt}>
-                    {new Date(row.createdAt).toLocaleDateString(locale)}
-                  </time>
-                </td>
-                <td className="admin-actions-cell" data-label={t("col.actions")}>
+                </>
+              }
+              subtitle={row.ownerEmail}
+              actions={
+                <>
                   <button
                     type="button"
-                    className="btn ghost tiny"
+                    className="btn ghost"
                     disabled={pending}
-                    onClick={() =>
-                      run(() => updateListingStatus(row.kind, row.id, "HIDDEN"))
-                    }
+                    onClick={() => run(() => updateListingStatus(row.kind, row.id, "HIDDEN"))}
                   >
                     {t("hide")}
                   </button>
                   <button
                     type="button"
-                    className="btn ghost tiny admin-btn-danger"
+                    className="btn ghost admin-btn-danger"
                     disabled={pending}
                     onClick={() => {
                       if (!window.confirm(t("confirmDelete"))) return;
@@ -134,12 +101,39 @@ export function AdminListingsTable({
                   >
                     {t("delete")}
                   </button>
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+                </>
+              }
+            >
+              <AdminField label={t("col.owner")}>{row.ownerName}</AdminField>
+              <AdminField label={t("col.status")}>
+                <select
+                  defaultValue={row.status}
+                  disabled={pending}
+                  className="admin-select"
+                  aria-label={t("col.status")}
+                  onChange={(e) =>
+                    run(() => updateListingStatus(row.kind, row.id, e.target.value))
+                  }
+                >
+                  {(STATUS_OPTIONS.includes(row.status)
+                    ? STATUS_OPTIONS
+                    : [row.status, ...STATUS_OPTIONS]
+                  ).map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </AdminField>
+              <AdminField label={t("col.created")}>
+                <time dateTime={row.createdAt}>
+                  {new Date(row.createdAt).toLocaleDateString(locale)}
+                </time>
+              </AdminField>
+            </AdminRecord>
+          ))}
+        </AdminRecordList>
+      )}
       <input type="hidden" name="tab" value={tab} />
     </div>
   );

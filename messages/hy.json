@@ -3936,7 +3936,12 @@
       "earlyBirdRemaining": "Early bird մնաց",
       "earlyBirdOpen": "{remaining} մնաց / {limit}",
       "earlyBirdFull": "Սլոտերը լրացված են",
-      "earlyBirdClaimed": "{count} early bird ակտիվացում"
+      "earlyBirdClaimed": "{count} early bird ակտիվացում",
+      "visits": "Այցելություններ",
+      "visits24h": "24 ժամ",
+      "visits7d": "7 օր",
+      "visits30d": "30 օր",
+      "visits90d": "90 օր"
     },
     "col": {
       "name": "Անուն",

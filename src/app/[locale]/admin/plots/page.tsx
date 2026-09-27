@@ -1,6 +1,12 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
+import {
+  AdminEmpty,
+  AdminField,
+  AdminRecord,
+  AdminRecordList,
+} from "@/components/AdminRecord";
 
 export const dynamic = "force-dynamic";
 
@@ -27,48 +33,36 @@ export default async function AdminPlotsPage({
     <>
       <h2>{t("plotsTitle")}</h2>
       <p className="lede">{t("plotsLede")}</p>
-      <div className="admin-table-wrap admin-responsive-table">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>{t("col.title")}</th>
-              <th>{t("col.owner")}</th>
-              <th>{t("col.status")}</th>
-              <th>{t("col.created")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {plots.length === 0 ? (
-              <tr>
-                <td colSpan={4}>{t("noResults")}</td>
-              </tr>
-            ) : (
-              plots.map((plot) => (
-                <tr key={plot.id}>
-                  <td data-label={t("col.title")}>{plot.name}</td>
-                  <td data-label={t("col.owner")}>
-                    {plot.user.farmId ? (
-                      <Link href={`/farms/${plot.user.farmId}`} className="linkish">
-                        {plot.user.name}
-                      </Link>
-                    ) : (
-                      <Link
-                        href={`/admin/users?q=${encodeURIComponent(plot.user.email)}`}
-                        className="linkish"
-                      >
-                        {plot.user.name}
-                      </Link>
-                    )}
-                    <span className="tiny muted block">{plot.user.email}</span>
-                  </td>
-                  <td data-label={t("col.status")}>{plot.status}</td>
-                  <td data-label={t("col.created")}>{dateFmt.format(plot.createdAt)}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      {plots.length === 0 ? (
+        <AdminEmpty>{t("noResults")}</AdminEmpty>
+      ) : (
+        <AdminRecordList>
+          {plots.map((plot) => (
+            <AdminRecord
+              key={plot.id}
+              title={plot.name}
+              subtitle={
+                plot.user.farmId ? (
+                  <Link href={`/farms/${plot.user.farmId}`} className="linkish">
+                    {plot.user.name}
+                  </Link>
+                ) : (
+                  <Link
+                    href={`/admin/users?q=${encodeURIComponent(plot.user.email)}`}
+                    className="linkish"
+                  >
+                    {plot.user.name}
+                  </Link>
+                )
+              }
+            >
+              <AdminField label={t("col.email")}>{plot.user.email}</AdminField>
+              <AdminField label={t("col.status")}>{plot.status}</AdminField>
+              <AdminField label={t("col.created")}>{dateFmt.format(plot.createdAt)}</AdminField>
+            </AdminRecord>
+          ))}
+        </AdminRecordList>
+      )}
     </>
   );
 }

@@ -19,6 +19,7 @@ import { Providers } from "@/components/Providers";
 import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 import { PwaServiceWorkerRegister } from "@/components/PwaServiceWorkerRegister";
 import { SiteJsonLd } from "@/components/SiteJsonLd";
+import { PageViewBeacon } from "@/components/PageViewBeacon";
 import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 
 const displayHy = Noto_Serif_Armenian({
@@ -90,6 +91,7 @@ export default async function LocaleLayout({
             </div>
           </Providers>
         </NextIntlClientProvider>
+        <PageViewBeacon />
         <Analytics />
         <SpeedInsights />
       </body>

@@ -2,6 +2,12 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getAdminDashboardStats } from "@/lib/admin";
 import { formatAmd } from "@/lib/utils";
+import {
+  AdminEmpty,
+  AdminField,
+  AdminRecord,
+  AdminRecordList,
+} from "@/components/AdminRecord";
 
 export const dynamic = "force-dynamic";
 
@@ -78,6 +84,28 @@ export default async function AdminDashboardPage({
     <>
       <p className="lede">{t("dashboardLede")}</p>
 
+      <section className="admin-visits" aria-labelledby="admin-visits-heading">
+        <h2 id="admin-visits-heading">{t("stats.visits")}</h2>
+        <div className="admin-stat-grid">
+          <div className="admin-stat-card">
+            <span>{t("stats.visits24h")}</span>
+            <strong>{stats.visits.h24.toLocaleString(locale)}</strong>
+          </div>
+          <div className="admin-stat-card">
+            <span>{t("stats.visits7d")}</span>
+            <strong>{stats.visits.d7.toLocaleString(locale)}</strong>
+          </div>
+          <div className="admin-stat-card">
+            <span>{t("stats.visits30d")}</span>
+            <strong>{stats.visits.d30.toLocaleString(locale)}</strong>
+          </div>
+          <div className="admin-stat-card">
+            <span>{t("stats.visits90d")}</span>
+            <strong>{stats.visits.d90.toLocaleString(locale)}</strong>
+          </div>
+        </div>
+      </section>
+
       <div className="admin-stat-grid">
         {cards.map((card) => (
           <Link key={card.href + card.label} href={card.href} className="admin-stat-card admin-stat-link">
@@ -119,90 +147,71 @@ export default async function AdminDashboardPage({
 
       <section className="admin-activity">
         <h2>{t("recentUsersTitle")}</h2>
-        <div className="admin-table-wrap admin-responsive-table">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>{t("col.name")}</th>
-                <th>{t("col.email")}</th>
-                <th>{t("col.role")}</th>
-                <th>{t("col.joined")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {stats.recentUsersList.length === 0 ? (
-                <tr>
-                  <td colSpan={4}>{t("noResults")}</td>
-                </tr>
-              ) : (
-                stats.recentUsersList.map((u) => (
-                  <tr key={u.id}>
-                    <td data-label={t("col.name")}>
-                      <Link
-                        href={u.farmId ? `/farms/${u.farmId}` : `/admin/users?q=${encodeURIComponent(u.email)}`}
-                        className="linkish"
-                      >
-                        {u.name}
-                      </Link>
-                      {u.earlyBirdFree ? (
-                        <span className="admin-badge">{t("earlyBirdBadge")}</span>
-                      ) : null}
-                    </td>
-                    <td data-label={t("col.email")}>{u.email}</td>
-                    <td data-label={t("col.role")}>{u.role}</td>
-                    <td data-label={t("col.joined")}>{dateFmt.format(u.createdAt)}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-        <Link href="/admin/users" className="tiny linkish">
+        {stats.recentUsersList.length === 0 ? (
+          <AdminEmpty>{t("noResults")}</AdminEmpty>
+        ) : (
+          <AdminRecordList>
+            {stats.recentUsersList.map((u) => (
+              <AdminRecord
+                key={u.id}
+                title={
+                  <>
+                    <Link
+                      href={
+                        u.farmId
+                          ? `/farms/${u.farmId}`
+                          : `/admin/users?q=${encodeURIComponent(u.email)}`
+                      }
+                      className="linkish"
+                    >
+                      {u.name}
+                    </Link>
+                    {u.earlyBirdFree ? (
+                      <span className="admin-badge">{t("earlyBirdBadge")}</span>
+                    ) : null}
+                  </>
+                }
+                subtitle={u.email}
+              >
+                <AdminField label={t("col.role")}>{u.role}</AdminField>
+                <AdminField label={t("col.joined")}>{dateFmt.format(u.createdAt)}</AdminField>
+              </AdminRecord>
+            ))}
+          </AdminRecordList>
+        )}
+        <Link href="/admin/users" className="admin-more-link">
           {t("viewAllUsers")}
         </Link>
       </section>
 
       <section className="admin-activity">
         <h2>{t("recentListingsTitle")}</h2>
-        <div className="admin-table-wrap admin-responsive-table">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>{t("col.kind")}</th>
-                <th>{t("col.title")}</th>
-                <th>{t("col.owner")}</th>
-                <th>{t("col.status")}</th>
-                <th>{t("col.created")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {stats.recentListings.length === 0 ? (
-                <tr>
-                  <td colSpan={5}>{t("noResults")}</td>
-                </tr>
-              ) : (
-                stats.recentListings.map((item) => (
-                  <tr key={`${item.kind}-${item.id}`}>
-                    <td data-label={t("col.kind")}>
-                      <Link href={`/admin/listings?tab=${item.kind}`} className="linkish">
-                        {kindLabel(item.kind)}
-                      </Link>
-                    </td>
-                    <td data-label={t("col.title")}>
-                      <Link href={item.href} className="linkish">
-                        {item.title}
-                      </Link>
-                    </td>
-                    <td data-label={t("col.owner")}>{item.ownerName}</td>
-                    <td data-label={t("col.status")}>{item.status}</td>
-                    <td data-label={t("col.created")}>{dateFmt.format(item.createdAt)}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-        <Link href="/admin/listings" className="tiny linkish">
+        {stats.recentListings.length === 0 ? (
+          <AdminEmpty>{t("noResults")}</AdminEmpty>
+        ) : (
+          <AdminRecordList>
+            {stats.recentListings.map((item) => (
+              <AdminRecord
+                key={`${item.kind}-${item.id}`}
+                title={
+                  <Link href={item.href} className="linkish">
+                    {item.title}
+                  </Link>
+                }
+                subtitle={
+                  <Link href={`/admin/listings?tab=${item.kind}`} className="linkish">
+                    {kindLabel(item.kind)}
+                  </Link>
+                }
+              >
+                <AdminField label={t("col.owner")}>{item.ownerName}</AdminField>
+                <AdminField label={t("col.status")}>{item.status}</AdminField>
+                <AdminField label={t("col.created")}>{dateFmt.format(item.createdAt)}</AdminField>
+              </AdminRecord>
+            ))}
+          </AdminRecordList>
+        )}
+        <Link href="/admin/listings" className="admin-more-link">
           {t("viewAllListings")}
         </Link>
       </section>

@@ -941,3 +941,13 @@ model VillageGoalJoin {
   @@unique([goalId, userId])
   @@index([userId])
 }
+
+/// Hourly public page views for the admin dashboard.
+/// `@vercel/analytics` is installed, but the Web Analytics query API needs
+/// VERCEL_ACCESS_TOKEN (not set in this project). Counts shown in admin come
+/// from this table, recorded by the public page beacon — not a Vercel API call.
+model PageView {
+  id    String   @id @default(cuid())
+  hour  DateTime @unique
+  count Int      @default(0)
+}

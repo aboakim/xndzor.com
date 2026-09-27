@@ -4,6 +4,12 @@ import { prisma } from "@/lib/prisma";
 import { formatAmd } from "@/lib/utils";
 import { maskEmail } from "@/lib/payments";
 import { AdminPaymentsClient, type AdminPaymentRow } from "./AdminPaymentsClient";
+import {
+  AdminEmpty,
+  AdminField,
+  AdminRecord,
+  AdminRecordList,
+} from "@/components/AdminRecord";
 
 export const dynamic = "force-dynamic";
 
@@ -111,47 +117,32 @@ export default async function AdminPaymentsPage({
 
       <section id="subscriptions" className="admin-activity">
         <h3>{t("subscriptions")}</h3>
-        <div className="admin-table-wrap admin-responsive-table">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>{t("col.owner")}</th>
-                <th>{t("col.code")}</th>
-                <th>{t("col.status")}</th>
-                <th>{t("until")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {subs.length === 0 ? (
-                <tr>
-                  <td colSpan={4}>{t("noResults")}</td>
-                </tr>
-              ) : (
-                subs.map((s) => {
-                  const q = s.user.email || s.user.name;
-                  return (
-                    <tr key={s.id}>
-                      <td data-label={t("col.owner")}>
-                        <Link
-                          href={`/admin/users?q=${encodeURIComponent(q)}`}
-                          className="linkish"
-                        >
-                          {s.user.name}
-                        </Link>
-                        <span className="tiny muted block">{maskEmail(s.user.email)}</span>
-                      </td>
-                      <td data-label={t("col.code")}>{s.planCode}</td>
-                      <td data-label={t("col.status")}>{s.status}</td>
-                      <td data-label={t("until")}>
-                        {s.currentPeriodEnd.toLocaleDateString(locale)}
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+        {subs.length === 0 ? (
+          <AdminEmpty>{t("noResults")}</AdminEmpty>
+        ) : (
+          <AdminRecordList>
+            {subs.map((s) => {
+              const q = s.user.email || s.user.name;
+              return (
+                <AdminRecord
+                  key={s.id}
+                  title={
+                    <Link href={`/admin/users?q=${encodeURIComponent(q)}`} className="linkish">
+                      {s.user.name}
+                    </Link>
+                  }
+                  subtitle={maskEmail(s.user.email)}
+                >
+                  <AdminField label={t("col.code")}>{s.planCode}</AdminField>
+                  <AdminField label={t("col.status")}>{s.status}</AdminField>
+                  <AdminField label={t("until")}>
+                    {s.currentPeriodEnd.toLocaleDateString(locale)}
+                  </AdminField>
+                </AdminRecord>
+              );
+            })}
+          </AdminRecordList>
+        )}
       </section>
     </>
   );

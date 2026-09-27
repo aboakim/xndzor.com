@@ -7,6 +7,12 @@ import { Link } from "@/i18n/navigation";
 import { confirmBankPayment } from "@/app/actions/admin";
 import { formatAmd } from "@/lib/utils";
 import { maskEmail } from "@/lib/payments";
+import {
+  AdminEmpty,
+  AdminField,
+  AdminRecord,
+  AdminRecordList,
+} from "@/components/AdminRecord";
 
 export type AdminPaymentRow = {
   id: string;
@@ -52,73 +58,67 @@ export function AdminPaymentsClient({
     });
   }
 
+  function paymentCard(p: AdminPaymentRow, withConfirm: boolean) {
+    const q = p.userEmail || p.userName;
+    return (
+      <AdminRecord
+        key={p.id}
+        title={
+          <Link href={`/admin/users?q=${encodeURIComponent(q)}`} className="linkish">
+            {p.userName}
+          </Link>
+        }
+        subtitle={maskEmail(p.userEmail)}
+        actions={
+          withConfirm ? (
+            <button
+              type="button"
+              className="btn primary"
+              disabled={pending}
+              onClick={() => confirm(p.id)}
+            >
+              {confirmingId === p.id ? t("confirming") : t("confirmBankPayment")}
+            </button>
+          ) : null
+        }
+      >
+        <AdminField label={t("col.code")}>{p.productCode}</AdminField>
+        <AdminField label={t("col.price")}>
+          {formatAmd(p.amountAmd, locale)} ֏
+        </AdminField>
+        <AdminField label={t("col.status")}>
+          {p.status} · {p.provider}
+          {p.userMarkedPaid ? ` · ${t("userMarkedPaid")}` : ""}
+        </AdminField>
+        <AdminField label={t("col.created")}>
+          <time dateTime={p.createdAt}>{new Date(p.createdAt).toLocaleString(locale)}</time>
+          {p.providerRef ? <span className="tiny muted block">{p.providerRef}</span> : null}
+        </AdminField>
+      </AdminRecord>
+    );
+  }
+
   return (
     <>
       {error ? <p className="form-error">{error}</p> : null}
       {pendingBank.length > 0 ? (
-        <>
+        <section className="admin-activity">
           <h3>{t("pendingBankTransfers")}</h3>
           <p className="lede tiny">{t("pendingBankTransfersLede")}</p>
-          <ul className="billing-list">
-            {pendingBank.map((p) => (
-              <li key={p.id} className="admin-payment-pending">
-                <span>
-                  <Link
-                    href={`/admin/users?q=${encodeURIComponent(p.userEmail || p.userName)}`}
-                    className="linkish"
-                  >
-                    {p.userName}
-                  </Link>
-                  {" · "}
-                  {maskEmail(p.userEmail)}
-                </span>
-                <span>
-                  {p.productCode} · {formatAmd(p.amountAmd, locale)} ֏ ·{" "}
-                  {p.providerRef || p.id}
-                  {p.userMarkedPaid ? ` · ${t("userMarkedPaid")}` : ""}
-                </span>
-                <time dateTime={p.createdAt}>
-                  {new Date(p.createdAt).toLocaleString(locale)}
-                </time>
-                <button
-                  type="button"
-                  className="btn primary tiny"
-                  disabled={pending}
-                  onClick={() => confirm(p.id)}
-                >
-                  {confirmingId === p.id ? t("confirming") : t("confirmBankPayment")}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </>
+          <AdminRecordList>
+            {pendingBank.map((p) => paymentCard(p, true))}
+          </AdminRecordList>
+        </section>
       ) : null}
 
-      <h3>{t("recentPayments")}</h3>
-      <ul className="billing-list">
-        {payments.map((p) => (
-          <li key={p.id}>
-            <span>
-              <Link
-                href={`/admin/users?q=${encodeURIComponent(p.userEmail || p.userName)}`}
-                className="linkish"
-              >
-                {p.userName}
-              </Link>
-              {" · "}
-              {maskEmail(p.userEmail)}
-            </span>
-            <span>
-              {p.productCode} · {formatAmd(p.amountAmd, locale)} ֏ · {p.status} ·{" "}
-              {p.provider}
-              {p.providerRef ? ` · ${p.providerRef}` : ""}
-            </span>
-            <time dateTime={p.createdAt}>
-              {new Date(p.createdAt).toLocaleString(locale)}
-            </time>
-          </li>
-        ))}
-      </ul>
+      <section className="admin-activity">
+        <h3>{t("recentPayments")}</h3>
+        {payments.length === 0 ? (
+          <AdminEmpty>{t("noResults")}</AdminEmpty>
+        ) : (
+          <AdminRecordList>{payments.map((p) => paymentCard(p, false))}</AdminRecordList>
+        )}
+      </section>
     </>
   );
 }
