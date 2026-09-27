@@ -1,7 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
-import { formatAmd, formatPriceRange, formatQty } from "@/lib/utils";
+import { formatAmd, formatPriceRange, formatQty, parseImageUrls } from "@/lib/utils";
 import { upcomingSupplyWhere } from "@/lib/upcoming-supply";
 import { ProductIcon } from "@/components/AgIcons";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -227,6 +227,7 @@ export default async function ForwardBoardPage({
                         )
                       : undefined
                   }
+                  thumb={parseImageUrls(s.imageUrls)[0]}
                   icon={<ProductIcon slugOrKey={s.product.slug} size={20} />}
                   badge={badge}
                   place={
@@ -261,6 +262,7 @@ export default async function ForwardBoardPage({
                 title={c.title}
                 meta={meta}
                 value={c.priceAmd != null ? `${formatAmd(c.priceAmd)} ֏` : undefined}
+                thumb={parseImageUrls(c.imageUrls)[0]}
                 icon={<ProductIcon slugOrKey={c.product.slug} size={20} />}
                 badge={badge}
                 place={

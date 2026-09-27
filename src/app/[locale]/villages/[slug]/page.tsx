@@ -133,6 +133,7 @@ export default async function VillagePage({
                   h.harvestDate.toISOString().slice(0, 10),
                 ].join(" · ")}
                 value={h.priceAmd != null ? `${formatAmd(h.priceAmd)} ֏` : undefined}
+                thumb={parseImageUrls(h.imageUrls)[0]}
                 icon={<ProductIcon slugOrKey={h.product.slug} size={20} />}
               />
             ))}
@@ -151,6 +152,7 @@ export default async function VillagePage({
                     ? formatPriceRange(s.priceAmd, s.priceAmd, s.unit, (k) => t(k as "common.amd"))
                     : undefined
                 }
+                thumb={parseImageUrls(s.imageUrls)[0]}
                 icon={<ProductIcon slugOrKey={s.product.slug} size={20} />}
               />
             ))}
