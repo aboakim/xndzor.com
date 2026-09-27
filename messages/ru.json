@@ -3852,6 +3852,8 @@
     "subtitle": "Управление платформой",
     "panelTitle": "Админ-панель",
     "backToSite": "На сайт",
+    "exitToSite": "Сайт",
+    "sectionsLabel": "Разделы",
     "dashboard": "Обзор",
     "users": "Пользователи",
     "listings": "Объявления",

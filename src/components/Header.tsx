@@ -27,8 +27,15 @@ export function Header() {
   /** Post ad = sell listing (classifieds clarity), not farm-OS plot create. */
   const postHref = session ? "/supply/new" : "/auth/login";
 
+  /** Admin runs its own phone shell, so the marketing chrome collapses there. */
+  const isAdmin = pathname === "/admin" || pathname.startsWith("/admin/");
+
   return (
-    <header className={`site-header vendo-header village-header${menuOpen ? " mega-menu-active" : ""}`}>
+    <header
+      className={`site-header vendo-header village-header${menuOpen ? " mega-menu-active" : ""}${
+        isAdmin ? " site-header--admin" : ""
+      }`}
+    >
       <div className="header-utility">
         <div className="header-utility-inner">
           <span className="utility-brand">{brand("brandLatin")}</span>

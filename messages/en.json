@@ -3852,6 +3852,8 @@
     "subtitle": "Platform control",
     "panelTitle": "Admin panel",
     "backToSite": "Back to site",
+    "exitToSite": "Site",
+    "sectionsLabel": "Sections",
     "dashboard": "Dashboard",
     "users": "Users",
     "listings": "Listings",

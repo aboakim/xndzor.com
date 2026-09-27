@@ -9594,16 +9594,29 @@ body.mega-menu-open {
 .admin-shell {
   padding-top: 0.5rem;
   padding-bottom: 3rem;
+  min-width: 0;
 }
 
+/*
+ * Every admin track is minmax(0, …): an `auto`/`1fr` track takes its base size
+ * from the widest item's min-content width, which on phones is the nav strip.
+ */
 .admin-layout {
   display: grid;
-  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  min-width: 0;
+}
+
+.admin-layout > * {
+  min-width: 0;
+  max-width: 100%;
 }
 
 @media (min-width: 901px) {
   .admin-layout {
     grid-template-columns: 220px minmax(0, 1fr);
+    gap: 1.5rem;
     align-items: start;
   }
 }
@@ -9614,6 +9627,7 @@ body.mega-menu-open {
   border-radius: var(--radius-lg);
   padding: 1rem;
   box-shadow: var(--shadow-card);
+  min-width: 0;
 }
 
 .admin-sidebar-head {
@@ -9625,10 +9639,16 @@ body.mega-menu-open {
   border-bottom: 1px solid var(--line);
 }
 
+/* Phone-only admin header; the desktop sidebar uses .admin-sidebar-head. */
+.admin-sidebar-bar {
+  display: none;
+}
+
 .admin-nav {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  min-width: 0;
 }
 
 .admin-nav-link {
@@ -9654,22 +9674,34 @@ body.mega-menu-open {
 
 .admin-content {
   min-width: 0;
+  max-width: 100%;
+}
+
+.admin-content > * {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .admin-content h2 {
   margin: 0 0 0.35rem;
   font-size: 1.35rem;
+  overflow-wrap: anywhere;
 }
 
 .admin-page-header {
   display: none;
 }
 
+/*
+ * min(100%, 160px) keeps the track from ever being wider than the grid, so a
+ * narrow phone falls back to one column instead of overflowing.
+ */
 .admin-stat-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr));
   gap: 0.75rem;
   margin: 1.25rem 0;
+  min-width: 0;
 }
 
 .admin-activity {
@@ -9687,12 +9719,14 @@ body.mega-menu-open {
 
 .admin-highlight-row {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.75rem;
+  min-width: 0;
 }
 
 @media (min-width: 768px) {
   .admin-highlight-row {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -9704,6 +9738,14 @@ body.mega-menu-open {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.admin-stat-card > * {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .admin-stat-link {
@@ -9785,6 +9827,7 @@ body.mega-menu-open {
   flex-direction: column;
   gap: 0.7rem;
   margin: 0.25rem 0 0.5rem;
+  min-width: 0;
 }
 
 .admin-record {
@@ -9845,6 +9888,7 @@ body.mega-menu-open {
   justify-content: space-between;
   align-items: center;
   gap: 0.75rem;
+  min-width: 0;
   min-height: 2.75rem;
   padding: 0.35rem 0;
   border-top: 1px solid color-mix(in srgb, var(--line) 85%, transparent);
@@ -9853,6 +9897,8 @@ body.mega-menu-open {
 .admin-record-field dt {
   margin: 0;
   flex: 0 1 42%;
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.03em;
@@ -10046,6 +10092,8 @@ body.mega-menu-open {
   flex-wrap: wrap;
   gap: 0.35rem;
   margin: 1rem 0;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .admin-tab {
@@ -10064,67 +10112,257 @@ body.mega-menu-open {
   background: color-mix(in srgb, var(--farm-green) 10%, var(--surface));
 }
 
+/* ─── Phone admin shell ───────────────────────────────────────────────────── */
 @media (max-width: 900px) {
+  body.admin-route {
+    overflow-x: clip;
+  }
+
+  body.admin-route .site-header,
+  body.admin-route .site-footer,
+  body.admin-route .mobile-tab-bar,
+  body.admin-route .pwa-install {
+    display: none !important;
+  }
+
+  body.admin-route .app-main {
+    padding-bottom: 0;
+  }
+
+  body.admin-route .admin-shell.section {
+    max-width: 480px;
+    padding-top: max(0.5rem, env(safe-area-inset-top));
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+    padding-left: max(14px, env(safe-area-inset-left));
+    padding-right: max(14px, env(safe-area-inset-right));
+  }
+
+  .admin-shell {
+    padding-top: 0.35rem;
+  }
+
   .admin-sidebar {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.4rem;
-    border-radius: 16px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+    padding: 0.6rem 0.65rem 0.55rem;
+    border-radius: 18px;
+    position: sticky;
+    top: max(0px, env(safe-area-inset-top));
+    z-index: 30;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .admin-sidebar-head {
     display: none;
   }
 
+  .admin-sidebar-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+
+  .admin-sidebar-id {
+    display: flex;
+    flex-direction: column;
+    gap: 0.05rem;
+    min-width: 0;
+  }
+
+  .admin-sidebar-eyebrow {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--pine-bright);
+  }
+
+  .admin-sidebar-current {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--pine-deep);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .admin-sidebar-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .admin-exit,
+  .admin-logout {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--pine-deep);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .admin-logout {
+    color: #b42318;
+    border-color: color-mix(in srgb, #b42318 28%, var(--line));
+  }
+
+  .admin-nav-scroll {
+    position: relative;
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .admin-nav-scroll::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0.35rem;
+    width: 2rem;
+    pointer-events: none;
+    border-radius: 0 12px 12px 0;
+    background: linear-gradient(
+      to left,
+      color-mix(in srgb, var(--surface) 96%, transparent),
+      transparent
+    );
+  }
+
+  /* Swipeable section strip. */
   .admin-nav {
     flex-direction: row;
-    flex: 1;
     min-width: 0;
+    max-width: 100%;
+    width: 100%;
+    gap: 0.4rem;
     overflow-x: auto;
-    gap: 0.35rem;
-    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: 0.25rem;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--pine) 35%, transparent) transparent;
     -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.35rem;
   }
 
   .admin-nav::-webkit-scrollbar {
-    display: none;
+    display: block;
+    height: 5px;
+  }
+
+  .admin-nav::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--pine) 40%, var(--line));
+    border-radius: 999px;
+  }
+
+  .admin-nav::-webkit-scrollbar-track {
+    background: transparent;
   }
 
   .admin-nav-link {
     flex: 0 0 auto;
+    scroll-snap-align: start;
     min-height: 44px;
     display: inline-flex;
     align-items: center;
-    padding: 0.45rem 0.9rem;
+    padding: 0.45rem 0.95rem;
+    border-radius: 999px;
     white-space: nowrap;
+    font-size: 0.95rem;
+    font-weight: 600;
     background: color-mix(in srgb, var(--pine) 8%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--pine) 16%, transparent);
   }
 
   .admin-nav-link.active {
     background: var(--pine);
+    border-color: var(--pine);
     color: #fff;
   }
 
+  /* The exit pill in .admin-sidebar-bar replaces it on phones. */
   .admin-nav-back {
-    margin-top: 0;
-    flex: 0 0 auto;
-    min-height: 44px;
-    display: inline-flex;
-    align-items: center;
-    white-space: nowrap;
+    display: none;
+  }
+
+  .admin-content .lede {
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+}
+
+@media (min-width: 901px) {
+  .admin-sidebar-actions,
+  .admin-nav-scroll::after {
+    display: none;
+  }
+
+  .admin-sidebar-bar {
+    display: none !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .admin-stat-link {
+    min-height: 5.5rem;
+    justify-content: center;
+    padding: 0.75rem 1.35rem 0.75rem 0.75rem;
+    box-sizing: border-box;
+  }
+
+  .admin-online-card,
+  .admin-traffic-card {
+    grid-column: 1 / -1;
+  }
+
+  .admin-traffic-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-traffic-metric span {
+    font-size: 0.9rem;
+  }
+
+  .admin-traffic-period {
+    font-size: 0.95rem;
   }
 }
 
 @media (max-width: 720px) {
-  .admin-stat-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.55rem;
-  }
-
   .admin-stat-link {
     min-height: 5.25rem;
-    justify-content: center;
+  }
+
+  .admin-stat-card > span {
+    font-size: 0.88rem;
+    line-height: 1.25;
   }
 
   .admin-stat-card strong {
@@ -10132,13 +10370,16 @@ body.mega-menu-open {
   }
 
   .admin-highlight-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .admin-tabs {
     flex-wrap: nowrap;
     overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
     scrollbar-width: none;
+    -ms-overflow-style: none;
     -webkit-overflow-scrolling: touch;
     padding-bottom: 0.2rem;
   }
@@ -10149,9 +10390,13 @@ body.mega-menu-open {
 
   .admin-tab {
     flex: 0 0 auto;
+    scroll-snap-align: start;
     min-height: 44px;
     display: inline-flex;
     align-items: center;
+    padding: 0.45rem 0.95rem;
+    font-size: 0.92rem;
+    white-space: nowrap;
   }
 
   .admin-search-form {
@@ -10176,6 +10421,11 @@ body.mega-menu-open {
   gap: 0.75rem;
   margin: 0.35rem 0 1rem;
   padding: 1rem 1.1rem;
+  min-width: 0;
+}
+
+.admin-visits {
+  min-width: 0;
 }
 
 .admin-online-label {
@@ -10207,9 +10457,10 @@ body.mega-menu-open {
 
 .admin-traffic-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.55rem;
   margin: 0.75rem 0 1.25rem;
+  min-width: 0;
 }
 
 .admin-traffic-period {
