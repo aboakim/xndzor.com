@@ -15,13 +15,13 @@ export default async function AdminDashboardPage({
   const t = await getTranslations("admin");
   const stats = await getAdminDashboardStats();
 
-  const cards = [
+  const cards: { label: string; value: string | number; href: string; hint?: string }[] = [
     { label: t("stats.users"), value: stats.users, href: "/admin/users" },
-    { label: t("stats.recentUsers"), value: stats.recentUsers, href: "/admin/users" },
+    { label: t("stats.recentUsers"), value: stats.recentUsers, href: "/admin/users?recent=7" },
     {
       label: t("stats.earlyBirdRemaining"),
       value: `${stats.earlyBird.remaining}/${stats.earlyBird.freeLimit}`,
-      href: undefined as string | undefined,
+      href: "/admin/users?earlyBird=1",
     },
     { label: t("stats.supplies"), value: stats.supplies, href: "/admin/listings?tab=supply" },
     { label: t("stats.demands"), value: stats.demands, href: "/admin/listings?tab=demand" },
@@ -31,12 +31,21 @@ export default async function AdminDashboardPage({
     { label: t("stats.jobs"), value: stats.jobs, href: "/admin/listings?tab=job" },
     {
       label: t("stats.futureHarvests"),
-      value: stats.futureHarvests,
+      value: stats.forwardBoard,
+      hint: t("stats.futureBoardHint", {
+        harvests: stats.futureHarvests,
+        supplies: stats.upcomingSupplies,
+      }),
       href: "/admin/listings?tab=futureHarvest",
     },
-    { label: t("stats.plots"), value: stats.plots },
+    { label: t("stats.plots"), value: stats.plots, href: "/admin/plots" },
+    { label: t("stats.spaces"), value: stats.spaces, href: "/admin/listings?tab=space" },
     { label: t("stats.payments"), value: stats.payments, href: "/admin/payments" },
-    { label: t("stats.subscriptions"), value: stats.subscriptions, href: "/admin/payments" },
+    {
+      label: t("stats.subscriptions"),
+      value: stats.subscriptions,
+      href: "/admin/payments#subscriptions",
+    },
   ];
 
   const kindLabel = (kind: string) => {
@@ -70,30 +79,24 @@ export default async function AdminDashboardPage({
       <p className="lede">{t("dashboardLede")}</p>
 
       <div className="admin-stat-grid">
-        {cards.map((card) =>
-          card.href ? (
-            <Link key={card.label} href={card.href} className="admin-stat-card admin-stat-link">
-              <span>{card.label}</span>
-              <strong>{card.value}</strong>
-            </Link>
-          ) : (
-            <div key={card.label} className="admin-stat-card">
-              <span>{card.label}</span>
-              <strong>{card.value}</strong>
-            </div>
-          ),
-        )}
+        {cards.map((card) => (
+          <Link key={card.href + card.label} href={card.href} className="admin-stat-card admin-stat-link">
+            <span>{card.label}</span>
+            <strong>{card.value}</strong>
+            {card.hint ? <span className="tiny muted">{card.hint}</span> : null}
+          </Link>
+        ))}
       </div>
 
       <div className="admin-highlight-row">
-        <div className="admin-stat-card admin-stat-wide">
+        <Link href="/admin/payments" className="admin-stat-card admin-stat-wide admin-stat-link">
           <span>{t("stats.revenue")}</span>
           <strong>{formatAmd(stats.totalRevenueAmd, locale)} ֏</strong>
           <span className="tiny muted">
             {t("stats.succeededPayments", { count: stats.succeededPayments })}
           </span>
-        </div>
-        <div className="admin-stat-card admin-stat-wide">
+        </Link>
+        <Link href="/admin/users?earlyBird=1" className="admin-stat-card admin-stat-wide admin-stat-link">
           <span>{t("stats.earlyBird")}</span>
           <strong>
             {stats.earlyBird.slotsFull
@@ -106,19 +109,17 @@ export default async function AdminDashboardPage({
           <span className="tiny muted">
             {t("stats.earlyBirdClaimed", { count: stats.earlyBird.claimed })}
           </span>
-        </div>
-        <div className="admin-stat-card admin-stat-wide">
+        </Link>
+        <Link href="/admin/plans" className="admin-stat-card admin-stat-wide admin-stat-link">
           <span>{t("stats.activePlans")}</span>
           <strong>{stats.plans}</strong>
-          <Link href="/admin/plans" className="tiny linkish">
-            {t("viewPlans")}
-          </Link>
-        </div>
+          <span className="tiny linkish">{t("viewPlans")}</span>
+        </Link>
       </div>
 
       <section className="admin-activity">
         <h2>{t("recentUsersTitle")}</h2>
-        <div className="admin-table-wrap">
+        <div className="admin-table-wrap admin-responsive-table">
           <table className="admin-table">
             <thead>
               <tr>
@@ -136,15 +137,20 @@ export default async function AdminDashboardPage({
               ) : (
                 stats.recentUsersList.map((u) => (
                   <tr key={u.id}>
-                    <td>
-                      {u.name}
+                    <td data-label={t("col.name")}>
+                      <Link
+                        href={u.farmId ? `/farms/${u.farmId}` : `/admin/users?q=${encodeURIComponent(u.email)}`}
+                        className="linkish"
+                      >
+                        {u.name}
+                      </Link>
                       {u.earlyBirdFree ? (
                         <span className="admin-badge">{t("earlyBirdBadge")}</span>
                       ) : null}
                     </td>
-                    <td>{u.email}</td>
-                    <td>{u.role}</td>
-                    <td>{dateFmt.format(u.createdAt)}</td>
+                    <td data-label={t("col.email")}>{u.email}</td>
+                    <td data-label={t("col.role")}>{u.role}</td>
+                    <td data-label={t("col.joined")}>{dateFmt.format(u.createdAt)}</td>
                   </tr>
                 ))
               )}
@@ -158,7 +164,7 @@ export default async function AdminDashboardPage({
 
       <section className="admin-activity">
         <h2>{t("recentListingsTitle")}</h2>
-        <div className="admin-table-wrap">
+        <div className="admin-table-wrap admin-responsive-table">
           <table className="admin-table">
             <thead>
               <tr>
@@ -177,11 +183,19 @@ export default async function AdminDashboardPage({
               ) : (
                 stats.recentListings.map((item) => (
                   <tr key={`${item.kind}-${item.id}`}>
-                    <td>{kindLabel(item.kind)}</td>
-                    <td>{item.title}</td>
-                    <td>{item.ownerName}</td>
-                    <td>{item.status}</td>
-                    <td>{dateFmt.format(item.createdAt)}</td>
+                    <td data-label={t("col.kind")}>
+                      <Link href={`/admin/listings?tab=${item.kind}`} className="linkish">
+                        {kindLabel(item.kind)}
+                      </Link>
+                    </td>
+                    <td data-label={t("col.title")}>
+                      <Link href={item.href} className="linkish">
+                        {item.title}
+                      </Link>
+                    </td>
+                    <td data-label={t("col.owner")}>{item.ownerName}</td>
+                    <td data-label={t("col.status")}>{item.status}</td>
+                    <td data-label={t("col.created")}>{dateFmt.format(item.createdAt)}</td>
                   </tr>
                 ))
               )}

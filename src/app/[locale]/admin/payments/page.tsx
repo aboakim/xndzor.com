@@ -1,4 +1,5 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
 import { formatAmd } from "@/lib/utils";
 import { maskEmail } from "@/lib/payments";
@@ -108,20 +109,50 @@ export default async function AdminPaymentsPage({
         locale={locale}
       />
 
-      <h3>{t("subscriptions")}</h3>
-      <ul className="billing-list">
-        {subs.map((s) => (
-          <li key={s.id}>
-            <span>
-              {s.user.name} · {maskEmail(s.user.email)}
-            </span>
-            <span>
-              {s.planCode} · {s.status} · {t("until")}{" "}
-              {s.currentPeriodEnd.toLocaleDateString(locale)}
-            </span>
-          </li>
-        ))}
-      </ul>
+      <section id="subscriptions" className="admin-activity">
+        <h3>{t("subscriptions")}</h3>
+        <div className="admin-table-wrap admin-responsive-table">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>{t("col.owner")}</th>
+                <th>{t("col.code")}</th>
+                <th>{t("col.status")}</th>
+                <th>{t("until")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {subs.length === 0 ? (
+                <tr>
+                  <td colSpan={4}>{t("noResults")}</td>
+                </tr>
+              ) : (
+                subs.map((s) => {
+                  const q = s.user.email || s.user.name;
+                  return (
+                    <tr key={s.id}>
+                      <td data-label={t("col.owner")}>
+                        <Link
+                          href={`/admin/users?q=${encodeURIComponent(q)}`}
+                          className="linkish"
+                        >
+                          {s.user.name}
+                        </Link>
+                        <span className="tiny muted block">{maskEmail(s.user.email)}</span>
+                      </td>
+                      <td data-label={t("col.code")}>{s.planCode}</td>
+                      <td data-label={t("col.status")}>{s.status}</td>
+                      <td data-label={t("until")}>
+                        {s.currentPeriodEnd.toLocaleDateString(locale)}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
     </>
   );
 }

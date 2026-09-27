@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { confirmBankPayment } from "@/app/actions/admin";
 import { formatAmd } from "@/lib/utils";
 import { maskEmail } from "@/lib/payments";
@@ -62,7 +63,14 @@ export function AdminPaymentsClient({
             {pendingBank.map((p) => (
               <li key={p.id} className="admin-payment-pending">
                 <span>
-                  {p.userName} · {maskEmail(p.userEmail)}
+                  <Link
+                    href={`/admin/users?q=${encodeURIComponent(p.userEmail || p.userName)}`}
+                    className="linkish"
+                  >
+                    {p.userName}
+                  </Link>
+                  {" · "}
+                  {maskEmail(p.userEmail)}
                 </span>
                 <span>
                   {p.productCode} · {formatAmd(p.amountAmd, locale)} ֏ ·{" "}
@@ -91,7 +99,14 @@ export function AdminPaymentsClient({
         {payments.map((p) => (
           <li key={p.id}>
             <span>
-              {p.userName} · {maskEmail(p.userEmail)}
+              <Link
+                href={`/admin/users?q=${encodeURIComponent(p.userEmail || p.userName)}`}
+                className="linkish"
+              >
+                {p.userName}
+              </Link>
+              {" · "}
+              {maskEmail(p.userEmail)}
             </span>
             <span>
               {p.productCode} · {formatAmd(p.amountAmd, locale)} ֏ · {p.status} ·{" "}

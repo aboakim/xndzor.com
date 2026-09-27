@@ -74,6 +74,9 @@ export async function updateListingStatus(
     case "futureHarvest":
       await prisma.futureHarvest.update({ where: { id }, data });
       break;
+    case "space":
+      await prisma.spaceListing.update({ where: { id }, data });
+      break;
     default:
       throw new Error("unknown_kind");
   }
@@ -111,6 +114,9 @@ export async function deleteListing(kind: ListingKind, id: string) {
         data: { futureHarvestId: null },
       });
       await prisma.futureHarvest.delete({ where: { id } });
+      break;
+    case "space":
+      await prisma.spaceListing.delete({ where: { id } });
       break;
     default:
       throw new Error("unknown_kind");

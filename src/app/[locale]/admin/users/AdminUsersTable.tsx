@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import {
   updateUserRole,
   updateUserSuspended,
@@ -14,6 +15,7 @@ export type AdminUserRow = {
   email: string;
   name: string;
   role: string;
+  farmId: string | null;
   farmVerified: boolean;
   suspended: boolean;
   isPro: boolean;
@@ -24,10 +26,14 @@ export function AdminUsersTable({
   users,
   locale,
   query,
+  recent = "",
+  earlyBird = "",
 }: {
   users: AdminUserRow[];
   locale: string;
   query: string;
+  recent?: string;
+  earlyBird?: string;
 }) {
   const t = useTranslations("admin");
   const [pending, startTransition] = useTransition();
@@ -48,12 +54,14 @@ export function AdminUsersTable({
           placeholder={t("searchUsers")}
           className="admin-search-input"
         />
+        {recent ? <input type="hidden" name="recent" value={recent} /> : null}
+        {earlyBird ? <input type="hidden" name="earlyBird" value={earlyBird} /> : null}
         <button type="submit" className="btn ghost" disabled={pending}>
           {t("search")}
         </button>
       </form>
 
-      <div className="admin-table-wrap">
+      <div className="admin-table-wrap admin-responsive-table">
         <table className="admin-table">
           <thead>
             <tr>
@@ -76,12 +84,18 @@ export function AdminUsersTable({
             ) : (
               users.map((u) => (
                 <tr key={u.id} className={u.suspended ? "admin-row-muted" : undefined}>
-                  <td>
-                    {u.name}
+                  <td data-label={t("col.name")}>
+                    {u.farmId ? (
+                      <Link href={`/farms/${u.farmId}`} className="linkish">
+                        {u.name}
+                      </Link>
+                    ) : (
+                      u.name
+                    )}
                     {u.isPro ? <span className="admin-badge">Pro</span> : null}
                   </td>
-                  <td>{u.email}</td>
-                  <td>
+                  <td data-label={t("col.email")}>{u.email}</td>
+                  <td data-label={t("col.role")}>
                     <select
                       defaultValue={u.role}
                       disabled={pending}
@@ -97,7 +111,7 @@ export function AdminUsersTable({
                       ))}
                     </select>
                   </td>
-                  <td>
+                  <td data-label={t("col.verified")}>
                     <label className="admin-check">
                       <input
                         type="checkbox"
@@ -110,19 +124,19 @@ export function AdminUsersTable({
                       {u.farmVerified ? t("verified") : t("unverified")}
                     </label>
                   </td>
-                  <td>
+                  <td data-label={t("col.status")}>
                     {u.suspended ? (
                       <span className="admin-status admin-status-bad">{t("suspended")}</span>
                     ) : (
                       <span className="admin-status admin-status-ok">{t("active")}</span>
                     )}
                   </td>
-                  <td>
+                  <td data-label={t("col.joined")}>
                     <time dateTime={u.createdAt}>
                       {new Date(u.createdAt).toLocaleDateString(locale)}
                     </time>
                   </td>
-                  <td>
+                  <td data-label={t("col.actions")}>
                     <button
                       type="button"
                       className="btn ghost tiny"

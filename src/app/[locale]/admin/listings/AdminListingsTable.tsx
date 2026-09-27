@@ -15,9 +15,21 @@ export type AdminListingRow = {
   ownerEmail: string;
   createdAt: string;
   href: string;
+  /** Set on supply rows that appear on the future-harvest board. */
+  readyInDays?: number | null;
 };
 
-const STATUS_OPTIONS = ["ACTIVE", "HIDDEN", "SOLD", "FILLED", "RESERVED", "OPEN", "CLOSED", "BUSY"];
+const STATUS_OPTIONS = [
+  "ACTIVE",
+  "HIDDEN",
+  "SOLD",
+  "FILLED",
+  "RESERVED",
+  "OPEN",
+  "CLOSED",
+  "BUSY",
+  "BOOKED",
+];
 
 export function AdminListingsTable({
   rows,
@@ -38,7 +50,7 @@ export function AdminListingsTable({
   }
 
   return (
-    <div className="admin-table-wrap">
+    <div className="admin-table-wrap admin-responsive-table">
       <table className="admin-table">
         <thead>
           <tr>
@@ -59,16 +71,24 @@ export function AdminListingsTable({
           ) : (
             rows.map((row) => (
               <tr key={`${row.kind}-${row.id}`}>
-                <td>
+                <td data-label={t("col.title")}>
                   <Link href={row.href} className="linkish">
                     {row.title}
                   </Link>
+                  {row.kind === "futureHarvest" ? (
+                    <span className="admin-badge">{t("sourceHarvest")}</span>
+                  ) : null}
+                  {row.kind === "supply" && row.readyInDays != null ? (
+                    <span className="admin-badge admin-badge-earth">
+                      {t("sourceSupply", { days: row.readyInDays })}
+                    </span>
+                  ) : null}
                 </td>
-                <td>
+                <td data-label={t("col.owner")}>
                   {row.ownerName}
                   <span className="tiny muted block">{row.ownerEmail}</span>
                 </td>
-                <td>
+                <td data-label={t("col.status")}>
                   <select
                     defaultValue={row.status}
                     disabled={pending}
@@ -77,19 +97,22 @@ export function AdminListingsTable({
                       run(() => updateListingStatus(row.kind, row.id, e.target.value))
                     }
                   >
-                    {STATUS_OPTIONS.map((s) => (
+                    {(STATUS_OPTIONS.includes(row.status)
+                      ? STATUS_OPTIONS
+                      : [row.status, ...STATUS_OPTIONS]
+                    ).map((s) => (
                       <option key={s} value={s}>
                         {s}
                       </option>
                     ))}
                   </select>
                 </td>
-                <td>
+                <td data-label={t("col.created")}>
                   <time dateTime={row.createdAt}>
                     {new Date(row.createdAt).toLocaleDateString(locale)}
                   </time>
                 </td>
-                <td className="admin-actions-cell">
+                <td className="admin-actions-cell" data-label={t("col.actions")}>
                   <button
                     type="button"
                     className="btn ghost tiny"

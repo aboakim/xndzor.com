@@ -2,7 +2,14 @@ import { notFound, redirect } from "next/navigation";
 import { getSession } from "./session";
 import { prisma } from "./prisma";
 import { userIsAdmin } from "./monetization";
+import { CATALOG_ROUTE, type CatalogCategory } from "./catalog";
 import { getEarlyBirdStats } from "./early-bird";
+import { upcomingSupplyWhere } from "./upcoming-supply";
+
+export function catalogPublicHref(category: string, id: string) {
+  const slug = CATALOG_ROUTE[category as CatalogCategory] ?? "fertilizers";
+  return `/shop/${slug}/${id}`;
+}
 
 export async function requireAdmin(locale: string) {
   const session = await getSession();
@@ -22,6 +29,7 @@ export type RecentAdminUser = {
   name: string;
   email: string;
   role: string;
+  farmId: string | null;
   createdAt: Date;
   earlyBirdFree: boolean;
 };
@@ -33,6 +41,7 @@ export type RecentAdminListing = {
   status: string;
   ownerName: string;
   createdAt: Date;
+  href: string;
 };
 
 export async function getAdminDashboardStats() {
@@ -49,6 +58,8 @@ export async function getAdminDashboardStats() {
     jobs,
     providers,
     futureHarvests,
+    upcomingSupplies,
+    spaces,
     payments,
     succeededPayments,
     subscriptions,
@@ -74,7 +85,9 @@ export async function getAdminDashboardStats() {
     prisma.catalogListing.count(),
     prisma.jobRequest.count(),
     prisma.serviceProvider.count(),
-    prisma.futureHarvest.count(),
+    prisma.futureHarvest.count({ where: { status: "ACTIVE" } }),
+    prisma.supply.count({ where: upcomingSupplyWhere() }),
+    prisma.spaceListing.count(),
     prisma.payment.count(),
     prisma.payment.count({ where: { status: "SUCCEEDED" } }),
     prisma.subscription.count({ where: { status: "ACTIVE" } }),
@@ -89,6 +102,7 @@ export async function getAdminDashboardStats() {
         name: true,
         email: true,
         role: true,
+        farmId: true,
         createdAt: true,
         earlyBirdFree: true,
       },
@@ -144,6 +158,7 @@ export async function getAdminDashboardStats() {
         id: true,
         title: true,
         status: true,
+        category: true,
         createdAt: true,
         user: { select: { name: true } },
       },
@@ -164,6 +179,7 @@ export async function getAdminDashboardStats() {
       status: r.status,
       ownerName: r.user.name,
       createdAt: r.createdAt,
+      href: `/supply/${r.id}`,
     })),
     ...recentDemands.map((r) => ({
       id: r.id,
@@ -172,6 +188,7 @@ export async function getAdminDashboardStats() {
       status: r.status,
       ownerName: r.user.name,
       createdAt: r.createdAt,
+      href: `/demand/${r.id}`,
     })),
     ...recentAnimals.map((r) => ({
       id: r.id,
@@ -180,6 +197,7 @@ export async function getAdminDashboardStats() {
       status: r.status,
       ownerName: r.user.name,
       createdAt: r.createdAt,
+      href: `/animals/${r.id}`,
     })),
     ...recentMachinery.map((r) => ({
       id: r.id,
@@ -188,6 +206,7 @@ export async function getAdminDashboardStats() {
       status: r.status,
       ownerName: r.user.name,
       createdAt: r.createdAt,
+      href: `/machinery/${r.id}`,
     })),
     ...recentCatalog.map((r) => ({
       id: r.id,
@@ -196,6 +215,7 @@ export async function getAdminDashboardStats() {
       status: r.status,
       ownerName: r.user.name,
       createdAt: r.createdAt,
+      href: catalogPublicHref(r.category, r.id),
     })),
   ]
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
@@ -212,6 +232,9 @@ export async function getAdminDashboardStats() {
     jobs,
     providers,
     futureHarvests,
+    upcomingSupplies,
+    forwardBoard: futureHarvests + upcomingSupplies,
+    spaces,
     payments,
     succeededPayments,
     subscriptions,
@@ -237,7 +260,8 @@ export type ListingKind =
   | "machinery"
   | "catalog"
   | "job"
-  | "futureHarvest";
+  | "futureHarvest"
+  | "space";
 
 export const LISTING_STATUSES = ["ACTIVE", "HIDDEN", "SOLD", "FILLED"] as const;
 export const USER_ROLES = ["FARMER", "BUYER", "PROVIDER", "BOTH", "ADMIN"] as const;
