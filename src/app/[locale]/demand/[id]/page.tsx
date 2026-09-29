@@ -253,7 +253,7 @@ export default async function DemandDetailPage({
               compact
             />
 
-            <ShareButtons title={demand.title} priceSnippet={priceLabel} />
+            <ShareButtons title={displayTitle} priceSnippet={priceLabel} />
 
             <OwnerContactActions
               ownerId={demand.userId}
@@ -262,7 +262,7 @@ export default async function DemandDetailPage({
               waText={
                 locale === "hy"
                   ? `Բարև, կարող եմ մատակարարել՝ ${demand.title}`
-                  : `Hi, I can supply for: ${demand.title}`
+                  : `Hi, I can supply for: ${displayTitle}`
               }
             />
 
