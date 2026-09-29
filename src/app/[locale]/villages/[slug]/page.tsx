@@ -127,6 +127,7 @@ export default async function VillagePage({
                 key={`harvest-${h.id}`}
                 href={`/forward/${h.id}`}
                 title={h.title}
+                productNameKey={h.product.nameKey}
                 meta={[
                   t(h.product.nameKey as "products.tomato"),
                   `${formatAmd(h.qtyExpected)} ${t(`units.${h.unit}` as "units.kg")}`,
@@ -142,6 +143,7 @@ export default async function VillagePage({
                 key={`supply-${s.id}`}
                 href={`/supply/${s.id}`}
                 title={s.title}
+                productNameKey={s.product.nameKey}
                 meta={[
                   t(s.product.nameKey as "products.tomato"),
                   formatQty(s.qtyAvailable, null, s.unit, (k) => t(k as "units.kg")),
@@ -171,6 +173,7 @@ export default async function VillagePage({
                 key={s.id}
                 href={`/supply/${s.id}`}
                 title={s.title}
+                productNameKey={s.product.nameKey}
                 meta={[
                   t(s.product.nameKey as "products.tomato"),
                   formatQty(s.qtyAvailable, null, s.unit, (k) => t(k as "units.kg")),
@@ -202,6 +205,7 @@ export default async function VillagePage({
                 key={d.id}
                 href={`/demand/${d.id}`}
                 title={d.title}
+                productNameKey={d.product.nameKey}
                 meta={[
                   t(d.product.nameKey as "products.tomato"),
                   formatQty(d.qtyMin, d.qtyMax, d.unit, (k) => t(k as "units.kg")),

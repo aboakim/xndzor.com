@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { formatAmd, formatListingAge, parseImageUrls } from "@/lib/utils";
 import { localizedPlaceName } from "@/lib/places";
-import { tContent } from "@/lib/content-locale";
+import { tradeListingTitle } from "@/lib/content-locale";
 
 type Place = { nameHy: string; nameEn: string; nameRu: string; slug?: string };
 
@@ -17,6 +17,8 @@ type ListingCardProps = {
   village: Place;
   imageUrls: string;
   categoryNameKey: string;
+  /** Catalog `products.*` key for trade-style listings. */
+  productNameKey?: string;
   /** Optional unit label (kg, ton…). */
   unit?: string | null;
   /** Listing createdAt for relative age. */
@@ -34,6 +36,7 @@ export function ListingCard({
   village,
   imageUrls,
   categoryNameKey,
+  productNameKey,
   unit,
   createdAt,
   verified = false,
@@ -84,7 +87,13 @@ export function ListingCard({
         <p className="listing-price listing-card-price">
           {formatAmd(priceAmd)} <span>{t("listings.amd")}</span>
         </p>
-        <h3 className="listing-card-title-static">{tContent(locale, title)}</h3>
+        <h3 className="listing-card-title-static">
+          {tradeListingTitle(
+            locale,
+            title,
+            productNameKey ? t(productNameKey as "products.tomato") : undefined,
+          )}
+        </h3>
         <p className="listing-meta listing-card-location">
           {villageLabel}, {marzLabel}
         </p>

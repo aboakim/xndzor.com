@@ -316,7 +316,7 @@ export default async function MachineryDetailPage({
                   <PostCard
                     key={m.id}
                     href={`/machinery/${m.id}`}
-                    title={tContent(locale, m.title)}
+                    title={m.title}
                     thumb={parseImageUrls(m.imageUrls ?? "[]")[0]}
                     icon={<ActionIcon action="machinery" size={22} />}
                     categoryPill={t(

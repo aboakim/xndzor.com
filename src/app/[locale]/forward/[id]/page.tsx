@@ -147,7 +147,8 @@ export default async function ForwardDetailPage({
       <TrackRecentView
         id={crop.id}
         href={`/forward/${crop.id}`}
-        title={displayTitle}
+        title={crop.title}
+        productNameKey={crop.product.nameKey}
         kind="forward"
         thumb={images[0] ?? null}
         subtitle={productLabel}

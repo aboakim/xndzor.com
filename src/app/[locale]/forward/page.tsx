@@ -17,7 +17,6 @@ import {
   sortByMonetization,
 } from "@/lib/monetization";
 import { getProducts } from "@/lib/products";
-import { tradeListingTitle } from "@/lib/content-locale";
 
 import { seoMessagesMetadata } from "@/lib/seo-metadata";
 
@@ -219,11 +218,8 @@ export default async function ForwardBoardPage({
                 <ClassifiedRow
                   key={`supply-${s.id}`}
                   href={`/supply/${s.id}`}
-                  title={tradeListingTitle(
-                    locale,
-                    s.title,
-                    t(s.product.nameKey as "products.tomato"),
-                  )}
+                  title={s.title}
+                  productNameKey={s.product.nameKey}
                   meta={meta}
                   value={
                     s.priceAmd != null
@@ -264,11 +260,8 @@ export default async function ForwardBoardPage({
               <ClassifiedRow
                 key={`harvest-${c.id}`}
                 href={`/forward/${c.id}`}
-                title={tradeListingTitle(
-                  locale,
-                  c.title,
-                  t(c.product.nameKey as "products.tomato"),
-                )}
+                title={c.title}
+                productNameKey={c.product.nameKey}
                 meta={meta}
                 value={c.priceAmd != null ? `${formatAmd(c.priceAmd)} ֏` : undefined}
                 thumb={parseImageUrls(c.imageUrls)[0]}

@@ -47,6 +47,8 @@ export const SEARCH_SECTION_ORDER: readonly SearchSectionId[] = [
 export type SearchHit = {
   id: string;
   title: string;
+  /** Catalog `products.*` key when hit is a trade listing. */
+  productNameKey?: string;
   href: string;
   snippet: string | null;
   /** First listing photo, if any. */
@@ -105,6 +107,7 @@ function firstImage(imageUrls: string | null | undefined): string | null {
 type HitSource = {
   id: string;
   title: string;
+  productNameKey?: string;
   description?: string | null;
   imageUrls?: string | null;
   priceAmd?: number | null;
@@ -117,6 +120,7 @@ function toHit(href: string, row: HitSource): SearchHit {
   return {
     id: row.id,
     title: row.title,
+    productNameKey: row.productNameKey,
     href,
     snippet: snippetFrom(row.description),
     imageUrl: firstImage(row.imageUrls),
@@ -207,6 +211,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
             priceAmd: true,
             unit: true,
             marz: marzSelect,
+            product: { select: { nameKey: true } },
           },
           orderBy: { createdAt: "desc" },
           take,
@@ -226,6 +231,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
             priceMaxAmd: true,
             unit: true,
             marz: marzSelect,
+            product: { select: { nameKey: true } },
           },
           orderBy: { createdAt: "desc" },
           take,
@@ -244,6 +250,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
             priceAmd: true,
             unit: true,
             marz: marzSelect,
+            product: { select: { nameKey: true } },
           },
           orderBy: { createdAt: "desc" },
           take,
@@ -364,6 +371,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
             pricePerUnitAmd: true,
             unit: true,
             marz: marzSelect,
+            product: { select: { nameKey: true } },
           },
           orderBy: { createdAt: "desc" },
           take,
@@ -400,6 +408,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
           toHit(`/supply/${r.id}`, {
             id: r.id,
             title: r.title,
+            productNameKey: r.product.nameKey,
             description: r.description,
             imageUrls: r.imageUrls,
             priceAmd: r.priceAmd,
@@ -417,6 +426,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
         toHit(`/demand/${r.id}`, {
           id: r.id,
           title: r.title,
+          productNameKey: r.product.nameKey,
           description: r.description,
           imageUrls: r.imageUrls,
           priceAmd: r.priceMinAmd,
@@ -433,6 +443,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
         toHit(`/forward/${r.id}`, {
           id: r.id,
           title: r.title,
+          productNameKey: r.product.nameKey,
           description: r.description,
           imageUrls: r.imageUrls,
           priceAmd: r.priceAmd,
@@ -519,6 +530,7 @@ export async function runSiteSearch(rawQ: string): Promise<{
         toHit(`/group-buy#${r.id}`, {
           id: r.id,
           title: r.title,
+          productNameKey: r.product.nameKey,
           description: r.description,
           imageUrls: r.imageUrls,
           priceAmd: r.pricePerUnitAmd,

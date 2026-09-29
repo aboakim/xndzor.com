@@ -1,10 +1,17 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ListingThumb } from "@/components/ListingThumb";
+import { tradeListingTitle, tContent } from "@/lib/content-locale";
 
 type PostCardProps = {
   href: string;
+  /** Raw listing title from DB (localized in-card). */
   title: string;
+  /** Catalog `products.*` key — enables product-name fallback for seed titles. */
+  productNameKey?: string;
   icon?: ReactNode;
   thumb?: string | null;
   /** Category pill below image (e.g. machinery type, crop). */
@@ -39,6 +46,7 @@ type PostCardProps = {
 export function PostCard({
   href,
   title,
+  productNameKey,
   icon,
   thumb,
   categoryPill,
@@ -55,6 +63,17 @@ export function PostCard({
   footMeta = [],
   urgent = false,
 }: PostCardProps) {
+  const locale = useLocale();
+  const t = useTranslations();
+  const catalogLabel = productNameKey
+    ? t(productNameKey as "products.tomato")
+    : undefined;
+  const displayTitle = tradeListingTitle(locale, title, catalogLabel);
+  const displayDescription =
+    description != null && description.trim()
+      ? tContent(locale, description)
+      : null;
+
   const chips = facts.filter(Boolean) as string[];
   const foot = footMeta.filter(Boolean) as string[];
   const factLine = chips.join(" · ");
@@ -66,7 +85,7 @@ export function PostCard({
           {thumb || icon ? (
             <ListingThumb
               src={thumb}
-              alt={title}
+              alt={displayTitle}
               className="post-card-thumb"
               fallback={icon}
               placeholderClassName="post-card-icon"
@@ -74,7 +93,7 @@ export function PostCard({
           ) : null}
           <div className="post-card-headings">
             <Link href={href} className="post-card-title">
-              {title}
+              {displayTitle}
             </Link>
             {factLine ? <p className="post-card-facts">{factLine}</p> : null}
           </div>
@@ -103,7 +122,7 @@ export function PostCard({
       <div className="listing-card-media">
         <ListingThumb
           src={thumb}
-          alt={title}
+          alt={displayTitle}
           className="listing-card-img"
           fallback={icon}
         />
@@ -135,10 +154,10 @@ export function PostCard({
           </div>
         )}
         <Link href={href} className="listing-card-title">
-          {title}
+          {displayTitle}
         </Link>
-        {description ? (
-          <p className="listing-card-desc">{description}</p>
+        {displayDescription ? (
+          <p className="listing-card-desc">{displayDescription}</p>
         ) : null}
         {chips.length > 0 ? (
           <div className="listing-meta-chips">

@@ -154,7 +154,8 @@ export default async function SupplyDetailPage({
       <TrackRecentView
         id={supply.id}
         href={`/supply/${supply.id}`}
-        title={displayTitle}
+        title={supply.title}
+        productNameKey={supply.product.nameKey}
         kind="supply"
         thumb={images[0] ?? null}
         subtitle={productLabel}

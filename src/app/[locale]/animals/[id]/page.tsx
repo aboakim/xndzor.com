@@ -302,7 +302,7 @@ export default async function AnimalDetailPage({
                   <PostCard
                     key={a.id}
                     href={`/animals/${a.id}`}
-                    title={tContent(locale, a.title)}
+                    title={a.title}
                     thumb={parseImageUrls(a.imageUrls ?? "[]")[0]}
                     icon={<ActionIcon action="animals" size={22} />}
                     categoryPill={t(`animalTypes.${a.animalType}` as "animalTypes.COW")}

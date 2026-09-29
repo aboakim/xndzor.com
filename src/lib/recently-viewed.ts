@@ -10,6 +10,8 @@ export type RecentViewItem = {
   id: string;
   href: string;
   title: string;
+  /** Catalog `products.*` key when the view was a trade listing. */
+  productNameKey?: string;
   kind: RecentViewKind;
   thumb?: string | null;
   subtitle?: string | null;

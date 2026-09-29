@@ -1,13 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { tradeListingTitle } from "@/lib/content-locale";
 import { PrefetchLink } from "@/components/PrefetchLink";
 import { readRecentViews, type RecentViewItem } from "@/lib/recently-viewed";
 
 /** Client strip of recently opened listings (localStorage). Hidden when empty. */
 export function RecentlyViewedStrip() {
   const t = useTranslations("home");
+  const tProducts = useTranslations();
+  const locale = useLocale();
   const [items, setItems] = useState<RecentViewItem[]>([]);
 
   useEffect(() => {
@@ -40,7 +43,15 @@ export function RecentlyViewedStrip() {
               )}
             </span>
             <span className="home-recent-body">
-              <strong>{item.title}</strong>
+              <strong>
+                {tradeListingTitle(
+                  locale,
+                  item.title,
+                  item.productNameKey
+                    ? tProducts(item.productNameKey as "products.tomato")
+                    : undefined,
+                )}
+              </strong>
               <em>
                 {t.has(`recentKind.${item.kind}` as "recentKind.machinery")
                   ? t(`recentKind.${item.kind}` as "recentKind.machinery")

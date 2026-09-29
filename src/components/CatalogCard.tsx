@@ -78,7 +78,7 @@ export function CatalogCard({
   return (
     <PostCard
       href={`/shop/${route}/${id}`}
-      title={tContent(locale, title)}
+      title={title}
       thumb={cover}
       icon={<ActionIcon action={route} size={28} />}
       categoryPill={t(`catalogSubtypes.${category}.${subtype}` as "catalogSubtypes.FERTILIZER.NPK")}

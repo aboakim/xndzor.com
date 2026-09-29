@@ -90,7 +90,7 @@ export function MachineryCard({
   return (
     <PostCard
       href={`/machinery/${id}`}
-      title={tContent(locale, title)}
+      title={title}
       thumb={cover}
       icon={<MachineryTypeIcon type={machineryType} size={28} />}
       categoryPill={t(`machineryTypes.${machineryType}` as "machineryTypes.TRACTOR")}

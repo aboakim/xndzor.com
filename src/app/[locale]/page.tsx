@@ -205,7 +205,7 @@ export default async function HomePage({
             priceMinAmd: true,
             priceMaxAmd: true,
             imageUrls: true,
-            product: { select: { slug: true } },
+            product: { select: { slug: true, nameKey: true } },
             marz: { select: { slug: true } },
             village: {
               select: {
@@ -262,7 +262,7 @@ export default async function HomePage({
             deadline: true,
             pricePerUnitAmd: true,
             imageUrls: true,
-            product: { select: { slug: true } },
+            product: { select: { slug: true, nameKey: true } },
             marz: { select: { slug: true } },
             joins: { where: { status: "JOINED" }, select: { qty: true } },
           },
@@ -456,6 +456,7 @@ export default async function HomePage({
                 key={`top-${s.id}`}
                 href={`/supply/${s.id}`}
                 title={s.title}
+                productNameKey={s.product.nameKey}
                 thumb={parseImageUrls(s.imageUrls ?? "[]")[0]}
                 icon={<ProductIcon slugOrKey={s.product.slug} size={28} />}
                 categoryPill={t("nav.supply")}
@@ -499,6 +500,7 @@ export default async function HomePage({
                 key={`urgent-${s.id}`}
                 href={`/supply/${s.id}`}
                 title={s.title}
+                productNameKey={s.product.nameKey}
                 thumb={parseImageUrls(s.imageUrls ?? "[]")[0]}
                 icon={<ProductIcon slugOrKey={s.product.slug} size={28} />}
                 categoryPill={t("nav.supply")}
@@ -547,6 +549,7 @@ export default async function HomePage({
                 key={s.id}
                 href={`/supply/${s.id}`}
                 title={s.title}
+                productNameKey={s.product.nameKey}
                 thumb={parseImageUrls(s.imageUrls ?? "[]")[0]}
                 icon={<ProductIcon slugOrKey={s.product.slug} size={28} />}
                 categoryPill={t("nav.supply")}
@@ -601,6 +604,7 @@ export default async function HomePage({
                 key={d.id}
                 href={`/demand/${d.id}`}
                 title={d.title}
+                productNameKey={d.product.nameKey}
                 thumb={parseImageUrls(d.imageUrls ?? "[]")[0]}
                 icon={<ProductIcon slugOrKey={d.product.slug} size={28} />}
                 categoryPill={t("nav.demand")}
@@ -643,6 +647,7 @@ export default async function HomePage({
                   key={c.id}
                   href="/group-buy"
                   title={c.title}
+                  productNameKey={c.product.nameKey}
                   thumb={parseImageUrls(c.imageUrls ?? "[]")[0]}
                   icon={<ProductIcon slugOrKey={c.product.slug} size={28} />}
                   categoryPill={t("nav.groupBuy")}
@@ -695,6 +700,7 @@ export default async function HomePage({
                     key={`supply-${s.id}`}
                     href={`/supply/${s.id}`}
                     title={s.title}
+                    productNameKey={s.product.nameKey}
                     thumb={parseImageUrls(s.imageUrls ?? "[]")[0]}
                     icon={<ProductIcon slugOrKey={s.product.slug} size={28} />}
                     categoryPill={t(s.product.nameKey as "products.tomato")}
@@ -730,6 +736,7 @@ export default async function HomePage({
                   key={`harvest-${h.id}`}
                   href={`/forward/${h.id}`}
                   title={h.title}
+                  productNameKey={h.product.nameKey}
                   thumb={parseImageUrls(h.imageUrls ?? "[]")[0]}
                   icon={<ProductIcon slugOrKey={h.product.slug} size={28} />}
                   categoryPill={t(h.product.nameKey as "products.tomato")}

@@ -11,6 +11,7 @@ import {
   type SearchSectionId,
 } from "@/lib/site-search";
 import { seoMessagesMetadata } from "@/lib/seo-metadata";
+import { tContent } from "@/lib/content-locale";
 import { formatAmd, formatPriceRange } from "@/lib/utils";
 
 export async function generateMetadata({
@@ -55,12 +56,13 @@ function hitPriceLabel(
 function hitMeta(
   hit: SearchHit,
   t: Awaited<ReturnType<typeof getTranslations>>,
+  locale: string,
 ): string {
   const parts: string[] = [];
   if (hit.marzSlug) {
     parts.push(t(`marzes.${hit.marzSlug}` as "marzes.Yerevan"));
   }
-  if (hit.snippet) parts.push(hit.snippet);
+  if (hit.snippet) parts.push(tContent(locale, hit.snippet));
   return parts.join(" · ");
 }
 
@@ -140,7 +142,8 @@ export default async function SearchPage({
                       key={hit.id}
                       href={hit.href}
                       title={hit.title}
-                      meta={hitMeta(hit, t)}
+                      productNameKey={hit.productNameKey}
+                      meta={hitMeta(hit, t, locale)}
                       value={hitPriceLabel(hit, t)}
                       thumb={hit.imageUrl}
                     />

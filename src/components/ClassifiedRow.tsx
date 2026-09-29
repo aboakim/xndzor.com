@@ -1,9 +1,16 @@
+"use client";
+
 import { Link } from "@/i18n/navigation";
 import type { ReactNode } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { tradeListingTitle } from "@/lib/content-locale";
 
 type ClassifiedRowProps = {
   href: string;
+  /** Raw listing title from DB (localized in-row). */
   title: string;
+  /** Catalog `products.*` key for trade listings. */
+  productNameKey?: string;
   meta: string;
   value?: string;
   icon?: ReactNode;
@@ -23,6 +30,7 @@ type ClassifiedRowProps = {
 export function ClassifiedRow({
   href,
   title,
+  productNameKey,
   meta,
   value,
   icon,
@@ -30,11 +38,18 @@ export function ClassifiedRow({
   place,
   badge,
 }: ClassifiedRowProps) {
+  const locale = useLocale();
+  const t = useTranslations();
+  const catalogLabel = productNameKey
+    ? t(productNameKey as "products.tomato")
+    : undefined;
+  const displayTitle = tradeListingTitle(locale, title, catalogLabel);
+
   return (
     <div className="classified-row">
       {thumb ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={thumb} alt={title} className="classified-thumb" loading="lazy" />
+        <img src={thumb} alt={displayTitle} className="classified-thumb" loading="lazy" />
       ) : icon ? (
         <span className="classified-icon" aria-hidden>
           {icon}
@@ -42,7 +57,7 @@ export function ClassifiedRow({
       ) : null}
       <span className="classified-body">
         <Link href={href} className="classified-title">
-          {title}
+          {displayTitle}
         </Link>
         <span className="classified-meta">
           <span className="classified-meta-text">{meta}</span>

@@ -95,7 +95,7 @@ export function AnimalCard({
   return (
     <PostCard
       href={`/animals/${id}`}
-      title={tContent(locale, title)}
+      title={title}
       thumb={cover}
       icon={<AnimalTypeIcon type={animalType} size={28} />}
       categoryPill={t(`animalTypes.${animalType}` as "animalTypes.COW")}
