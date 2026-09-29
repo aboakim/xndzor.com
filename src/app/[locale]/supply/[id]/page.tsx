@@ -25,6 +25,7 @@ import { SellerCard } from "@/components/SellerCard";
 import { USER_PROFILE_SELECT } from "@/lib/profile-privacy";
 import { listingPageMetadata, productJsonLd } from "@/lib/listing-seo";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { tContent, tradeListingTitle } from "@/lib/content-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -44,11 +45,14 @@ export async function generateMetadata({
       status: true,
       imageUrls: true,
       marz: { select: { slug: true } },
+      product: { select: { nameKey: true } },
     },
   });
   if (!supply || supply.status === "HIDDEN") return {};
   const t = await getTranslations({ locale });
   const region = t(`marzes.${supply.marz.slug}` as "marzes.Yerevan");
+  const productLabel = t(supply.product.nameKey as "products.tomato");
+  const displayTitle = tradeListingTitle(locale, supply.title, productLabel);
   const priceLabel =
     supply.priceAmd != null
       ? formatPriceRange(supply.priceAmd, supply.priceAmd, supply.unit, (k) =>
@@ -58,12 +62,12 @@ export async function generateMetadata({
   return listingPageMetadata({
     locale,
     path: `/supply/${id}`,
-    title: supply.title,
+    title: displayTitle,
     descriptionKey: "listing.supplyDesc",
     priceLabel,
     region,
     imageUrlsJson: supply.imageUrls,
-    body: supply.description,
+    body: tContent(locale, supply.description),
   });
 }
 
@@ -87,6 +91,10 @@ export default async function SupplyDetailPage({
     },
   });
   if (!supply || supply.status === "HIDDEN") notFound();
+
+  const productLabel = t(supply.product.nameKey as "products.tomato");
+  const displayTitle = tradeListingTitle(locale, supply.title, productLabel);
+  const displayDescription = tContent(locale, supply.description);
 
   const demands = await prisma.demand.findMany({
     where: { status: "ACTIVE", productId: supply.productId },
@@ -124,7 +132,7 @@ export default async function SupplyDetailPage({
       label: t(supply.product.nameKey as "products.tomato"),
     },
     { href: `/supply?marz=${supply.marzId}`, label: marzLabel },
-    { label: supply.title },
+    { label: displayTitle },
   ];
   const pageUrl = absoluteUrl(locale, `/supply/${supply.id}`);
 
@@ -134,8 +142,8 @@ export default async function SupplyDetailPage({
         data={[
           breadcrumbJsonLd(locale, crumbs),
           productJsonLd({
-            name: supply.title,
-            description: supply.description || supply.title,
+            name: displayTitle,
+            description: displayDescription || displayTitle,
             url: pageUrl,
             image: images[0] ?? null,
             priceAmd: supply.priceAmd,
@@ -146,10 +154,10 @@ export default async function SupplyDetailPage({
       <TrackRecentView
         id={supply.id}
         href={`/supply/${supply.id}`}
-        title={supply.title}
+        title={displayTitle}
         kind="supply"
         thumb={images[0] ?? null}
-        subtitle={t(supply.product.nameKey as "products.tomato")}
+        subtitle={productLabel}
       />
       <Breadcrumbs items={crumbs} />
 
@@ -159,7 +167,7 @@ export default async function SupplyDetailPage({
 
           <div className="detail-body">
             <h2>{t("detail.description")}</h2>
-            <p className="pre-wrap detail-desc">{supply.description}</p>
+            <p className="pre-wrap detail-desc">{displayDescription}</p>
           </div>
 
           <section className="match-section killer-flow">
@@ -173,7 +181,13 @@ export default async function SupplyDetailPage({
                   <li key={demand.id} className="match-row">
                     <div>
                       <Link href={`/demand/${demand.id}`}>
-                        <strong>{demand.title}</strong>
+                        <strong>
+                          {tradeListingTitle(
+                            locale,
+                            demand.title,
+                            t(demand.product.nameKey as "products.tomato"),
+                          )}
+                        </strong>
                       </Link>
                       <p>
                         {formatQty(demand.qtyMin, demand.qtyMax, demand.unit, (k) =>
@@ -221,7 +235,7 @@ export default async function SupplyDetailPage({
         <aside className="detail-split-aside">
           <div className="detail-offer-card">
             <p className="eyebrow">{t("pillars.supply")}</p>
-            <h1 className="detail-offer-title">{supply.title}</h1>
+            <h1 className="detail-offer-title">{displayTitle}</h1>
             <p className="detail-offer-price">{priceLabel}</p>
             <p className="detail-product">
               <ProductIcon slugOrKey={supply.product.slug} size={18} />
@@ -265,7 +279,7 @@ export default async function SupplyDetailPage({
               compact
             />
 
-            <ShareButtons title={supply.title} priceSnippet={priceLabel} />
+            <ShareButtons title={displayTitle} priceSnippet={priceLabel} />
 
             <OwnerContactActions
               ownerId={supply.userId}
@@ -274,14 +288,14 @@ export default async function SupplyDetailPage({
               waText={
                 locale === "hy"
                   ? `Բարև, հետաքրքրված եմ՝ ${supply.title}`
-                  : `Hi, interested in: ${supply.title}`
+                  : `Hi, interested in: ${displayTitle}`
               }
             />
 
             {!isOwner ? (
               <ReportListingButton
                 listingPath={`/supply/${supply.id}`}
-                listingTitle={supply.title}
+                listingTitle={displayTitle}
               />
             ) : null}
 

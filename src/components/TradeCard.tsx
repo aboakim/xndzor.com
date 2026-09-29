@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { parseImageUrls } from "@/lib/utils";
-import { tContent } from "@/lib/content-locale";
+import { tradeListingTitle } from "@/lib/content-locale";
 import { localizedPlaceName } from "@/lib/places";
 import { ProductIcon } from "@/components/AgIcons";
 import { ClassifiedRow } from "@/components/ClassifiedRow";
@@ -55,8 +55,9 @@ export function TradeCard({
   const href = kind === "demand" ? `/demand/${id}` : `/supply/${id}`;
   const cover = parseImageUrls(imageUrls || "[]")[0];
   const slug = productSlug || productNameKey.replace(/^products\./, "");
+  const catalogLabel = t(productNameKey as "products.tomato");
   const metaLine = [
-    t(productNameKey as "products.tomato"),
+    catalogLabel,
     qtyLabel,
     village ? null : marzLabel,
     meta,
@@ -67,7 +68,7 @@ export function TradeCard({
   return (
     <ClassifiedRow
       href={href}
-      title={tContent(locale, title)}
+      title={tradeListingTitle(locale, title, catalogLabel)}
       meta={metaLine}
       value={priceLabel}
       thumb={cover}

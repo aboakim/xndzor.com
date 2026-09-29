@@ -21,6 +21,7 @@ import { resolveOwnerFreeCheckout } from "@/lib/early-bird";
 import { TrackRecentView } from "@/components/TrackRecentView";
 import { listingPageMetadata, productJsonLd } from "@/lib/listing-seo";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { tContent, tradeListingTitle } from "@/lib/content-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -39,12 +40,15 @@ export async function generateMetadata({
       status: true,
       imageUrls: true,
       marz: { select: { slug: true } },
+      product: { select: { nameKey: true } },
     },
   });
   if (!crop || crop.status === "HIDDEN") return {};
   const t = await getTranslations({ locale, namespace: "seo" });
   const tRoot = await getTranslations({ locale });
   const region = tRoot(`marzes.${crop.marz.slug}` as "marzes.Yerevan");
+  const productLabel = tRoot(crop.product.nameKey as "products.tomato");
+  const displayTitle = tradeListingTitle(locale, crop.title, productLabel);
   const priceLabel =
     crop.priceAmd != null
       ? `${formatAmd(crop.priceAmd, locale)} ֏`
@@ -52,12 +56,12 @@ export async function generateMetadata({
   return listingPageMetadata({
     locale,
     path: `/forward/${id}`,
-    title: crop.title,
+    title: displayTitle,
     descriptionKey: "listing.forwardDesc",
     priceLabel,
     region,
     imageUrlsJson: crop.imageUrls,
-    body: crop.description,
+    body: tContent(locale, crop.description),
   });
 }
 
@@ -86,6 +90,10 @@ export default async function ForwardDetailPage({
     },
   });
   if (!crop || crop.status === "HIDDEN") notFound();
+
+  const productLabel = t(crop.product.nameKey as "products.tomato");
+  const displayTitle = tradeListingTitle(locale, crop.title, productLabel);
+  const displayDescription = tContent(locale, crop.description);
 
   const reserved = crop.preOffers
     .filter((i) => i.status !== "DECLINED")
@@ -124,11 +132,11 @@ export default async function ForwardDetailPage({
           breadcrumbJsonLd(locale, [
             { href: "/", label: t("nav.home") },
             { href: "/forward", label: t("forwardBoard.title") },
-            { label: crop.title },
+            { label: displayTitle },
           ]),
           productJsonLd({
-            name: crop.title,
-            description: crop.description || crop.title,
+            name: displayTitle,
+            description: displayDescription || displayTitle,
             url: absoluteUrl(locale, `/forward/${crop.id}`),
             image: images[0] ?? null,
             priceAmd: crop.priceAmd,
@@ -139,14 +147,14 @@ export default async function ForwardDetailPage({
       <TrackRecentView
         id={crop.id}
         href={`/forward/${crop.id}`}
-        title={crop.title}
+        title={displayTitle}
         kind="forward"
         thumb={images[0] ?? null}
-        subtitle={t(crop.product.nameKey as "products.tomato")}
+        subtitle={productLabel}
       />
       <p className="eyebrow">{t("actions.forward.title")}</p>
       <ListingGallery images={images} />
-      <h1>{crop.title}</h1>
+      <h1>{displayTitle}</h1>
       <p className="detail-product">{t(crop.product.nameKey as "products.tomato")}</p>
       <p className="detail-location">
         {crop.village ? (
@@ -180,9 +188,9 @@ export default async function ForwardDetailPage({
           </strong>
         </div>
       </div>
-      <p className="pre-wrap">{crop.description}</p>
+      <p className="pre-wrap">{displayDescription}</p>
       <ShareButtons
-        title={crop.title}
+        title={displayTitle}
         priceSnippet={`${formatAmd(crop.qtyExpected)} ${t(`units.${crop.unit}` as "units.kg")}`}
       />
 

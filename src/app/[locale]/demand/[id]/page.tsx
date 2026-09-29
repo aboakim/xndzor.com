@@ -19,6 +19,7 @@ import { USER_PROFILE_SELECT } from "@/lib/profile-privacy";
 import { MyListingActions } from "@/components/MyListingActions";
 import { listingPageMetadata, productJsonLd } from "@/lib/listing-seo";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { tContent, tradeListingTitle } from "@/lib/content-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -39,11 +40,14 @@ export async function generateMetadata({
       status: true,
       imageUrls: true,
       marz: { select: { slug: true } },
+      product: { select: { nameKey: true } },
     },
   });
   if (!demand || demand.status === "HIDDEN") return {};
   const t = await getTranslations({ locale });
   const region = t(`marzes.${demand.marz.slug}` as "marzes.Yerevan");
+  const productLabel = t(demand.product.nameKey as "products.tomato");
+  const displayTitle = tradeListingTitle(locale, demand.title, productLabel);
   const priceLabel =
     formatPriceRange(
       demand.priceMinAmd,
@@ -54,12 +58,12 @@ export async function generateMetadata({
   return listingPageMetadata({
     locale,
     path: `/demand/${id}`,
-    title: demand.title,
+    title: displayTitle,
     descriptionKey: "listing.demandDesc",
     priceLabel,
     region,
     imageUrlsJson: demand.imageUrls,
-    body: demand.description,
+    body: tContent(locale, demand.description),
   });
 }
 
@@ -83,6 +87,9 @@ export default async function DemandDetailPage({
     },
   });
   if (!demand || demand.status === "HIDDEN") notFound();
+  const productLabel = t(demand.product.nameKey as "products.tomato");
+  const displayTitle = tradeListingTitle(locale, demand.title, productLabel);
+  const displayDescription = tContent(locale, demand.description);
   const isOwner = session?.user?.id === demand.userId;
 
   const supplies = await prisma.supply.findMany({
@@ -113,11 +120,11 @@ export default async function DemandDetailPage({
               label: t(demand.product.nameKey as "products.tomato"),
             },
             { href: `/demand?marz=${demand.marzId}`, label: marzLabel },
-            { label: demand.title },
+            { label: displayTitle },
           ]),
           productJsonLd({
-            name: demand.title,
-            description: demand.description || demand.title,
+            name: displayTitle,
+            description: displayDescription || displayTitle,
             url: absoluteUrl(locale, `/demand/${demand.id}`),
             image: images[0] ?? null,
             priceAmd: demand.priceMaxAmd ?? demand.priceMinAmd,
@@ -134,7 +141,7 @@ export default async function DemandDetailPage({
             label: t(demand.product.nameKey as "products.tomato"),
           },
           { href: `/demand?marz=${demand.marzId}`, label: marzLabel },
-          { label: demand.title },
+          { label: displayTitle },
         ]}
       />
 
@@ -144,7 +151,7 @@ export default async function DemandDetailPage({
 
           <div className="detail-body">
             <h2>{t("detail.description")}</h2>
-            <p className="pre-wrap detail-desc">{demand.description}</p>
+            <p className="pre-wrap detail-desc">{displayDescription}</p>
           </div>
 
           <section className="match-section">
@@ -157,7 +164,13 @@ export default async function DemandDetailPage({
                   <li key={supply.id} className="match-row">
                     <div>
                       <Link href={`/supply/${supply.id}`}>
-                        <strong>{supply.title}</strong>
+                        <strong>
+                          {tradeListingTitle(
+                            locale,
+                            supply.title,
+                            t(supply.product.nameKey as "products.tomato"),
+                          )}
+                        </strong>
                       </Link>
                       <p>
                         {formatQty(supply.qtyAvailable, null, supply.unit, (k) =>
@@ -198,7 +211,7 @@ export default async function DemandDetailPage({
         <aside className="detail-split-aside">
           <div className="detail-offer-card">
             <p className="eyebrow">{t("pillars.demand")}</p>
-            <h1 className="detail-offer-title">{demand.title}</h1>
+            <h1 className="detail-offer-title">{displayTitle}</h1>
             <p className="detail-offer-price">{priceLabel}</p>
             <p className="detail-product">
               <ProductIcon slugOrKey={demand.product.slug} size={18} />

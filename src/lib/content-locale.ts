@@ -480,6 +480,22 @@ function pick(tri: Tri, locale: string): string {
   return tri.en;
 }
 
+/**
+ * Trade board listing title: seed translation when available; otherwise catalog product
+ * label in the active locale for Armenian-only user titles.
+ */
+export function tradeListingTitle(
+  locale: string,
+  title: string,
+  catalogLabel?: string,
+): string {
+  const localized = tContent(locale, title);
+  if (locale !== "hy" && localized === title.trim() && catalogLabel) {
+    return catalogLabel;
+  }
+  return localized;
+}
+
 /** Translate seeded demo text; leave user-authored content unchanged. */
 export function tContent(locale: string, text: string | null | undefined): string {
   if (!text) return "";

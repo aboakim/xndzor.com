@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { formatAmd, formatListingAge, parseImageUrls } from "@/lib/utils";
 import { localizedPlaceName } from "@/lib/places";
+import { tContent } from "@/lib/content-locale";
 
 type Place = { nameHy: string; nameEn: string; nameRu: string; slug?: string };
 
@@ -83,7 +84,7 @@ export function ListingCard({
         <p className="listing-price listing-card-price">
           {formatAmd(priceAmd)} <span>{t("listings.amd")}</span>
         </p>
-        <h3 className="listing-card-title-static">{title}</h3>
+        <h3 className="listing-card-title-static">{tContent(locale, title)}</h3>
         <p className="listing-meta listing-card-location">
           {villageLabel}, {marzLabel}
         </p>

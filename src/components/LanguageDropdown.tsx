@@ -3,14 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
+import { routing } from "@/i18n/routing";
 
-const locales = [
-  { code: "hy" },
-  { code: "ru" },
-  { code: "en" },
-] as const;
+const locales = routing.locales.map((code) => ({ code }));
 
-type LocaleCode = (typeof locales)[number]["code"];
+type LocaleCode = (typeof routing.locales)[number];
 
 export function LanguageDropdown() {
   const t = useTranslations("nav.locale");

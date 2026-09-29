@@ -1518,6 +1518,7 @@
     }
   },
   "animals": {
+    "hp": "HP",
     "kg": "kg",
     "heads": "{n} head",
     "perHead": "head",

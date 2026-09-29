@@ -54,6 +54,16 @@ export function productHyLabel(nameKey: string): string {
   return hyProductNames[key] ?? key;
 }
 
+export type ProductLocale = "hy" | "ru" | "en";
+
+/** Localized catalog product name from messages (hy / ru / en). */
+export function productLabelForLocale(locale: string, nameKey: string): string {
+  const key = nameKey.replace(/^products\./, "");
+  if (locale === "ru") return ruProductNames[key] ?? productHyLabel(nameKey);
+  if (locale === "en") return enProductNames[key] ?? productHyLabel(nameKey);
+  return productHyLabel(nameKey);
+}
+
 type ProductSearchEntry = {
   slug: string;
   labels: string[];
