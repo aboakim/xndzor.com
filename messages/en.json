@@ -2547,7 +2547,7 @@
     },
     "sideBanners": {
       "label": "Ad",
-      "size": "300×250",
+      "size": "300×600",
       "slotAriaLeft": "Advertisement banner, left",
       "slotAriaRight": "Advertisement banner, right"
     },

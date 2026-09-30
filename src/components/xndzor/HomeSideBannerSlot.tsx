@@ -1,4 +1,8 @@
-import type { HomeSideBannerConfig } from "@/lib/side-banners";
+import {
+  HOME_SIDE_BANNER_HEIGHT,
+  HOME_SIDE_BANNER_WIDTH,
+  type HomeSideBannerConfig,
+} from "@/lib/side-banners";
 import { ManagerAmSideAd } from "@/components/xndzor/ManagerAmSideAd";
 
 type Props = {
@@ -27,7 +31,14 @@ export function HomeSideBannerSlot({ side, config, label, sizeLabel, ariaLabel, 
         <ManagerAmSideAd slotId={managerSlot} />
       ) : hasImage ? (
         // eslint-disable-next-line @next/next/no-img-element -- owner-supplied ad URLs (any host)
-        <img src={config.imageUrl.trim()} alt={alt} width={300} height={250} loading="lazy" decoding="async" />
+        <img
+          src={config.imageUrl.trim()}
+          alt={alt}
+          width={HOME_SIDE_BANNER_WIDTH}
+          height={HOME_SIDE_BANNER_HEIGHT}
+          loading="lazy"
+          decoding="async"
+        />
       ) : (
         <div className="home-trust-side-placeholder" aria-hidden>
           <span className="home-trust-side-placeholder-label">{label}</span>

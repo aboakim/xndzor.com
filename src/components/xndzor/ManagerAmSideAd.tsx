@@ -1,12 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  HOME_SIDE_BANNER_HEIGHT,
+  HOME_SIDE_BANNER_WIDTH,
+} from "@/lib/side-banners";
 
 /** Same endpoint as https://manager.am/banner.js (avoids shared globals + document.write). */
 export const MANAGER_AM_BANNER_SCRIPT_URL = "https://manager.am/banner.js";
 
-const WIDTH = 300;
-const HEIGHT = 250;
+const WIDTH = HOME_SIDE_BANNER_WIDTH;
+const HEIGHT = HOME_SIDE_BANNER_HEIGHT;
 
 type Props = {
   slotId: number;

@@ -1,7 +1,10 @@
 /**
- * Homepage hero side ad slots (300×250), desktop (xl+) only.
+ * Homepage hero side ad slots (300×600), desktop (xl+) only.
  * Manager.am slots: left 1212, right 1213 (see ManagerAmSideAd).
  */
+export const HOME_SIDE_BANNER_WIDTH = 300;
+export const HOME_SIDE_BANNER_HEIGHT = 600;
+
 export type HomeSideBannerConfig = {
   /** manager.am placement id; when set, renders live ad instead of image/placeholder */
   managerAdSlot?: number;
