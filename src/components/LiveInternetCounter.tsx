@@ -6,6 +6,18 @@ import { useEffect } from "react";
 /** Dedupe React Strict Mode double-mount for the same path. */
 let lastHitPath = "";
 
+/** LiveInternet is registered for xndzor.com; production canonical is www — strip www on hit URLs. */
+function urlForLiveInternet(raw: string): string {
+  if (!raw) return raw;
+  try {
+    const u = new URL(raw);
+    if (u.hostname === "www.xndzor.com") u.hostname = "xndzor.com";
+    return u.toString();
+  } catch {
+    return raw;
+  }
+}
+
 function hitLiveInternet() {
   const screenPart =
     typeof screen === "undefined"
@@ -19,10 +31,10 @@ function hitLiveInternet() {
 
   new Image().src =
     "https://counter.yadro.ru/hit?r" +
-    escape(document.referrer) +
+    escape(urlForLiveInternet(document.referrer)) +
     screenPart +
     ";u" +
-    escape(document.URL) +
+    escape(urlForLiveInternet(document.URL)) +
     ";h" +
     escape(document.title.substring(0, 150)) +
     ";" +
