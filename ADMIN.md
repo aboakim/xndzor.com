@@ -56,8 +56,8 @@ The top of `/hy/admin` shows Production visitors, page views, and bounce for 24 
 
 | Variable | Effect |
 |----------|--------|
-| `VERCEL_ACCESS_TOKEN` | When set, visitors and page views come from the Vercel Web Analytics API (`xndzor-com`, team `aboakim`). Refresh about once a minute. |
-| unset | Rolling visitors and page views from the public-site beacon (since 6 Sep 2026). |
+| `VERCEL_ACCESS_TOKEN` | When set, visitors and page views come from the Vercel Web Analytics API (`xndzor-com`, team `aboakim`, Production only). Refresh about once a minute. |
+| unset or API error | The dashboard shows a “not connected” message and **does not** substitute the on-site beacon totals (those differ from Vercel). |
 
 Counting in Vercel started on 6 Sep 2026. Create a token at [vercel.com/account/tokens](https://vercel.com/account/tokens) and add it in Vercel → Settings → Environment Variables, then redeploy.
 

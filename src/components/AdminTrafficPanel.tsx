@@ -83,11 +83,10 @@ export function AdminTrafficPanel({
     if (traffic.source === "vercel") {
       return t("stats.liveSource", { updated });
     }
-    if (traffic.vercelTokenConfigured) {
-      return t("stats.vercelFallback", { updated });
-    }
-    return t("stats.firstPartySource", { updated });
+    return null;
   }, [traffic, locale, t]);
+
+  const showVercelTotals = traffic.source === "vercel";
 
   return (
     <section className="admin-visits" aria-labelledby="admin-visits-heading">
@@ -105,8 +104,22 @@ export function AdminTrafficPanel({
       </div>
 
       <h2 id="admin-visits-heading">{t("stats.visits")}</h2>
-      <p className="tiny muted admin-traffic-note">{t("stats.trackingSince")}</p>
-      <p className="tiny muted admin-traffic-note">{sourceNote}</p>
+      {showVercelTotals ? (
+        <>
+          <p className="tiny muted admin-traffic-note">{t("stats.trackingSince")}</p>
+          {sourceNote ? <p className="tiny muted admin-traffic-note">{sourceNote}</p> : null}
+        </>
+      ) : (
+        <div className="admin-traffic-disconnected">
+          <p className="admin-traffic-alert">{t("stats.vercelNotConnected")}</p>
+          <p className="tiny muted admin-traffic-note">{t("stats.vercelConnectHint")}</p>
+          {traffic.vercelError ? (
+            <p className="tiny muted admin-traffic-note">
+              {t("stats.vercelErrorDetail", { reason: traffic.vercelError })}
+            </p>
+          ) : null}
+        </div>
+      )}
 
       <div className="admin-traffic-grid">
         {PERIODS.map(({ key, label }) => {
@@ -116,11 +129,11 @@ export function AdminTrafficPanel({
               <span className="admin-traffic-period">{t(`stats.${label}`)}</span>
               <div className="admin-traffic-metric">
                 <span>{t("stats.visitors")}</span>
-                <b>{fmt(period.visitors)}</b>
+                <b>{showVercelTotals ? fmt(period.visitors) : "—"}</b>
               </div>
               <div className="admin-traffic-metric">
                 <span>{t("stats.pageViews")}</span>
-                <b>{fmt(period.pageViews)}</b>
+                <b>{showVercelTotals ? fmt(period.pageViews) : "—"}</b>
               </div>
             </div>
           );

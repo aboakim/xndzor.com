@@ -2227,6 +2227,22 @@
         "mailSubject": "Xndzor.com — security report",
         "mailBody": "Hello,\n\nI would like to report a security issue on Xndzor.com.\n\n[describe the issue]\n\n---\n{email}"
       }
+    },
+    "stats": {
+      "eyebrow": "Statistics",
+      "title": "Site statistics",
+      "lede": "Aggregate visits and page views — no personal data.",
+      "trackingSince": "Counting since {date} (Production)",
+      "updated": "Updated {updated}",
+      "counterActive": "Counter is active",
+      "counterStarting": "Counter is active — numbers will update as people visit",
+      "tableHeading": "Visits by period",
+      "period24h": "24 hours",
+      "period7d": "7 days",
+      "period30d": "30 days",
+      "visitors": "visitors",
+      "pageViews": "page views",
+      "privacyNote": "Only aggregate totals are shown. IP addresses, session lists, and other personal data are not displayed."
     }
   },
   "payments": {
@@ -3958,6 +3974,9 @@
       "firstPartySource": "On-site counter · updated {updated}",
       "vercelFallback": "Vercel API unavailable — showing on-site counter ({updated})",
       "liveSource": "Vercel Analytics · Production · {updated}",
+      "vercelNotConnected": "Vercel Analytics is not connected. The figures below are not from Vercel — add an API token so 24h / 7d / 30d match the Vercel Production dashboard.",
+      "vercelConnectHint": "Vercel → Project → Settings → Environment Variables → set VERCEL_ACCESS_TOKEN (read, team aboakim), optional VERCEL_TEAM_ID, then redeploy.",
+      "vercelErrorDetail": "Vercel API response: {reason}",
       "onlineUnavailable": "Live count unavailable — check DATABASE_URL / db push"
     },
     "col": {
@@ -4078,6 +4097,10 @@
     "about": {
       "title": "About — Xndzor",
       "description": "Xndzor — Armenia agricultural marketplace for farmers and buyers."
+    },
+    "stats": {
+      "title": "Site statistics — Xndzor",
+      "description": "Aggregate visits and page views for Xndzor.com (24 hours, 7 and 30 days)."
     },
     "contact": {
       "title": "Contact — Xndzor",

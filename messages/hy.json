@@ -2227,6 +2227,22 @@
         "mailSubject": "Xndzor.com — անվտանգության հաղորդագրություն",
         "mailBody": "Բարև,\n\nԵս ուզում եմ հաղորդել անվտանգության խնդրի մասին Xndzor.com-ում.\n\n[նկարագրեք խնդիրը]\n\n---\n{email}"
       }
+    },
+    "stats": {
+      "eyebrow": "Վիճակագրություն",
+      "title": "Կայքի վիճակագրություն",
+      "lede": "Ընդհանուր այցելություններ և էջադիտումներ՝ առանց անձնական տվյալների։",
+      "trackingSince": "Հաշվարկը սկսվել է {date}-ից (Production)",
+      "updated": "Թարմացվել է {updated}",
+      "counterActive": "Հաշվիչը ակտիվ է",
+      "counterStarting": "Հաշվիչը ակտիվ է — թվերը կթարմացվեն այցելություններից հետո",
+      "tableHeading": "Այցելություններ ըստ ժամանակահատվածի",
+      "period24h": "24 ժամ",
+      "period7d": "7 օր",
+      "period30d": "30 օր",
+      "visitors": "այցելուներ",
+      "pageViews": "էջադիտումներ",
+      "privacyNote": "Ցուցադրվում են միայն ընդհանուր թվեր։ IP հասցեներ, session-ների ցանկ և այլ անձնական տվյալներ չեն ցուցադրվում։"
     }
   },
   "payments": {
@@ -3957,6 +3973,9 @@
       "firstPartySource": "Կայքի հաշվարկ · թարմացվել է {updated}",
       "vercelFallback": "Vercel API-ն հասանելի չէ — ցույց ենք տալիս կայքի հաշվարկը ({updated})",
       "liveSource": "Vercel Analytics · Production · {updated}",
+      "vercelNotConnected": "Vercel Analytics-ը միացված չէ. Ստորևի թվերը Vercel-ից չեն — միացրեք API-ն, որպեսզի համընկնեն Vercel Production վահանակի 24 ժ / 7 օր / 30 օր ցուցանիշներին։",
+      "vercelConnectHint": "Vercel → Project → Settings → Environment Variables → ավելացրեք VERCEL_ACCESS_TOKEN (read, team aboakim), կամընտրելի VERCEL_TEAM_ID, ապա redeploy։",
+      "vercelErrorDetail": "Vercel API պատասխան՝ {reason}",
       "onlineUnavailable": "Կենդանի հաշվարկը անհասանելի է — ստուգեք DATABASE_URL / db push"
     },
     "col": {
@@ -4077,6 +4096,10 @@
     "about": {
       "title": "Մեր մասին — Խնձոր",
       "description": "Խնձոր՝ Հայաստանի գյուղատնտեսական շուկա ֆերմերների և գնորդների համար։"
+    },
+    "stats": {
+      "title": "Կայքի վիճակագրություն — Խնձոր",
+      "description": "Xndzor.com-ի ընդհանուր այցելություններ և էջադիտումներ (24 ժամ, 7 և 30 օր)։"
     },
     "contact": {
       "title": "Կապ — Խնձոր",

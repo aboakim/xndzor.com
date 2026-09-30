@@ -25,7 +25,7 @@ export type TrafficPeriod = {
   bounceRate: number | null;
 };
 
-export type TrafficSource = "vercel" | "first-party";
+export type TrafficSource = "vercel" | "first-party" | "disconnected";
 
 export type TrafficStats = {
   source: TrafficSource;
@@ -35,6 +35,8 @@ export type TrafficStats = {
   vercelTokenConfigured: boolean;
   /** Last time a Vercel API fetch succeeded (ISO), or null if never / no token. */
   lastVercelSuccessAt: string | null;
+  /** HTTP status, `missing-token`, `bad-shape`, etc. — never includes secrets. */
+  vercelError: string | null;
   periods: Record<TrafficPeriodKey, TrafficPeriod>;
 };
 
@@ -90,4 +92,12 @@ export function vercelTotalsAreEmpty(
   live: Record<TrafficPeriodKey, { visitors: number; pageViews: number }>,
 ): boolean {
   return PERIOD_KEYS.every((key) => live[key].visitors === 0 && live[key].pageViews === 0);
+}
+
+export function emptyTrafficPeriods(): Record<TrafficPeriodKey, TrafficPeriod> {
+  const periods = {} as Record<TrafficPeriodKey, TrafficPeriod>;
+  for (const key of PERIOD_KEYS) {
+    periods[key] = { visitors: 0, pageViews: 0, bounceRate: null };
+  }
+  return periods;
 }

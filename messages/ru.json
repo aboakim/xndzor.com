@@ -2226,6 +2226,22 @@
         "mailSubject": "Xndzor.com — сообщение о безопасности",
         "mailBody": "Здравствуйте,\n\nХочу сообщить о проблеме безопасности на Xndzor.com.\n\n[опишите проблему]\n\n---\n{email}"
       }
+    },
+    "stats": {
+      "eyebrow": "Статистика",
+      "title": "Статистика сайта",
+      "lede": "Сводные визиты и просмотры страниц — без персональных данных.",
+      "trackingSince": "Подсчёт с {date} (Production)",
+      "updated": "Обновлено {updated}",
+      "counterActive": "Счётчик активен",
+      "counterStarting": "Счётчик активен — цифры обновятся после посещений",
+      "tableHeading": "Визиты по периодам",
+      "period24h": "24 часа",
+      "period7d": "7 дней",
+      "period30d": "30 дней",
+      "visitors": "посетители",
+      "pageViews": "просмотры",
+      "privacyNote": "Показываются только суммарные цифры. IP-адреса, списки сессий и другие персональные данные не отображаются."
     }
   },
   "payments": {
@@ -3957,6 +3973,9 @@
       "firstPartySource": "Счётчик на сайте · обновлено {updated}",
       "vercelFallback": "API Vercel недоступен — показываем счётчик сайта ({updated})",
       "liveSource": "Vercel Analytics · Production · {updated}",
+      "vercelNotConnected": "Vercel Analytics не подключён. Цифры ниже не из Vercel — добавьте токен API, чтобы 24 ч / 7 д / 30 д совпадали с Production в Vercel.",
+      "vercelConnectHint": "Vercel → Project → Settings → Environment Variables → VERCEL_ACCESS_TOKEN (read, team aboakim), опционально VERCEL_TEAM_ID, затем redeploy.",
+      "vercelErrorDetail": "Ответ Vercel API: {reason}",
       "onlineUnavailable": "Онлайн-счётчик недоступен — проверьте DATABASE_URL / db push"
     },
     "col": {
@@ -4077,6 +4096,10 @@
     "about": {
       "title": "О нас — Хндзор",
       "description": "Хндзор — сельскохозяйственный рынок Армении для фермеров и покупателей."
+    },
+    "stats": {
+      "title": "Статистика сайта — Хндзор",
+      "description": "Сводные визиты и просмотры Xndzor.com (24 часа, 7 и 30 дней)."
     },
     "contact": {
       "title": "Контакты — Хндзор",

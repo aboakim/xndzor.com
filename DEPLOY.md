@@ -23,7 +23,7 @@ In [Vercel → Project → Settings → Environment Variables](https://vercel.co
 | `AUTH_URL` | same as `NEXTAUTH_URL` |
 | `NEXTAUTH_SECRET` / `AUTH_SECRET` | long random secret |
 | `ADMIN_EMAIL` | your admin email |
-| `VERCEL_ACCESS_TOKEN` | optional. Live Production visitors and page views on `/hy/admin` from the Web Analytics API. Without it (or if the API fails), the dashboard shows rolling totals from the site beacon since 6 Sep 2026. Create a token at [vercel.com/account/tokens](https://vercel.com/account/tokens) for team `aboakim`. |
+| `VERCEL_ACCESS_TOKEN` | Recommended. Live Production visitors and page views on `/hy/admin` from the Web Analytics API (24h / 7d / 30d). Without it (or if the API fails), the admin traffic cards stay empty with a connect prompt — not the on-site beacon. Create a token at [vercel.com/account/tokens](https://vercel.com/account/tokens) for team `aboakim` (read scope). Optional: `VERCEL_TEAM_ID`. |
 
 Redeploy after saving env vars. Build runs `prisma db push` when `DATABASE_URL` is Postgres.
 
