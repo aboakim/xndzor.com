@@ -2545,6 +2545,12 @@
         }
       }
     },
+    "sideBanners": {
+      "label": "Ad",
+      "size": "300×250",
+      "slotAriaLeft": "Advertisement banner, left",
+      "slotAriaRight": "Advertisement banner, right"
+    },
     "welcomeTrust": {
       "badge": "Armenian farm marketplace",
       "headline": "Sell and buy harvest easily",

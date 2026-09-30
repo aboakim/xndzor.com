@@ -28,6 +28,7 @@ const securityHeaders = [
       "base-uri 'self'",
       "form-action 'self' https://checkout.stripe.com https://*.stripe.com",
       "object-src 'none'",
+      "frame-src 'self' https://manager.am",
     ].join("; "),
   },
   ...(isProd

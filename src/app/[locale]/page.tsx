@@ -50,10 +50,10 @@ const HeroPromoSlider = nextDynamic(
   { loading: () => <div className="skeleton home-promo-skel" aria-hidden /> },
 );
 
-const WelcomeTrustBanner = nextDynamic(
+const HomeTrustBannerWithSideAds = nextDynamic(
   () =>
-    import("@/components/xndzor/WelcomeTrustBanner").then((m) => ({
-      default: m.WelcomeTrustBanner,
+    import("@/components/xndzor/HomeTrustBannerWithSideAds").then((m) => ({
+      default: m.HomeTrustBannerWithSideAds,
     })),
   { loading: () => <HomeStripSkeleton /> },
 );
@@ -435,7 +435,7 @@ export default async function HomePage({
       </Reveal>
 
       <Reveal as="section" className="section home-trust-banner" delayMs={40}>
-        <WelcomeTrustBanner />
+        <HomeTrustBannerWithSideAds />
       </Reveal>
 
       <XndzorHero greeting={heroGreeting} />
