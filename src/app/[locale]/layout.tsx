@@ -20,6 +20,7 @@ import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 import { PwaServiceWorkerRegister } from "@/components/PwaServiceWorkerRegister";
 import { SiteJsonLd } from "@/components/SiteJsonLd";
 import { PageViewBeacon } from "@/components/PageViewBeacon";
+import { LiveInternetCounter } from "@/components/LiveInternetCounter";
 import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 
 const displayHy = Noto_Serif_Armenian({
@@ -92,6 +93,7 @@ export default async function LocaleLayout({
           </Providers>
         </NextIntlClientProvider>
         <PageViewBeacon />
+        <LiveInternetCounter />
         <Analytics />
         <SpeedInsights />
       </body>
