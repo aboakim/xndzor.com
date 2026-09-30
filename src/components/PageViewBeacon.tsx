@@ -5,21 +5,31 @@ import { useEffect } from "react";
 
 const SID_KEY = "xz_sid";
 let lastSentPath = "";
+let memorySid = "";
 
 function sessionId(): string {
+  const valid =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
   try {
     const existing = localStorage.getItem(SID_KEY);
-    if (
-      existing &&
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(existing)
-    ) {
-      return existing;
-    }
+    if (existing && valid.test(existing)) return existing;
     const id = crypto.randomUUID();
     localStorage.setItem(SID_KEY, id);
     return id;
   } catch {
-    return "";
+    // localStorage blocked — try sessionStorage, then an in-tab id.
+  }
+
+  try {
+    const existing = sessionStorage.getItem(SID_KEY);
+    if (existing && valid.test(existing)) return existing;
+    const id = crypto.randomUUID();
+    sessionStorage.setItem(SID_KEY, id);
+    return id;
+  } catch {
+    if (!memorySid) memorySid = crypto.randomUUID();
+    return memorySid;
   }
 }
 

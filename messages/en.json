@@ -3948,10 +3948,11 @@
       "pageViews": "page views",
       "onlineNow": "On the site now",
       "bounce": "bounce",
-      "bounceAsOf": "27 September",
-      "trackingSince": "Counting started on 6 September",
-      "snapshotSource": "Vercel figures as of 27 September, plus visits since then",
-      "liveSource": "Vercel Analytics · Production"
+      "trackingSince": "Counting since 6 September (Production)",
+      "firstPartySource": "On-site counter · updated {updated}",
+      "vercelFallback": "Vercel API unavailable — showing on-site counter ({updated})",
+      "liveSource": "Vercel Analytics · Production · {updated}",
+      "onlineUnavailable": "Live count unavailable — check DATABASE_URL / db push"
     },
     "col": {
       "name": "Name",

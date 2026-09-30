@@ -57,9 +57,9 @@ The top of `/hy/admin` shows Production visitors, page views, and bounce for 24 
 | Variable | Effect |
 |----------|--------|
 | `VERCEL_ACCESS_TOKEN` | When set, visitors and page views come from the Vercel Web Analytics API (`xndzor-com`, team `aboakim`). Refresh about once a minute. |
-| unset | Shows the Vercel dashboard snapshot from 27 Sep 2026, plus page views and visitors the site has counted since then. |
+| unset | Rolling visitors and page views from the public-site beacon (since 6 Sep 2026). |
 
-Counting in Vercel started on 6 Sep 2026. Bounce rate is the 27 Sep dashboard figure — the Web Analytics API does not return it. Create a token at [vercel.com/account/tokens](https://vercel.com/account/tokens) and add it in Vercel → Settings → Environment Variables, then redeploy.
+Counting in Vercel started on 6 Sep 2026. Create a token at [vercel.com/account/tokens](https://vercel.com/account/tokens) and add it in Vercel → Settings → Environment Variables, then redeploy.
 
 Public pages send a heartbeat every 25 seconds. Admin pages are not counted.
 

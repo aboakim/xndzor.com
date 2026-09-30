@@ -30,6 +30,15 @@ export async function touchSession(sessionId: string, now = new Date()): Promise
   }
 }
 
+export async function presenceStorageReady(): Promise<boolean> {
+  try {
+    await prisma.siteSession.findFirst({ select: { id: true } });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function countOnline(now = Date.now()): Promise<number> {
   try {
     return await prisma.siteSession.count({

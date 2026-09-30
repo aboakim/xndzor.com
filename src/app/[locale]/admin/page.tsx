@@ -2,7 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { AdminTrafficPanel } from "@/components/AdminTrafficPanel";
 import { getAdminDashboardStats } from "@/lib/admin";
-import { countOnline } from "@/lib/presence";
+import { countOnline, presenceStorageReady } from "@/lib/presence";
 import { getTrafficStats } from "@/lib/traffic";
 import { formatAmd } from "@/lib/utils";
 import {
@@ -22,10 +22,11 @@ export default async function AdminDashboardPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("admin");
-  const [stats, traffic, online] = await Promise.all([
+  const [stats, traffic, online, trackingReady] = await Promise.all([
     getAdminDashboardStats(),
     getTrafficStats(),
     countOnline(),
+    presenceStorageReady(),
   ]);
 
   const cards: { label: string; value: string | number; href: string; hint?: string }[] = [
@@ -91,7 +92,11 @@ export default async function AdminDashboardPage({
     <>
       <p className="lede">{t("dashboardLede")}</p>
 
-      <AdminTrafficPanel initial={traffic} initialOnline={online} />
+      <AdminTrafficPanel
+        initial={traffic}
+        initialOnline={online}
+        initialTrackingReady={trackingReady}
+      />
 
       <div className="admin-stat-grid">
         {cards.map((card) => (

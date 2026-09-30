@@ -3947,10 +3947,11 @@
       "pageViews": "просмотры",
       "onlineNow": "Сейчас на сайте",
       "bounce": "отказы",
-      "bounceAsOf": "27 сентября",
-      "trackingSince": "Подсчёт начался 6 сентября",
-      "snapshotSource": "Цифры Vercel на 27 сентября плюс визиты после этой даты",
-      "liveSource": "Vercel Analytics · Production"
+      "trackingSince": "Подсчёт с 6 сентября (Production)",
+      "firstPartySource": "Счётчик на сайте · обновлено {updated}",
+      "vercelFallback": "API Vercel недоступен — показываем счётчик сайта ({updated})",
+      "liveSource": "Vercel Analytics · Production · {updated}",
+      "onlineUnavailable": "Онлайн-счётчик недоступен — проверьте DATABASE_URL / db push"
     },
     "col": {
       "name": "Имя",

@@ -944,8 +944,7 @@ model VillageGoalJoin {
 
 /// Hourly public page views recorded by the site beacon.
 /// The admin dashboard prefers the Vercel Web Analytics API when
-/// VERCEL_ACCESS_TOKEN is set. These rows are added on top of the
-/// 27 Sep 2026 Vercel snapshot until that token is available.
+/// VERCEL_ACCESS_TOKEN is set; otherwise rolling totals come from here.
 model PageView {
   id    String   @id @default(cuid())
   hour  DateTime @unique

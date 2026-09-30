@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { TrafficPeriodKey, TrafficStats } from "@/lib/traffic-stats";
 
 const PERIODS: { key: TrafficPeriodKey; label: "visits24h" | "visits7d" | "visits30d" }[] = [
@@ -10,17 +10,29 @@ const PERIODS: { key: TrafficPeriodKey; label: "visits24h" | "visits7d" | "visit
   { key: "d30", label: "visits30d" },
 ];
 
+function formatFetchedAt(iso: string, locale: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+  return new Intl.DateTimeFormat(locale, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
+
 export function AdminTrafficPanel({
   initial,
   initialOnline,
+  initialTrackingReady,
 }: {
   initial: TrafficStats;
   initialOnline: number;
+  initialTrackingReady: boolean;
 }) {
   const t = useTranslations("admin");
   const locale = useLocale();
   const [traffic, setTraffic] = useState(initial);
   const [online, setOnline] = useState(initialOnline);
+  const [trackingReady, setTrackingReady] = useState(initialTrackingReady);
 
   useEffect(() => {
     let stop = false;
@@ -28,8 +40,10 @@ export function AdminTrafficPanel({
       try {
         const res = await fetch("/api/admin/online", { cache: "no-store" });
         if (!res.ok) return;
-        const data = (await res.json()) as { online?: unknown };
-        if (!stop && typeof data.online === "number") setOnline(data.online);
+        const data = (await res.json()) as { online?: unknown; trackingReady?: unknown };
+        if (stop) return;
+        if (typeof data.online === "number") setOnline(data.online);
+        if (typeof data.trackingReady === "boolean") setTrackingReady(data.trackingReady);
       } catch {
         // Keep the last number on screen.
       }
@@ -64,6 +78,17 @@ export function AdminTrafficPanel({
 
   const fmt = (value: number) => value.toLocaleString(locale);
 
+  const sourceNote = useMemo(() => {
+    const updated = formatFetchedAt(traffic.fetchedAt, locale);
+    if (traffic.source === "vercel") {
+      return t("stats.liveSource", { updated });
+    }
+    if (traffic.vercelTokenConfigured) {
+      return t("stats.vercelFallback", { updated });
+    }
+    return t("stats.firstPartySource", { updated });
+  }, [traffic, locale, t]);
+
   return (
     <section className="admin-visits" aria-labelledby="admin-visits-heading">
       <div className="admin-stat-card admin-online-card">
@@ -74,13 +99,14 @@ export function AdminTrafficPanel({
           </span>
         </div>
         <strong aria-live="polite">{fmt(online)}</strong>
+        {!trackingReady ? (
+          <p className="tiny muted admin-traffic-note">{t("stats.onlineUnavailable")}</p>
+        ) : null}
       </div>
 
       <h2 id="admin-visits-heading">{t("stats.visits")}</h2>
       <p className="tiny muted admin-traffic-note">{t("stats.trackingSince")}</p>
-      <p className="tiny muted admin-traffic-note">
-        {traffic.source === "vercel" ? t("stats.liveSource") : t("stats.snapshotSource")}
-      </p>
+      <p className="tiny muted admin-traffic-note">{sourceNote}</p>
 
       <div className="admin-traffic-grid">
         {PERIODS.map(({ key, label }) => {
@@ -96,11 +122,6 @@ export function AdminTrafficPanel({
                 <span>{t("stats.pageViews")}</span>
                 <b>{fmt(period.pageViews)}</b>
               </div>
-              {period.bounceRate != null ? (
-                <span className="tiny muted">
-                  {t("stats.bounce")} {period.bounceRate}% · {t("stats.bounceAsOf")}
-                </span>
-              ) : null}
             </div>
           );
         })}

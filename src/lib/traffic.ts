@@ -1,9 +1,8 @@
 import { listPageViewHours } from "./pageviews";
 import { countSessionsSince } from "./presence";
 import {
-  SNAPSHOT_AT_MS,
   TRAFFIC_WINDOWS,
-  composeSnapshotPeriods,
+  composeFirstPartyPeriods,
   periodsFromVercel,
   vercelTotalsAreEmpty,
   type TrafficPeriodKey,
@@ -16,13 +15,17 @@ const CACHE_MS = 60_000;
 type LiveCounts = Record<TrafficPeriodKey, { visitors: number; pageViews: number }>;
 
 let cache: { at: number; value: TrafficStats } | null = null;
+let lastVercelSuccessAt: number | null = null;
 
 function vercelToken(): string {
   return process.env.VERCEL_ACCESS_TOKEN?.trim() ?? "";
 }
 
 function analyticsQuery(since: Date, until: Date): URLSearchParams {
-  const projectId = process.env.VERCEL_PROJECT_ID?.trim() || "xndzor-com";
+  const projectId =
+    process.env.VERCEL_PROJECT_ID?.trim() ||
+    process.env.VERCEL_ANALYTICS_PROJECT_ID?.trim() ||
+    "xndzor-com";
   const params = new URLSearchParams({
     projectId,
     since: since.toISOString(),
@@ -70,6 +73,22 @@ async function fetchVercelWindow(
   return parsed;
 }
 
+function statsEnvelope(
+  now: number,
+  tokenConfigured: boolean,
+  source: TrafficStats["source"],
+  periods: TrafficStats["periods"],
+): TrafficStats {
+  return {
+    source,
+    fetchedAt: new Date(now).toISOString(),
+    vercelTokenConfigured: tokenConfigured,
+    lastVercelSuccessAt:
+      lastVercelSuccessAt != null ? new Date(lastVercelSuccessAt).toISOString() : null,
+    periods,
+  };
+}
+
 async function fetchVercelTraffic(now: number, token: string): Promise<TrafficStats | null> {
   try {
     const rows = await Promise.all(
@@ -77,7 +96,8 @@ async function fetchVercelTraffic(now: number, token: string): Promise<TrafficSt
     );
     const live = Object.fromEntries(rows) as LiveCounts;
     if (vercelTotalsAreEmpty(live)) return null;
-    return { source: "vercel", periods: periodsFromVercel(now, live) };
+    lastVercelSuccessAt = now;
+    return statsEnvelope(now, true, "vercel", periodsFromVercel(live));
   } catch (error) {
     const status = error instanceof Error ? error.message : "error";
     console.warn("[traffic] Vercel Web Analytics unavailable", status);
@@ -85,31 +105,30 @@ async function fetchVercelTraffic(now: number, token: string): Promise<TrafficSt
   }
 }
 
-async function snapshotTraffic(now: number): Promise<TrafficStats> {
-  const [pageViewHours, sinceSnapshot, h24, d7, d30] = await Promise.all([
+async function firstPartyTraffic(now: number, tokenConfigured: boolean): Promise<TrafficStats> {
+  const [pageViewHours, h24, d7, d30] = await Promise.all([
     listPageViewHours(now - TRAFFIC_WINDOWS.d30 - 60 * 60 * 1000),
-    countSessionsSince(SNAPSHOT_AT_MS),
     countSessionsSince(now - TRAFFIC_WINDOWS.h24),
     countSessionsSince(now - TRAFFIC_WINDOWS.d7),
     countSessionsSince(now - TRAFFIC_WINDOWS.d30),
   ]);
 
-  return {
-    source: "snapshot",
-    periods: composeSnapshotPeriods(now, pageViewHours, {
-      sinceSnapshot,
-      inWindow: { h24, d7, d30 },
-    }),
-  };
+  return statsEnvelope(
+    now,
+    tokenConfigured,
+    "first-party",
+    composeFirstPartyPeriods(now, pageViewHours, { h24, d7, d30 }),
+  );
 }
 
-/** Live Vercel Production totals, or the 27 Sep 2026 snapshot plus beacon growth. */
+/** Live Vercel Production totals when the token works; otherwise first-party beacon totals. */
 export async function getTrafficStats(now = Date.now()): Promise<TrafficStats> {
   if (cache && now - cache.at < CACHE_MS) return cache.value;
 
   const token = vercelToken();
+  const tokenConfigured = Boolean(token);
   const live = token ? await fetchVercelTraffic(now, token) : null;
-  const value = live ?? (await snapshotTraffic(now));
+  const value = live ?? (await firstPartyTraffic(now, tokenConfigured));
   cache = { at: now, value };
   return value;
 }

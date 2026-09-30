@@ -3947,11 +3947,11 @@
       "visitors": "այցելուներ",
       "pageViews": "էջադիտումներ",
       "onlineNow": "Հիմա կայքում",
-      "bounce": "ցատկում",
-      "bounceAsOf": "27 սեպտեմբեր",
-      "trackingSince": "Հաշվարկը սկսվել է 6 սեպտեմբերից",
-      "snapshotSource": "Vercel-ի թվերը 27 սեպտեմբերի դրությամբ, գումարած նոր այցերը",
-      "liveSource": "Vercel Analytics · Production"
+      "trackingSince": "Հաշվարկը սկսվել է 6 սեպտեմբերից (Production)",
+      "firstPartySource": "Կայքի հաշվարկ · թարմացվել է {updated}",
+      "vercelFallback": "Vercel API-ն հասանելի չէ — ցույց ենք տալիս կայքի հաշվարկը ({updated})",
+      "liveSource": "Vercel Analytics · Production · {updated}",
+      "onlineUnavailable": "Կենդանի հաշվարկը անհասանելի է — ստուգեք DATABASE_URL / db push"
     },
     "col": {
       "name": "Անուն",

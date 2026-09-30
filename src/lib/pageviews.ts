@@ -1,10 +1,10 @@
 import { prisma } from "./prisma";
 
 /**
- * First-party pageview counter.
+ * First-party pageview counter (public locale pages only).
  * `@vercel/analytics` still sends hits to Vercel. The admin dashboard reads
- * those totals from the Web Analytics API when `VERCEL_ACCESS_TOKEN` is set.
- * Until then, hourly rows here are added on top of the 27 Sep 2026 snapshot.
+ * Production totals from the Web Analytics API when `VERCEL_ACCESS_TOKEN` is set;
+ * otherwise it shows rolling counts from these hourly rows and session heartbeats.
  */
 
 export function pageViewHour(now = new Date()): Date {
