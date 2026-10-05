@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Link } from "@/i18n/navigation";
 import { OwnerContactActions } from "@/components/OwnerContactActions";
 import { ShareButtons } from "@/components/ShareButtons";
+import { ListingCreatedShareBannerSlot } from "@/components/ListingCreatedShareBannerSlot";
 import { OfferButton } from "@/components/OfferButton";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ListingGallery } from "@/components/ListingGallery";
@@ -144,6 +145,7 @@ export default async function DemandDetailPage({
           { label: displayTitle },
         ]}
       />
+      <ListingCreatedShareBannerSlot title={displayTitle} priceSnippet={priceLabel} />
 
       <div className="detail-split">
         <div className="detail-split-main">

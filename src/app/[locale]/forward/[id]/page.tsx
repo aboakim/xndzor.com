@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
 import { OwnerContactActions } from "@/components/OwnerContactActions";
 import { ShareButtons } from "@/components/ShareButtons";
+import { ListingCreatedShareBannerSlot } from "@/components/ListingCreatedShareBannerSlot";
 import { ForwardInterestForm } from "@/components/ForwardInterestForm";
 import { JsonLd } from "@/components/JsonLd";
 import { formatAmd, parseImageUrls } from "@/lib/utils";
@@ -152,6 +153,10 @@ export default async function ForwardDetailPage({
         kind="forward"
         thumb={images[0] ?? null}
         subtitle={productLabel}
+      />
+      <ListingCreatedShareBannerSlot
+        title={displayTitle}
+        priceSnippet={`${formatAmd(crop.qtyExpected)} ${t(`units.${crop.unit}` as "units.kg")}`}
       />
       <p className="eyebrow">{t("actions.forward.title")}</p>
       <ListingGallery images={images} />

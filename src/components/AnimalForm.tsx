@@ -15,6 +15,7 @@ import { ImageUploadField, uploadImagesDetailed } from "@/components/ImageUpload
 import { AnimalTypeIcon } from "@/components/AgIcons";
 import {
   formatUploadBatchError,
+  pathAfterListingSave,
   resolveListingError,
 } from "@/lib/listing-create";
 
@@ -166,7 +167,9 @@ export function AnimalForm({
         return;
       }
       const created = await res.json();
-      router.push(`/animals/${isEdit ? listingId : created.id}`);
+      router.push(
+        pathAfterListingSave("/animals", isEdit ? listingId! : created.id, isEdit),
+      );
       router.refresh();
     } catch (err) {
       try {

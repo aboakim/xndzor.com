@@ -3823,7 +3823,12 @@
     "x": "X",
     "copy": "Copy link",
     "copied": "Link copied",
-    "tip": "Share this listing with buyers and neighbors."
+    "tip": "Share this listing with buyers and neighbors.",
+    "createdPrompt": {
+      "title": "Share your listing",
+      "message": "We recommend sharing this listing on social networks so more people can see it.",
+      "dismiss": "Dismiss"
+    }
   },
   "my": {
     "markActive": "Mark active",

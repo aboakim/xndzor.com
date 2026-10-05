@@ -12,6 +12,7 @@ import { ImageUploadField, uploadImagesDetailed } from "@/components/ImageUpload
 import { getFeaturedProducts, type CatalogProduct } from "@/lib/products";
 import {
   formatUploadBatchError,
+  pathAfterListingSave,
   resolveListingError,
   type ListingField,
 } from "@/lib/listing-create";
@@ -197,7 +198,9 @@ export function ForwardCropForm({
         return;
       }
       const crop = await res.json();
-      router.push(`/forward/${isEdit ? listingId : crop.id}`);
+      router.push(
+        pathAfterListingSave("/forward", isEdit ? listingId! : crop.id, isEdit),
+      );
       router.refresh();
     } catch (err) {
       setError(

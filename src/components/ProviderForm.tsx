@@ -7,6 +7,7 @@ import { MARZES } from "@/lib/locations";
 import { JOB_TYPES } from "@/lib/matching";
 import { JobTypeIcon } from "@/components/AgIcons";
 import { toDateInput } from "@/lib/date-input";
+import { pathAfterListingSave } from "@/lib/listing-create";
 
 export function ProviderForm({
   defaultMarzId,
@@ -71,7 +72,7 @@ export function ProviderForm({
       return;
     }
     const p = await res.json();
-    router.push(`/providers/${isEdit ? listingId : p.id}`);
+    router.push(pathAfterListingSave("/providers", isEdit ? listingId! : p.id, isEdit));
     router.refresh();
   }
 

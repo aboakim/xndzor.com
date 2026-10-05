@@ -15,6 +15,7 @@ import {
 import { ImageUploadField, uploadImagesDetailed } from "@/components/ImageUploadField";
 import {
   formatUploadBatchError,
+  pathAfterListingSave,
   resolveListingError,
 } from "@/lib/listing-create";
 import { toDateInput } from "@/lib/date-input";
@@ -216,7 +217,13 @@ export function CatalogForm({
         return;
       }
       const created = await res.json();
-      router.push(`/shop/${route}/${isEdit ? listingId : created.id}`);
+      router.push(
+        pathAfterListingSave(
+          `/shop/${route}`,
+          isEdit ? listingId! : created.id,
+          isEdit,
+        ),
+      );
       router.refresh();
     } catch (err) {
       try {

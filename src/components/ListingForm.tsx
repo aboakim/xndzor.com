@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { MARZES, localizedPlaceName, type LocationVillage } from "@/lib/places";
 import { ImageUploadField, uploadImages } from "@/components/ImageUploadField";
+import { pathAfterListingCreate } from "@/lib/listing-create";
 
 type Category = { id: string; slug: string; nameKey: string };
 
@@ -97,7 +98,7 @@ export function ListingForm({
         throw new Error(data.error || t("images.uploadError"));
       }
       const listing = await res.json();
-      router.push(`/listings/${listing.id}`);
+      router.push(pathAfterListingCreate("/listings", listing.id));
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.registerError"));

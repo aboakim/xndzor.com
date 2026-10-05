@@ -2,17 +2,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { listingSharePayload, listingShareUrlFromLocation } from "@/lib/listing-share";
 
 export type ShareButtonsProps = {
   title: string;
   /** Optional price / budget line included in share text */
   priceSnippet?: string | null;
 };
-
-function sharePayload(title: string, url: string, priceSnippet?: string | null) {
-  const headline = priceSnippet ? `${title} — ${priceSnippet}` : title;
-  return { url, headline, text: `${headline}\n${url}` };
-}
 
 function IconFacebook({ size = 20 }: { size?: number }) {
   return (
@@ -88,37 +84,46 @@ export function ShareButtons({ title, priceSnippet }: ShareButtonsProps) {
     window.open(href, "_blank", "noopener,noreferrer");
   }, []);
 
+  const shareUrl = useCallback(
+    () => listingShareUrlFromLocation(window.location.href),
+    [],
+  );
+
   const onFacebook = useCallback(() => {
-    const { url } = sharePayload(title, window.location.href, priceSnippet);
+    const url = shareUrl();
     openShare(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`);
-  }, [openShare, priceSnippet, title]);
+  }, [openShare, shareUrl]);
 
   const onWhatsApp = useCallback(() => {
-    const { text } = sharePayload(title, window.location.href, priceSnippet);
+    const url = shareUrl();
+    const { text } = listingSharePayload(title, url, priceSnippet);
     openShare(`https://wa.me/?text=${encodeURIComponent(text)}`);
-  }, [openShare, priceSnippet, title]);
+  }, [openShare, priceSnippet, shareUrl, title]);
 
   const onTelegram = useCallback(() => {
-    const { url, headline } = sharePayload(title, window.location.href, priceSnippet);
+    const url = shareUrl();
+    const { headline } = listingSharePayload(title, url, priceSnippet);
     openShare(
       `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(headline)}`,
     );
-  }, [openShare, priceSnippet, title]);
+  }, [openShare, priceSnippet, shareUrl, title]);
 
   const onViber = useCallback(() => {
-    const { text } = sharePayload(title, window.location.href, priceSnippet);
+    const url = shareUrl();
+    const { text } = listingSharePayload(title, url, priceSnippet);
     window.location.href = `viber://forward?text=${encodeURIComponent(text)}`;
-  }, [priceSnippet, title]);
+  }, [priceSnippet, shareUrl, title]);
 
   const onX = useCallback(() => {
-    const { url, headline } = sharePayload(title, window.location.href, priceSnippet);
+    const url = shareUrl();
+    const { headline } = listingSharePayload(title, url, priceSnippet);
     openShare(
       `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(headline)}`,
     );
-  }, [openShare, priceSnippet, title]);
+  }, [openShare, priceSnippet, shareUrl, title]);
 
   const onCopy = useCallback(async () => {
-    const url = window.location.href;
+    const url = shareUrl();
     try {
       await navigator.clipboard.writeText(url);
     } catch {
@@ -131,16 +136,17 @@ export function ShareButtons({ title, priceSnippet }: ShareButtonsProps) {
     }
     setCopied(true);
     window.setTimeout(() => setCopied(false), 2200);
-  }, []);
+  }, [shareUrl]);
 
   const onNative = useCallback(async () => {
-    const { url, headline, text } = sharePayload(title, window.location.href, priceSnippet);
+    const url = shareUrl();
+    const { headline, text } = listingSharePayload(title, url, priceSnippet);
     try {
       await navigator.share({ title: headline, text, url });
     } catch {
       /* user cancelled */
     }
-  }, [priceSnippet, title]);
+  }, [priceSnippet, shareUrl, title]);
 
   return (
     <div className="share-buttons">

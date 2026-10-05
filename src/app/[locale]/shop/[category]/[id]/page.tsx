@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Link } from "@/i18n/navigation";
 import { OwnerContactActions } from "@/components/OwnerContactActions";
 import { ShareButtons } from "@/components/ShareButtons";
+import { ListingCreatedShareBannerSlot } from "@/components/ListingCreatedShareBannerSlot";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ListingGallery } from "@/components/ListingGallery";
 import { JsonLd } from "@/components/JsonLd";
@@ -189,6 +190,7 @@ export default async function CatalogDetailPage({
           { label: title },
         ]}
       />
+      <ListingCreatedShareBannerSlot title={title} priceSnippet={priceLabel} />
 
       <ListingGallery images={images} />
 

@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
 import { OwnerContactActions } from "@/components/OwnerContactActions";
 import { ShareButtons } from "@/components/ShareButtons";
+import { ListingCreatedShareBannerSlot } from "@/components/ListingCreatedShareBannerSlot";
 import { JsonLd } from "@/components/JsonLd";
 import { findProvidersForJob, parseJobTypesJson } from "@/lib/matching";
 import { formatAmd, parseImageUrls } from "@/lib/utils";
@@ -109,6 +110,12 @@ export default async function JobDetailPage({
         ]}
       />
       <p className="eyebrow">{t("actions.orderJob.title")}</p>
+      <ListingCreatedShareBannerSlot
+        title={job.title}
+        priceSnippet={
+          job.budgetAmd != null ? `${formatAmd(job.budgetAmd)} ֏` : t("detail.priceOpen")
+        }
+      />
       <h1>{job.title}</h1>
       <p className="detail-product">
         <JobTypeIcon type={job.jobType} size={18} />

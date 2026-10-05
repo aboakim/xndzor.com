@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
 import { OwnerContactActions } from "@/components/OwnerContactActions";
 import { ShareButtons } from "@/components/ShareButtons";
+import { ListingCreatedShareBannerSlot } from "@/components/ListingCreatedShareBannerSlot";
 import { findJobsForProvider, parseJobTypesJson } from "@/lib/matching";
 import { formatAmd } from "@/lib/utils";
 import { ApplyToJobButton } from "@/components/ApplyToJobButton";
@@ -39,6 +40,14 @@ export default async function ProviderDetailPage({
   return (
     <div className="section detail-page">
       <p className="eyebrow">{t("actions.doJob.title")}</p>
+      <ListingCreatedShareBannerSlot
+        title={provider.title}
+        priceSnippet={
+          provider.rateAmd != null
+            ? `${formatAmd(provider.rateAmd)} ֏ / ${provider.rateUnit}`
+            : null
+        }
+      />
       <h1>{provider.title}</h1>
       <p className="detail-product">
         {jobTypes.map((jt) => t(`jobTypes.${jt}` as "jobTypes.HARVEST")).join(" · ")}

@@ -13,6 +13,7 @@ import {
   formatUploadBatchError,
   isVillageOptionalForMarz,
   locationReadyForSubmit,
+  pathAfterListingSave,
   resolveListingError,
   type ListingField,
 } from "@/lib/listing-create";
@@ -245,7 +246,9 @@ export function SupplyForm({
         return;
       }
       const created = await res.json();
-      router.push(`/supply/${isEdit ? listingId : created.id}`);
+      router.push(
+        pathAfterListingSave("/supply", isEdit ? listingId! : created.id, isEdit),
+      );
       router.refresh();
     } catch (err) {
       setError(

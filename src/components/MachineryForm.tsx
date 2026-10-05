@@ -14,6 +14,7 @@ import { ImageUploadField, uploadImagesDetailed } from "@/components/ImageUpload
 import { MachineryTypeIcon } from "@/components/AgIcons";
 import {
   formatUploadBatchError,
+  pathAfterListingSave,
   resolveListingError,
 } from "@/lib/listing-create";
 
@@ -207,7 +208,9 @@ export function MachineryForm({
         return;
       }
       const created = await res.json();
-      router.push(`/machinery/${isEdit ? listingId : created.id}`);
+      router.push(
+        pathAfterListingSave("/machinery", isEdit ? listingId! : created.id, isEdit),
+      );
       router.refresh();
     } catch (err) {
       try {

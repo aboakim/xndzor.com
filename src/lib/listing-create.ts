@@ -1,5 +1,22 @@
 /** Shared helpers for supply / demand / forward create flows. */
 
+import { NEW_LISTING_QUERY_PARAM } from "@/lib/listing-share";
+
+/** Detail path after a new listing is published (shows share prompt once). */
+export function pathAfterListingCreate(basePath: string, id: string): string {
+  const path = basePath.endsWith("/") ? `${basePath}${id}` : `${basePath}/${id}`;
+  return `${path}?${NEW_LISTING_QUERY_PARAM}=1`;
+}
+
+/** Detail path after create or edit save. */
+export function pathAfterListingSave(
+  basePath: string,
+  id: string,
+  isEdit: boolean,
+): string {
+  return isEdit ? `${basePath}/${id}` : pathAfterListingCreate(basePath, id);
+}
+
 export function isVillageOptionalForMarz(marzId: string): boolean {
   return marzId === "Yerevan";
 }
