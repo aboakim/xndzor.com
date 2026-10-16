@@ -10,6 +10,9 @@ export const TRACKING_SINCE_MS = Date.parse(`${TRACKING_SINCE_LABEL}T00:00:00.00
 
 const HOUR_MS = 60 * 60 * 1000;
 
+/** Max rolling window for Vercel all-time when an earlier `since` is rejected (Hobby retention ≈ 30d). */
+export const VERCEL_ALLTIME_MAX_WINDOW_MS = 30 * 24 * HOUR_MS;
+
 /** Rolling windows for 24h and 7d cards. All-time uses {@link TRACKING_SINCE_MS} via {@link periodWindowStartMs}. */
 export const TRAFFIC_WINDOWS = {
   h24: 24 * HOUR_MS,
@@ -47,6 +50,8 @@ export type TrafficStats = {
   lastVercelSuccessAt: string | null;
   /** HTTP status, `missing-token`, `bad-shape`, etc. — never includes secrets. */
   vercelError: string | null;
+  /** YYYY-MM-DD start of the all-time Vercel query (null when not from Vercel). */
+  allTimeSinceDate: string | null;
   periods: Record<TrafficPeriodKey, TrafficPeriod>;
 };
 

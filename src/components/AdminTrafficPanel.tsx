@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
-import type { TrafficPeriodKey, TrafficStats } from "@/lib/traffic-stats";
+import { TRACKING_SINCE_LABEL, type TrafficPeriodKey, type TrafficStats } from "@/lib/traffic-stats";
 
 const PERIODS: {
   key: TrafficPeriodKey;
@@ -13,6 +13,12 @@ const PERIODS: {
   { key: "d7", label: "visits7d" },
   { key: "allTime", label: "visitsAllTime", subtitle: "visitsAllTimeSince" },
 ];
+
+function formatAllTimeSince(isoDate: string, locale: string): string {
+  const date = new Date(`${isoDate}T12:00:00.000Z`);
+  if (Number.isNaN(date.getTime())) return isoDate;
+  return new Intl.DateTimeFormat(locale, { month: "long", day: "numeric" }).format(date);
+}
 
 function formatFetchedAt(iso: string, locale: string): string {
   const date = new Date(iso);
@@ -128,12 +134,20 @@ export function AdminTrafficPanel({
       <div className="admin-traffic-grid">
         {PERIODS.map(({ key, label, subtitle }) => {
           const period = traffic.periods[key];
+          const allTimeSub =
+            key === "allTime" && showVercelTotals && traffic.allTimeSinceDate
+              ? traffic.allTimeSinceDate === TRACKING_SINCE_LABEL
+                ? t(`stats.${subtitle!}`)
+                : formatAllTimeSince(traffic.allTimeSinceDate, locale)
+              : subtitle
+                ? t(`stats.${subtitle}`)
+                : null;
           return (
             <div key={key} className="admin-stat-card admin-traffic-card">
               <span className="admin-traffic-period">
                 {t(`stats.${label}`)}
-                {subtitle ? (
-                  <span className="admin-traffic-period-sub tiny muted"> · {t(`stats.${subtitle}`)}</span>
+                {allTimeSub ? (
+                  <span className="admin-traffic-period-sub tiny muted"> · {allTimeSub}</span>
                 ) : null}
               </span>
               <div className="admin-traffic-metric">
