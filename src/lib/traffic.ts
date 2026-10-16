@@ -1,16 +1,16 @@
 import { listPageViewHours } from "./pageviews";
 import { countSessionsSince, presenceStorageReady } from "./presence";
 import {
-  TRAFFIC_WINDOWS,
+  TRAFFIC_PERIOD_KEYS,
   TRACKING_SINCE_MS,
   composeFirstPartyPeriods,
   emptyTrafficPeriods,
+  periodWindowStartMs,
   periodsFromVercel,
   type TrafficPeriodKey,
   type TrafficStats,
 } from "./traffic-stats";
 
-const PERIOD_KEYS = Object.keys(TRAFFIC_WINDOWS) as TrafficPeriodKey[];
 const CACHE_MS = 60_000;
 
 type LiveCounts = Record<TrafficPeriodKey, { visitors: number; pageViews: number }>;
@@ -51,13 +51,14 @@ function readCount(body: unknown): { visitors: number; pageViews: number } | nul
   return { visitors, pageViews };
 }
 
+/** Vercel Web Analytics count API accepts arbitrary `since`/`until` (not fixed 24h/7d/30d presets). */
 async function fetchVercelWindow(
   key: TrafficPeriodKey,
   now: number,
   token: string,
 ): Promise<{ visitors: number; pageViews: number }> {
   const until = new Date(now);
-  const since = new Date(now - TRAFFIC_WINDOWS[key]);
+  const since = new Date(periodWindowStartMs(key, now));
   const params = analyticsQuery(since, until);
   const response = await fetch(
     `https://api.vercel.com/v1/query/web-analytics/visits/count?${params}`,
@@ -99,7 +100,7 @@ async function fetchVercelTraffic(
 ): Promise<{ ok: true; stats: TrafficStats } | { ok: false; error: string }> {
   try {
     const rows = await Promise.all(
-      PERIOD_KEYS.map(async (key) => [key, await fetchVercelWindow(key, now, token)] as const),
+      TRAFFIC_PERIOD_KEYS.map(async (key) => [key, await fetchVercelWindow(key, now, token)] as const),
     );
     const live = Object.fromEntries(rows) as LiveCounts;
     lastVercelSuccessAt = now;
@@ -117,9 +118,8 @@ async function fetchVercelTraffic(
 async function sessionCountsForWindows(now: number): Promise<Record<TrafficPeriodKey, number>> {
   const counts = {} as Record<TrafficPeriodKey, number>;
   await Promise.all(
-    PERIOD_KEYS.map(async (key) => {
-      const windowStart = Math.max(now - TRAFFIC_WINDOWS[key], TRACKING_SINCE_MS);
-      counts[key] = await countSessionsSince(windowStart);
+    TRAFFIC_PERIOD_KEYS.map(async (key) => {
+      counts[key] = await countSessionsSince(periodWindowStartMs(key, now));
     }),
   );
   return counts;
@@ -127,7 +127,7 @@ async function sessionCountsForWindows(now: number): Promise<Record<TrafficPerio
 
 async function firstPartyTraffic(now: number, tokenConfigured: boolean): Promise<TrafficStats> {
   const [pageViewHours, sessionsInWindow] = await Promise.all([
-    listPageViewHours(now - TRAFFIC_WINDOWS.d30 - 60 * 60 * 1000),
+    listPageViewHours(TRACKING_SINCE_MS - 60 * 60 * 1000),
     sessionCountsForWindows(now),
   ]);
 
@@ -164,7 +164,7 @@ export async function getPublicTrafficStats(now = Date.now()): Promise<PublicTra
   ]);
 
   const periods = {} as Record<TrafficPeriodKey, PublicTrafficPeriod>;
-  for (const key of PERIOD_KEYS) {
+  for (const key of TRAFFIC_PERIOD_KEYS) {
     periods[key] = {
       visitors: firstParty.periods[key].visitors,
       pageViews: firstParty.periods[key].pageViews,

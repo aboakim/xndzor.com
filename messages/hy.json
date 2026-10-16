@@ -2239,7 +2239,7 @@
       "tableHeading": "Այցելություններ ըստ ժամանակահատվածի",
       "period24h": "24 ժամ",
       "period7d": "7 օր",
-      "period30d": "30 օր",
+      "periodAllTime": "Ամբողջ ժամանակ",
       "visitors": "այցելուներ",
       "pageViews": "էջադիտումներ",
       "privacyNote": "Ցուցադրվում են միայն ընդհանուր թվեր։ IP հասցեներ, session-ների ցանկ և այլ անձնական տվյալներ չեն ցուցադրվում։"
@@ -3969,7 +3969,8 @@
       "visits": "Այցելություններ",
       "visits24h": "24 ժամ",
       "visits7d": "7 օր",
-      "visits30d": "30 օր",
+      "visitsAllTime": "Ամբողջ ժամանակ",
+      "visitsAllTimeSince": "6 սեպտեմբերից",
       "visits90d": "90 օր",
       "visitors": "այցելուներ",
       "pageViews": "էջադիտումներ",
@@ -3978,7 +3979,7 @@
       "firstPartySource": "Կայքի հաշվարկ · թարմացվել է {updated}",
       "vercelFallback": "Vercel API-ն հասանելի չէ — ցույց ենք տալիս կայքի հաշվարկը ({updated})",
       "liveSource": "Vercel Analytics · Production · {updated}",
-      "vercelNotConnected": "Vercel Analytics-ը միացված չէ. Ստորևի թվերը Vercel-ից չեն — միացրեք API-ն, որպեսզի համընկնեն Vercel Production վահանակի 24 ժ / 7 օր / 30 օր ցուցանիշներին։",
+      "vercelNotConnected": "Vercel Analytics-ը միացված չէ. Ստորևի թվերը Vercel-ից չեն — միացրեք API-ն, որպեսզի համընկնեն Vercel Production վահանակի 24 ժ / 7 օր / ամբողջ ժամանակ ցուցանիշներին։",
       "vercelConnectHint": "Vercel → Project → Settings → Environment Variables → ավելացրեք VERCEL_ACCESS_TOKEN (read, team aboakim), կամընտրելի VERCEL_TEAM_ID, ապա redeploy։",
       "vercelErrorDetail": "Vercel API պատասխան՝ {reason}",
       "onlineUnavailable": "Կենդանի հաշվարկը անհասանելի է — ստուգեք DATABASE_URL / db push"
@@ -4104,7 +4105,7 @@
     },
     "stats": {
       "title": "Կայքի վիճակագրություն — Խնձոր",
-      "description": "Xndzor.com-ի ընդհանուր այցելություններ և էջադիտումներ (24 ժամ, 7 և 30 օր)։"
+      "description": "Xndzor.com-ի ընդհանուր այցելություններ և էջադիտումներ (24 ժամ, 7 օր, ամբողջ ժամանակ՝ 6 սեպտեմբերից)։"
     },
     "contact": {
       "title": "Կապ — Խնձոր",

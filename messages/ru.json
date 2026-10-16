@@ -2238,7 +2238,7 @@
       "tableHeading": "Визиты по периодам",
       "period24h": "24 часа",
       "period7d": "7 дней",
-      "period30d": "30 дней",
+      "periodAllTime": "За всё время",
       "visitors": "посетители",
       "pageViews": "просмотры",
       "privacyNote": "Показываются только суммарные цифры. IP-адреса, списки сессий и другие персональные данные не отображаются."
@@ -3968,7 +3968,8 @@
       "visits": "Посещения",
       "visits24h": "24 часа",
       "visits7d": "7 дней",
-      "visits30d": "30 дней",
+      "visitsAllTime": "За всё время",
+      "visitsAllTimeSince": "с 6 сентября",
       "visits90d": "90 дней",
       "visitors": "посетители",
       "pageViews": "просмотры",
@@ -3978,7 +3979,7 @@
       "firstPartySource": "Счётчик на сайте · обновлено {updated}",
       "vercelFallback": "API Vercel недоступен — показываем счётчик сайта ({updated})",
       "liveSource": "Vercel Analytics · Production · {updated}",
-      "vercelNotConnected": "Vercel Analytics не подключён. Цифры ниже не из Vercel — добавьте токен API, чтобы 24 ч / 7 д / 30 д совпадали с Production в Vercel.",
+      "vercelNotConnected": "Vercel Analytics не подключён. Цифры ниже не из Vercel — добавьте токен API, чтобы 24 ч / 7 д / за всё время совпадали с Production в Vercel.",
       "vercelConnectHint": "Vercel → Project → Settings → Environment Variables → VERCEL_ACCESS_TOKEN (read, team aboakim), опционально VERCEL_TEAM_ID, затем redeploy.",
       "vercelErrorDetail": "Ответ Vercel API: {reason}",
       "onlineUnavailable": "Онлайн-счётчик недоступен — проверьте DATABASE_URL / db push"
@@ -4104,7 +4105,7 @@
     },
     "stats": {
       "title": "Статистика сайта — Хндзор",
-      "description": "Сводные визиты и просмотры Xndzor.com (24 часа, 7 и 30 дней)."
+      "description": "Сводные визиты и просмотры Xndzor.com (24 часа, 7 дней, за всё время с 6 сентября)."
     },
     "contact": {
       "title": "Контакты — Хндзор",

@@ -4,10 +4,14 @@ import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import type { TrafficPeriodKey, TrafficStats } from "@/lib/traffic-stats";
 
-const PERIODS: { key: TrafficPeriodKey; label: "visits24h" | "visits7d" | "visits30d" }[] = [
+const PERIODS: {
+  key: TrafficPeriodKey;
+  label: "visits24h" | "visits7d" | "visitsAllTime";
+  subtitle?: "visitsAllTimeSince";
+}[] = [
   { key: "h24", label: "visits24h" },
   { key: "d7", label: "visits7d" },
-  { key: "d30", label: "visits30d" },
+  { key: "allTime", label: "visitsAllTime", subtitle: "visitsAllTimeSince" },
 ];
 
 function formatFetchedAt(iso: string, locale: string): string {
@@ -62,7 +66,7 @@ export function AdminTrafficPanel({
         const res = await fetch("/api/admin/traffic", { cache: "no-store" });
         if (!res.ok) return;
         const data = (await res.json()) as TrafficStats;
-        if (!stop && data?.periods?.h24 && data.periods.d7 && data.periods.d30) {
+        if (!stop && data?.periods?.h24 && data.periods.d7 && data.periods.allTime) {
           setTraffic(data);
         }
       } catch {
@@ -122,11 +126,16 @@ export function AdminTrafficPanel({
       )}
 
       <div className="admin-traffic-grid">
-        {PERIODS.map(({ key, label }) => {
+        {PERIODS.map(({ key, label, subtitle }) => {
           const period = traffic.periods[key];
           return (
             <div key={key} className="admin-stat-card admin-traffic-card">
-              <span className="admin-traffic-period">{t(`stats.${label}`)}</span>
+              <span className="admin-traffic-period">
+                {t(`stats.${label}`)}
+                {subtitle ? (
+                  <span className="admin-traffic-period-sub tiny muted"> · {t(`stats.${subtitle}`)}</span>
+                ) : null}
+              </span>
               <div className="admin-traffic-metric">
                 <span>{t("stats.visitors")}</span>
                 <b>{showVercelTotals ? fmt(period.visitors) : "—"}</b>

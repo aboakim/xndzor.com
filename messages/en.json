@@ -2239,7 +2239,7 @@
       "tableHeading": "Visits by period",
       "period24h": "24 hours",
       "period7d": "7 days",
-      "period30d": "30 days",
+      "periodAllTime": "All time",
       "visitors": "visitors",
       "pageViews": "page views",
       "privacyNote": "Only aggregate totals are shown. IP addresses, session lists, and other personal data are not displayed."
@@ -3969,7 +3969,8 @@
       "visits": "Visits",
       "visits24h": "24 hours",
       "visits7d": "7 days",
-      "visits30d": "30 days",
+      "visitsAllTime": "All time",
+      "visitsAllTimeSince": "since 6 Sep",
       "visits90d": "90 days",
       "visitors": "visitors",
       "pageViews": "page views",
@@ -3979,7 +3980,7 @@
       "firstPartySource": "On-site counter · updated {updated}",
       "vercelFallback": "Vercel API unavailable — showing on-site counter ({updated})",
       "liveSource": "Vercel Analytics · Production · {updated}",
-      "vercelNotConnected": "Vercel Analytics is not connected. The figures below are not from Vercel — add an API token so 24h / 7d / 30d match the Vercel Production dashboard.",
+      "vercelNotConnected": "Vercel Analytics is not connected. The figures below are not from Vercel — add an API token so 24h / 7d / all-time match the Vercel Production dashboard.",
       "vercelConnectHint": "Vercel → Project → Settings → Environment Variables → set VERCEL_ACCESS_TOKEN (read, team aboakim), optional VERCEL_TEAM_ID, then redeploy.",
       "vercelErrorDetail": "Vercel API response: {reason}",
       "onlineUnavailable": "Live count unavailable — check DATABASE_URL / db push"
@@ -4105,7 +4106,7 @@
     },
     "stats": {
       "title": "Site statistics — Xndzor",
-      "description": "Aggregate visits and page views for Xndzor.com (24 hours, 7 and 30 days)."
+      "description": "Aggregate visits and page views for Xndzor.com (24 hours, 7 days, all time since 6 September)."
     },
     "contact": {
       "title": "Contact — Xndzor",
