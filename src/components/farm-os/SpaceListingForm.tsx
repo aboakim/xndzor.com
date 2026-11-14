@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -23,10 +24,10 @@ export function SpaceListingForm({
     setErr(null);
     try {
       const priceRaw = String(fd.get("priceAmd") || "");
-      const res = await fetch("/api/spaces", {
+      const res = await apiMutation("/api/spaces", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        json: {
           title: fd.get("title"),
           description: fd.get("description"),
           spaceType: fd.get("spaceType"),
@@ -37,7 +38,7 @@ export function SpaceListingForm({
           priceUnit: fd.get("priceUnit") || "PER_MONTH",
           marzId: fd.get("marzId"),
           phone: fd.get("phone"),
-        }),
+        },
       });
       if (!res.ok) {
         setErr(t("error"));

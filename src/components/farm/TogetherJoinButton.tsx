@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { useState } from "react";
 
 export function TogetherJoinButton({
@@ -19,10 +20,10 @@ export function TogetherJoinButton({
       setBusy(false);
       return;
     }
-    const res = await fetch("/api/farm/goals", {
+    const res = await apiMutation("/api/farm/goals", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "join", goalId, qty }),
+      json: { action: "join", goalId, qty },
     });
     setBusy(false);
     if (res.ok) {

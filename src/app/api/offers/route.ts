@@ -2,11 +2,23 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { offerSchema } from "@/lib/validations";
+import { clientIp, rateLimitAsync } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
   const session = await getSession();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const limited = await rateLimitAsync(
+    `offer:${session.user.id}:${clientIp(req)}`,
+    { limit: 60, windowMs: 60 * 60 * 1000 },
+  );
+  if (!limited.ok) {
+    return NextResponse.json(
+      { error: "Too many requests" },
+      { status: 429, headers: { "Retry-After": String(limited.retryAfterSec) } },
+    );
   }
 
   const body = await req.json();

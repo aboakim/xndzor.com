@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { machineryListingSchema } from "@/lib/validations";
 import { cleanText } from "@/lib/sanitize";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimitAsync } from "@/lib/rate-limit";
 import { resolveLocationRefs } from "@/lib/resolve-refs";
 import { filterListingImageUrls } from "@/lib/upload-urls";
 
@@ -81,7 +81,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const limited = rateLimit(`machinery-post:${session.user.id}:${clientIp(req)}`, {
+  const limited = await rateLimitAsync(`machinery-post:${session.user.id}:${clientIp(req)}`, {
     limit: 40,
     windowMs: 60 * 60 * 1000,
   });

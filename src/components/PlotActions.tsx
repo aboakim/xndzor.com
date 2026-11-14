@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { FormEvent, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -24,10 +25,10 @@ export function PlotActions({
   const [msg, setMsg] = useState("");
 
   async function patch(body: Record<string, unknown>) {
-    const res = await fetch(`/api/plots/${plotId}`, {
+    const res = await apiMutation(`/api/plots/${plotId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      json: body,
     });
     return res;
   }
@@ -153,10 +154,10 @@ export function TaskDoneButton({ plotId, taskId }: { plotId: string; taskId: str
 
   async function done() {
     setBusy(true);
-    await fetch(`/api/plots/${plotId}`, {
+    await apiMutation(`/api/plots/${plotId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "taskStatus", taskId, status: "DONE" }),
+      json: { action: "taskStatus", taskId, status: "DONE" },
     });
     setBusy(false);
     router.refresh();

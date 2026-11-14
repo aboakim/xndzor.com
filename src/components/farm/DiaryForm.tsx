@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 
@@ -67,10 +68,10 @@ export function DiaryForm({ plots }: { plots: PlotOpt[] }) {
     e.preventDefault();
     setStatus(null);
     setError(null);
-    const res = await fetch("/api/farm/diary", {
+    const res = await apiMutation("/api/farm/diary", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ rawText: text, plotId: plotId || null }),
+      json: { rawText: text, plotId: plotId || null },
     });
     if (!res.ok) {
       setError(t("saveError"));

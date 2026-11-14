@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { userIsAdmin } from "@/lib/monetization";
 import type { ListingKind } from "@/lib/admin";
 import { USER_ROLES } from "@/lib/admin";
+import { logSecurityEvent } from "@/lib/security-audit";
 
 async function assertAdmin() {
   const session = await getSession();
@@ -13,6 +14,15 @@ async function assertAdmin() {
   const admin = await userIsAdmin(session.user.id);
   if (!admin) throw new Error("forbidden");
   return session.user.id;
+}
+
+function auditAdmin(adminId: string, action: string, meta?: Record<string, unknown>) {
+  void logSecurityEvent({
+    type: "admin_action",
+    userId: adminId,
+    path: "/hy/admin",
+    meta: { action, ...meta },
+  });
 }
 
 function revalidateAdmin() {
@@ -25,23 +35,26 @@ function revalidateAdmin() {
 }
 
 export async function updateUserRole(userId: string, role: string) {
-  await assertAdmin();
+  const adminId = await assertAdmin();
   if (!USER_ROLES.includes(role as (typeof USER_ROLES)[number])) {
     throw new Error("invalid_role");
   }
   await prisma.user.update({ where: { id: userId }, data: { role } });
+  auditAdmin(adminId, "updateUserRole", { targetUserId: userId, role });
   revalidateAdmin();
 }
 
 export async function updateUserVerified(userId: string, farmVerified: boolean) {
-  await assertAdmin();
+  const adminId = await assertAdmin();
   await prisma.user.update({ where: { id: userId }, data: { farmVerified } });
+  auditAdmin(adminId, "updateUserVerified", { targetUserId: userId, farmVerified });
   revalidateAdmin();
 }
 
 export async function updateUserSuspended(userId: string, suspended: boolean) {
-  await assertAdmin();
+  const adminId = await assertAdmin();
   await prisma.user.update({ where: { id: userId }, data: { suspended } });
+  auditAdmin(adminId, "updateUserSuspended", { targetUserId: userId, suspended });
   revalidateAdmin();
 }
 
@@ -50,7 +63,7 @@ export async function updateListingStatus(
   id: string,
   status: string,
 ) {
-  await assertAdmin();
+  const adminId = await assertAdmin();
   const data = { status };
   switch (kind) {
     case "supply":
@@ -80,11 +93,12 @@ export async function updateListingStatus(
     default:
       throw new Error("unknown_kind");
   }
+  auditAdmin(adminId, "updateListingStatus", { kind, id, status });
   revalidateAdmin();
 }
 
 export async function deleteListing(kind: ListingKind, id: string) {
-  await assertAdmin();
+  const adminId = await assertAdmin();
   switch (kind) {
     case "supply":
       await prisma.offer.deleteMany({ where: { supplyId: id } });
@@ -121,12 +135,14 @@ export async function deleteListing(kind: ListingKind, id: string) {
     default:
       throw new Error("unknown_kind");
   }
+  auditAdmin(adminId, "deleteListing", { kind, id });
   revalidateAdmin();
 }
 
 export async function togglePlanActive(planId: string, active: boolean) {
-  await assertAdmin();
+  const adminId = await assertAdmin();
   await prisma.plan.update({ where: { id: planId }, data: { active } });
+  auditAdmin(adminId, "togglePlanActive", { planId, active });
   revalidateAdmin();
 }
 
@@ -135,7 +151,7 @@ export async function togglePlanActive(planId: string, active: boolean) {
  * Does not consume early-bird free slots (paid BANK_TRANSFER provider).
  */
 export async function confirmBankPayment(paymentId: string) {
-  await assertAdmin();
+  const adminId = await assertAdmin();
   const payment = await prisma.payment.findUnique({ where: { id: paymentId } });
   if (!payment) throw new Error("not_found");
   if (payment.provider !== "BANK_TRANSFER") throw new Error("invalid_provider");
@@ -174,5 +190,6 @@ export async function confirmBankPayment(paymentId: string) {
     amountAmd: payment.amountAmd,
     result,
   });
+  auditAdmin(adminId, "confirmBankPayment", { paymentId });
   revalidateAdmin();
 }

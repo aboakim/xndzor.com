@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -18,10 +19,10 @@ export function EmptyReturnTeaser() {
     setBusy(true);
     setMsg(null);
     try {
-      const res = await fetch("/api/return-capacity", {
+      const res = await apiMutation("/api/return-capacity", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fromNote, toNote, capacityNote }),
+        json: { fromNote, toNote, capacityNote },
       });
       if (!res.ok) {
         setMsg(t("error"));

@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { allocateBatchCode, ensureFarmId } from "@/lib/farm-id";
 import { effectiveTons } from "@/lib/yield";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimitAsync } from "@/lib/rate-limit";
 
 const bodySchema = z
   .object({
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
   const userId = session.user.id;
 
   const ip = clientIp(req);
-  const limited = rateLimit(`batch:${userId}:${ip}`, {
+  const limited = await rateLimitAsync(`batch:${userId}:${ip}`, {
     limit: 20,
     windowMs: 60 * 60 * 1000,
   });

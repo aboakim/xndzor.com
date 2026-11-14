@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { MARZES, localizedPlaceName, type LocationVillage } from "@/lib/places";
@@ -54,7 +55,7 @@ export function ProfileForm({ welcome, earlyBird, earlyBirdRemaining, earlyBirdL
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/profile")
+    apiMutation("/api/profile")
       .then((r) => {
         if (!r.ok) throw new Error("load");
         return r.json();
@@ -98,7 +99,7 @@ export function ProfileForm({ welcome, earlyBird, earlyBirdRemaining, earlyBirdL
     prevMarzRef.current = marzId;
     let cancelled = false;
     setLoadingVillages(true);
-    fetch(`/api/villages?marzId=${encodeURIComponent(marzId)}`)
+    apiMutation(`/api/villages?marzId=${encodeURIComponent(marzId)}`)
       .then((r) => r.json())
       .then((data) => {
         if (cancelled) return;
@@ -123,10 +124,10 @@ export function ProfileForm({ welcome, earlyBird, earlyBirdRemaining, earlyBirdL
     setError(null);
 
     try {
-      const res = await fetch("/api/profile", {
+      const res = await apiMutation("/api/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        json: {
           name,
           phone,
           avatarUrl: avatarUrl || "",
@@ -137,7 +138,7 @@ export function ProfileForm({ welcome, earlyBird, earlyBirdRemaining, earlyBirdL
           showAvatarPublic,
           showMarzPublic,
           showVillagePublic,
-        }),
+        },
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string; code?: string };
       if (!res.ok) {

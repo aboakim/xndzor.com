@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -45,10 +46,10 @@ export function SpaceForm({
   async function save(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    const res = await fetch(isEdit ? `/api/farm/spaces/${listingId}` : "/api/farm/spaces", {
+    const res = await apiMutation(isEdit ? `/api/farm/spaces/${listingId}` : "/api/farm/spaces", {
       method: isEdit ? "PATCH" : "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+      json: {
         title,
         description,
         spaceType,
@@ -57,7 +58,7 @@ export function SpaceForm({
         marzId,
         phone,
         capacityNote,
-      }),
+      },
     });
     if (!res.ok) {
       setError(isEdit ? tEdit("error") : t("saveError"));

@@ -1,7 +1,12 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
-import { clearAuthFailures, isLocked, recordAuthFailure } from "./rate-limit";
+import {
+  clearAuthFailuresAsync,
+  isLockedAsync,
+  recordAuthFailureAsync,
+} from "./rate-limit";
+import { logLoginSuccessThrottled, logSecurityEvent } from "./security-audit";
 import { BCRYPT_ROUNDS } from "./password";
 import { isAdminEmail } from "./monetization";
 
@@ -45,27 +50,43 @@ export const authOptions: any = {
         if (!credentials?.email || !credentials.password) return null;
         const email = String(credentials.email).toLowerCase().trim();
         const failKey = `auth:${email}`;
-        if (isLocked(failKey).locked) return null;
+        if ((await isLockedAsync(failKey)).locked) return null;
 
         try {
           const user = await prisma.user.findUnique({ where: { email } });
           if (!user) {
-            recordAuthFailure(failKey);
+            const fail = await recordAuthFailureAsync(failKey);
+            await logSecurityEvent({
+              type: !fail.ok && fail.locked ? "login_lockout" : "login_failure",
+              ip: null,
+              meta: { email },
+            });
             return null;
           }
 
           if (user.suspended) {
-            recordAuthFailure(failKey);
+            await recordAuthFailureAsync(failKey);
+            await logSecurityEvent({
+              type: "login_failure",
+              userId: user.id,
+              meta: { reason: "suspended" },
+            });
             return null;
           }
 
           const ok = await bcrypt.compare(String(credentials.password), user.passwordHash);
           if (!ok) {
-            recordAuthFailure(failKey);
+            const fail = await recordAuthFailureAsync(failKey);
+            await logSecurityEvent({
+              type: !fail.ok && fail.locked ? "login_lockout" : "login_failure",
+              userId: user.id,
+              meta: { email },
+            });
             return null;
           }
 
-          clearAuthFailures(failKey);
+          await clearAuthFailuresAsync(failKey);
+          void logLoginSuccessThrottled(user.id, null);
           return {
             id: user.id,
             email: user.email,

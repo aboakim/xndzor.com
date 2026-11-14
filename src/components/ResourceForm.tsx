@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -30,7 +31,7 @@ export function ResourceForm({
       return;
     }
     setLoadingVillages(true);
-    fetch(`/api/villages?marzId=${encodeURIComponent(marzId)}`)
+    apiMutation(`/api/villages?marzId=${encodeURIComponent(marzId)}`)
       .then((r) => r.json())
       .then((data) => {
         setVillages(Array.isArray(data) ? data : []);
@@ -57,10 +58,10 @@ export function ResourceForm({
       phone: String(fd.get("phone") || ""),
       whatsapp: String(fd.get("whatsapp") || ""),
     };
-    const res = await fetch("/api/resources", {
+    const res = await apiMutation("/api/resources", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      json: body,
     });
     setSaving(false);
     if (!res.ok) {

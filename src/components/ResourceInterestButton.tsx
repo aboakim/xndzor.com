@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { FormEvent, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -18,10 +19,10 @@ export function ResourceInterestButton({ resourceId }: { resourceId: string }) {
     e.preventDefault();
     setSaving(true);
     setError("");
-    const res = await fetch("/api/resources/interest", {
+    const res = await apiMutation("/api/resources/interest", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ resourceId, message }),
+      json: { resourceId, message },
     });
     setSaving(false);
     if (res.status === 401) {

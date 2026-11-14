@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -20,10 +21,10 @@ export function CreateBatchButton({ futureHarvestId, plotId, className }: Props)
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/batches", {
+      const res = await apiMutation("/api/batches", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ futureHarvestId, plotId }),
+        json: { futureHarvestId, plotId },
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {

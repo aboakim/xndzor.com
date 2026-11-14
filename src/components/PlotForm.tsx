@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
@@ -75,7 +76,7 @@ export function PlotForm({
     }
     let cancelled = false;
     setLoadingVillages(true);
-    fetch(`/api/villages?marzId=${encodeURIComponent(marzId)}`)
+    apiMutation(`/api/villages?marzId=${encodeURIComponent(marzId)}`)
       .then((r) => r.json())
       .then((data) => {
         if (cancelled) return;
@@ -110,10 +111,10 @@ export function PlotForm({
       villageId,
       farmerOverrideTons: override || "",
     };
-    const res = await fetch(isEdit ? `/api/plots/${listingId}` : "/api/plots", {
+    const res = await apiMutation(isEdit ? `/api/plots/${listingId}` : "/api/plots", {
       method: isEdit ? "PATCH" : "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      json: body,
     });
     setSaving(false);
     if (res.status === 401) {

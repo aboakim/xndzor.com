@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { FormEvent, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -38,10 +39,10 @@ export function DemandAlertForm({
     setSaving(true);
     setMsg("");
     try {
-      const res = await fetch("/api/demand-alerts", {
+      const res = await apiMutation("/api/demand-alerts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, active: true }),
+        json: { productId, active: true },
       });
       if (!res.ok) {
         setMsg(t("errors.generic"));

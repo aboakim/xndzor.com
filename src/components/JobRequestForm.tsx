@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { FormEvent, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -50,10 +51,10 @@ export function JobRequestForm({
     setError("");
     const fd = new FormData(e.currentTarget);
     const body = { ...Object.fromEntries(fd.entries()), jobType };
-    const res = await fetch(isEdit ? `/api/jobs/${listingId}` : "/api/jobs", {
+    const res = await apiMutation(isEdit ? `/api/jobs/${listingId}` : "/api/jobs", {
       method: isEdit ? "PATCH" : "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      json: body,
     });
     setSaving(false);
     if (!res.ok) {

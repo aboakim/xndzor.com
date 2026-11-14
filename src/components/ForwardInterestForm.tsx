@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { FormEvent, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -15,10 +16,10 @@ export function ForwardInterestForm({ futureHarvestId }: { futureHarvestId: stri
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setSaving(true);
-    const res = await fetch("/api/forward", {
+    const res = await apiMutation("/api/forward", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ futureHarvestId, qtyWanted: qty, message }),
+      json: { futureHarvestId, qtyWanted: qty, message },
     });
     setSaving(false);
     if (res.status === 401) {

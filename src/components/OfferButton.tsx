@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { FormEvent, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -24,10 +25,10 @@ export function OfferButton({
     e.preventDefault();
     setSaving(true);
     setError("");
-    const res = await fetch("/api/offers", {
+    const res = await apiMutation("/api/offers", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ supplyId, demandId, message }),
+      json: { supplyId, demandId, message },
     });
     setSaving(false);
     if (!res.ok) {

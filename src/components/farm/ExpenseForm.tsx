@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 
@@ -18,15 +19,15 @@ export function ExpenseForm({ plots }: { plots: PlotOpt[] }) {
   async function save(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    const res = await fetch("/api/farm/expenses", {
+    const res = await apiMutation("/api/farm/expenses", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+      json: {
         category,
         amountAmd: Number(amountAmd),
         note,
         plotId: plotId || null,
-      }),
+      },
     });
     if (!res.ok) {
       setError(t("saveError"));

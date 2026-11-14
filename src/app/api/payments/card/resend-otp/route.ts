@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { validateCsrf } from "@/lib/csrf";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimitAsync } from "@/lib/rate-limit";
 import {
   createOtpForPayment,
   isDemoOtpInResponse,
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   }
 
   const ip = clientIp(req);
-  const limit = rateLimit(`card:resend:${session.user.id}`, {
+  const limit = await rateLimitAsync(`card:resend:${session.user.id}`, {
     limit: 3,
     windowMs: 5 * 60 * 1000,
   });
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
       { status: 429, headers: { "Retry-After": String(limit.retryAfterSec) } },
     );
   }
-  const ipLimit = rateLimit(`card:resend:ip:${ip}`, {
+  const ipLimit = await rateLimitAsync(`card:resend:ip:${ip}`, {
     limit: 6,
     windowMs: 5 * 60 * 1000,
   });

@@ -24,8 +24,20 @@ In [Vercel → Project → Settings → Environment Variables](https://vercel.co
 | `NEXTAUTH_SECRET` / `AUTH_SECRET` | long random secret |
 | `ADMIN_EMAIL` | your admin email |
 | `VERCEL_ACCESS_TOKEN` | Recommended. Live Production visitors and page views on `/hy/admin` from the Web Analytics API (24h / 7d / 30d). Without it (or if the API fails), the admin traffic cards stay empty with a connect prompt — not the on-site beacon. Create a token at [vercel.com/account/tokens](https://vercel.com/account/tokens) for team `aboakim` (read scope). Optional: `VERCEL_TEAM_ID`. |
+| `UPSTASH_REDIS_REST_URL` | **Recommended (production).** Shared rate limits + login lockouts across Vercel instances. [Upstash Redis](https://console.upstash.com) → REST API. |
+| `UPSTASH_REDIS_REST_TOKEN` | Pair with the URL above. If unset, limits fall back to in-memory (unsafe for multi-instance). |
 
 Redeploy after saving env vars. Build runs `prisma db push` when `DATABASE_URL` is Postgres.
+
+### Database roles (least privilege)
+
+- **Neon owner** connection: migrations, `prisma db push`, one-off admin scripts — keep off Vercel.
+- **App role** (Neon project → Roles): use a non-owner user in production `DATABASE_URL` on Vercel (`CREATE`, `SELECT`, `UPDATE`, `DELETE` on app tables only). Do not commit connection strings.
+- After schema changes (e.g. `SecurityEvent`), run `npx prisma db push` against production Neon from your machine or CI before relying on audit rows.
+
+### Backups
+
+See **SECURITY.md → Backups (Neon)** for PITR / branch restore and a quarterly checklist.
 
 ### 3. Optional seed
 

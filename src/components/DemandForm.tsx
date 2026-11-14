@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
@@ -99,7 +100,7 @@ export function DemandForm({
     }
     let cancelled = false;
     setLoadingVillages(true);
-    fetch(`/api/villages?marzId=${encodeURIComponent(marzId)}`)
+    apiMutation(`/api/villages?marzId=${encodeURIComponent(marzId)}`)
       .then((r) => r.json())
       .then((data) => {
         if (cancelled) return;
@@ -237,10 +238,10 @@ export function DemandForm({
         whatsapp: String(fd.get("whatsapp") || ""),
         imageUrls,
       };
-      const res = await fetch(isEdit ? `/api/demand/${listingId}` : "/api/demand", {
+      const res = await apiMutation(isEdit ? `/api/demand/${listingId}` : "/api/demand", {
         method: isEdit ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        json: body,
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));

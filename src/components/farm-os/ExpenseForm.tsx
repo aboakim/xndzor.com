@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -24,16 +25,16 @@ export function ExpenseForm({ plots }: { plots: PlotOpt[] }) {
     setBusy(true);
     setErr(null);
     try {
-      const res = await fetch("/api/expenses", {
+      const res = await apiMutation("/api/expenses", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        json: {
           amountAmd: Math.round(Number(amountAmd)),
           category,
           note: note || null,
           plotId: plotId || null,
           date,
-        }),
+        },
       });
       if (!res.ok) {
         setErr(t("error"));

@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useState } from "react";
@@ -23,10 +24,10 @@ export function CatalogListingActions({
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch(`/api/catalog/${id}`, {
+      const res = await apiMutation(`/api/catalog/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: next }),
+        json: { status: next },
       });
       if (!res.ok) {
         const data = (await res.json().catch(() => null)) as { error?: string } | null;
@@ -46,7 +47,7 @@ export function CatalogListingActions({
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch(`/api/catalog/${id}`, { method: "DELETE" });
+      const res = await apiMutation(`/api/catalog/${id}`, { method: "DELETE" });
       if (!res.ok) {
         const data = (await res.json().catch(() => null)) as { error?: string } | null;
         setError(typeof data?.error === "string" ? data.error : tMy("actionError"));

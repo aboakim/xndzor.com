@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { BCRYPT_ROUNDS } from "@/lib/password";
+import { clientIp, rateLimitAsync } from "@/lib/rate-limit";
+import { logSecurityEvent } from "@/lib/security-audit";
 
 /**
  * One-time / emergency admin upsert against the DB this deployment uses.
@@ -33,7 +35,21 @@ export async function POST(req: Request) {
     ? auth.slice(7).trim()
     : "";
   const provided = bearer || body.secret?.trim() || "";
+  const ip = clientIp(req);
+  const limited = await rateLimitAsync(`admin-bootstrap:${ip}`, {
+    limit: 5,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!limited.ok) {
+    return NextResponse.json({ error: "rate_limited" }, { status: 429 });
+  }
   if (!provided || provided !== expected) {
+    void logSecurityEvent({
+      type: "admin_bootstrap",
+      ip,
+      path: "/api/admin/bootstrap",
+      meta: { ok: false, reason: "unauthorized" },
+    });
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
@@ -74,6 +90,14 @@ export async function POST(req: Request) {
         },
       });
     }
+
+    void logSecurityEvent({
+      type: "admin_bootstrap",
+      userId: existing?.id,
+      ip,
+      path: "/api/admin/bootstrap",
+      meta: { ok: true, email, created: !existing },
+    });
 
     return NextResponse.json({
       ok: true,

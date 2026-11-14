@@ -17,11 +17,18 @@ Xndzor.com — practical hardening for Next.js + Prisma + Auth.js (Credentials).
 
 ## Auth & sessions
 
-- Passwords hashed with **bcrypt** (12 rounds).
+- Passwords hashed with **bcrypt** (12 rounds). **Argon2id** may be adopted later with dual-verify; passwords are not mass-migrated today.
 - JWT sessions; cookies **httpOnly**, **SameSite=Lax**, **Secure** in production (`__Secure-` cookie name).
-- Failed logins: lockout after **8** failures / 15 minutes (in-memory; per email).
-- Register / upload / machinery create: **in-memory rate limits**. For multiple server instances, replace `src/lib/rate-limit.ts` with **Redis** (e.g. Upstash).
-- Mutations require a signed-in session; ownership checks on edit/delete (e.g. machinery).
+- Failed logins: lockout after **8** failures / 15 minutes (per email). Uses **Upstash Redis** when `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` are set; otherwise in-memory (local dev only).
+- Rate limits on register, upload, checkout, comments, listing create, `/api/xndzor/solve`, offers, job apply, and payment callbacks — same Upstash / memory backend (`rateLimitAsync` in `src/lib/rate-limit.ts`).
+- **CSRF**: double-submit cookie (`farmos-csrf`) + `x-csrf-token` header on state-changing `/api/*` requests (middleware). Exempt: Auth.js routes, webhooks, payment provider callbacks, admin bootstrap (Bearer), anonymous beacons (`/api/pageview`, `/api/presence`). Client helpers: `src/lib/fetch-with-csrf.ts` (`apiMutation`).
+- Mutations require a signed-in session; ownership checks on edit/delete via `listingAuthError` (e.g. supply, machinery, catalog).
+
+## Audit logging
+
+- Prisma model **`SecurityEvent`** (type, userId?, ip?, path?, meta JSON, `createdAt`) plus structured `console.info` JSON (`scope: security`) for Vercel logs.
+- Logged: login failure / lockout, throttled login success, register, register rate limit, upload rate limit, admin actions, admin bootstrap use, rate-limit blocks where wired.
+- After deploy, run `npx prisma db push` (or migrate) so `SecurityEvent` exists in Neon.
 
 ## Uploads
 
@@ -44,11 +51,25 @@ Set in `next.config.ts`: CSP (Next-friendly), `X-Frame-Options: DENY`, `nosniff`
 
 ## Residual risks (honest)
 
-- In-memory rate limits / lockouts reset on process restart and do not sync across replicas.
-- CSP allows `'unsafe-inline'` / `'unsafe-eval'` scripts (needed for Next.js defaults); tighten later with nonces if you harden further.
-- Uploaded files are served as static public assets — do not treat `public/uploads` as private.
+- Without **Upstash** env vars, rate limits / lockouts are **in-memory** (not suitable for multi-instance production).
+- CSRF does not replace XSS or authz bugs; penetration testing was **not** performed for this release.
+- CSP keeps `'unsafe-inline'` / `'unsafe-eval'` for Next.js 15 (removing `unsafe-eval` broke dev builds in smoke tests); tighten with nonces when feasible.
+- Uploaded files are served as static public assets — do not treat `public/uploads` or Blob URLs as private.
 - No WAF / bot protection yet — put Cloudflare (or similar) in front for public traffic.
 - Dependency CVEs: run `npm audit` regularly and upgrade.
+
+## Backups (Neon)
+
+Neon retains **point-in-time recovery (PITR)** on paid plans; free tier has branch/history limits — confirm in your Neon project → **Backup & restore**.
+
+**Quarterly restore check (recommended):**
+
+1. Create a **branch** from a timestamp in Neon console (or restore to a new branch).
+2. Point a local or staging `DATABASE_URL` at that branch.
+3. Run `npx prisma db push` (if schema drift) and smoke-test login + one listing read.
+4. Delete the test branch when done.
+
+This verifies you can recover data; it does not prove RTO/RPO without your own runbook timing.
 
 ## Report issues
 

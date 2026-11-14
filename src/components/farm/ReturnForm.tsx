@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -24,10 +25,10 @@ export function ReturnForm({
   async function save(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    const res = await fetch("/api/farm/returns", {
+    const res = await apiMutation("/api/farm/returns", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+      json: {
         fromNote,
         toNote,
         fromMarzId,
@@ -37,7 +38,7 @@ export function ReturnForm({
         departAt: departAt || null,
         phone,
         capacityNote: `${freeTons} t`,
-      }),
+      },
     });
     if (!res.ok) {
       setError(t("saveError"));

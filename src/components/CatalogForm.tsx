@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
@@ -79,7 +80,7 @@ export function CatalogForm({
     }
     let cancelled = false;
     setLoadingVillages(true);
-    fetch(`/api/villages?marzId=${encodeURIComponent(marzId)}`)
+    apiMutation(`/api/villages?marzId=${encodeURIComponent(marzId)}`)
       .then((r) => r.json())
       .then((data) => {
         if (cancelled) return;
@@ -201,10 +202,10 @@ export function CatalogForm({
         whatsapp: String(fd.get("whatsapp") || ""),
         imageUrls,
       };
-      const res = await fetch(isEdit ? `/api/catalog/${listingId}` : "/api/catalog", {
+      const res = await apiMutation(isEdit ? `/api/catalog/${listingId}` : "/api/catalog", {
         method: isEdit ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        json: body,
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));

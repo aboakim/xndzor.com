@@ -9,6 +9,8 @@ import {
   MAX_IMAGE_PICK_BYTES,
   MAX_LISTING_IMAGES,
 } from "@/lib/validations";
+import { fetchCsrfToken } from "@/lib/fetch-with-csrf";
+import { CSRF_HEADER } from "@/lib/csrf-constants";
 
 const CLIENT_TYPES = new Set([
   "image/jpeg",
@@ -353,10 +355,11 @@ function isNonRetryableUploadError(message: string): boolean {
   );
 }
 
-function uploadOneImage(
+async function uploadOneImage(
   file: File,
   opts?: { onProgress?: (pct: number) => void },
 ): Promise<string> {
+  const csrf = await fetchCsrfToken();
   return new Promise((resolve, reject) => {
     const fd = new FormData();
     // Explicit filename helps some runtimes accept canvas-compressed Blobs.
@@ -397,6 +400,7 @@ function uploadOneImage(
     xhr.addEventListener("timeout", () => reject(new Error("NETWORK_ERROR")));
     xhr.addEventListener("abort", () => reject(new Error("NETWORK_ERROR")));
     xhr.open("POST", "/api/upload");
+    xhr.setRequestHeader(CSRF_HEADER, csrf);
     xhr.withCredentials = true;
     xhr.send(fd);
   });

@@ -6,7 +6,7 @@ import {
   type IdramCallbackParams,
 } from "@/lib/payments/idram";
 import { fulfillPayment, logPaymentEvent, markPaymentFailed } from "@/lib/payments";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimitAsync } from "@/lib/rate-limit";
 
 async function parseCallbackParams(req: Request): Promise<IdramCallbackParams> {
   const out: IdramCallbackParams = {};
@@ -38,7 +38,7 @@ async function parseCallbackParams(req: Request): Promise<IdramCallbackParams> {
 
 async function handleCallback(req: Request) {
   const ip = clientIp(req);
-  const limit = rateLimit(`idram:callback:${ip}`, {
+  const limit = await rateLimitAsync(`idram:callback:${ip}`, {
     limit: 120,
     windowMs: 60 * 1000,
   });

@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { FormEvent, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
@@ -81,7 +82,7 @@ export function AnimalForm({
     }
     let cancelled = false;
     setLoadingVillages(true);
-    fetch(`/api/villages?marzId=${encodeURIComponent(marzId)}`)
+    apiMutation(`/api/villages?marzId=${encodeURIComponent(marzId)}`)
       .then((r) => r.json())
       .then((data) => {
         if (cancelled) return;
@@ -151,10 +152,10 @@ export function AnimalForm({
         whatsapp: String(fd.get("whatsapp") || ""),
         imageUrls,
       };
-      const res = await fetch(isEdit ? `/api/animals/${listingId}` : "/api/animals", {
+      const res = await apiMutation(isEdit ? `/api/animals/${listingId}` : "/api/animals", {
         method: isEdit ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        json: body,
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));

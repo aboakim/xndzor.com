@@ -11,7 +11,7 @@ import {
   type ProductCode,
 } from "@/lib/pricing";
 import { validateCsrf } from "@/lib/csrf";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimitAsync } from "@/lib/rate-limit";
 import { getStripe } from "@/lib/stripe";
 import {
   createOtpForPayment,
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
   }
 
   const ip = clientIp(req);
-  const limit = rateLimit(`card:initiate:${session.user.id}`, {
+  const limit = await rateLimitAsync(`card:initiate:${session.user.id}`, {
     limit: 10,
     windowMs: 60 * 60 * 1000,
   });
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
       { status: 429, headers: { "Retry-After": String(limit.retryAfterSec) } },
     );
   }
-  const ipLimit = rateLimit(`card:initiate:ip:${ip}`, {
+  const ipLimit = await rateLimitAsync(`card:initiate:ip:${ip}`, {
     limit: 20,
     windowMs: 60 * 60 * 1000,
   });

@@ -15,7 +15,7 @@ import {
 } from "@/lib/pricing";
 import { assertListingOwnedBy } from "@/lib/monetization";
 import { validateCsrf } from "@/lib/csrf";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimitAsync } from "@/lib/rate-limit";
 import { fulfillPayment, logPaymentEvent } from "@/lib/payments";
 import {
   isEarlyBirdEnabled,
@@ -67,7 +67,7 @@ export async function POST(req: Request) {
   }
 
   const ip = clientIp(req);
-  const userLimit = rateLimit(`checkout:user:${session.user.id}`, {
+  const userLimit = await rateLimitAsync(`checkout:user:${session.user.id}`, {
     limit: 15,
     windowMs: 60 * 60 * 1000,
   });
@@ -77,7 +77,7 @@ export async function POST(req: Request) {
       { status: 429, headers: { "Retry-After": String(userLimit.retryAfterSec) } },
     );
   }
-  const ipLimit = rateLimit(`checkout:ip:${ip}`, {
+  const ipLimit = await rateLimitAsync(`checkout:ip:${ip}`, {
     limit: 30,
     windowMs: 60 * 60 * 1000,
   });

@@ -2,10 +2,22 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { jobApplicationSchema } from "@/lib/validations";
+import { clientIp, rateLimitAsync } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
   const session = await getSession();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const limited = await rateLimitAsync(
+    `job-apply:${session.user.id}:${clientIp(req)}`,
+    { limit: 40, windowMs: 60 * 60 * 1000 },
+  );
+  if (!limited.ok) {
+    return NextResponse.json(
+      { error: "Too many requests" },
+      { status: 429, headers: { "Retry-After": String(limited.retryAfterSec) } },
+    );
+  }
 
   const parsed = jobApplicationSchema.safeParse(await req.json());
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });

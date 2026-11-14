@@ -961,3 +961,17 @@ model SiteSession {
   @@index([lastSeen])
   @@index([firstSeen])
 }
+
+/// Append-only security audit trail (login, rate limits, admin bootstrap, etc.)
+model SecurityEvent {
+  id        String   @id @default(cuid())
+  type      String
+  userId    String?
+  ip        String?
+  path      String?
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  @@index([type, createdAt])
+  @@index([userId, createdAt])
+}

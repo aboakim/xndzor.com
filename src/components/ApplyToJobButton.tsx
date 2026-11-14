@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { FormEvent, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -22,15 +23,15 @@ export function ApplyToJobButton({
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setSaving(true);
-    const res = await fetch("/api/jobs/apply", {
+    const res = await apiMutation("/api/jobs/apply", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+      json: {
         jobRequestId,
         providerId,
         message,
         proposedPriceAmd: price || "",
-      }),
+      },
     });
     setSaving(false);
     if (!res.ok) return;

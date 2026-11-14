@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
@@ -38,7 +39,7 @@ export function ListingForm({
     }
     let cancelled = false;
     setLoadingVillages(true);
-    fetch(`/api/villages?marzId=${encodeURIComponent(marzId)}`)
+    apiMutation(`/api/villages?marzId=${encodeURIComponent(marzId)}`)
       .then((r) => r.json())
       .then((data: LocationVillage[]) => {
         if (cancelled) return;
@@ -88,10 +89,10 @@ export function ListingForm({
         imageUrls,
       };
 
-      const res = await fetch("/api/listings", {
+      const res = await apiMutation("/api/listings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        json: body,
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));

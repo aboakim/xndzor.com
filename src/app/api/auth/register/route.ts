@@ -4,10 +4,11 @@ import { prisma } from "@/lib/prisma";
 import { BCRYPT_ROUNDS } from "@/lib/password";
 import { registerSchema, type RegisterErrorCode } from "@/lib/validations";
 import { cleanText } from "@/lib/sanitize";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimitAsync } from "@/lib/rate-limit";
 import { allocateFarmId } from "@/lib/farm-id";
 import { getEarlyBirdStats } from "@/lib/early-bird";
 import { ensureMarz, ensureVillage } from "@/lib/ensure-locations";
+import { logSecurityEvent } from "@/lib/security-audit";
 
 function err(code: RegisterErrorCode, status: number, extra?: Record<string, string>) {
   return NextResponse.json(
@@ -40,11 +41,17 @@ function zodCode(issueMessage: string | undefined): RegisterErrorCode {
 export async function POST(req: Request) {
   try {
     const ip = clientIp(req);
-    const limited = rateLimit(`register:${ip}`, {
+    const limited = await rateLimitAsync(`register:${ip}`, {
       limit: 8,
       windowMs: 60 * 60 * 1000,
     });
     if (!limited.ok) {
+      void logSecurityEvent({
+        type: "register_rate_limited",
+        ip,
+        path: "/api/auth/register",
+        meta: { retryAfterSec: limited.retryAfterSec },
+      });
       return err("RATE_LIMITED", 429, {
         retryAfter: String(limited.retryAfterSec),
       });
@@ -127,6 +134,12 @@ export async function POST(req: Request) {
         throw e;
       }
     }
+    void logSecurityEvent({
+      type: "register",
+      userId: user.id,
+      ip,
+      path: "/api/auth/register",
+    });
     const earlyBird = await getEarlyBirdStats();
     return NextResponse.json(
       {

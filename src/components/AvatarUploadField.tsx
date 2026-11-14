@@ -8,6 +8,8 @@ import {
   MAX_IMAGE_BYTES,
   MAX_IMAGE_PICK_BYTES,
 } from "@/lib/validations";
+import { fetchCsrfToken } from "@/lib/fetch-with-csrf";
+import { CSRF_HEADER } from "@/lib/csrf-constants";
 
 const CLIENT_TYPES = new Set([
   "image/jpeg",
@@ -146,6 +148,8 @@ export async function uploadAvatar(
     );
   }
 
+  const csrf = await fetchCsrfToken();
+
   return new Promise((resolve, reject) => {
     const fd = new FormData();
     fd.append("files", compressed);
@@ -178,6 +182,7 @@ export async function uploadAvatar(
     });
     xhr.addEventListener("error", () => reject(new Error("Upload failed")));
     xhr.open("POST", "/api/upload");
+    xhr.setRequestHeader(CSRF_HEADER, csrf);
     xhr.withCredentials = true;
     xhr.send(fd);
   });

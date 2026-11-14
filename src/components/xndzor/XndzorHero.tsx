@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { useCallback, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { BrandLogo } from "@/components/BrandLogo";
@@ -78,10 +79,10 @@ export function XndzorHero({ greeting }: XndzorHeroProps) {
     setShowFeatures(false);
 
     try {
-      const res = await fetch("/api/xndzor/solve", {
+      const res = await apiMutation("/api/xndzor/solve", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: query, mode }),
+        json: { text: query, mode },
       });
       if (!res.ok) throw new Error("solve_failed");
       const data = (await res.json()) as { bundle: SolutionBundle };

@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { FormEvent, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -14,10 +15,10 @@ export function GroupBuyJoinForm({ campaignId }: { campaignId: string }) {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setSaving(true);
-    const res = await fetch("/api/group-buy", {
+    const res = await apiMutation("/api/group-buy", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ campaignId, qty }),
+      json: { campaignId, qty },
     });
     setSaving(false);
     if (res.status === 401) {

@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { signIn } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -79,7 +80,7 @@ export default function RegisterForm({ callbackUrl }: Props) {
     let cancelled = false;
     setLoadingVillages(true);
     setVillageId("");
-    fetch(`/api/villages?marzId=${encodeURIComponent(marzId)}`)
+    apiMutation(`/api/villages?marzId=${encodeURIComponent(marzId)}`)
       .then((r) => r.json())
       .then((data) => {
         if (cancelled) return;
@@ -123,10 +124,10 @@ export default function RegisterForm({ callbackUrl }: Props) {
     }
 
     try {
-      const res = await fetch("/api/auth/register", {
+      const res = await apiMutation("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        json: body,
       });
       const data = (await res.json().catch(() => ({}))) as {
         error?: string;

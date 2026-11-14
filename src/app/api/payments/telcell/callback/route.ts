@@ -6,7 +6,7 @@ import {
   type TelcellCallbackParams,
 } from "@/lib/payments/telcell";
 import { fulfillPayment, logPaymentEvent, markPaymentFailed } from "@/lib/payments";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimitAsync } from "@/lib/rate-limit";
 
 async function parseCallbackBody(req: Request): Promise<TelcellCallbackParams> {
   const out: TelcellCallbackParams = {};
@@ -32,7 +32,7 @@ async function parseCallbackBody(req: Request): Promise<TelcellCallbackParams> {
 
 export async function POST(req: Request) {
   const ip = clientIp(req);
-  const limit = rateLimit(`telcell:callback:${ip}`, {
+  const limit = await rateLimitAsync(`telcell:callback:${ip}`, {
     limit: 120,
     windowMs: 60 * 1000,
   });

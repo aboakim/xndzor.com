@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { validateCsrf } from "@/lib/csrf";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimitAsync } from "@/lib/rate-limit";
 import { logPaymentEvent } from "@/lib/payments";
 
 const bodySchema = z.object({
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
   }
 
   const ip = clientIp(req);
-  const limit = rateLimit(`bank-mark-paid:${session.user.id}:${ip}`, {
+  const limit = await rateLimitAsync(`bank-mark-paid:${session.user.id}:${ip}`, {
     limit: 20,
     windowMs: 60 * 60 * 1000,
   });

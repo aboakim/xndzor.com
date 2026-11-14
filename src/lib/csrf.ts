@@ -1,8 +1,6 @@
 import { cookies } from "next/headers";
 import { randomBytes, timingSafeEqual } from "crypto";
-
-const CSRF_COOKIE = "farmos-csrf";
-const CSRF_HEADER = "x-csrf-token";
+import { CSRF_COOKIE, CSRF_HEADER } from "@/lib/csrf-constants";
 
 export function generateCsrfToken(): string {
   return randomBytes(32).toString("base64url");
@@ -41,4 +39,16 @@ export async function validateCsrf(req: Request): Promise<boolean> {
   return safeEqual(header, cookie);
 }
 
-export { CSRF_HEADER };
+export { CSRF_COOKIE, CSRF_HEADER } from "@/lib/csrf-constants";
+
+/** Edge/middleware: validate double-submit token from request (no next/headers). */
+export function validateCsrfRequest(req: {
+  headers: { get(name: string): string | null };
+  cookies: { get(name: string): { value: string } | undefined };
+}): boolean {
+  const header = req.headers.get(CSRF_HEADER)?.trim();
+  if (!header) return false;
+  const cookie = req.cookies.get(CSRF_COOKIE)?.value?.trim();
+  if (!cookie) return false;
+  return safeEqual(header, cookie);
+}

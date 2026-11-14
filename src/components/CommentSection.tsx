@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { FormEvent, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
@@ -33,7 +34,7 @@ export function CommentSection({
   const [error, setError] = useState("");
 
   async function load() {
-    const res = await fetch(
+    const res = await apiMutation(
       `/api/comments?targetType=${encodeURIComponent(targetType)}&targetId=${encodeURIComponent(targetId)}`
     );
     if (res.ok) setRows(await res.json());
@@ -49,15 +50,15 @@ export function CommentSection({
     if (!session?.user) return;
     setBusy(true);
     setError("");
-    const res = await fetch("/api/comments", {
+    const res = await apiMutation("/api/comments", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+      json: {
         targetType,
         targetId,
         body,
         rating: rating || "",
-      }),
+      },
     });
     setBusy(false);
     if (!res.ok) {
@@ -71,7 +72,7 @@ export function CommentSection({
 
   async function remove(id: string) {
     if (!confirm(t("confirmDelete"))) return;
-    await fetch(`/api/comments/${id}`, { method: "DELETE" });
+    await apiMutation(`/api/comments/${id}`, { method: "DELETE" });
     await load();
   }
 

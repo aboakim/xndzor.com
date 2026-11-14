@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { FormEvent, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -61,10 +62,10 @@ export function ProviderForm({
       ...Object.fromEntries(fd.entries()),
       jobTypes,
     };
-    const res = await fetch(isEdit ? `/api/providers/${listingId}` : "/api/providers", {
+    const res = await apiMutation(isEdit ? `/api/providers/${listingId}` : "/api/providers", {
       method: isEdit ? "PATCH" : "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      json: body,
     });
     setSaving(false);
     if (!res.ok) {

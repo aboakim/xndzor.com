@@ -9,7 +9,7 @@ import {
   MAX_UPLOAD_TOTAL_BYTES,
 } from "@/lib/validations";
 import { detectImageKind, KIND_TO_EXT } from "@/lib/image-magic";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimitAsync } from "@/lib/rate-limit";
 
 /** Allow Blob puts on cold starts without cutting off mid-upload. */
 export const maxDuration = 60;
@@ -97,11 +97,19 @@ export async function POST(req: Request) {
   }
 
   const ip = clientIp(req);
-  const limited = rateLimit(`upload:${session.user.id}:${ip}`, {
+  const limited = await rateLimitAsync(`upload:${session.user.id}:${ip}`, {
     limit: 45,
     windowMs: 15 * 60 * 1000,
   });
   if (!limited.ok) {
+    const { logSecurityEvent } = await import("@/lib/security-audit");
+    void logSecurityEvent({
+      type: "upload_rate_limited",
+      userId: session.user.id,
+      ip,
+      path: "/api/upload",
+      meta: { retryAfterSec: limited.retryAfterSec },
+    });
     return NextResponse.json(
       { error: "Too many uploads. Try again later." },
       { status: 429, headers: { "Retry-After": String(limited.retryAfterSec) } },

@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -180,15 +181,15 @@ export function ForwardCropForm({
       }
 
       setPhase("publishing");
-      const res = await fetch(isEdit ? `/api/forward/${listingId}` : "/api/forward", {
+      const res = await apiMutation(isEdit ? `/api/forward/${listingId}` : "/api/forward", {
         method: isEdit ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        json: {
           ...Object.fromEntries(fd.entries()),
           productId,
           phone,
           imageUrls,
-        }),
+        },
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));

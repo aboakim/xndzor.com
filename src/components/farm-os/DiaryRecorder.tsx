@@ -1,5 +1,6 @@
 "use client";
 
+import { apiMutation } from "@/lib/fetch-with-csrf";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -78,10 +79,10 @@ export function DiaryRecorder({ plots }: { plots: PlotOpt[] }) {
     setBusy(true);
     setMsg(null);
     try {
-      const res = await fetch("/api/diary", {
+      const res = await apiMutation("/api/diary", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rawText: text, plotId: plotId || null }),
+        json: { rawText: text, plotId: plotId || null },
       });
       if (!res.ok) {
         setMsg(t("error"));

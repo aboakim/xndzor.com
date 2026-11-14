@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { commentSchema } from "@/lib/validations";
 import { cleanText } from "@/lib/sanitize";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimitAsync } from "@/lib/rate-limit";
 import type { CommentTargetType } from "@/lib/catalog";
 
 async function targetExists(targetType: CommentTargetType, targetId: string) {
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const limited = rateLimit(`comment-post:${session.user.id}:${clientIp(req)}`, {
+  const limited = await rateLimitAsync(`comment-post:${session.user.id}:${clientIp(req)}`, {
     limit: 30,
     windowMs: 60 * 60 * 1000,
   });
