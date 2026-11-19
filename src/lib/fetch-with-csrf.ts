@@ -53,7 +53,8 @@ export async function apiMutation(
   url: string,
   init: RequestInit & { json?: unknown } = {},
 ): Promise<Response> {
-  const method = (init.method || "POST").toUpperCase();
+  const hasBody = init.json !== undefined || init.body != null;
+  const method = (init.method ?? (hasBody ? "POST" : "GET")).toUpperCase();
   const headers = await csrfHeaders(init.headers);
   if (!headers["Content-Type"] && init.json !== undefined) {
     headers["Content-Type"] = "application/json";
