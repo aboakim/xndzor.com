@@ -438,8 +438,6 @@ export default async function HomePage({
         <HomeTrustBannerWithSideAds />
       </Reveal>
 
-      <XndzorHero greeting={heroGreeting} />
-
       {topSupplies.length > 0 ? (
         <HomeSection
           action="sell"
@@ -586,6 +584,10 @@ export default async function HomePage({
           </div>
         )}
       </HomeSection>
+
+      <Reveal as="section" className="section home-solve-widget" delayMs={50}>
+        <XndzorHero greeting={heroGreeting} />
+      </Reveal>
 
       <HomeSection
         action="demand"
@@ -800,7 +802,10 @@ export default async function HomePage({
                 <ClassifiedRow
                   key={row.taskId}
                   href={`/plots/${row.plotId}`}
-                  title={resolveTaskCopy((k, v) => t(k as "today.irrigationDue", v), row.title)}
+                  displayTitle={resolveTaskCopy(
+                    (k, v) => t(k as "today.irrigationDue", v),
+                    row.title,
+                  )}
                   meta={row.plotName}
                 />
               ))}

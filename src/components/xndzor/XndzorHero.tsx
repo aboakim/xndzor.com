@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { apiMutation } from "@/lib/fetch-with-csrf";
 import { useCallback, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
@@ -124,8 +125,11 @@ export function XndzorHero({ greeting }: XndzorHeroProps) {
           </nav>
         </aside>
 
-        <div className="xndzor-hero-inner">
-        <div className="xndzor-hero-brand">
+        <div className="xndzor-hero-inner xndzor-hero-card">
+        <div
+          className="xndzor-hero-brand xz-hero-reveal"
+          style={{ "--xz-hero-delay": "0ms" } as CSSProperties}
+        >
           <span className="xndzor-apple" aria-hidden>
             <BrandLogo size={40} className="xndzor-apple-logo" />
           </span>
@@ -134,7 +138,12 @@ export function XndzorHero({ greeting }: XndzorHeroProps) {
           {greeting ? <p className="xndzor-hero-greeting">{greeting}</p> : null}
         </div>
 
-        <div className="xndzor-mode-toggle" role="tablist" aria-label={t("modeLabel")}>
+        <div
+          className="xndzor-mode-toggle xz-hero-reveal"
+          style={{ "--xz-hero-delay": "70ms" } as CSSProperties}
+          role="tablist"
+          aria-label={t("modeLabel")}
+        >
           <button
             type="button"
             role="tab"
@@ -163,7 +172,10 @@ export function XndzorHero({ greeting }: XndzorHeroProps) {
           </button>
         </div>
 
-        <div className="xndzor-input-block">
+        <div
+          className="xndzor-input-block xz-hero-reveal"
+          style={{ "--xz-hero-delay": "140ms" } as CSSProperties}
+        >
           <label htmlFor="xndzor-problem" className="xndzor-input-label">
             {mode === "need" ? t("whatNeed") : t("whatHave")}
           </label>
@@ -187,11 +199,12 @@ export function XndzorHero({ greeting }: XndzorHeroProps) {
           />
 
           <div className="xndzor-chips" aria-label={t("quickChips")}>
-            {chips.map((chip) => (
+            {chips.map((chip, i) => (
               <button
                 key={chip.key}
                 type="button"
-                className="xndzor-chip"
+                className="xndzor-chip xz-hero-chip"
+                style={{ "--xz-chip-delay": `${200 + i * 45}ms` } as CSSProperties}
                 onClick={() => applyChip(chip.key)}
               >
                 <span aria-hidden>{chip.emoji}</span>

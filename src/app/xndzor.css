@@ -446,6 +446,178 @@
   font-weight: 700;
 }
 
+/* ——— Home solve widget (mid-page placement + motion) ——— */
+.home-solve-widget {
+  padding-top: 0.5rem;
+  padding-bottom: 0.35rem;
+}
+
+.home-solve-widget .xndzor-hero {
+  padding-top: 0.75rem;
+  padding-bottom: 1.25rem;
+}
+
+.xndzor-hero-card {
+  position: relative;
+  padding: 1.15rem 1.1rem 1.35rem;
+  border-radius: calc(var(--radius-lg) + 4px);
+  background: color-mix(in srgb, var(--surface) 92%, rgba(26, 107, 85, 0.04));
+  border: 1px solid color-mix(in srgb, var(--pine) 12%, var(--line));
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.65) inset,
+    0 10px 36px rgba(10, 51, 41, 0.07);
+}
+
+.xz-hero-reveal {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.xz-hero-chip {
+  opacity: 0;
+  transform: translateY(10px) scale(0.96);
+}
+
+.home-solve-widget.is-in .xndzor-hero-card {
+  animation: xz-hero-card-settle 0.85s var(--ease-out-soft) both;
+}
+
+.home-solve-widget.is-in .xz-hero-reveal {
+  animation: xz-hero-reveal-up 0.72s var(--ease-out-soft) both;
+  animation-delay: var(--xz-hero-delay, 0ms);
+}
+
+.home-solve-widget.is-in .xz-hero-chip {
+  animation: xz-hero-chip-in 0.55s var(--ease-out-soft) both;
+  animation-delay: var(--xz-chip-delay, 0ms);
+}
+
+.home-solve-widget.is-in .xndzor-hero-band-orb-left {
+  animation: xz-solve-orb-drift 14s ease-in-out infinite;
+}
+
+.home-solve-widget.is-in .xndzor-hero-band-orb-right {
+  animation: xz-solve-orb-drift 16s ease-in-out 2s infinite reverse;
+}
+
+.home-solve-widget.is-in .xndzor-mode-btn.is-active {
+  animation: xz-tab-glow 4s ease-in-out 0.8s infinite;
+}
+
+.home-solve-widget.is-in .xndzor-find-btn:not(:disabled) {
+  animation:
+    xz-hero-reveal-up 0.65s var(--ease-out-soft) 0.32s both,
+    xz-find-btn-pulse 3.2s ease-in-out 1.4s infinite;
+}
+
+.home-solve-widget.is-in .xndzor-apple-logo {
+  animation: xz-logo-nod 5s ease-in-out 0.6s infinite;
+}
+
+@keyframes xz-hero-card-settle {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.985);
+    box-shadow: 0 4px 20px rgba(10, 51, 41, 0.04);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.65) inset,
+      0 10px 36px rgba(10, 51, 41, 0.07);
+  }
+}
+
+@keyframes xz-hero-reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes xz-hero-chip-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes xz-solve-orb-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(10px, -8px) scale(1.06);
+    opacity: 0.62;
+  }
+}
+
+@keyframes xz-tab-glow {
+  0%,
+  100% {
+    box-shadow: var(--shadow-card);
+  }
+  50% {
+    box-shadow:
+      var(--shadow-card),
+      0 0 0 3px rgba(26, 107, 85, 0.12);
+  }
+}
+
+@keyframes xz-find-btn-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(26, 107, 85, 0.2),
+      var(--shadow-card, 0 4px 14px rgba(10, 51, 41, 0.12));
+  }
+  50% {
+    box-shadow:
+      0 0 0 6px rgba(26, 107, 85, 0.08),
+      var(--shadow-card, 0 6px 18px rgba(10, 51, 41, 0.14));
+  }
+}
+
+@keyframes xz-logo-nod {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(-2deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xz-hero-reveal,
+  .xz-hero-chip {
+    opacity: 1;
+    transform: none;
+  }
+
+  .home-solve-widget.is-in .xndzor-hero-card,
+  .home-solve-widget.is-in .xz-hero-reveal,
+  .home-solve-widget.is-in .xz-hero-chip,
+  .home-solve-widget.is-in .xndzor-find-btn:not(:disabled),
+  .home-solve-widget.is-in .xndzor-hero-band-orb-left,
+  .home-solve-widget.is-in .xndzor-hero-band-orb-right,
+  .home-solve-widget.is-in .xndzor-mode-btn.is-active,
+  .home-solve-widget.is-in .xndzor-apple-logo {
+    animation: none !important;
+  }
+}
+
 .xndzor-error {
   color: var(--danger);
   font-size: 0.88rem;
@@ -3039,6 +3211,7 @@
 
 .home-vendo-banners > .home-trust-banner,
 .home-vendo-banners > .home-trust-strip,
+.home-vendo-banners > .home-solve-widget,
 .home-vendo-banners > .home-banner-gallery,
 .home-vendo-banners > .home-market-pulse-wrap,
 .home-vendo-banners > .home-weather-row,
