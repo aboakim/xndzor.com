@@ -802,7 +802,7 @@ export default async function HomePage({
                 <ClassifiedRow
                   key={row.taskId}
                   href={`/plots/${row.plotId}`}
-                  displayTitle={resolveTaskCopy(
+                  title={resolveTaskCopy(
                     (k, v) => t(k as "today.irrigationDue", v),
                     row.title,
                   )}
